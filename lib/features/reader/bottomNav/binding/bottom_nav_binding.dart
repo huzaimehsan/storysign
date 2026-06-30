@@ -1,0 +1,19 @@
+import 'package:get/get.dart';
+
+import '../../Home/controller/reader/home_controller.dart';
+import '../../library/controller/reader/reader_controller.dart';
+import '../controller/bottom_nav_controller.dart';
+
+
+class BottomNavBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<BottomNavController>(()=> BottomNavController());
+
+    Get.lazyPut<HomeController>(()=> HomeController());
+
+    Get.lazyPut<ReaderController>(()=> ReaderController());
+
+  }
+}
+
