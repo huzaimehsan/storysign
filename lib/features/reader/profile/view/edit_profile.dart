@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -6,12 +8,22 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
+import '../../../../widgets/image_picker.dart';
 import '../../../../widgets/sucess_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+
+  final MediaPickerService _mediaPickerService = MediaPickerService();
+
+  File? _profileImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,18 +52,30 @@ class EditProfile extends StatelessWidget {
                       border: Border.all(color: whiteColor.withOpacity(0.2), width: 1.5),
                     ),
                     child: ClipOval(
-                      child: Image.asset(
-                        'assets/png/searchprofile.png',
-                        fit: BoxFit.cover,
-                      ),
+                      child:_profileImage != null
+                    ? Image.file(
+                    _profileImage!,
+                      fit: BoxFit.cover,
+                    )
+                    : Image.asset(
+                'assets/png/searchprofile.png',
+                fit: BoxFit.cover,
+              ),
                     ),
                   ),
                   Positioned(
                     right: -1.w,
                     bottom: 2.w,
                     child: GestureDetector(
-                      onTap: () {
-                        // TODO: Open camera or photo picker
+                      onTap: () async {
+                        final File? file =
+                        await _mediaPickerService.pickMedia(context);
+
+                        if (file != null) {
+                          setState(() {
+                            _profileImage = file;
+                          });
+                        }
                       },
                       child: Image.asset(
                       "assets/png/camera.png",
