@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../Home/view/reader/home_screen.dart';
 import '../../Home/view/reader/track_request.dart';
@@ -94,7 +95,7 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
                 key: _navigatorKeys[4],
                 onGenerateRoute: (_) => MaterialPageRoute(
                     builder: (_) =>
-                        const Center(child: Text("Profile Page"))),
+                       ProfileScreen()),
               ),
             ],
           ),

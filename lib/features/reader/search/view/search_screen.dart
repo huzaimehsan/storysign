@@ -32,7 +32,7 @@ class SearchScreen extends StatelessWidget {
             date: "Joined: 22 june, 2026",
             requestAutoGraph: () {},
             authorDetail: () {
-              Navigator.of(context).pushNamed('/authordetail');
+             Get.toNamed('/authordetail');
             },
           ),
           SizedBox(height: 0.3.h),
@@ -40,16 +40,25 @@ class SearchScreen extends StatelessWidget {
             imagePath: "assets/png/searchprofile.png",
             bookTitle: "Matt Haig",
             date: "Joined: 22 june, 2026",
-            requestAutoGraph: () {},
-            authorDetail: () {},
+            requestAutoGraph: () {
+              Get.toNamed('/authordetail');
+
+            },
+            authorDetail: () {
+              Get.toNamed('/authordetail');
+            },
           ),
           SizedBox(height: 0.3.h),
           SearchAuthorCard(
             imagePath: "assets/png/searchprofile.png",
             bookTitle: "Matt Haig",
             date: "Joined: 22 june, 2026",
-            requestAutoGraph: () {},
-            authorDetail: () {},
+            requestAutoGraph: () {
+              Get.toNamed('/authordetail');
+            },
+            authorDetail: () {
+              Get.toNamed('/authordetail');
+            },
           ),
         ],
       ),

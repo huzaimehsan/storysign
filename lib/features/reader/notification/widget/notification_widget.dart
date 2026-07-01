@@ -58,7 +58,7 @@ Widget customNotificationHeader({
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 2.h),
+        SizedBox(height: 1.h),
 
         // Title
         customText(
@@ -71,25 +71,27 @@ Widget customNotificationHeader({
           fontFamily: "Poppins",
         ),
 
-        SizedBox(height: 0.5.h),
+        SizedBox(height: 0.3.h),
 
         // Description
         customText(
           text: description,
-          fontSize: 15.sp,
+          fontSize: 14.sp,
           fontWeight: FontWeight.w400,
           color: textFeildContainColor,
+          letterSpacing: 0,
           textAlign: TextAlign.start,
           fontFamily: "Poppins",
         ),
 
-        SizedBox(height: 0.5.h),
+        SizedBox(height: 0.3.h),
 
         // Time
         Align(
           alignment: Alignment.centerRight,
           child: customText(
             text: time,
+            letterSpacing: 0,
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             color: textFeildContainColor,
@@ -98,14 +100,14 @@ Widget customNotificationHeader({
           ),
         ),
 
-        SizedBox(height: 1.h),
+
 
         // Divider
         Divider(
           color: whiteColor.withOpacity(0.5),
           thickness: 1,
         ),
-        SizedBox(height: 1.h),
+
       ],
     ),
   );

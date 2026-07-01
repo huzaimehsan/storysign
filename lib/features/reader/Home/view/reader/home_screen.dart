@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
 
+import '../../../../../widgets/book_widget.dart';
 import '../../widgets/reader/build_profile_card.dart';
 import '../../widgets/reader/user_profile_card.dart';
 
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.h),
+          padding: EdgeInsets.symmetric(vertical: 7.h),
           child: Column(
             children: [
               Padding(

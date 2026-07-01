@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../../constants/color_constants.dart';
+import '../../../../../widgets/book_widget.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/search_widget.dart';
 import '../../../search/widgets/header_widget.dart';

@@ -11,7 +11,8 @@ class WidgetSelectAuthor extends StatelessWidget {
   final String imagePath;
   final String bookTitle;
   final String activity;
-  final VoidCallback authorDetail;
+  final bool isActive;
+  final VoidCallback ontap;
   final String date;
 
   const WidgetSelectAuthor({
@@ -19,8 +20,9 @@ class WidgetSelectAuthor extends StatelessWidget {
     required this.imagePath,
     required this.bookTitle,
     required this.activity,
+    required this.isActive,
     required this.date,
-    required this.authorDetail,
+    required this.ontap,
   });
 
   @override
@@ -52,7 +54,7 @@ class WidgetSelectAuthor extends StatelessWidget {
               decoration: BoxDecoration(
 
                 border: Border.all(
-                  color: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
+                  color: isActive ? buttonColor : const Color(0xFFACACAC),
                   width: 1.2,
 
                 ),
@@ -82,7 +84,7 @@ class WidgetSelectAuthor extends StatelessWidget {
                   customText(
                     fontFamily: "Poppins",
                     text: activity,
-                    color: buttonColor,
+                    color: isActive ? buttonColor : const Color(0xFFACACAC),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                   ),
@@ -97,17 +99,22 @@ class WidgetSelectAuthor extends StatelessWidget {
                   ),
                   SizedBox(height: 1.h),
 
-                  buttonWidget(
-                    "Select",
-                    activity == 'Active' ? whiteColor : whiteColor,
-                    onTap: () {},
-                    colors: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
-                    fontFamily: 'Poppins',
-                    height: 2.7.h,
-                    width: 18.w,
-                    borderColor: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
-                    fontsize: 14.sp,
-                    fontweight: FontWeight.w600,
+                  GestureDetector(
+                    onTap: ontap,
+                    child: buttonWidget(
+
+
+                      "Select",
+                      isActive ? whiteColor : whiteColor,
+                      onTap: isActive ? ontap : null,
+                      colors: isActive? buttonColor : const Color(0xFFACACAC),
+                      fontFamily: 'Poppins',
+                      height: 2.7.h,
+                      width: 18.w,
+                      borderColor: isActive ? buttonColor : const Color(0xFFACACAC),
+                      fontsize: 14.sp,
+                      fontweight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

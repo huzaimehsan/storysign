@@ -137,7 +137,7 @@ Widget emailTextFeild(
                 ),
 
                 contentPadding: EdgeInsets.symmetric(
-                  vertical: 1.h,
+                  vertical: 1.1.h,
                   horizontal: 4.w,
                 ),
 

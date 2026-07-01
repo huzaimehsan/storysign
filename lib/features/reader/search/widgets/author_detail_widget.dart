@@ -21,10 +21,10 @@ class AuthorInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: 9.5.h,
       width: 100.w,
       margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-      padding: EdgeInsets.all(5.w),
+      padding: EdgeInsets.all(4.5.w),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(20.sp),

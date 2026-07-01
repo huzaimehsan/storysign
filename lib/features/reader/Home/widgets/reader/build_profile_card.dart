@@ -83,7 +83,7 @@ Widget buildProfileCard({
             ),
           ],
         ),
-        SizedBox(height: 2.h),
+        SizedBox(height: 1.h),
         Row(
           children: [
             Expanded(

@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:storysign/features/reader/Home/view/reader/final_review.dart';
+import 'package:storysign/features/reader/Home/view/reader/make_payment.dart';
+import 'package:storysign/features/reader/Home/view/reader/request_detail.dart';
+import 'package:storysign/features/reader/Home/view/reader/signed_copy.dart';
+import 'package:storysign/features/reader/Home/view/reader/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/reader/upload_book.dart';
+import 'package:storysign/features/reader/profile/view/edit_profile.dart';
+import 'package:storysign/features/reader/profile/view/help_and%20_support.dart';
+import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
+import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../features/reader/Home/view/reader/request_autograph.dart';
 import '../../features/reader/Home/view/reader/select_author.dart';
@@ -58,7 +67,21 @@ class AppRoutes {
 
 
     GetPage(name: '/selectauthor', page: () => SelectAuthor(),binding: BottomNavBinding()),
+    GetPage(name: '/request', page: () => RequestDetail(),binding: BottomNavBinding()),
+    GetPage(name: '/makepayment', page: () => MakePayment(),binding: BottomNavBinding()),
 
+    GetPage(name: '/finalreview', page: () => FinalReview(),binding: BottomNavBinding()),
+
+    GetPage(name: '/tracking', page: () => TrackingScreen(),binding: BottomNavBinding()),
+
+    GetPage(name: '/signedcopy', page: () => SignedCopy(),binding: BottomNavBinding()),
+    GetPage(name: '/profile', page: () => ProfileScreen(),binding: BottomNavBinding()),
+    GetPage(name: '/editprofile', page: () => EditProfile(),binding: BottomNavBinding()),
+
+
+    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(),binding: BottomNavBinding()),
+
+    GetPage(name: '/privacy', page: () => PrivacyPolicy(),binding: BottomNavBinding()),
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),
     // GetPage(name: '/aboutus', page: () => AboutUsScreen(),binding: SettingBinding()),
