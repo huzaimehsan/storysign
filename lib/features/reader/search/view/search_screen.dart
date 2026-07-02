@@ -34,7 +34,7 @@ class SearchScreen extends GetView<SearchPageController> {
             child: Obx(() {
               final list = controller.filteredAuthors;
               return ListView.builder(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.only(bottom: 12.h),
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   final author = list[index];
@@ -54,7 +54,7 @@ class SearchScreen extends GetView<SearchPageController> {
             }),
           ),
 
-          SizedBox(height: 14.h),
+
         ],
       ),
     );

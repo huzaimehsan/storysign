@@ -23,7 +23,10 @@ Widget settingsGroupCard({EdgeInsetsGeometry? margin}) {
     child: Column(
       children: [
         // Item 1
-        _buildRowItem("assets/png/upgrade.png", "Upgrade Plan", () {}),
+        _buildRowItem("assets/png/upgrade.png", "Change Password", () {
+
+          Get.toNamed("/newpass");
+        }),
         Divider(
           thickness: 0.02.h, // Responsive thickness
           // Responsive vertical spacing

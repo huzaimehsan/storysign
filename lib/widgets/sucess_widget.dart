@@ -5,25 +5,11 @@ import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
 import 'customText_widget.dart';
-
-void showSuccessDialog(BuildContext context,{bool isProfile = false ,String? desc}) {
-
+void showSuccessDialog(BuildContext context, {bool isProfile = false, String? desc}) {
   showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (BuildContext dialogContext) {
-      Future.delayed(const Duration(seconds: 3), () {
-        if (!isProfile) {
-          if (Navigator.of(dialogContext, rootNavigator: true).canPop()) {
-            Navigator.of(dialogContext, rootNavigator: true).pop();
-          }
-          if (Get.currentRoute != '/tracking') {
-            Get.toNamed('/signedcopy');
-          }
-        }
-      }
-        );
-
+    builder: (BuildContext context) {
       return Dialog(
         insetPadding: EdgeInsets.symmetric(horizontal: 2.w),
         backgroundColor: Colors.transparent,
@@ -59,31 +45,32 @@ void showSuccessDialog(BuildContext context,{bool isProfile = false ,String? des
                 ),
               ),
               SizedBox(height: 3.h),
+
               // Success Message
               customText(
                 fontFamily: "Poppins",
-                text: desc,
+                text: desc ?? "Success!", // Default text agar desc null ho
                 color: secondryColor,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 3.h),
-              // Go to Dashboard Button
+
+              // Button
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 2.w),
                 child: buttonWidget(
-
                   isProfile ? "Okay" : "Go to Dashboard",
-
                   whiteColor,
                   onTap: () {
-                    if (isProfile) {
+                    // Dialog band karne ke liye
+                    Get.back();
 
-                      Get.back();
+                    // Route Navigation
+                    if (isProfile) {
                       Get.toNamed("/bottomnav");
                     } else {
-
                       Get.offAllNamed('/home');
                     }
                   },

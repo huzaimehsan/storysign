@@ -32,9 +32,9 @@ class AuthController extends GetxController {
     print("User selected: ${selectedRole.value}");
 
     if (selectedRole.value == "Reader") {
-      Get.toNamed('/signup');
+      Get.toNamed('/signup' ,arguments: 'reader');
     } else {
-      Get.toNamed('/signup');
+      Get.toNamed('/signup' ,arguments: 'author');
     }
   }
 

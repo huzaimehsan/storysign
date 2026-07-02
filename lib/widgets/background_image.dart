@@ -5,14 +5,10 @@ class BackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/jpg/splash.jpg'),
-          fit: BoxFit.cover,
-        ),
+    return Positioned.fill(
+      child: Image.asset(
+        'assets/jpg/splash.jpg',
+        fit: BoxFit.cover,
       ),
     );
   }

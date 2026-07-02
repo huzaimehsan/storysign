@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -5,14 +7,27 @@ import 'package:sizer/sizer.dart';
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/custom_text_feild.dart';
+import '../../../../../widgets/image_picker.dart';
 import '../../../search/widgets/file_upload_widget.dart';
 import '../../../search/widgets/header_widget.dart';
 
-class UploadBook extends StatelessWidget {
-  const UploadBook({super.key});
+class UploadBook extends StatefulWidget {
+   UploadBook({super.key});
+
+  @override
+  State<UploadBook> createState() => _UploadBookState();
+}
+
+class _UploadBookState extends State<UploadBook> {
+  final MediaPickerService _mediaPicker = MediaPickerService();
+
+  File? _bookFile;
+
+  File? _coverImage;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -20,7 +35,7 @@ class UploadBook extends StatelessWidget {
           children: [
             customHeader(
               context: context,
-              title: "Autograph Request",
+              title: "Upload Book",
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),
@@ -38,14 +53,28 @@ class UploadBook extends StatelessWidget {
                   FileUploadWidget(
                     title: 'Upload Book',
                     description: 'Tap to select a pdf file from your device',
-                    onTap: () {},
+                    file: _bookFile,
+                    onTap: () async {
+                      final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.document);
+                      if (file != null) {
+                        setState(() => _bookFile = file);
+                      }
+                    },
+                    onRemove: () => setState(() => _bookFile = null),
                   ),
                   SizedBox(height: 1.5.h),
 
                   FileUploadWidget(
                     title: 'Upload Cover Photo',
                     description: 'Tap to select a png format from your device',
-                    onTap: () {},
+                    file: _coverImage,
+                    onTap: () async {
+                      final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.image);
+                      if (file != null) {
+                        setState(() => _coverImage = file);
+                      }
+                    },
+                    onRemove: () => setState(() => _coverImage = null),
                   ),
 
                   SizedBox(height: 8.h),

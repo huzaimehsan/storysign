@@ -78,7 +78,7 @@ Widget recentlySignedBooks({
                 ),
                 SizedBox(height: 1.h),
                 buttonWidget(
-                  onTap: trackRequest,
+
                   status ,
                   buttonColor,
                   colors: buttonColor.withOpacity(0.2),
@@ -93,11 +93,14 @@ Widget recentlySignedBooks({
             ),
           ),
           if (showArrow)
-            Image.asset(
-              "assets/icon/arrowicon.png",
-              height: 4.h,
-              width: 6.w,
-              fit: BoxFit.cover,
+            InkWell(
+              onTap: trackRequest,
+              child: Image.asset(
+                "assets/icon/arrowicon.png",
+                height: 4.h,
+                width: 6.w,
+                fit: BoxFit.cover,
+              ),
             ),
         ],
       ),

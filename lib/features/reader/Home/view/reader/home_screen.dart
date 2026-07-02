@@ -93,7 +93,8 @@ class HomeScreen extends GetView<HomeController> {
                       date: book["date"]!,
                       status: book["status"]!,
                       trackRequest: () {
-                        Navigator.of(context).pushNamed('/trackrequest');
+                        Get.toNamed("/signedcopy");
+
                       },
                     );
                   },

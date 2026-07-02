@@ -110,7 +110,10 @@ class ReaderLibrary extends GetView<ReaderController> {
                 buttonWidget(
                   "Upload Book",
                   whiteColor,
-                  onTap: () => {},
+                  onTap: () => {
+                    
+                    Get.toNamed("/uploadbook")
+                  },
                   colors: buttonColor,
                   width: 35.w,
                   height: 4.4.h,
@@ -139,7 +142,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                 );
               }
               return ListView.builder(
-                padding: EdgeInsets.only(bottom: 2.h),
+                padding: EdgeInsets.only(bottom: 12.h),
                 itemCount: books.length,
                 itemBuilder: (context, index) {
                   final book = books[index];
@@ -157,6 +160,8 @@ class ReaderLibrary extends GetView<ReaderController> {
               );
             }),
           ),
+
+
         ],
       ),
     );

@@ -60,44 +60,48 @@ Widget libraryStatCardIcon({
   required String value,
   required String subtitle,
   required String imagePath,
+  required VoidCallback? ontap,
 }) {
   return Padding(
     padding:  EdgeInsets.symmetric(vertical: 1.h),
-    child: Container(
-      width: 28.w,
+    child: InkWell(
+      onTap: ontap,
+      child: Container(
+        width: 28.w,
 
 
-      padding: EdgeInsets.only(right: 1.w,left: 1.w,top: 1.2.h,bottom: 1.2.h),
+        padding: EdgeInsets.only(right: 1.w,left: 1.w,top: 1.2.h,bottom: 1.2.h),
 
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.circular(12.sp),
-        boxShadow: [
-          BoxShadow(
-            color: blackColor.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      // Center alignment ke liye Column ko use karein
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center, // Title aur Value bhi center ho jayenge
-        children: [
-          customText(
-            fontFamily: 'Poppins',
-            text: title,
-            color: secondryColor.withOpacity(0.70),
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(12.sp),
+          boxShadow: [
+            BoxShadow(
+              color: blackColor.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        // Center alignment ke liye Column ko use karein
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center, // Title aur Value bhi center ho jayenge
+          children: [
+            customText(
+              fontFamily: 'Poppins',
+              text: title,
+              color: secondryColor.withOpacity(0.70),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
 
-          Image.asset(imagePath,height: 7.w,width: 6.w,)
+            Image.asset(imagePath,height: 7.w,width: 6.w,)
 
-          // Subtitle ab center alignment ke sath
+            // Subtitle ab center alignment ke sath
 
-        ],
+          ],
+        ),
       ),
     ),
   );

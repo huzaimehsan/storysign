@@ -51,16 +51,24 @@ class _EditProfileState extends State<EditProfile> {
                       color: textFeildContainColor,
                       border: Border.all(color: whiteColor.withOpacity(0.2), width: 1.5),
                     ),
-                    child: ClipOval(
-                      child:_profileImage != null
-                    ? Image.file(
-                    _profileImage!,
-                      fit: BoxFit.cover,
-                    )
-                    : Image.asset(
-                'assets/png/searchprofile.png',
-                fit: BoxFit.cover,
-              ),
+                    child:ClipOval(
+                      child: _profileImage != null
+                          ? Image.file(
+                        _profileImage!,
+                        fit: BoxFit.cover,
+                        width: 20.w, // Container size ke mutabiq
+                        height: 20.w,
+                      )
+                          : Container(
+                        color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
+                        child: Center(
+                          child: Icon(
+                            Icons.person_rounded,
+                            color: buttonColor.withOpacity(0.6),
+                            size: 12.w, // Size adjust karlein
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Positioned(

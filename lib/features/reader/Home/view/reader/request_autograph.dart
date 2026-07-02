@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -8,10 +9,20 @@ import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/custom_text_feild.dart';
 import '../../../search/widgets/author_detail_widget.dart';
 import '../../../search/widgets/file_upload_widget.dart';
+import 'package:storysign/widgets/image_picker.dart';
 import '../../../search/widgets/header_widget.dart';
 
-class RequestAutographCard extends StatelessWidget {
+class RequestAutographCard extends StatefulWidget {
   const RequestAutographCard({super.key});
+
+  @override
+  State<RequestAutographCard> createState() => _RequestAutographCardState();
+}
+
+class _RequestAutographCardState extends State<RequestAutographCard> {
+  final MediaPickerService _mediaPicker = MediaPickerService();
+  File? _bookFile;
+  File? _coverImage;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +39,6 @@ class RequestAutographCard extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
 
-
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Column(
@@ -40,14 +49,28 @@ class RequestAutographCard extends StatelessWidget {
                   FileUploadWidget(
                     title: 'Upload Book',
                     description: 'Tap to select a pdf file from your device',
-                    onTap: () {},
+                    file: _bookFile,
+                    onTap: () async {
+                      final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.document);
+                      if (file != null) {
+                        setState(() => _bookFile = file);
+                      }
+                    },
+                    onRemove: () => setState(() => _bookFile = null),
                   ),
                   SizedBox(height: 1.5.h),
 
                   FileUploadWidget(
                     title: 'Upload Cover Photo',
                     description: 'Tap to select a png format from your device',
-                    onTap: () {},
+                    file: _coverImage,
+                    onTap: () async {
+                      final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.image);
+                      if (file != null) {
+                        setState(() => _coverImage = file);
+                      }
+                    },
+                    onRemove: () => setState(() => _coverImage = null),
                   ),
                   SizedBox(height: 1.5.h),
                   emailTextFeild(
@@ -65,7 +88,6 @@ class RequestAutographCard extends StatelessWidget {
                     colors: buttonColor,
                     fontFamily: 'Poppins',
                     height: 5.2.h,
-
                     width: double.infinity,
                     fontsize: 16.sp,
                     fontweight: FontWeight.w600,

@@ -17,11 +17,15 @@ Widget userProfileCard({required String imagePath, required String name}) {
           CircleAvatar(
             radius: 3.0.h,
             child: ClipOval(
-              child: Image.asset(
-                imagePath,
-                height: 7.h,
-                width: 7.h,
-                fit: BoxFit.cover,
+              child:Container(
+                color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
+                child: Center(
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: buttonColor.withOpacity(0.6),
+                    size: 12.w, // Size adjust karlein
+                  ),
+                ),
               ),
             ),
           ),

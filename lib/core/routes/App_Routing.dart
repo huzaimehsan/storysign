@@ -6,6 +6,8 @@ import 'package:storysign/features/reader/Home/view/reader/request_detail.dart';
 import 'package:storysign/features/reader/Home/view/reader/signed_copy.dart';
 import 'package:storysign/features/reader/Home/view/reader/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/reader/upload_book.dart';
+import 'package:storysign/features/reader/profile/view/change_password.dart';
+import 'package:storysign/features/reader/profile/view/contact_us.dart';
 import 'package:storysign/features/reader/profile/view/edit_profile.dart';
 import 'package:storysign/features/reader/profile/view/help_and%20_support.dart';
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
@@ -80,7 +82,9 @@ class AppRoutes {
 
 
     GetPage(name: '/helpandsupport', page: () => HelpAndSupport(),binding: BottomNavBinding()),
+    GetPage(name: '/newpass', page: () => ChangePassword(),binding: BottomNavBinding()),
 
+    GetPage(name: '/contact', page: () => ContactUs(),binding: BottomNavBinding()),
     GetPage(name: '/privacy', page: () => PrivacyPolicy(),binding: BottomNavBinding()),
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),

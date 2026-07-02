@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:storysign/features/reader/profile/controller/help_support_controller.dart';
 
 import '../../Home/controller/reader/home_controller.dart';
 import '../../library/controller/reader/reader_controller.dart';
@@ -16,7 +17,7 @@ class BottomNavBinding implements Bindings {
     Get.lazyPut<ReaderController>(()=> ReaderController());
 
     Get.lazyPut<SearchPageController>(()=> SearchPageController());
-
+    Get.lazyPut<HelpAndSupportController>(()=> HelpAndSupportController());
   }
 }
 

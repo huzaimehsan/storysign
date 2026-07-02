@@ -9,10 +9,12 @@ import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
 
+enum PickMode { image, document, any }
+
 class MediaPickerService {
   final ImagePicker _imagePicker = ImagePicker();
 
-  Future<File?> pickMedia(BuildContext context) async {
+  Future<File?> pickMedia(BuildContext context, {PickMode mode = PickMode.any}) async {
     return await showModalBottomSheet<File?>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -47,7 +49,7 @@ class MediaPickerService {
               const SizedBox(height: 25),
 
               const Text(
-                "Choose Photo",
+                "Choose",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -70,41 +72,41 @@ class MediaPickerService {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  if (mode == PickMode.any || mode == PickMode.image)
+                    _pickerItem(
+                      icon: Icons.camera_alt_rounded,
+                      title: "Camera",
+                      color: const Color(0xff4F46E5),
+                      onTap: () {
+                        _pickImage(ImageSource.camera).then((file) {
+                          Navigator.pop(context, file);
+                        });
+                      },
+                    ),
 
-                  _pickerItem(
-                    icon: Icons.camera_alt_rounded,
-                    title: "Camera",
-                    color: const Color(0xff4F46E5),
-                    onTap: () {
-                      _pickImage(ImageSource.camera).then((file){
-                        Navigator.pop(context,file);
-                      });
-                    },
-                  ),
+                  if (mode == PickMode.any || mode == PickMode.image)
+                    _pickerItem(
+                      icon: Icons.photo_rounded,
+                      title: "Gallery",
+                      color: const Color(0xff10B981),
+                      onTap: () {
+                        _pickImage(ImageSource.gallery).then((file) {
+                          Navigator.pop(context, file);
+                        });
+                      },
+                    ),
 
-
-                  _pickerItem(
-                    icon: Icons.photo_rounded,
-                    title: "Gallery",
-                    color: const Color(0xff10B981),
-                    onTap: () {
-                      _pickImage(ImageSource.gallery).then((file){
-                        Navigator.pop(context,file);
-                      });
-                    },
-                  ),
-
-
-                  _pickerItem(
-                    icon: Icons.description_rounded,
-                    title: "Files",
-                    color: const Color(0xffF59E0B),
-                    onTap: () {
-                      _pickDocument().then((file){
-                        Navigator.pop(context,file);
-                      });
-                    },
-                  ),
+                  if (mode == PickMode.any || mode == PickMode.document)
+                    _pickerItem(
+                      icon: Icons.description_rounded,
+                      title: "Files",
+                      color: const Color(0xffF59E0B),
+                      onTap: () {
+                        _pickDocument().then((file) {
+                          Navigator.pop(context, file);
+                        });
+                      },
+                    ),
 
                 ],
               ),
