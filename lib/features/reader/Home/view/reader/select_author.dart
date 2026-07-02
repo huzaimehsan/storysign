@@ -60,24 +60,29 @@ class SelectAuthor extends GetView<HomeController> {
             searchWidget(),
 
             SizedBox(height: 0.5.h),
-            Column(
-              children: List.generate(authors.length, (index) {
-                final author = authors[index];
-                final active = author['active'] as bool;
-                return WidgetSelectAuthor(
-
-                  imagePath: author['imagePath']!,
-                  bookTitle: author['bookTitle']!,
-                  date: author['date']!,
-                  activity: active ? 'Active' : 'Inactive',
-                  isActive: active,
-                  ontap:  () {
-                    Get.toNamed("/request");
-
-                  },
-                );
-              }),
-            ),
+            Obx(() {
+              final authorsList = controller.filteredAuthors;
+              return ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: authorsList.length,
+                itemBuilder: (context, index) {
+                  final author = authorsList[index];
+                  final active = author['active'] as bool? ?? false;
+                  return WidgetSelectAuthor(
+                    imagePath: author['imagePath'] as String,
+                    bookTitle: author['name'] as String,
+                    date: author['date'] as String,
+                    activity: active ? 'Active' : 'Inactive',
+                    isActive: active,
+                    ontap: () {
+                      Get.toNamed("/request");
+                    },
+                  );
+                },
+              );
+            }),
 
           ],
         ),

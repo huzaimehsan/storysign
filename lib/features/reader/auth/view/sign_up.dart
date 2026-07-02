@@ -11,18 +11,16 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/image_picker.dart';
 
-
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
-
 
   @override
   State<SignUp> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
-
   final String role = Get.arguments ?? 'reader';
+
   bool get isAuthor => role == 'author';
   final MediaPickerService _mediaPickerService = MediaPickerService();
   File? _profileImage;
@@ -32,24 +30,27 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(
-          children: [
-            BackgroundImage(),
-        
-            Align(
-              alignment: Alignment.topCenter,
-              child: SafeArea(
+        children: [
+          BackgroundImage(),
+
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                physics: BouncingScrollPhysics(),
                 child: Container(
                   width: 90.w,
-                  // 🔥 PURI SCREEN KE LIYE UNIFORM PADDING
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height,
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: containerColor,
                     borderRadius: BorderRadius.circular(20.sp),
                   ),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -64,9 +65,9 @@ class _SignUpState extends State<SignUp> {
                           letterSpacing: 0.0,
                         ),
                       ),
-                      SizedBox(height: 1.5.h,),
+                      SizedBox(height: 1.5.h),
                       Center(
-                        child:  Stack(
+                        child: Stack(
                           clipBehavior: Clip.none,
                           children: [
                             Container(
@@ -75,26 +76,29 @@ class _SignUpState extends State<SignUp> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: textFeildContainColor,
-                                border: Border.all(color: whiteColor.withOpacity(0.2), width: 1.5),
+                                border: Border.all(
+                                  color: whiteColor.withOpacity(0.2),
+                                  width: 1.5,
+                                ),
                               ),
-                              child:ClipOval(
+                              child: ClipOval(
                                 child: _profileImage != null
                                     ? Image.file(
-                                  _profileImage!,
-                                  fit: BoxFit.cover,
-                                  width: 20.w, // Container size ke mutabiq
-                                  height: 20.w,
-                                )
+                                        _profileImage!,
+                                        fit: BoxFit.cover,
+                                        width: 20.w,
+                                        height: 20.w,
+                                      )
                                     : Container(
-                                  color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.person_rounded,
-                                      color: buttonColor.withOpacity(0.6),
-                                      size: 12.w, // Size adjust karlein
-                                    ),
-                                  ),
-                                ),
+                                        color: Colors.grey.withOpacity(0.2),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.person_rounded,
+                                            color: buttonColor.withOpacity(0.6),
+                                            size: 12.w,
+                                          ),
+                                        ),
+                                      ),
                               ),
                             ),
                             Positioned(
@@ -102,9 +106,8 @@ class _SignUpState extends State<SignUp> {
                               bottom: 2.w,
                               child: GestureDetector(
                                 onTap: () async {
-                                  final File? file =
-                                  await _mediaPickerService.pickMedia(context);
-        
+                                  final File? file = await _mediaPickerService
+                                      .pickMedia(context);
                                   if (file != null) {
                                     setState(() {
                                       _profileImage = file;
@@ -122,29 +125,30 @@ class _SignUpState extends State<SignUp> {
                           ],
                         ),
                       ),
-        
+
                       SizedBox(height: 1.5.h),
-        
+
                       // Fields
                       emailTextFeild('Full Name', "Lisa Jhon"),
-                      SizedBox(height: 1.5.h), // Consistent gap
+                      SizedBox(height: 1.5.h),
                       emailTextFeild('Email', "abc@gmail.com"),
                       SizedBox(height: 1.5.h),
                       emailTextFeild('Password', "8+ character"),
                       SizedBox(height: 1.5.h),
                       emailTextFeild('Confirm Password', "**********"),
-        
+
                       if (isAuthor) ...[
                         SizedBox(height: 1.5.h),
                         emailTextFeild('Bio Graphy', "Write  about yourself"),
-        
                       ],
-        
+
                       SizedBox(height: 3.h),
                       buttonWidget(
                         "Sign Up",
-                        Colors.white,
-                        onTap: () => Get.toNamed('/bottomnav'),
+                        whiteColor,
+                        onTap: () => isAuthor
+                            ? Get.toNamed('/plan')
+                            : Get.toNamed('/bottomnav'),
                         colors: buttonColor,
                         fontFamily: 'Poppins',
                         height: 5.5.h,
@@ -152,9 +156,9 @@ class _SignUpState extends State<SignUp> {
                         fontsize: 16.sp,
                         fontweight: FontWeight.w600,
                       ),
-        
+
                       SizedBox(height: 2.h),
-        
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -174,16 +178,19 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-        
+
                       SizedBox(height: 3.h),
-        
+
                       // Divider section
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.1.w),
                         child: Row(
                           children: [
                             Expanded(
-                              child: Divider(color: textFeildColor, thickness: 1),
+                              child: Divider(
+                                color: textFeildColor,
+                                thickness: 1,
+                              ),
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 3.w),
@@ -196,14 +203,17 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                             Expanded(
-                              child: Divider(color: textFeildColor, thickness: 1),
+                              child: Divider(
+                                color: textFeildColor,
+                                thickness: 1,
+                              ),
                             ),
                           ],
                         ),
                       ),
-        
+
                       SizedBox(height: 4.h),
-        
+
                       Row(
                         children: [
                           Expanded(
@@ -231,16 +241,15 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 1.h,),
+                      SizedBox(height: 1.h),
                     ],
                   ),
                 ),
               ),
             ),
-            ),
-          ],
-
-        ),
+          ),
+        ],
+      ),
     );
   }
 }

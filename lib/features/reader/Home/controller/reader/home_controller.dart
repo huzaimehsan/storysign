@@ -5,12 +5,37 @@ class HomeController extends GetxController {
 
   RxInt selectedAuthorIndex = 0.obs;
 
-  var authors = <Map<String, String>>[
-    {"name": "James Davenport", "imagePath": "assets/png/authorimg.png"},
-    {"name": "Jane Austen", "imagePath": "assets/png/authorimg.png"},
-    {"name": "F. Scott Fitzgerald", "imagePath": "assets/png/authorimg.png"},
-    {"name": "William Shakespeare", "imagePath": "assets/png/authorimg.png"},
-    {"name": "Leo Tolstoy", "imagePath": "assets/png/authorimg.png"},
+  var authors = <Map<String, dynamic>>[
+    {
+      "name": "James Davenport",
+      "imagePath": "assets/png/authorimg.png",
+      "date": "Joined: 22 june, 2026",
+      "active": true,
+    },
+    {
+      "name": "Jane Austen",
+      "imagePath": "assets/png/authorimg.png",
+      "date": "Joined: 22 june, 2026",
+      "active": true,
+    },
+    {
+      "name": "F. Scott Fitzgerald",
+      "imagePath": "assets/png/authorimg.png",
+      "date": "Joined: 22 june, 2026",
+      "active": true,
+    },
+    {
+      "name": "William Shakespeare",
+      "imagePath": "assets/png/authorimg.png",
+      "date": "Joined: 22 june, 2026",
+      "active": true,
+    },
+    {
+      "name": "Leo Tolstoy",
+      "imagePath": "assets/png/authorimg.png",
+      "date": "Joined: 22 june, 2026",
+      "active": true,
+    },
   ].obs;
 
   var recentlySignedBooksList = <Map<String, String>>[
@@ -39,14 +64,14 @@ class HomeController extends GetxController {
 
   RxString searchQuery = "".obs;
 
-  List<Map<String, String>> get filteredAuthors {
+  List<Map<String, dynamic>> get filteredAuthors {
     if (searchQuery.value.trim().isEmpty) {
       return authors;
     }
     final query = searchQuery.value.toLowerCase();
     return authors
         .where((author) =>
-            author["name"]!.toLowerCase().contains(query))
+            (author["name"] as String).toLowerCase().contains(query))
         .toList();
   }
 
