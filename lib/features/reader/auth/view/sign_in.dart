@@ -90,7 +90,7 @@ class SignIn extends StatelessWidget {
                         text: "Don’t have an account?  ",
                       ),
                       GestureDetector( // 💡 Tap effect ke liye
-                        onTap: () => Get.toNamed('/signup'),
+                        onTap: () => Get.toNamed('/chooserole'),
                         child: customText(
                           color: white,
                           fontFamily: 'Inter',

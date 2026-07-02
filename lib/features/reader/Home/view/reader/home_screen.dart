@@ -5,10 +5,11 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/widgets/search_widget.dart';
 
 import '../../../../../widgets/book_widget.dart';
+import '../../controller/reader/home_controller.dart';
 import '../../widgets/reader/build_profile_card.dart';
 import '../../widgets/reader/user_profile_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
   @override
@@ -30,35 +31,42 @@ class HomeScreen extends StatelessWidget {
                     Get.toNamed("/requestautographcard");
                   },
                   onUploadBookPressed: () {
-
                     Get.toNamed("/uploadbook");
                   },
                 ),
               ),
               SizedBox(height: 2.h),
 
-            searchWidget(),
+              searchWidget(
+                onChanged: (val) {
+                  controller.searchQuery.value = val;
+                },
+              ),
               SizedBox(height: 2.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.w),
                 child: sectionHeader(title: "All Authors", onSeeAll: () {}),
               ),
               SizedBox(height: 1.h),
-              SizedBox(
-                height: 27.w,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  itemCount: 5,
-                  separatorBuilder: (context, index) => SizedBox(width: 1.w),
-                  itemBuilder: (context, index) {
-                    return userProfileCard(
-                      imagePath: "assets/png/authorimg.png",
-                      name: "James Davenport",
-                    );
-                  },
-                ),
-              ),
+              Obx(() {
+                final authorsList = controller.filteredAuthors;
+                return SizedBox(
+                  height: 27.w,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    itemCount: authorsList.length,
+                    separatorBuilder: (context, index) => SizedBox(width: 1.w),
+                    itemBuilder: (context, index) {
+                      final author = authorsList[index];
+                      return userProfileCard(
+                        imagePath: author["imagePath"]!,
+                        name: author["name"]!,
+                      );
+                    },
+                  ),
+                );
+              }),
 
               SizedBox(height: 1.h),
               Padding(
@@ -69,28 +77,30 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              recentlySignedBooks(
-                imagePath: "assets/png/book.png",
-                bookTitle: "Pride and Prejudice",
-                authorName: "Jane Austen",
-                date: "22 june, 2026", trackRequest: () {  }, status: 'Signed',
-              ),
+              Obx(() {
+                final books = controller.filteredRecentlySignedBooks;
+                return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: books.length,
+                  itemBuilder: (context, index) {
+                    final book = books[index];
+                    return recentlySignedBooks(
+                      imagePath: book["imagePath"]!,
+                      bookTitle: book["bookTitle"]!,
+                      authorName: book["authorName"]!,
+                      date: book["date"]!,
+                      status: book["status"]!,
+                      trackRequest: () {
+                        Navigator.of(context).pushNamed('/trackrequest');
+                      },
+                    );
+                  },
+                );
+              }),
 
-              recentlySignedBooks(
-                imagePath: "assets/png/book.png",
-                bookTitle: "The Great Gatsby",
-                authorName: "F. Scott Fitzgerald",
-                date: "25 june, 2026", trackRequest: () {  }, status: 'Signed',
-              ),
-
-              recentlySignedBooks(
-                imagePath: "assets/png/book.png",
-                bookTitle: "The Great Gatsby",
-                authorName: "F. Scott Fitzgerald",
-                date: "25 june, 2026", trackRequest: () {  }, status: 'Signed',
-              ),
-
-              SizedBox(height: 7.h,),
+              SizedBox(height: 7.h),
             ],
           ),
         ),

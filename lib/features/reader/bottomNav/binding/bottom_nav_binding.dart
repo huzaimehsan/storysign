@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../../Home/controller/reader/home_controller.dart';
 import '../../library/controller/reader/reader_controller.dart';
+import '../../search/controller/search_page_controller.dart';
 import '../controller/bottom_nav_controller.dart';
 
 
@@ -13,6 +14,8 @@ class BottomNavBinding implements Bindings {
     Get.lazyPut<HomeController>(()=> HomeController());
 
     Get.lazyPut<ReaderController>(()=> ReaderController());
+
+    Get.lazyPut<SearchPageController>(()=> SearchPageController());
 
   }
 }

@@ -75,7 +75,7 @@ class ChooseRole extends GetView<AuthController> {
                         SizedBox(height: 3.h),
                         buttonWidget(
                           "Continue",
-                          Colors.white,
+                         whiteColor,
                           onTap: () => controller.proceed(),
                           colors: buttonColor,
                           fontFamily: 'Poppins',

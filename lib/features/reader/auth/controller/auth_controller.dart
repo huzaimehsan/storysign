@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-class AuthController extends GetxController{
+class AuthController extends GetxController {
   RxInt remainingSeconds = 60.obs;
   RxBool isTimerRunning = false.obs;
   Timer? _timer;
@@ -31,7 +31,11 @@ class AuthController extends GetxController{
   void proceed() {
     print("User selected: ${selectedRole.value}");
 
-    Get.toNamed('/bottomnav');
+    if (selectedRole.value == "Reader") {
+      Get.toNamed('/signup');
+    } else {
+      Get.toNamed('/signup');
+    }
   }
 
   @override
@@ -39,5 +43,4 @@ class AuthController extends GetxController{
     _timer?.cancel();
     super.onClose();
   }
-
 }

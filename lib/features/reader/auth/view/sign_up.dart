@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -7,13 +9,22 @@ import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
+import '../../../../widgets/image_picker.dart';
 
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
   @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  @override
   Widget build(BuildContext context) {
+    final MediaPickerService _mediaPickerService = MediaPickerService();
+
+    File? _profileImage;
     return Scaffold(
       body: Stack(
         children: [
@@ -45,6 +56,57 @@ class SignUp extends StatelessWidget {
                         letterSpacing: 0.0,
                       ),
                     ),
+                    SizedBox(height: 2.h,),
+                    Center(
+                      child:  Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            height: 25.w,
+                            width: 25.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: textFeildContainColor,
+                              border: Border.all(color: whiteColor.withOpacity(0.2), width: 1.5),
+                            ),
+                            child: ClipOval(
+                              child:_profileImage != null
+                                  ? Image.file(
+                                _profileImage!,
+                                fit: BoxFit.cover,
+                              )
+                                  : Image.asset(
+                                'assets/png/searchprofile.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: -1.w,
+                            bottom: 2.w,
+                            child: GestureDetector(
+                              onTap: () async {
+                                final File? file =
+                                await _mediaPickerService.pickMedia(context);
+
+                                if (file != null) {
+                                  setState(() {
+                                    _profileImage = file;
+                                  });
+                                }
+                              },
+                              child: Image.asset(
+                                "assets/png/camera.png",
+                                height: 8.w,
+                                width: 8.w,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     SizedBox(height: 2.5.h),
 
                     // Fields
@@ -60,7 +122,7 @@ class SignUp extends StatelessWidget {
                     buttonWidget(
                       "Sign Up",
                       Colors.white,
-                      onTap: () => Get.toNamed('/chooserole'),
+                      onTap: () => Get.toNamed('/bottomnav'),
                       colors: buttonColor,
                       fontFamily: 'Poppins',
                       height: 5.5.h,

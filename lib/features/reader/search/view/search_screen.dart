@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../widgets/search_widget.dart';
-
+import '../controller/search_page_controller.dart';
 import '../widgets/header_widget.dart';
 import '../widgets/search_author_widget.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends GetView<SearchPageController> {
   const SearchScreen({super.key});
 
   @override
@@ -23,43 +23,38 @@ class SearchScreen extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
 
-          searchWidget(),
+          searchWidget(
+            onChanged: (val) {
+              controller.searchQuery.value = val;
+            },
+          ),
 
           SizedBox(height: 1.h),
-          SearchAuthorCard(
-            imagePath: "assets/png/searchprofile.png",
-            bookTitle: "Matt Haig",
-            date: "Joined: 22 june, 2026",
-            requestAutoGraph: () {},
-            authorDetail: () {
-             Get.toNamed('/authordetail');
-            },
+          Expanded(
+            child: Obx(() {
+              final list = controller.filteredAuthors;
+              return ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final author = list[index];
+                  return SearchAuthorCard(
+                    imagePath: author["imagePath"]!,
+                    bookTitle: author["bookTitle"]!,
+                    date: author["date"]!,
+                    requestAutoGraph: () {
+                      Get.toNamed('/authordetail');
+                    },
+                    authorDetail: () {
+                      Get.toNamed('/authordetail');
+                    },
+                  );
+                },
+              );
+            }),
           ),
-          SizedBox(height: 0.3.h),
-          SearchAuthorCard(
-            imagePath: "assets/png/searchprofile.png",
-            bookTitle: "Matt Haig",
-            date: "Joined: 22 june, 2026",
-            requestAutoGraph: () {
-              Get.toNamed('/authordetail');
 
-            },
-            authorDetail: () {
-              Get.toNamed('/authordetail');
-            },
-          ),
-          SizedBox(height: 0.3.h),
-          SearchAuthorCard(
-            imagePath: "assets/png/searchprofile.png",
-            bookTitle: "Matt Haig",
-            date: "Joined: 22 june, 2026",
-            requestAutoGraph: () {
-              Get.toNamed('/authordetail');
-            },
-            authorDetail: () {
-              Get.toNamed('/authordetail');
-            },
-          ),
+          SizedBox(height: 14.h),
         ],
       ),
     );

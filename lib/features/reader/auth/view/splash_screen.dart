@@ -87,7 +87,7 @@ class SplashScreen extends StatelessWidget {
 
                       InkWell(
                         onTap: (){
-                          Get.toNamed('/signup');
+                          Get.toNamed('/chooserole');
 
                         },
 
