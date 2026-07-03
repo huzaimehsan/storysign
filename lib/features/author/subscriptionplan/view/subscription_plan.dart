@@ -6,7 +6,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 
 import '../../../../widgets/customText_widget.dart';
-import '../../widgets/subscription_header_widget.dart';
+import '../../../../widgets/subscription_header_widget.dart';
 import '../../widgets/subscription_plan_card.dart';
 import '../controller/subscription_plan_controller.dart';
 
@@ -78,7 +78,7 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                       features:
                           List<String>.from(plan['features'] as List<dynamic>),
                       isMostPopular: plan['isMostPopular'] as bool,
-                      onSelect: () {},
+                      onSelect: () => controller.selectPlan(plan),
                     );
                   },
                 ),

@@ -4,8 +4,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../constants/color_constants.dart';
-import '../../../../widgets/customText_widget.dart';
+import '../../constants/color_constants.dart';
+import '../../widgets/customText_widget.dart';
 
 Widget customHeaderAuthor({
   required BuildContext context,

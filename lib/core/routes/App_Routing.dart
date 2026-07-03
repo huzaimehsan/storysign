@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_binding.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
 import 'package:storysign/features/reader/Home/view/reader/final_review.dart';
 import 'package:storysign/features/reader/Home/view/reader/make_payment.dart';
@@ -17,6 +18,7 @@ import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
+import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
 import '../../features/reader/Home/view/reader/request_autograph.dart';
 import '../../features/reader/Home/view/reader/select_author.dart';
 import '../../features/reader/Home/view/reader/track_request.dart';
@@ -94,6 +96,7 @@ class AppRoutes {
     GetPage(name: '/authorbottomnav', page: () => AuthorBottomNavLayout(),binding: AuthorBottomNavBinding()),
 
   GetPage(name: '/plan', page: () => SubscriptionPlan(),binding: AuthorBottomNavBinding()),
+    GetPage(name: '/selectplan', page: () => SubscriptionPlanSelectionScreen(),binding: AuthorBottomNavBinding()),
 
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),

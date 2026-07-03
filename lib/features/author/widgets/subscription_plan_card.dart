@@ -11,6 +11,10 @@ class SubscriptionPlanCard extends StatelessWidget {
   final List<String> features;
   final bool isMostPopular;
   final VoidCallback onSelect;
+  final bool showActionButton;
+  final bool showAmountRow;
+  final String? amountLabel;
+  final String? amountValue;
 
   const SubscriptionPlanCard({
     super.key,
@@ -20,6 +24,10 @@ class SubscriptionPlanCard extends StatelessWidget {
     required this.features,
     this.isMostPopular = false,
     required this.onSelect,
+    this.showActionButton = true,
+    this.showAmountRow = false,
+    this.amountLabel,
+    this.amountValue,
   });
 
   @override
@@ -60,8 +68,8 @@ class SubscriptionPlanCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: "Poppins",
                         color: buttonColor,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     TextSpan(
@@ -101,14 +109,12 @@ class SubscriptionPlanCard extends StatelessWidget {
                 .map(
                   (feature) => Padding(
                     padding: EdgeInsets.only(bottom: 0.8.h),
-                    child: Expanded(
-                      child: customText(
-                        text: feature,
-                        fontFamily: "Poppins",
-                        color: primaryColor.withOpacity(0.7),
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    child: customText(
+                      text: feature,
+                      fontFamily: "Poppins",
+                      color: primaryColor.withOpacity(0.7),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 )
@@ -116,17 +122,38 @@ class SubscriptionPlanCard extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
 
-          buttonWidget(
-            'Select Plan',
-            whiteColor,
-            onTap: onSelect,
-            colors: buttonColor,
-            fontFamily: 'Poppins',
-            height: 4.h,
-            width: double.infinity,
-            fontsize: 14.sp,
-            fontweight: FontWeight.w600,
-          ),
+          if (showAmountRow)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                customText(
+                  text: amountLabel ?? 'Total Amount',
+                  fontFamily: 'Poppins',
+                  color: secondryColor,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+                customText(
+                  text: amountValue ?? price,
+                  fontFamily: 'Poppins',
+                  color: buttonColor,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ],
+            )
+          else if (showActionButton)
+            buttonWidget(
+              'Select Plan',
+              whiteColor,
+              onTap: onSelect,
+              colors: buttonColor,
+              fontFamily: 'Poppins',
+              height: 4.h,
+              width: double.infinity,
+              fontsize: 14.sp,
+              fontweight: FontWeight.w600,
+            ),
         ],
       ),
     );

@@ -2,12 +2,13 @@ import 'package:get/get.dart';
 
 class SubscriptionPlanController extends GetxController {
   var isYearly = false.obs;
+  var selectedPlan = Rx<Map<String, dynamic>?>(null);
 
   final List<Map<String, dynamic>> _monthlyPlans = [
     {
       'title': 'Starter',
       'subtitle': 'For New Authors',
-      'price': '\$9',
+      'price': '\$9.00',
       'features': [
         '25 Signature per month',
         'Signed ebooks with message',
@@ -20,7 +21,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Pro',
       'subtitle': 'Most Popular',
-      'price': '\$24',
+      'price': '\$24.00',
       'features': [
         '100 Signature per month',
         'Signed ebooks with message',
@@ -33,7 +34,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Premium',
       'subtitle': 'Best for Book Organizations',
-      'price': '\$49',
+      'price': '\$49.00',
       'features': [
         'Unlimited Signature per month',
         'Signed ebooks with message',
@@ -49,7 +50,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Starter',
       'subtitle': 'For New Authors',
-      'price': '\$99',
+      'price': '\$99.00',
       'features': [
         '25 Signature per month',
         'Signed ebooks with message',
@@ -62,7 +63,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Pro',
       'subtitle': 'Most Popular',
-      'price': '\$249',
+      'price': '\$249.00',
       'features': [
         '100 Signature per month',
         'Signed ebooks with message',
@@ -92,5 +93,10 @@ class SubscriptionPlanController extends GetxController {
 
   void setYearly(bool value) {
     isYearly.value = value;
+  }
+
+  void selectPlan(Map<String, dynamic> plan) {
+    selectedPlan.value = plan;
+    Get.toNamed('/selectplan');
   }
 }
