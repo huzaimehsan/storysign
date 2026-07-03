@@ -68,6 +68,7 @@ class SignedCopy extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             signedCopyMessageCard(
+              title: "Message",
               message: "To lily- may this story inspire your greatest adventure. Dream boldly, read widely.",
               margin: EdgeInsets.symmetric(horizontal: 4.w),
             ),

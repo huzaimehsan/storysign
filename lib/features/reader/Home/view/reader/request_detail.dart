@@ -24,7 +24,7 @@ class RequestDetail extends StatelessWidget {
           children: [
             customHeader(
               context: context,
-              title: "Autograph Request",
+              title: "Request Detail",
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),

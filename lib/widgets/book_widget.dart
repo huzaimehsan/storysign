@@ -108,17 +108,17 @@ Widget recentlySignedBooks({
     ),
   );
 }
-
 Widget signedCopyMessageCard({
-  String title = 'Message',
+  String? title, // String? (Nullable)
   required String message,
+
   EdgeInsetsGeometry? margin,
 }) {
   return Padding(
-    padding: margin ?? EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.6.h),
+    padding: margin ?? EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
     child: Container(
       width: double.infinity,
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.w),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(18.sp),
@@ -126,21 +126,25 @@ Widget signedCopyMessageCard({
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          customText(
-            fontFamily: "Poppins",
-            text: title,
-            color: secondryColor,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          SizedBox(height: 1.2.h),
+          // Agar title null nahi hai, tabhi text show karo
+          if (title != null && title.isNotEmpty) ...[
+            customText(
+              fontFamily: "Poppins",
+              text: title,
+              color: secondryColor,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            SizedBox(height: 1.2.h),
+          ],
+
           customText(
             fontFamily: "Poppins",
             text: message,
-            color: secondryColor.withOpacity(0.8),
+            color: secondryColor,
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.start,
           ),
         ],
       ),

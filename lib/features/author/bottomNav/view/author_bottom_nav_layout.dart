@@ -1,50 +1,131 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/request/view/all_request.dart';
+import 'package:storysign/features/author/home/view/author_home_screen.dart';
+import 'package:storysign/features/author/request/view/request_detail.dart';
+import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
-import '../../../../constants/color_constants.dart';
-import '../controller/author_bottom_nav_controller.dart';
+import '../../../reader/library/view/reader/reader_library.dart';
+
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
 
-  final List<Widget> _pages = [
-    const SizedBox.shrink(),
-    const SizedBox.shrink(),
-    const SizedBox.shrink(),
-    const SizedBox.shrink(),
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+
   ];
+
+  // // Tab 0 (Home) ka initial route tree
+  // Route _buildHomeRoute(RouteSettings settings) {
+  //   switch (settings.name) {
+  //     case '/trackrequest':
+  //       return MaterialPageRoute(builder: (_) => const TrackRequest());
+  //
+  //
+  //     default:
+  //
+  //
+  //       return MaterialPageRoute(builder: (_) => const HomeScreen());
+  //   }
+  // }
+
+  Route _buildRequestRoute(RouteSettings settings) {
+    switch (settings.name) {
+
+      case  '/requestDetail':
+        return MaterialPageRoute(builder: (_) => const RequestDetail());
+      default:
+
+
+        return MaterialPageRoute(builder: (_) => const AllRequest());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(
-        () => _pages[controller.currentIndex.value],
-      ),
-      bottomNavigationBar: Container(
-        margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
-        height: 8.5.h,
-        decoration: BoxDecoration(
-          color: bottomNavColor,
-          borderRadius: BorderRadius.circular(25.sp),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 2.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        final currentNavigator =
+            _navigatorKeys[controller.currentIndex.value].currentState;
+        if (currentNavigator != null && currentNavigator.canPop()) {
+          currentNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: Obx(
+              () => IndexedStack(
+            index: controller.currentIndex.value,
             children: [
-              _buildNavItem("assets/icon/home.png", 0),
-              _buildNavItem("assets/icon/search.png", 1),
-              _buildNavItem("assets/icon/library.png", 2),
-              _buildNavItem("assets/icon/profile.png", 3),
+              // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
+              Navigator(
+                key: _navigatorKeys[0],
+                onGenerateRoute: (_) => MaterialPageRoute(
+                    builder: (_) =>
+                        AuthorHomeScreen()),
+              ),
+              // Tab 1: Search
+              Navigator(
+                key: _navigatorKeys[1],
+                onGenerateRoute: _buildRequestRoute,
+              ),
+              // Tab 2: Library
+              Navigator(
+                key: _navigatorKeys[2],
+                onGenerateRoute: (_) => MaterialPageRoute(
+                    builder: (_) => ReaderLibrary()
+                ),
+              ),
+              // Tab 3: Notifications
+
+              // Tab 4: Profile
+              Navigator(
+                key: _navigatorKeys[3],
+                onGenerateRoute: (_) => MaterialPageRoute(
+                    builder: (_) =>
+                        ProfileScreen()),
+              ),
             ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          margin: EdgeInsets.only(
+            left: 5.w,
+            right: 5.w,
+            bottom: 2.h,
+          ),
+          height: 8.5.h,
+          decoration: BoxDecoration(
+            color: bottomNavColor,
+            borderRadius: BorderRadius.circular(25.sp),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 2.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem("assets/icon/home.png", 0),
+                _buildNavItem("assets/icon/request.png", 1),
+                _buildNavItem("assets/icon/deliver.png", 2),
+
+                _buildNavItem("assets/icon/profile.png", 3),
+              ],
+            ),
           ),
         ),
       ),

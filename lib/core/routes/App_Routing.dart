@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_binding.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/request/view/all_request.dart';
+import 'package:storysign/features/author/request/view/ebook_preview.dart';
 
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
 import 'package:storysign/features/reader/Home/view/reader/final_review.dart';
@@ -98,6 +100,13 @@ class AppRoutes {
   GetPage(name: '/plan', page: () => SubscriptionPlan(),binding: AuthorBottomNavBinding()),
     GetPage(name: '/selectplan', page: () => SubscriptionPlanSelectionScreen(),binding: AuthorBottomNavBinding()),
 
+
+    GetPage(name: '/allRequest', page: () => AllRequest(),binding: AuthorBottomNavBinding()),
+
+    GetPage(name: '/requestDetail', page: () => RequestDetail(),binding: AuthorBottomNavBinding()),
+
+
+    GetPage(name: '/pdfReview', page: () => BookPreviewPage(),binding: AuthorBottomNavBinding()),
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),
     // GetPage(name: '/aboutus', page: () => AboutUsScreen(),binding: SettingBinding()),
