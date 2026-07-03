@@ -40,12 +40,12 @@ class EbookPreviewController extends GetxController {
   void previousPage() {
     pdfViewerController.previousPage();
   }
-
-  void signThisPage() {
-    if (Get.context != null) {
-      Navigator.of(Get.context!).pushNamed('/drawSignature');
-    }
-  }
+  //
+  // void signThisPage() {
+  //   if (Get.context != null) {
+  //     Navigator.of(Get.context!).pushNamed('/drawSignature');
+  //   }
+  // }
 
   @override
   void onClose() {

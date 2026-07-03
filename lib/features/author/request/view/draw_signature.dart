@@ -40,23 +40,19 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                   GestureDetector(
                     onTap: () => controller.selectMode('pencil'),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.2.h),
+                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
                       decoration: BoxDecoration(
                         color: isPencil ? buttonColor : white,
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.edit_rounded,
-                            color: isPencil ? whiteColor : buttonColor,
-                            size: 4.5.w,
-                          ),
+                          Image.asset("assets/icon/apple.png",height: 4.w,width: 4.w,),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Apple Pencil',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
                             color: isPencil ? whiteColor : buttonColor,
                             fontFamily: 'Poppins',
                           ),
@@ -69,23 +65,19 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                   GestureDetector(
                     onTap: () => controller.selectMode('finger'),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.2.h),
+                      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 1.h),
                       decoration: BoxDecoration(
                         color: !isPencil ? buttonColor : white,
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.gesture_rounded,
-                            color: !isPencil ? whiteColor : buttonColor,
-                            size: 4.5.w,
-                          ),
+                         Image.asset("assets/icon/finger.png",height: 4.w,width: 4.w,),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Finger',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
                             color: !isPencil ? whiteColor : buttonColor,
                             fontFamily: 'Poppins',
                           ),
@@ -106,7 +98,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
               decoration: BoxDecoration(
                 color: white, // warm cream background
                 borderRadius: BorderRadius.circular(5.w),
-                border: Border.all(color: Colors.white.withAlpha(64), width: 1.5),
+                border: Border.all(color: whiteColor.withAlpha(64), width: 1.5),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withAlpha(89),
@@ -141,9 +133,9 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                               SizedBox(height: 1.5.h),
                               customText(
                                 text: 'Draw the Signature Here Use pencil or mouse',
-                                fontSize: 12.sp,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w400,
-                                color: buttonColor.withAlpha(128),
+                                color: secondryColor.withAlpha(128),
                                 fontFamily: 'Poppins',
                                 textAlign: TextAlign.center,
                               ),
@@ -158,7 +150,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
               ),
             ),
 
-            SizedBox(height: 4.h),
+            SizedBox(height: 10.h),
 
             // Undo, Redo, Clear circular action buttons
             Row(
@@ -181,7 +173,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
               ],
             ),
 
-            SizedBox(height: 4.h),
+            SizedBox(height: 2.h),
 
             // Confirm Button
             Padding(
@@ -217,7 +209,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
         child: Icon(
           icon,
           color: bottomNavColor,
-          size: 5.w,
+          size: 3.5.w,
         ),
       ),
     );

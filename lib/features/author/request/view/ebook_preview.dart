@@ -70,7 +70,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
               ),
             ),
         
-            SizedBox(height: 4.h),
+            SizedBox(height: 5.h),
         
             // Zoom Controls Row
             Row(
@@ -157,7 +157,10 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                 "Sign This Page",
                 whiteColor,
                 colors: buttonColor,
-                onTap: controller.signThisPage,
+                onTap: (){
+                  Navigator.of(context).pushNamed('/drawSignature');
+
+                },
                 fontFamily: 'Poppins',
                 height: 5.5.h,
                 width: double.infinity,
@@ -165,7 +168,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                 fontweight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 1.h),
           ],
         ),
       ),
