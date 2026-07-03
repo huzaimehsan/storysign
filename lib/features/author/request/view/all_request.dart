@@ -14,7 +14,7 @@ class AllRequest extends GetView<AllRequestController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -42,20 +42,25 @@ class AllRequest extends GetView<AllRequestController> {
             ),
         
             Obx(
-              () => ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.only(bottom:12.h),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.filteredRequests.length,
-                itemBuilder: (context, index) {
-                  final request = controller.filteredRequests[index];
-                  return AllPendingRequest(
-                    imagePath: request['imagePath'] ?? '',
-                    authorName: request['authorName'] ?? '',
-                    bookName: request['bookName'] ?? '',
-                    date: request['date'] ?? '', ontap: () {  Navigator.of(context).pushNamed('/requestDetail'); },
-                  );
-                },
+              () => Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(bottom: 12.h),
+        
+                  itemCount: controller.filteredRequests.length,
+                  itemBuilder: (context, index) {
+                    final request = controller.filteredRequests[index];
+                    return AllPendingRequest(
+                      imagePath: request['imagePath'] ?? '',
+                      authorName: request['authorName'] ?? '',
+                      bookName: request['bookName'] ?? '',
+                      date: request['date'] ?? '',
+                      ontap: () {
+                        Navigator.of(context).pushNamed('/requestDetail');
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

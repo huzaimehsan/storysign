@@ -16,14 +16,14 @@ Widget customHeaderAuthor({
   required VoidCallback onIconPressed,
 }) {
   return Container(
-    padding: EdgeInsets.only(top: 6.h),
+    padding: EdgeInsets.symmetric(horizontal: 1.w),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // 1. Back Button
         GestureDetector(
           onTap: onBack,
-          child: Icon(Icons.arrow_back_ios, color: whiteColor, size: 3.2.w),
+          child: Icon(Icons.arrow_back_ios, color: whiteColor, size: 4.w),
         ),
 
         // 2. Custom Title Text
@@ -32,8 +32,6 @@ Widget customHeaderAuthor({
             child: customText(
               text: title,
               fontSize: 16.sp,
-              height: 1.0, // 100% of 16px
-              letterSpacing: 0.0,
               fontWeight: FontWeight.w600,
               color: whiteColor,
               textAlign: TextAlign.center,

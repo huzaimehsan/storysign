@@ -5,11 +5,12 @@ import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/home/view/author_home_screen.dart';
+import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/request_detail.dart';
+import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../../reader/library/view/reader/reader_library.dart';
-
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
@@ -19,7 +20,6 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
-
   ];
 
   // // Tab 0 (Home) ka initial route tree
@@ -38,12 +38,14 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
 
   Route _buildRequestRoute(RouteSettings settings) {
     switch (settings.name) {
-
-      case  '/requestDetail':
+      case '/requestDetail':
         return MaterialPageRoute(builder: (_) => const RequestDetail());
+
+        case '/pdfReview':
+        return MaterialPageRoute(builder: (_) => const BookPreviewPage());
+      case '/drawSignature':
+        return MaterialPageRoute(builder: (_) => const DrawSignatureScreen());
       default:
-
-
         return MaterialPageRoute(builder: (_) => const AllRequest());
     }
   }
@@ -62,15 +64,14 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
       child: Scaffold(
         extendBody: true,
         body: Obx(
-              () => IndexedStack(
+          () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
               // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
               Navigator(
                 key: _navigatorKeys[0],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) =>
-                        AuthorHomeScreen()),
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => AuthorHomeScreen()),
               ),
               // Tab 1: Search
               Navigator(
@@ -80,28 +81,22 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               // Tab 2: Library
               Navigator(
                 key: _navigatorKeys[2],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) => ReaderLibrary()
-                ),
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => ReaderLibrary()),
               ),
               // Tab 3: Notifications
 
               // Tab 4: Profile
               Navigator(
                 key: _navigatorKeys[3],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) =>
-                        ProfileScreen()),
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => ProfileScreen()),
               ),
             ],
           ),
         ),
         bottomNavigationBar: Container(
-          margin: EdgeInsets.only(
-            left: 5.w,
-            right: 5.w,
-            bottom: 2.h,
-          ),
+          margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
           height: 8.5.h,
           decoration: BoxDecoration(
             color: bottomNavColor,
