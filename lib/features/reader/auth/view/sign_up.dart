@@ -37,7 +37,7 @@ class _SignUpState extends State<SignUp> {
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                 top: 3.h,
                 ),
                 physics: BouncingScrollPhysics(),
                 child: Container(

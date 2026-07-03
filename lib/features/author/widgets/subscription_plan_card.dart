@@ -52,14 +52,30 @@ class SubscriptionPlanCard extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
 
-              customText(
-                text: price,
-                fontFamily: "Poppins",
-                color: buttonColor,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-              ),
-             
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: price,
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        color: buttonColor,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "/m",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        color: secondryColor,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
 

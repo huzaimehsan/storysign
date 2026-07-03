@@ -7,7 +7,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Starter',
       'subtitle': 'For New Authors',
-      'price': '\$9/m',
+      'price': '\$9',
       'features': [
         '25 Signature per month',
         'Signed ebooks with message',
@@ -20,7 +20,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Pro',
       'subtitle': 'Most Popular',
-      'price': '\$24/m',
+      'price': '\$24',
       'features': [
         '100 Signature per month',
         'Signed ebooks with message',
@@ -33,7 +33,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Premium',
       'subtitle': 'Best for Book Organizations',
-      'price': '\$49/m',
+      'price': '\$49',
       'features': [
         'Unlimited Signature per month',
         'Signed ebooks with message',
@@ -49,7 +49,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Starter',
       'subtitle': 'For New Authors',
-      'price': '\$99/yr',
+      'price': '\$99',
       'features': [
         '25 Signature per month',
         'Signed ebooks with message',
@@ -62,7 +62,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Pro',
       'subtitle': 'Most Popular',
-      'price': '\$249/yr',
+      'price': '\$249',
       'features': [
         '100 Signature per month',
         'Signed ebooks with message',
@@ -75,7 +75,7 @@ class SubscriptionPlanController extends GetxController {
     {
       'title': 'Premium',
       'subtitle': 'Best for Book Organizations',
-      'price': '\$499/yr',
+      'price': '\$499',
       'features': [
         'Unlimited Signature per month',
         'Signed ebooks with message',
