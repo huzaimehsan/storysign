@@ -15,6 +15,7 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -71,7 +72,7 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               Expanded(
                 child: Obx(
                   () => ListView.builder(
-                    padding: EdgeInsets.only(top: 2.h, bottom: 4.h),
+                    padding: EdgeInsets.zero,
                     itemCount: controller.plans.length,
                     itemBuilder: (context, index) {
                       final plan = controller.plans[index];

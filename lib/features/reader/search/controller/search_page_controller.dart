@@ -24,6 +24,21 @@ class SearchPageController extends GetxController {
     },
     {
       "imagePath": "assets/png/searchprofile.png",
+      "bookTitle": "Jane Austen",
+      "date": "Joined: 18 june, 2026",
+    },
+    {
+      "imagePath": "assets/png/searchprofile.png",
+      "bookTitle": "Jane Austen",
+      "date": "Joined: 18 june, 2026",
+    },
+    {
+      "imagePath": "assets/png/searchprofile.png",
+      "bookTitle": "Jane Austen",
+      "date": "Joined: 18 june, 2026",
+    },
+    {
+      "imagePath": "assets/png/searchprofile.png",
       "bookTitle": "William Shakespeare",
       "date": "Joined: 10 june, 2026",
     },

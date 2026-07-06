@@ -31,7 +31,7 @@ Widget customHeader({
           child: Center(
             child: customText(
               text: title,
-              fontSize: 17.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
               color: whiteColor,
               textAlign: TextAlign.center,

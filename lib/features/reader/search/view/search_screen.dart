@@ -14,6 +14,7 @@ class SearchScreen extends GetView<SearchPageController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             customHeader(

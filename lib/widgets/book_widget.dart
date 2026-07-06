@@ -143,7 +143,7 @@ Widget signedCopyMessageCard({
             text: message,
             color: secondryColor,
             fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w300,
             textAlign: TextAlign.start,
           ),
         ],

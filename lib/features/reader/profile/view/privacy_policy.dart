@@ -50,7 +50,7 @@ class PrivacyPolicy extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           children: [
             customHeader(
@@ -60,21 +60,25 @@ class PrivacyPolicy extends StatelessWidget {
               onIconPressed: () {},
             ),
             SizedBox(height : 1.h),
-
-
-
-            ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: privayPolicyItems.length,
-              itemBuilder: (context, index) {
-                final faq = privayPolicyItems[index];
-                return faqItemWidget(
-                  title: faq['title']!,
-                  description: faq['description']!,
-                );
-              },
+        
+        
+        
+            Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: privayPolicyItems.length,
+                  itemBuilder: (context, index) {
+                    final faq = privayPolicyItems[index];
+                    return faqItemWidget(
+                      title: faq['title']!,
+                      description: faq['description']!,
+                    );
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 2.h),
           ],

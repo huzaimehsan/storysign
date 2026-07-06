@@ -23,6 +23,7 @@ class ReaderLibrary extends GetView<ReaderController> {
     final List<String> tabs = ["All", "Signed", "Unsigned"];
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             customHeader(

@@ -47,7 +47,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                       ),
                       child: Row(
                         children: [
-                          Image.asset("assets/icon/apple.png",height: 4.w,width: 4.w,),
+                          Image.asset("assets/icon/apple.png",height: 4.w,width: 4.w,color: isPencil ? whiteColor : buttonColor,),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Apple Pencil',
@@ -72,7 +72,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                       ),
                       child: Row(
                         children: [
-                         Image.asset("assets/icon/finger.png",height: 4.w,width: 4.w,),
+                         Image.asset("assets/icon/finger.png",height: 4.w,width: 4.w,color: isPencil ? buttonColor : whiteColor,),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Finger',
@@ -177,7 +177,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
               ],
             ),
 
-            SizedBox(height: 2.h),
+            SizedBox(height: 3.h),
 
             // Confirm Button
             Padding(
@@ -205,7 +205,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(3.w),
+        padding: EdgeInsets.all(2.5.w),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(color: bottomNavColor, width: 1.5),
@@ -213,7 +213,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
         child: Icon(
           icon,
           color: bottomNavColor,
-          size: 3.5.w,
+          size: 4.w,
         ),
       ),
     );

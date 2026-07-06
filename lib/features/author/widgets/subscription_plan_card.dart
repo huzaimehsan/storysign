@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
@@ -15,6 +16,7 @@ class SubscriptionPlanCard extends StatelessWidget {
   final bool showAmountRow;
   final String? amountLabel;
   final String? amountValue;
+  final bool isCurrentPlan;
 
   const SubscriptionPlanCard({
     super.key,
@@ -24,6 +26,7 @@ class SubscriptionPlanCard extends StatelessWidget {
     required this.features,
     this.isMostPopular = false,
     required this.onSelect,
+    this.isCurrentPlan = false,
     this.showActionButton = true,
     this.showAmountRow = false,
     this.amountLabel,
@@ -32,6 +35,9 @@ class SubscriptionPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic>? args = Get.arguments;
+
+    String source = args?['source'] ?? 'startup';
     return Container(
       margin: EdgeInsets.symmetric(vertical: 1.2.h),
       padding: EdgeInsets.all(4.w),
@@ -144,9 +150,11 @@ class SubscriptionPlanCard extends StatelessWidget {
             )
           else if (showActionButton)
             buttonWidget(
-              'Select Plan',
+              isCurrentPlan
+                  ? "Current Plan"
+                  : (source == 'profile' ? "Upgrade to Basic" : "Select Plan"),
               whiteColor,
-              onTap: onSelect,
+              onTap: isCurrentPlan ? null : onSelect,
               colors: buttonColor,
               fontFamily: 'Poppins',
               height: 4.h,

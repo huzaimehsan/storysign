@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/profile/view/author_profile.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/home/view/author_home_screen.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
@@ -92,7 +93,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               Navigator(
                 key: _navigatorKeys[2],
                 onGenerateRoute: (_) =>
-                    MaterialPageRoute(builder: (_) => ReaderLibrary()),
+                    MaterialPageRoute(builder: (_) =>  AuthorProfileScreen()),
               ),
               // Tab 3: Notifications
 
@@ -100,7 +101,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               Navigator(
                 key: _navigatorKeys[3],
                 onGenerateRoute: (_) =>
-                    MaterialPageRoute(builder: (_) => ProfileScreen()),
+                    MaterialPageRoute(builder: (_) => AuthorProfileScreen()),
               ),
             ],
           ),

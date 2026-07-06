@@ -18,7 +18,7 @@ class HelpAndSupport extends GetView<HelpAndSupportController> {
 
 
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           children: [
             customHeader(
@@ -51,7 +51,7 @@ class HelpAndSupport extends GetView<HelpAndSupportController> {
                     value: '',
                     subtitle: '', ontap: () {
                       Get.toNamed("/contact");
-
+        
                       
                   },
                   ),
@@ -79,18 +79,22 @@ class HelpAndSupport extends GetView<HelpAndSupportController> {
               ),
             ),
             SizedBox(height: 1.h),
-            Obx(() => ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: controller.filteredFaqs.length,
-              itemBuilder: (context, index) {
-                final faq = controller.filteredFaqs[index];
-                return faqItemWidget(
-                  title: faq['title']!,
-                  description: faq['description']!,
-                );
-              },
+            Obx(() => Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.filteredFaqs.length,
+                  itemBuilder: (context, index) {
+                    final faq = controller.filteredFaqs[index];
+                    return faqItemWidget(
+                      title: faq['title']!,
+                      description: faq['description']!,
+                    );
+                  },
+                ),
+              ),
             )),
             SizedBox(height: 2.h),
           ],

@@ -23,6 +23,8 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: containerColor,
       body: SafeArea(
+        bottom: false
+        ,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,9 +48,9 @@ class ProfileScreen extends StatelessWidget {
                         email: 'johnsmith@gmail.com',
                         joinedDate: '22 june, 2026',
                         onEdit: () {
-                
-                          Get.toNamed("/editprofile");
-                        },
+
+                          Get.toNamed('/editprofile', arguments: {'role': 'reader'});
+                        }, author: false,
                       ),
                 
                       SizedBox(height: 2.h),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
 Widget profileHeaderCard({
@@ -9,6 +10,7 @@ Widget profileHeaderCard({
   required String name,
   required String email,
   required String joinedDate,
+  required bool? author,
   VoidCallback? onEdit,
 }) {
   return Container(
@@ -79,7 +81,50 @@ Widget profileHeaderCard({
                     fontWeight: FontWeight.w400, // Normal weight
                   ),
                 ],
-              )
+              ),
+
+SizedBox(height: 1.h),
+              Row(
+                children: [
+                  // Baki widgets...
+
+                  // Agar author true hai, to ye button dikhega
+                  if (author == true)
+                    buttonWidget(
+                      "Pro Plan",
+                      buttonColor,
+                      onTap: () {},
+                      colors: buttonColor.withOpacity(0.15),
+                      fontFamily: 'Poppins',
+                      height: 2.6.h,
+                      width: 18.w,
+                      borderColor:buttonColor,
+                      fontsize: 14.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                  SizedBox(width: 4.w,),
+                  if (author == true)
+                    buttonWidget(
+                      "234 Autographs",
+                      buttonColor,
+                      onTap: () {},
+                      colors: bottomNavColor,
+                      fontFamily: 'Poppins',
+                      height: 2.7.h,
+                      width: 30.w,
+                      borderColor: textFeildContainColor,
+                      fontsize: 14.sp,
+                      fontweight: FontWeight.w500,
+                    ),
+                  // Agar aapko 'else' mein kuch aur bhi dikhana hai to:
+
+                ],
+              ),
+
+              if (author== true)
+                SizedBox(
+                  height: 3.h,
+                ),
             ],
           ),
         ),

@@ -15,6 +15,7 @@ class AllRequest extends GetView<AllRequestController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Padding(
@@ -44,8 +45,8 @@ class AllRequest extends GetView<AllRequestController> {
             Obx(
               () => Expanded(
                 child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(bottom: 12.h),
+
+                  padding: EdgeInsets.zero,
         
                   itemCount: controller.filteredRequests.length,
                   itemBuilder: (context, index) {

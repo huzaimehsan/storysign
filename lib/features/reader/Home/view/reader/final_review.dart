@@ -82,7 +82,15 @@ class FinalReview extends StatelessWidget {
                 "Submit Request",
                 whiteColor,
                 onTap: () {
-                  showSuccessDialog(context, isProfile: false,desc: "Your Autograph Request have been sent Successfully");
+                  showSuccessDialog(context,desc: "Your Autograph Request have been sent Successfully",buttonText: "okay",
+
+
+                  ontap:
+                  (){
+                    Get.back();
+                    Get.toNamed("/bottomnav");
+                  }
+                  );
                 },
                 colors: buttonColor,
                 fontFamily: 'Poppins',

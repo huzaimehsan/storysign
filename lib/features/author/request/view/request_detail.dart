@@ -8,6 +8,7 @@ import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
+import '../../../../widgets/sucess_widget.dart';
 
 class RequestDetail extends StatelessWidget {
   const RequestDetail({super.key});
@@ -27,7 +28,7 @@ class RequestDetail extends StatelessWidget {
                 children: [
                   customHeaderAuthor(
                     context: context,
-                    title: 'All Request',
+                    title: 'Request Detail',
                     onBack: () => Get.back(),
                     onIconPressed: () {},
                   ),
@@ -111,7 +112,18 @@ class RequestDetail extends StatelessWidget {
                   buttonWidget(
                     "Decline Request",
                     whiteColor,
-                    onTap: () {},
+                    onTap: () {
+
+                      showDeclineDialog(
+                        context,
+                        desc: "Are you sure you want to decline this request?",
+                        buttonText: "Confirm",
+                        ontap: () {
+                          // Your decline logic goes here
+                          Get.back();
+                        },
+                      );
+                    },
                     colors: greyColor,
                     fontFamily: 'Poppins',
                     height: 5.2.h,
