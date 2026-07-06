@@ -22,147 +22,149 @@ class ReaderLibrary extends GetView<ReaderController> {
   Widget build(BuildContext context) {
     final List<String> tabs = ["All", "Signed", "Unsigned"];
     return Scaffold(
-      body: Column(
-        children: [
-          customHeader(
-            context: context,
-            title: "My Library",
-            onBack: () => Get.back(),
-            onIconPressed: () {},
-          ),
-          SizedBox(height: 2.h),
-
-          searchWidget(
-            onChanged: (val) {
-              controller.searchQuery.value = val;
-            },
-          ),
-          SizedBox(height: 1.5.h),
-          Padding(
-            padding: EdgeInsets.only(right: 5.w, left: 3.w),
-            child: Row(
-              children: [
-                ...tabs.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  String tab = entry.value;
-
-                  int flexValue = index == 0 ? 2 : 3;
-
-                  return Expanded(
-                    flex: flexValue,
-                    child: Obx(() {
-                      bool isSelected = controller.selectedTab.value == tab;
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2.w),
-                        child: buttonWidget(
-                          tab,
-                          isSelected ? whiteColor : buttonColor,
-                          onTap: () => controller.selectTab(tab),
-                          colors: isSelected
-                              ? buttonColor
-                              : const Color(0xFFF5E6D3),
-
-                          height: 4.5.h,
-                          fontFamily: "Poppins",
-                          fontsize: 14.sp,
-                          fontweight: FontWeight.w600,
-                        ),
-                      );
-                    }),
-                  );
-                }),
-
-                SizedBox(width: 2.w),
-                GestureDetector(
-                  onTap: () => _showFilterBottomSheet(context),
-                  child: Container(
-                    height: 4.5.h,
-                    width: 10.5.w,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5E6D3),
-                      borderRadius: BorderRadius.circular(17.sp),
-                    ),
-                    child: Icon(
-                      Icons.tune_rounded,
-                      color: buttonColor,
-                      size: 16.sp,
+      body: SafeArea(
+        child: Column(
+          children: [
+            customHeader(
+              context: context,
+              title: "My Library",
+              onBack: () => Get.back(),
+              onIconPressed: () {},
+            ),
+            SizedBox(height: 2.h),
+        
+            searchWidget(
+              onChanged: (val) {
+                controller.searchQuery.value = val;
+              },
+            ),
+            SizedBox(height: 1.5.h),
+            Padding(
+              padding: EdgeInsets.only(right: 5.w, left: 3.w),
+              child: Row(
+                children: [
+                  ...tabs.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String tab = entry.value;
+        
+                    int flexValue = index == 0 ? 2 : 3;
+        
+                    return Expanded(
+                      flex: flexValue,
+                      child: Obx(() {
+                        bool isSelected = controller.selectedTab.value == tab;
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 2.w),
+                          child: buttonWidget(
+                            tab,
+                            isSelected ? whiteColor : buttonColor,
+                            onTap: () => controller.selectTab(tab),
+                            colors: isSelected
+                                ? buttonColor
+                                : const Color(0xFFF5E6D3),
+        
+                            height: 4.5.h,
+                            fontFamily: "Poppins",
+                            fontsize: 14.sp,
+                            fontweight: FontWeight.w600,
+                          ),
+                        );
+                      }),
+                    );
+                  }),
+        
+                  SizedBox(width: 2.w),
+                  GestureDetector(
+                    onTap: () => _showFilterBottomSheet(context),
+                    child: Container(
+                      height: 4.5.h,
+                      width: 10.5.w,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5E6D3),
+                        borderRadius: BorderRadius.circular(17.sp),
+                      ),
+                      child: Icon(
+                        Icons.tune_rounded,
+                        color: buttonColor,
+                        size: 16.sp,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 2.h),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                customText(
-                  color: whiteColor,
-                  fontFamily: 'Poppins',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  text: "All Books",
-                ),
-                Spacer(),
-                buttonWidget(
-                  "Upload Book",
-                  whiteColor,
-                  onTap: () => {
-                    
-                    Get.toNamed("/uploadbook")
-                  },
-                  colors: buttonColor,
-                  width: 35.w,
-                  height: 4.4.h,
-
-                  fontFamily: "Poppins",
-                  fontsize: 14.sp,
-                  fontweight: FontWeight.w500,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 1.h),
-
-          Expanded(
-            child: Obx(() {
-              final books = controller.filteredBooks;
-              if (books.isEmpty) {
-                return Center(
-                  child: customText(
-                    text: "No books found",
-                    color: greyColor,
-                    fontSize: 15.sp,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w500,
+            SizedBox(height: 2.h),
+        
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  customText(
+                    color: whiteColor,
+                    fontFamily: 'Poppins',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    text: "All Books",
                   ),
-                );
-              }
-              return ListView.builder(
-                padding: EdgeInsets.only(bottom: 12.h),
-                itemCount: books.length,
-                itemBuilder: (context, index) {
-                  final book = books[index];
-                  return recentlySignedBooks(
-                    imagePath: book["imagePath"] ?? "assets/png/book.png",
-                    bookTitle: book["bookTitle"] ?? "",
-                    authorName: book["authorName"] ?? "",
-                    date: book["date"] ?? "",
-                    status: book["status"] ?? "",
-                    trackRequest: () {
-                      Get.toNamed('/trackrequest');
+                  Spacer(),
+                  buttonWidget(
+                    "Upload Book",
+                    whiteColor,
+                    onTap: () => {
+                      
+                      Get.toNamed("/uploadbook")
                     },
+                    colors: buttonColor,
+                    width: 35.w,
+                    height: 4.4.h,
+        
+                    fontFamily: "Poppins",
+                    fontsize: 14.sp,
+                    fontweight: FontWeight.w500,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 1.h),
+        
+            Expanded(
+              child: Obx(() {
+                final books = controller.filteredBooks;
+                if (books.isEmpty) {
+                  return Center(
+                    child: customText(
+                      text: "No books found",
+                      color: greyColor,
+                      fontSize: 15.sp,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
+                    ),
                   );
-                },
-              );
-            }),
-          ),
-
-
-        ],
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  itemCount: books.length,
+                  itemBuilder: (context, index) {
+                    final book = books[index];
+                    return recentlySignedBooks(
+                      imagePath: book["imagePath"] ?? "assets/png/book.png",
+                      bookTitle: book["bookTitle"] ?? "",
+                      authorName: book["authorName"] ?? "",
+                      date: book["date"] ?? "",
+                      status: book["status"] ?? "",
+                      trackRequest: () {
+                        Get.toNamed('/trackrequest');
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
+        
+        
+          ],
+        ),
       ),
     );
   }

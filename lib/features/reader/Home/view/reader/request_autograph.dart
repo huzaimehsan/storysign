@@ -27,7 +27,7 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -38,14 +38,14 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
-
+        
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Column(
                 children: [
                   emailTextFeild('Book Name', "Things Fall Apart"),
                   SizedBox(height: 1.5.h),
-
+        
                   FileUploadWidget(
                     title: 'Upload Book',
                     description: 'Tap to select a pdf file from your device',
@@ -59,7 +59,7 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
                     onRemove: () => setState(() => _bookFile = null),
                   ),
                   SizedBox(height: 1.5.h),
-
+        
                   FileUploadWidget(
                     title: 'Upload Cover Photo',
                     description: 'Tap to select a png format from your device',
@@ -79,8 +79,8 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
                     maxLength: 200,
                     maxLines: 4,
                   ),
-                  SizedBox(height: 8.h),
-
+                  SizedBox(height: 5.h),
+        
                   buttonWidget(
                     "Select Author",
                     whiteColor,
@@ -92,8 +92,8 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
                     fontsize: 16.sp,
                     fontweight: FontWeight.w600,
                   ),
+        
 
-                  SizedBox(height: 5.h),
                 ],
               ),
             ),

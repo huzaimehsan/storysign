@@ -14,8 +14,8 @@ class SignedCopy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: containerColor,
-      body: SingleChildScrollView(
+
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

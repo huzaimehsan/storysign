@@ -46,7 +46,7 @@ class SelectAuthor extends GetView<HomeController> {
     ];
 
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,32 +58,36 @@ class SelectAuthor extends GetView<HomeController> {
             ),
             SizedBox(height: 2.h),
             searchWidget(),
-
+        
             SizedBox(height: 0.5.h),
             Obx(() {
               final authorsList = controller.filteredAuthors;
-              return ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: authorsList.length,
-                itemBuilder: (context, index) {
-                  final author = authorsList[index];
-                  final active = author['active'] as bool? ?? false;
-                  return WidgetSelectAuthor(
-                    imagePath: author['imagePath'] as String,
-                    bookTitle: author['name'] as String,
-                    date: author['date'] as String,
-                    activity: active ? 'Active' : 'Inactive',
-                    isActive: active,
-                    ontap: () {
-                      Get.toNamed("/request");
+              return Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: authorsList.length,
+                    itemBuilder: (context, index) {
+                      final author = authorsList[index];
+                      final active = author['active'] as bool? ?? false;
+                      return WidgetSelectAuthor(
+                        imagePath: author['imagePath'] as String,
+                        bookTitle: author['name'] as String,
+                        date: author['date'] as String,
+                        activity: active ? 'Active' : 'Inactive',
+                        isActive: active,
+                        ontap: () {
+                          Get.toNamed("/request");
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                ),
               );
             }),
-
+        
           ],
         ),
       ),

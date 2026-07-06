@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:signature/signature.dart';
 import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/author/request/controller/place_signature_controller.dart';
 
 class DrawSignatureController extends GetxController {
-  final SignatureController signatureController = SignatureController(
+  SignatureController signatureController = SignatureController(
     penStrokeWidth: 4.0,
     penColor: blackColor,
     exportBackgroundColor: Colors.transparent,
@@ -17,13 +18,39 @@ class DrawSignatureController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    signatureController.addListener(() {
-      isSignatureEmpty.value = signatureController.isEmpty;
-    });
+    _registerListener();
+  }
+
+  void _registerListener() {
+    signatureController.addListener(_onSignatureChange);
+  }
+
+  void _onSignatureChange() {
+    isSignatureEmpty.value = signatureController.isEmpty;
   }
 
   void selectMode(String mode) {
     signatureMode.value = mode;
+    final double width = (mode == 'pencil') ? 3.0 : 5.0;
+
+    if (signatureController.penStrokeWidth == width) return;
+
+    final currentPoints = signatureController.points;
+
+    // Dispose old controller
+    signatureController.removeListener(_onSignatureChange);
+    signatureController.dispose();
+
+    // Create new controller with existing points and new stroke width
+    signatureController = SignatureController(
+      penStrokeWidth: width,
+      penColor: blackColor,
+      exportBackgroundColor: Colors.transparent,
+      points: currentPoints,
+    );
+
+    _registerListener();
+    isSignatureEmpty.value = signatureController.isEmpty;
   }
 
   void undo() {
@@ -38,11 +65,22 @@ class DrawSignatureController extends GetxController {
     signatureController.clear();
   }
 
-  void confirmSignature() {
-    // Process signature (e.g. export to PNG image)
+  void confirmSignature(BuildContext context) async {
+    // Process signature (export to PNG image bytes)
     if (signatureController.isNotEmpty) {
-      Get.back();
-      // Add logic to save or send the signature image
+      final bytes = await signatureController.toPngBytes();
+      // Guard context use after async gap
+      if (bytes != null && context.mounted) {
+        // Create fresh PlaceSignatureController with bytes before navigating
+        if (Get.isRegistered<PlaceSignatureController>()) {
+          Get.delete<PlaceSignatureController>(force: true);
+        }
+        final placeCtrl = Get.put(PlaceSignatureController());
+        placeCtrl.signatureBytes = bytes;
+        // Use screen's context so we push through the NESTED navigator (tab 1)
+        // This keeps the parent scaffold's bottom nav visible
+        Navigator.of(context).pushNamed('/placeSignature');
+      }
     } else {
       Get.snackbar(
         'Empty Signature',
@@ -54,8 +92,10 @@ class DrawSignatureController extends GetxController {
     }
   }
 
+
   @override
   void onClose() {
+    signatureController.removeListener(_onSignatureChange);
     signatureController.dispose();
     super.onClose();
   }

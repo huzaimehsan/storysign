@@ -13,49 +13,51 @@ class SearchScreen extends GetView<SearchPageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          customHeader(
-            context: context,
-            title: "All Authors",
-            onBack: () => Get.back(),
-            onIconPressed: () {},
-          ),
-          SizedBox(height: 2.h),
-
-          searchWidget(
-            onChanged: (val) {
-              controller.searchQuery.value = val;
-            },
-          ),
-
-          SizedBox(height: 1.h),
-          Expanded(
-            child: Obx(() {
-              final list = controller.filteredAuthors;
-              return ListView.builder(
-                padding: EdgeInsets.only(bottom: 12.h),
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  final author = list[index];
-                  return SearchAuthorCard(
-                    imagePath: author["imagePath"]!,
-                    bookTitle: author["bookTitle"]!,
-                    date: author["date"]!,
-                    requestAutoGraph: () {
-                      Get.toNamed('/authordetail');
-                    },
-                    authorDetail: () {
-                      Get.toNamed('/authordetail');
-                    },
-                  );
-                },
-              );
-            }),
-          ),
-
-
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            customHeader(
+              context: context,
+              title: "All Authors",
+              onBack: () => Get.back(),
+              onIconPressed: () {},
+            ),
+            SizedBox(height: 2.h),
+        
+            searchWidget(
+              onChanged: (val) {
+                controller.searchQuery.value = val;
+              },
+            ),
+        
+            SizedBox(height: 1.h),
+            Expanded(
+              child: Obx(() {
+                final list = controller.filteredAuthors;
+                return ListView.builder(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    final author = list[index];
+                    return SearchAuthorCard(
+                      imagePath: author["imagePath"]!,
+                      bookTitle: author["bookTitle"]!,
+                      date: author["date"]!,
+                      requestAutoGraph: () {
+                        Get.toNamed('/authordetail');
+                      },
+                      authorDetail: () {
+                        Get.toNamed('/authordetail');
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
+        
+        
+          ],
+        ),
       ),
     );
   }

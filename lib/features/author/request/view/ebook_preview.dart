@@ -55,7 +55,14 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                       controller: controller.pdfViewerController,
                       onDocumentLoaded: controller.onDocumentLoaded,
                       onPageChanged: controller.onPageChanged,
+                      pageLayoutMode: PdfPageLayoutMode.single,
                       onZoomLevelChanged: controller.onZoomLevelChanged,
+                      scrollDirection: PdfScrollDirection.horizontal,
+
+                      canShowScrollHead: false,
+                      canShowScrollStatus: false,
+                      canShowPaginationDialog: false,
+
                     ),
                     Obx(() {
                       if (controller.isLoading.value) {
@@ -113,7 +120,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                       border: Border.all(color: bottomNavColor, width: 1.5),
                     ),
                     child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
+                      Icons.arrow_forward_ios_rounded,
                       color: bottomNavColor,
                       size: 4.w,
                     ),
@@ -139,7 +146,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                       border: Border.all(color: bottomNavColor, width: 1.5),
                     ),
                     child: Icon(
-                      Icons.arrow_forward_ios_rounded,
+                      Icons.arrow_back_ios_new_rounded,
                       color: bottomNavColor,
                       size: 4.w,
                     ),

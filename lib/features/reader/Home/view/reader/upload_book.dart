@@ -29,7 +29,7 @@ class _UploadBookState extends State<UploadBook> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,16 +40,16 @@ class _UploadBookState extends State<UploadBook> {
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
-
-
-
+        
+        
+        
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Column(
                 children: [
                   emailTextFeild('Book Name', "Things Fall Apart"),
                   SizedBox(height: 1.5.h),
-
+        
                   FileUploadWidget(
                     title: 'Upload Book',
                     description: 'Tap to select a pdf file from your device',
@@ -63,7 +63,7 @@ class _UploadBookState extends State<UploadBook> {
                     onRemove: () => setState(() => _bookFile = null),
                   ),
                   SizedBox(height: 1.5.h),
-
+        
                   FileUploadWidget(
                     title: 'Upload Cover Photo',
                     description: 'Tap to select a png format from your device',
@@ -76,9 +76,9 @@ class _UploadBookState extends State<UploadBook> {
                     },
                     onRemove: () => setState(() => _coverImage = null),
                   ),
-
+        
                   SizedBox(height: 8.h),
-
+        
                   buttonWidget(
                     "Save Book",
                     whiteColor,
@@ -91,7 +91,7 @@ class _UploadBookState extends State<UploadBook> {
                     fontsize: 16.sp,
                     fontweight: FontWeight.w600,
                   ),
-
+        
                   SizedBox(height: 5.h),
                 ],
               ),

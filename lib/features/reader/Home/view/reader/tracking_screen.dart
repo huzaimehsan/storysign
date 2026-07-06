@@ -15,7 +15,7 @@ class TrackingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -88,7 +88,7 @@ class TrackingScreen extends StatelessWidget {
                       date: "12 Jun, 2026",
                     ),
                     SizedBox(height: 2.h),
-
+        
                     buildInfoCard(
                       imagePath: "assets/png/noconfirm.png",
                       title: "Author Review",

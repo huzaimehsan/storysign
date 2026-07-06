@@ -18,7 +18,7 @@ class RequestDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,7 +55,7 @@ class RequestDetail extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-
+        
             AuthorInfoCard(
               imagePath: "assets/png/searchprofile.png",
               bookTitle: "Matt Haig",
@@ -83,13 +83,13 @@ class RequestDetail extends StatelessWidget {
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.2.h,
-
+        
                 width: double.infinity,
                 fontsize: 16.sp,
                 fontweight: FontWeight.w600,
               ),
             ),
-
+        
             SizedBox(height: 2.h),
           ],
         ),

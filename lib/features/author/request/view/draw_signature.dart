@@ -113,12 +113,16 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Signature(
-                      controller: controller.signatureController,
-                      height: 45.h,
-                      width: 90.w,
-                      backgroundColor: Colors.transparent,
-                    ),
+                    Obx(() {
+                      // Trigger rebuild when mode changes (which reconstructs the controller)
+                      final _ = controller.signatureMode.value;
+                      return Signature(
+                        controller: controller.signatureController,
+                        height: 45.h,
+                        width: 90.w,
+                        backgroundColor: Colors.transparent,
+                      );
+                    }),
                     Obx(() {
                       if (controller.isSignatureEmpty.value) {
                         return IgnorePointer(
@@ -182,7 +186,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                 "Confirm Signature",
                 whiteColor,
                 colors: buttonColor,
-                onTap: controller.confirmSignature,
+                onTap: () => controller.confirmSignature(context),
                 fontFamily: 'Poppins',
                 height: 5.5.h,
                 width: double.infinity,

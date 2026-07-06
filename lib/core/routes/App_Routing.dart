@@ -5,6 +5,7 @@ import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
+import 'package:storysign/features/author/request/view/place_signature.dart';
 
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
 import 'package:storysign/features/reader/Home/view/reader/final_review.dart';
@@ -109,6 +110,9 @@ class AppRoutes {
 
     GetPage(name: '/pdfReview', page: () => BookPreviewPage(),binding: AuthorBottomNavBinding()),
     GetPage(name: '/drawSignature', page: () => const DrawSignatureScreen(),binding: AuthorBottomNavBinding()),
+
+    GetPage(name: '/placeSignature', page: () => const PlaceSignatureScreen(),binding: AuthorBottomNavBinding()),
+
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),
     // GetPage(name: '/aboutus', page: () => AboutUsScreen(),binding: SettingBinding()),

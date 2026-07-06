@@ -12,7 +12,7 @@ Widget customNotificationHeader({
   required VoidCallback onIconPressed,
 }) {
   return Container(
-    padding: EdgeInsets.only(top: 6.h, left: 5.w, right: 5.w),
+    padding: EdgeInsets.only( left: 4.w, right: 4.w),
     child: Stack(
       alignment: Alignment.center,
       children: [

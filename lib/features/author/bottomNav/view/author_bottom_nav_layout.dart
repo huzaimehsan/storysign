@@ -8,9 +8,13 @@ import 'package:storysign/features/author/home/view/author_home_screen.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/request_detail.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
+import 'package:storysign/features/author/request/view/place_signature.dart';
+import 'package:storysign/features/author/request/view/add_message.dart';
+import 'package:storysign/features/author/request/view/final_review.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../../reader/library/view/reader/reader_library.dart';
+
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
@@ -45,6 +49,12 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
         return MaterialPageRoute(builder: (_) => const BookPreviewPage());
       case '/drawSignature':
         return MaterialPageRoute(builder: (_) => const DrawSignatureScreen());
+      case '/placeSignature':
+        return MaterialPageRoute(builder: (_) => const PlaceSignatureScreen());
+      case '/addMessage':
+        return MaterialPageRoute(builder: (_) => const AddMessageScreen());
+      case '/authorFinalReview':
+        return MaterialPageRoute(builder: (_) => const AuthorFinalReviewScreen());
       default:
         return MaterialPageRoute(builder: (_) => const AllRequest());
     }

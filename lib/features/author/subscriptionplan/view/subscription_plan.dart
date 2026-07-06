@@ -29,39 +29,42 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               ),
               SizedBox(height: 2.h),
               Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buttonWidget(
-                      'Monthly',
-                      controller.isYearly.value ? whiteColor : buttonColor,
-                      onTap: () => controller.setYearly(false),
-                      colors: controller.isYearly.value
-                          ? buttonColor
-                          : whiteColor,
-        
-                      fontFamily: 'Poppins',
-                      height: 3.5.h,
-                      width: 24.w,
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w500,
-                    ),
-                    SizedBox(width: 5.w),
-                    buttonWidget(
-                      'Yearly',
-                      controller.isYearly.value ? buttonColor : whiteColor,
-                      onTap: () => controller.setYearly(true),
-                      colors: controller.isYearly.value
-                          ? whiteColor
-                          : buttonColor,
-        
-                      fontFamily: 'Poppins',
-                      height: 3.5.h,
-                      width: 24.w,
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w500,
-                    ),
-                  ],
+                () => Padding(
+                  padding:  EdgeInsets.only(bottom: 1.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buttonWidget(
+                        'Monthly',
+                        controller.isYearly.value ? whiteColor : buttonColor,
+                        onTap: () => controller.setYearly(false),
+                        colors: controller.isYearly.value
+                            ? buttonColor
+                            : whiteColor,
+
+                        fontFamily: 'Poppins',
+                        height: 3.5.h,
+                        width: 24.w,
+                        fontsize: 14.sp,
+                        fontweight: FontWeight.w500,
+                      ),
+                      SizedBox(width: 5.w),
+                      buttonWidget(
+                        'Yearly',
+                        controller.isYearly.value ? buttonColor : whiteColor,
+                        onTap: () => controller.setYearly(true),
+                        colors: controller.isYearly.value
+                            ? whiteColor
+                            : buttonColor,
+
+                        fontFamily: 'Poppins',
+                        height: 3.5.h,
+                        width: 24.w,
+                        fontsize: 14.sp,
+                        fontweight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
                 ),
               ),
         

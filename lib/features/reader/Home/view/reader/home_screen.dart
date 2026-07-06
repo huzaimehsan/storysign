@@ -15,95 +15,97 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 7.h),
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: buildProfileCard(
-                  name: "John Aldito",
-                  onTrackPressed: () {
-                    Navigator.of(context).pushNamed('/trackrequest');
-                  },
-                  onAutographPressed: () {
-                    Get.toNamed("/requestautographcard");
-                  },
-                  onUploadBookPressed: () {
-                    Get.toNamed("/uploadbook");
-                  },
-                ),
-              ),
-              SizedBox(height: 2.h),
-
-              searchWidget(
-                onChanged: (val) {
-                  controller.searchQuery.value = val;
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 7.h),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: buildProfileCard(
+                name: "John Aldito",
+                onTrackPressed: () {
+                  Navigator.of(context).pushNamed('/trackrequest');
+                },
+                onAutographPressed: () {
+                  Get.toNamed("/requestautographcard");
+                },
+                onUploadBookPressed: () {
+                  Get.toNamed("/uploadbook");
                 },
               ),
-              SizedBox(height: 2.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: sectionHeader(title: "All Authors", onSeeAll: () {}),
+            ),
+            SizedBox(height: 2.h),
+      
+            searchWidget(
+              onChanged: (val) {
+                controller.searchQuery.value = val;
+              },
+            ),
+            SizedBox(height: 2.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: sectionHeader(title: "All Authors", onSeeAll: () {}),
+            ),
+            SizedBox(height: 1.h),
+            Obx(() {
+              final authorsList = controller.filteredAuthors;
+              return SizedBox(
+                height: 27.w,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  itemCount: authorsList.length,
+                  separatorBuilder: (context, index) => SizedBox(width: 1.w),
+                  itemBuilder: (context, index) {
+                    final author = authorsList[index];
+                    return userProfileCard(
+                      imagePath: author["imagePath"]!,
+                      name: author["name"]!,
+                    );
+                  },
+                ),
+              );
+            }),
+      
+            SizedBox(height: 1.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: sectionHeader(
+                title: " Recently Signed Books",
+                onSeeAll: () {},
               ),
-              SizedBox(height: 1.h),
-              Obx(() {
-                final authorsList = controller.filteredAuthors;
-                return SizedBox(
-                  height: 27.w,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    itemCount: authorsList.length,
-                    separatorBuilder: (context, index) => SizedBox(width: 1.w),
+            ),
+      
+            Obx(() {
+              final books = controller.filteredRecentlySignedBooks;
+              return Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: books.length,
                     itemBuilder: (context, index) {
-                      final author = authorsList[index];
-                      return userProfileCard(
-                        imagePath: author["imagePath"]!,
-                        name: author["name"]!,
+                      final book = books[index];
+                      return recentlySignedBooks(
+                        imagePath: book["imagePath"]!,
+                        bookTitle: book["bookTitle"]!,
+                        authorName: book["authorName"]!,
+                        date: book["date"]!,
+                        status: book["status"]!,
+                        trackRequest: () {
+                          Get.toNamed("/signedcopy");
+                        
+                        },
                       );
                     },
                   ),
-                );
-              }),
-
-              SizedBox(height: 1.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: sectionHeader(
-                  title: " Recently Signed Books",
-                  onSeeAll: () {},
                 ),
-              ),
+              );
+            }),
+      
 
-              Obx(() {
-                final books = controller.filteredRecentlySignedBooks;
-                return ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-                    return recentlySignedBooks(
-                      imagePath: book["imagePath"]!,
-                      bookTitle: book["bookTitle"]!,
-                      authorName: book["authorName"]!,
-                      date: book["date"]!,
-                      status: book["status"]!,
-                      trackRequest: () {
-                        Get.toNamed("/signedcopy");
-
-                      },
-                    );
-                  },
-                );
-              }),
-
-              SizedBox(height: 7.h),
-            ],
-          ),
+          ],
         ),
       ),
     );

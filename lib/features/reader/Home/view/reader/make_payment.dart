@@ -26,7 +26,7 @@ class _MakePaymentState extends State<MakePayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,8 +51,8 @@ class _MakePaymentState extends State<MakePayment> {
                     fontWeight: FontWeight.w400,
                   ),
                   SizedBox(height: 1.h),
-
-
+        
+        
                   PopupMenuButton<String>(
                     onSelected: (String newValue) {
                       setState(() {
@@ -67,10 +67,10 @@ class _MakePaymentState extends State<MakePayment> {
                         );
                       }).toList();
                     },
-
+        
                     offset: Offset(0, 50),
-
-
+        
+        
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
                       decoration: BoxDecoration(

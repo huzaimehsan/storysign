@@ -60,26 +60,31 @@ class NotificationScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: ListView.builder(
-        padding: EdgeInsets.only(bottom: 20.h),
-        itemCount: notificationData.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              children: [
-                customNotificationHeader(onBack: Get.back, onIconPressed: () {}),
-                SizedBox(height: 1.h),
-              ],
-            );
-          }
+      body: SafeArea(
 
-          final data = notificationData[index - 1];
-          return notificationTile(
-            title: data['title']!,
-            description: data['desc']!,
-            time: data['time']!,
-          );
-        },
+        child: Column(
+          children: [
+
+            customNotificationHeader(onBack: Get.back, onIconPressed: () {}),
+            SizedBox(height: 1.h),
+
+
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.only(bottom: 20.h),
+                itemCount: notificationData.length,
+                itemBuilder: (context, index) {
+                  final data = notificationData[index];
+                  return notificationTile(
+                    title: data['title']!,
+                    description: data['desc']!,
+                    time: data['time']!,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
