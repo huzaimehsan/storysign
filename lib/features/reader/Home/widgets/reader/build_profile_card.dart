@@ -49,7 +49,7 @@ Widget buildProfileCard({
                         fontWeight: FontWeight.w500,
                         text: "Welcome, Reader",
                       ),
-                      Icon(Icons.menu, color: Colors.white, size: 20),
+                    
                     ],
                   ),
                   SizedBox(height: 0.8.h),

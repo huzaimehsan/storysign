@@ -22,6 +22,7 @@ import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
+import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
 import '../../features/reader/Home/view/reader/request_autograph.dart';
 import '../../features/reader/Home/view/reader/select_author.dart';
@@ -105,7 +106,7 @@ class AppRoutes {
 
     GetPage(name: '/allRequest', page: () => AllRequest(),binding: AuthorBottomNavBinding()),
 
-    GetPage(name: '/requestDetail', page: () => RequestDetail(),binding: AuthorBottomNavBinding()),
+    GetPage(name: '/requestDetail', page: () => RequestDetailAuthor(),binding: AuthorBottomNavBinding()),
 
 
     GetPage(name: '/pdfReview', page: () => BookPreviewPage(),binding: AuthorBottomNavBinding()),

@@ -4,7 +4,9 @@ import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
 
+import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/book_widget.dart';
+import '../../../../../widgets/customText_widget.dart';
 import '../../controller/reader/home_controller.dart';
 import '../../widgets/reader/build_profile_card.dart';
 import '../../widgets/reader/user_profile_card.dart';
@@ -47,9 +49,28 @@ class HomeScreen extends GetView<HomeController> {
               child: sectionHeader(title: "All Authors", onSeeAll: () {}),
             ),
             SizedBox(height: 1.h),
+
+
             Obx(() {
               final authorsList = controller.filteredAuthors;
-              return SizedBox(
+              if (authorsList.isEmpty) {
+                return SizedBox(
+                  height: 10.h,
+                  child: Center(
+                    child: customText(
+                      text: "No Author At All",
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: whiteColor,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+              return
+
+                SizedBox(
                 height: 27.w,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
@@ -78,10 +99,27 @@ class HomeScreen extends GetView<HomeController> {
       
             Obx(() {
               final books = controller.filteredRecentlySignedBooks;
-              return Expanded(
+
+
+              if (books.isEmpty) {
+                return Expanded(
+                  child: Center(
+                    child: customText(
+                      text: "No Recently Signed Books",
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: whiteColor,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+return
+                Expanded(
                 child: SingleChildScrollView(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(bottom:5.h),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: books.length,

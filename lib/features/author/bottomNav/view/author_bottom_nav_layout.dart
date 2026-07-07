@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/delivered/view/delivered_screen.dart';
 import 'package:storysign/features/author/profile/view/author_profile.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/home/view/author_home_screen.dart';
@@ -44,7 +45,9 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   Route _buildRequestRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/requestDetail':
-        return MaterialPageRoute(builder: (_) => const RequestDetail());
+        return MaterialPageRoute(builder: (_) => const RequestDetailAuthor(),
+        settings: settings,
+        );
 
         case '/pdfReview':
         return MaterialPageRoute(builder: (_) => const BookPreviewPage());
@@ -58,6 +61,23 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
         return MaterialPageRoute(builder: (_) => const AuthorFinalReviewScreen());
       default:
         return MaterialPageRoute(builder: (_) => const AllRequest());
+    }
+  }
+
+  // AuthorBottomNavLayout file mein ye changes karein:
+
+
+
+
+
+  Route _buildDeliveredRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/requestDetail':
+        return MaterialPageRoute(builder: (_) => const RequestDetailAuthor(),settings: settings);
+
+
+      default:
+        return MaterialPageRoute(builder: (_) => const DeliveredScreen());
     }
   }
 
@@ -92,8 +112,8 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               // Tab 2: Library
               Navigator(
                 key: _navigatorKeys[2],
-                onGenerateRoute: (_) =>
-                    MaterialPageRoute(builder: (_) =>  AuthorProfileScreen()),
+                onGenerateRoute:_buildDeliveredRoute,
+
               ),
               // Tab 3: Notifications
 

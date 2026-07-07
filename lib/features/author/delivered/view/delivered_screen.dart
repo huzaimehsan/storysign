@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/author/delivered/controller/delivered_controller.dart';
 import 'package:storysign/features/author/request/controller/all_request_controller.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
@@ -10,8 +11,8 @@ import '../../../../widgets/search_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
 import '../../../reader/Home/widgets/reader/user_profile_card.dart';
 
-class AllRequest extends GetView<AllRequestController> {
-  const AllRequest({super.key});
+class DeliveredScreen extends GetView<DeliveredController> {
+  const DeliveredScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class AllRequest extends GetView<AllRequestController> {
                 children: [
                   customHeaderAuthor(
                     context: context,
-                    title: 'All Request',
+                    title: 'All Delivered Request',
                     onBack: () => Get.back(),
                     onIconPressed: () {},
                   ),
@@ -41,7 +42,7 @@ class AllRequest extends GetView<AllRequestController> {
             SizedBox(height: 2.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: sectionHeader(title: "Pending Requests", onSeeAll: () {}),
+              child: sectionHeader(title: "Delivered Requests", onSeeAll: () {}),
             ),
 
             Obx(
@@ -67,7 +68,7 @@ class AllRequest extends GetView<AllRequestController> {
                       bookName: request['bookName'] ?? '',
                       date: request['date'] ?? '',
                       ontap: () {
-                        Navigator.of(context).pushNamed('/requestDetail' ,arguments: {'from': 'all_request'});
+                        Navigator.of(context).pushNamed('/requestDetail' ,arguments: {'from': 'all_delivered'});
                       },
                     );
                   },

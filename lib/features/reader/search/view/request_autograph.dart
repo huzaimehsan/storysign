@@ -100,16 +100,9 @@ class _RequestAutographState extends State<RequestAutograph> {
                       whiteColor,
                       onTap: () {
 
-                        showSuccessDialog(
-                          context,
-                          desc: "Autograph request has been sent to the author",
-                          buttonText: "Okay",
-                          ontap: () {
-                            // Your logic here
-                            Get.back();
-                            Get.toNamed("/bottomnav");
-                          },
-                        );
+                        Get.toNamed("/request" , arguments: {'role': 'alreadySelectedAuthor'} );
+
+
                       },
                       colors: buttonColor,
                       fontFamily: 'Poppins',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/author/request/controller/request_detail_controller.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -10,11 +11,23 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
 import '../../../../widgets/sucess_widget.dart';
 
-class RequestDetail extends StatelessWidget {
-  const RequestDetail({super.key});
+class RequestDetailAuthor extends GetView<RequestDetailController> {
+  const RequestDetailAuthor({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)?.settings.arguments as Map?;
+
+    if (args != null && args['from'] != null) {
+      controller.sourceScreen.value = args['from'];
+      print("DEBUG: Screen set to ${controller.sourceScreen.value}");
+    } else {
+      print("DEBUG: Arguments null mile!");
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -90,50 +103,54 @@ class RequestDetail extends StatelessWidget {
                   "I've read your previous works and they changed my life. My daughter is turning 16 next week. Could you write something encouraging about following your dreams?",
               margin: EdgeInsets.symmetric(horizontal: 4.w),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Column(
-                children: [
-                  SizedBox(height: 18.h),
-                  buttonWidget(
-                    "Accept Request",
-                    whiteColor,
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/pdfReview');
-                    },
-                    colors: buttonColor,
-                    fontFamily: 'Poppins',
-                    height: 5.2.h,
-                    width: double.infinity,
-                    fontsize: 16.sp,
-                    fontweight: FontWeight.w600,
-                  ),
-                  SizedBox(height: 2.h),
-                  buttonWidget(
-                    "Decline Request",
-                    whiteColor,
-                    onTap: () {
 
-                      showDeclineDialog(
-                        context,
-                        desc: "Are you sure you want to decline this request?",
-                        buttonText: "Confirm",
-                        ontap: () {
-                          // Your decline logic goes here
-                          Get.back();
-                        },
-                      );
-                    },
-                    colors: greyColor,
-                    fontFamily: 'Poppins',
-                    height: 5.2.h,
-                    width: double.infinity,
-                    fontsize: 16.sp,
-                    fontweight: FontWeight.w600,
-                  ),
-                ],
-              ),
-            ),
+
+            Obx(() {
+
+              return (!controller.isFromDelivered)
+                  ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Column(
+                  children: [
+                    SizedBox(height: 18.h),
+                    buttonWidget(
+                      "Accept Request",
+                      whiteColor,
+                      onTap: () => Navigator.of(context).pushNamed('/pdfReview'),
+                      colors: buttonColor,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
+                      width: double.infinity,
+                      fontsize: 16.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                    SizedBox(height: 2.h),
+                    buttonWidget(
+                      "Decline Request",
+                      whiteColor,
+                      onTap: () {
+                        showDeclineDialog(
+                          context,
+                          desc: "Are you sure you want to decline this request?",
+                          buttonText: "Confirm",
+                          ontap: () {
+                            Get.back();
+                            Get.back();
+                          },
+                        );
+                      },
+                      colors: greyColor,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
+                      width: double.infinity,
+                      fontsize: 16.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              )
+                  : const SizedBox.shrink(); // Agar delivered hai to khali space
+            }),
         
             SizedBox(height: 2.h),
           ],

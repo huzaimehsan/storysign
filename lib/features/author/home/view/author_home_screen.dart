@@ -5,6 +5,7 @@ import 'package:storysign/features/author/home/widgets/author_profile_widget.dar
 import 'package:storysign/features/author/home/widgets/pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../../reader/Home/widgets/reader/user_profile_card.dart';
 import '../controller/author_home_controller.dart';
@@ -60,6 +61,10 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
               ],
             ),
             activeSubscription(
+              ontap: (){
+
+                Get.toNamed('/plan');
+              },
               title: 'Active Subscription',
               price: 'Basic. ',
               date: ' \$' "99",
@@ -75,9 +80,21 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
             ),
             Obx(
               () => Expanded(
-                child: SingleChildScrollView(
+                child:
+
+                controller.filteredRequests.isEmpty
+                    ? Center(
+                  child: customText(
+                    text: "No pending requests",
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: whiteColor,
+                    textAlign: TextAlign.center,
+                  ),
+                ):
+                SingleChildScrollView(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(bottom: 12.h),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: controller.filteredRequests.length,

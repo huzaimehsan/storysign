@@ -79,7 +79,10 @@ class SelectAuthor extends GetView<HomeController> {
                         activity: active ? 'Active' : 'Inactive',
                         isActive: active,
                         ontap: () {
-                          Get.toNamed("/request");
+
+                          Get.toNamed("/request" , arguments: {'role': 'selectAuthor'} );
+
+
                         },
                       );
                     },
