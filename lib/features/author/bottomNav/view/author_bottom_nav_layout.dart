@@ -127,7 +127,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
           ),
         ),
         bottomNavigationBar: Container(
-          margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
+          margin: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 2.h),
           height: 8.5.h,
           decoration: BoxDecoration(
             color: bottomNavColor,

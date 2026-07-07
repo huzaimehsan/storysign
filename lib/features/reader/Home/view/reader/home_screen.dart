@@ -37,7 +37,7 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ),
             SizedBox(height: 2.h),
-      
+
             searchWidget(
               onChanged: (val) {
                 controller.searchQuery.value = val;
@@ -50,7 +50,6 @@ class HomeScreen extends GetView<HomeController> {
             ),
             SizedBox(height: 1.h),
 
-
             Obx(() {
               final authorsList = controller.filteredAuthors;
               if (authorsList.isEmpty) {
@@ -59,18 +58,17 @@ class HomeScreen extends GetView<HomeController> {
                   child: Center(
                     child: customText(
                       text: "No Author At All",
+
+                      color: greyColor,
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: whiteColor,
-                      textAlign: TextAlign.center,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 );
               }
 
-              return
-
-                SizedBox(
+              return SizedBox(
                 height: 27.w,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
@@ -87,7 +85,7 @@ class HomeScreen extends GetView<HomeController> {
                 ),
               );
             }),
-      
+
             SizedBox(height: 1.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -96,30 +94,29 @@ class HomeScreen extends GetView<HomeController> {
                 onSeeAll: () {},
               ),
             ),
-      
+
             Obx(() {
               final books = controller.filteredRecentlySignedBooks;
-
 
               if (books.isEmpty) {
                 return Expanded(
                   child: Center(
                     child: customText(
                       text: "No Recently Signed Books",
+
+                      color: greyColor,
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: whiteColor,
-                      textAlign: TextAlign.center,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 );
               }
 
-return
-                Expanded(
+              return Expanded(
                 child: SingleChildScrollView(
                   child: ListView.builder(
-                    padding: EdgeInsets.only(bottom:5.h),
+                    padding: EdgeInsets.only(bottom: 5.h),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: books.length,
@@ -133,7 +130,6 @@ return
                         status: book["status"]!,
                         trackRequest: () {
                           Get.toNamed("/signedcopy");
-                        
                         },
                       );
                     },
@@ -141,8 +137,6 @@ return
                 ),
               );
             }),
-      
-
           ],
         ),
       ),

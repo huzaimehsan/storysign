@@ -23,7 +23,7 @@ Widget settingsGroupCard({EdgeInsetsGeometry? margin}) {
     child: Column(
       children: [
         // Item 1
-        _buildRowItem("assets/png/upgrade.png", "Change Password", () {
+        _buildRowItem(Icons.password, "Change Password", () {
 
           Get.toNamed("/newpass");
         }),
@@ -77,13 +77,17 @@ Widget settingsSignoutCard({EdgeInsetsGeometry? margin, VoidCallback? ontap}) {
     ),
   );
 }
-
-Widget _buildRowItem(String iconPath, String title, VoidCallback? ontap) {
+// Naya function:
+Widget _buildRowItem(dynamic icon, String title, VoidCallback? ontap) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 2.w, horizontal: 6.w),
     child: Row(
       children: [
-        Image.asset(iconPath, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain),
+        // Check karein ke icon String hai (asset) ya IconData
+        icon is String
+            ? Image.asset(icon, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain)
+            : Icon(icon, size: 5.8.w, color: buttonColor), // Agar IconData hai
+
         SizedBox(width: 4.w),
         customText(
           fontFamily: 'Poppins',

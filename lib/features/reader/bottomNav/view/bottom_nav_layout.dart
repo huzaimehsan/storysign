@@ -102,8 +102,8 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
         ),
         bottomNavigationBar: Container(
           margin: EdgeInsets.only(
-            left: 5.w,
-            right: 5.w,
+            left: 4.w,
+            right: 4.w,
             bottom: 2.h,
           ),
           height: 8.5.h,

@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
+  final TextEditingController searchController = TextEditingController();
   RxString selectedTab = "All".obs;
 
   RxInt selectedAuthorIndex = 0.obs;
@@ -28,7 +30,7 @@ class HomeController extends GetxController {
       "name": "William Shakespeare",
       "imagePath": "assets/png/authorimg.png",
       "date": "Joined: 22 june, 2026",
-      "active": true,
+      "active": false,
     },
     {
       "name": "Leo Tolstoy",
@@ -51,15 +53,17 @@ class HomeController extends GetxController {
       "bookTitle": "The Great Gatsby",
       "authorName": "F. Scott Fitzgerald",
       "date": "25 june, 2026",
-      "status": "Signed",
+      "status": "In process",
     },
     {
       "imagePath": "assets/png/book.png",
       "bookTitle": "The Great Gatsby",
       "authorName": "F. Scott Fitzgerald",
       "date": "25 june, 2026",
-      "status": "Signed",
+      "status": "Delivered",
     },
+
+
   ].obs;
 
   RxString searchQuery = "".obs;
@@ -76,15 +80,22 @@ class HomeController extends GetxController {
   }
 
   List<Map<String, String>> get filteredRecentlySignedBooks {
-    if (searchQuery.value.trim().isEmpty) {
-      return recentlySignedBooksList;
-    }
-    final query = searchQuery.value.toLowerCase();
-    return recentlySignedBooksList
-        .where((book) =>
-            book["bookTitle"]!.toLowerCase().contains(query) ||
-            book["authorName"]!.toLowerCase().contains(query))
-        .toList();
+    final query = searchQuery.value.toLowerCase().trim();
+
+    return recentlySignedBooksList.where((book) {
+      final status = book["status"] ?? "";
+      final matchesTab = selectedTab.value == "All" ||
+          (selectedTab.value == "In Process" && status == "In process") ||
+          (selectedTab.value == "Delivered" && status == "Delivered");
+
+      if (!matchesTab) return false;
+
+      if (query.isEmpty) return true;
+
+      final title = (book["bookTitle"] ?? "").toLowerCase();
+      final author = (book["authorName"] ?? "").toLowerCase();
+      return title.contains(query) || author.contains(query);
+    }).toList();
   }
 
   void selectAuthor(int index) {
@@ -93,5 +104,13 @@ class HomeController extends GetxController {
 
   void selectTab(String tab) {
     selectedTab.value = tab;
+  }
+
+  void applyFilter(String tab) {
+    selectTab(tab);
+  }
+
+  void resetFilter() {
+    selectTab("All");
   }
 }

@@ -57,7 +57,11 @@ class SelectAuthor extends GetView<HomeController> {
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
-            searchWidget(),
+            searchWidget(
+              controller: controller.searchController,
+              onChanged: (value) => controller.searchQuery.value = value,
+              hintText: 'Search authors',
+            ),
         
             SizedBox(height: 0.5.h),
             Obx(() {
@@ -79,10 +83,9 @@ class SelectAuthor extends GetView<HomeController> {
                         activity: active ? 'Active' : 'Inactive',
                         isActive: active,
                         ontap: () {
-
-                          Get.toNamed("/request" , arguments: {'role': 'selectAuthor'} );
-
-
+                          if (active) {
+                            Get.toNamed("/request", arguments: {'role': 'selectAuthor'});
+                          }
                         },
                       );
                     },

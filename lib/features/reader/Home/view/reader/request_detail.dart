@@ -17,6 +17,15 @@ class RequestDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String role = args?['role'] as String? ?? '';
+    final bool isAlreadySelectedAuthor = role == 'alreadySelectedAuthor';
+    final bool isSelectAuthor = role == 'selectAuthor';
+    final String actionButtonText = isSelectAuthor ? 'Request Autograph' : 'Make Payment';
+    final VoidCallback actionButtonTap = isSelectAuthor
+        ? () => Get.toNamed('/requestautograph')
+        : () => Get.toNamed('/makepayment');
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -24,7 +33,7 @@ class RequestDetail extends StatelessWidget {
           children: [
             customHeader(
               context: context,
-              title: "Request Detail",
+              title: isSelectAuthor ? 'Author Selected' : 'Request Detail',
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),
@@ -77,16 +86,12 @@ class RequestDetail extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: buttonWidget(
-                "Make Payment",
+                actionButtonText,
                 whiteColor,
-                onTap: () => Get.toNamed('/makepayment'),
+                onTap: actionButtonTap,
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.2.h,
-        
-                width: double.infinity,
-                fontsize: 16.sp,
-                fontweight: FontWeight.w600,
               ),
             ),
         

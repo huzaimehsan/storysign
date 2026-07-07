@@ -99,22 +99,17 @@ class WidgetSelectAuthor extends StatelessWidget {
                   ),
                   SizedBox(height: 1.h),
 
-                  GestureDetector(
-                    onTap: ontap,
-                    child: buttonWidget(
-
-
-                      "Select",
-                      isActive ? whiteColor : whiteColor,
-                      onTap: isActive ? ontap : null,
-                      colors: isActive? buttonColor : const Color(0xFFACACAC),
-                      fontFamily: 'Poppins',
-                      height: 2.7.h,
-                      width: 18.w,
-                      borderColor: isActive ? buttonColor : const Color(0xFFACACAC),
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w600,
-                    ),
+                  buttonWidget(
+                    "Select",
+                    isActive ? whiteColor : whiteColor,
+                    onTap: isActive ? ontap : null,
+                    colors: isActive ? buttonColor : const Color(0xFFACACAC),
+                    fontFamily: 'Poppins',
+                    height: 2.7.h,
+                    width: 18.w,
+                    borderColor: isActive ? buttonColor : const Color(0xFFACACAC),
+                    fontsize: 14.sp,
+                    fontweight: FontWeight.w600,
                   ),
                 ],
               ),

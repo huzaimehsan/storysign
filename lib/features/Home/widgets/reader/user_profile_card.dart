@@ -1,11 +1,86 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/constants/color_constants.dart';
 
-import '../constants/color_constants.dart';
-import 'button_widget.dart';
-import 'customText_widget.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/customText_widget.dart';
+
+Widget userProfileCard({required String imagePath, required String name}) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Stack(
+        children: [
+          // Profile Image
+          CircleAvatar(
+            radius: 3.0.h,
+            child: ClipOval(
+              child: Image.asset(
+                imagePath,
+                height: 7.h,
+                width: 7.h,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          Positioned(
+            right: 0.1.h,
+            bottom: 0.5.h,
+            child: Container(
+              height: 1.2.h,
+              width: 1.2.h,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 0.5.h),
+
+      SizedBox(
+        width: 20.w,
+
+        child: customText(
+          color: whiteColor,
+          fontFamily: 'Inter',
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          text: name.contains(" ") ? name.replaceFirst(" ", "\n") : name,
+          maxLines: 2,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget sectionHeader({required String title, required VoidCallback onSeeAll}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      customText(
+        text: title,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
+        color: whiteColor,
+      ),
+      InkWell(
+        onTap: onSeeAll,
+        child: customText(
+          fontFamily: "Poppins",
+          text: "View All >",
+          color: iconColor,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ],
+  );
+}
 
 Widget recentlySignedBooks({
   required String imagePath,
@@ -14,16 +89,13 @@ Widget recentlySignedBooks({
   required String date,
   required VoidCallback trackRequest,
   required String status,
-  EdgeInsetsGeometry? margin,
-  bool? iconBadge,
-  bool showArrow = true,
 }) {
   return Padding(
-    padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 0.6.h),
+    padding: EdgeInsets.symmetric(vertical: 0.3.h),
     child: Container(
       height: 16.h,
-      width: double.infinity,
-      margin: margin ?? EdgeInsets.zero,
+      width: 100.w,
+      margin: EdgeInsets.fromLTRB(4.4.w, 0.8.h, 4.4.w, 0),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: white,
@@ -76,10 +148,10 @@ Widget recentlySignedBooks({
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 1.h),
+                SizedBox(height: 0.6.h),
                 buttonWidget(
-
-                  status ,
+                  onTap: trackRequest,
+                 status ,
                   buttonColor,
                   colors: buttonColor.withOpacity(0.2),
                   fontFamily: 'Poppins',
@@ -92,59 +164,12 @@ Widget recentlySignedBooks({
               ],
             ),
           ),
-          if (showArrow)
-            InkWell(
-              onTap: trackRequest,
-              child: Image.asset(
-                "assets/icon/arrowicon.png",
-                height: 4.h,
-                width: 6.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-        ],
-      ),
 
-    ),
-  );
-}
-Widget signedCopyMessageCard({
-  String? title, // String? (Nullable)
-  required String message,
-
-  EdgeInsetsGeometry? margin,
-}) {
-  return Padding(
-    padding: margin ?? EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-    child: Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.w),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.circular(18.sp),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Agar title null nahi hai, tabhi text show karo
-          if (title != null && title.isNotEmpty) ...[
-            customText(
-              fontFamily: "Poppins",
-              text: title,
-              color: secondryColor,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-            ),
-            SizedBox(height: 1.2.h),
-          ],
-
-          customText(
-            fontFamily: "Poppins",
-            text: message,
-            color: secondryColor,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w300,
-            textAlign: TextAlign.start,
+          Image.asset(
+            "assets/icon/arrowicon.png",
+            height: 4.h,
+            width: 6.w,
+            fit: BoxFit.cover,
           ),
         ],
       ),

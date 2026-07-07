@@ -18,20 +18,12 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
 
   @override
   Widget build(BuildContext context) {
-
-    final args = ModalRoute.of(context)?.settings.arguments as Map?;
-
-    if (args != null && args['from'] != null) {
-      controller.sourceScreen.value = args['from'];
-      print("DEBUG: Screen set to ${controller.sourceScreen.value}");
-    } else {
-      print("DEBUG: Arguments null mile!");
-    }
-
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final bool isFromDelivered = args?['from'] == 'all_delivered';
     return Scaffold(
       body: SafeArea(
         child: Column(
-          // Yahan 'start' lagana zaroori hai
+
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -64,7 +56,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                 ],
               ),
             ),
-        
+
             AllPendingRequest(
               imagePath: "assets/png/searchprofile.png",
               authorName: "Jane Austen",
@@ -90,7 +82,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               authorName: "Jane Austen",
             ),
             SizedBox(height: 2.h),
-        
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: customText(
@@ -106,15 +98,13 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
             SizedBox(height: 2.h),
             signedCopyMessageCard(
               message:
-                  "I've read your previous works and they changed my life. My daughter is turning 16 next week. Could you write something encouraging about following your dreams?",
+              "I've read your previous works and they changed my life. My daughter is turning 16 next week. Could you write something encouraging about following your dreams?",
               margin: EdgeInsets.symmetric(horizontal: 4.w),
             ),
 
 
-            Obx(() {
-
-              return (!controller.isFromDelivered)
-                  ? Padding(
+            if (!isFromDelivered)
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 child: Column(
                   children: [
@@ -154,10 +144,8 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     ),
                   ],
                 ),
-              )
-                  : const SizedBox.shrink(); // Agar delivered hai to khali space
-            }),
-        
+              ),
+
             SizedBox(height: 2.h),
           ],
         ),

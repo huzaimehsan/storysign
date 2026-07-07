@@ -155,7 +155,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                       date: book["date"] ?? "",
                       status: book["status"] ?? "",
                       trackRequest: () {
-                        Get.toNamed('/trackrequest');
+
                       },
                     );
                   },
