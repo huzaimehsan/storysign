@@ -42,7 +42,13 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                   customHeaderAuthor(
                     context: context,
                     title: 'Request Detail',
-                    onBack: () => Get.back(),
+                    onBack: () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      } else {
+                        Get.back();
+                      }
+                    },
                     onIconPressed: () {},
                   ),
                   SizedBox(height: 2.h),

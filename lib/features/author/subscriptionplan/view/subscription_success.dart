@@ -47,7 +47,9 @@ class SubscriptionSuccessScreen extends StatelessWidget {
               buttonWidget(
                 'Continue',
                 whiteColor,
-                onTap: () => Get.toNamed('/authorbottomnav'),
+                onTap: () {
+                  Get.offAllNamed('/authorbottomnav');
+                },
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.h,

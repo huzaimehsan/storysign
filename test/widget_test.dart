@@ -1,30 +1,40 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:storysign/main.dart';
+import 'package:get/get.dart';
+import 'package:storysign/features/author/request/controller/request_detail_controller.dart';
+import 'package:storysign/features/author/request/view/request_detail.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('request detail back button pops the current screen', (tester) async {
+    Get.put(RequestDetailController());
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(
+      GetMaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(Get.context!).push(
+                  MaterialPageRoute(builder: (_) => const RequestDetailAuthor()),
+                );
+              },
+              child: const Text('Open request detail'),
+            ),
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('Open request detail'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Request Detail'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.arrow_back_ios));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Open request detail'), findsOneWidget);
   });
 }
