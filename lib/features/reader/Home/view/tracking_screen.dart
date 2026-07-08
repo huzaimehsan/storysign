@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../../search/widgets/header_widget.dart';
-import '../../widgets/reader/request_detail_widget.dart';
-import '../../widgets/reader/tracking_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../search/widgets/header_widget.dart';
+import '../widgets/reader/request_detail_widget.dart';
+import '../widgets/reader/tracking_widget.dart';
 
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({super.key});

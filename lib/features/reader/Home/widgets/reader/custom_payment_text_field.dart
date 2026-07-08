@@ -41,7 +41,7 @@ class CustomPaymentTextField extends StatelessWidget {
           maxLength: maxLength,
           obscureText: obscureText ?? false,
           style: TextStyle(
-            color: blackColor,
+            color: textFeildColor,
             fontSize: 14.sp,
             fontFamily: "Poppins",
           ),

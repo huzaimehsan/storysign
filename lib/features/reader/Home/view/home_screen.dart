@@ -4,12 +4,12 @@ import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/book_widget.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../controller/reader/home_controller.dart';
-import '../../widgets/reader/build_profile_card.dart';
-import '../../widgets/reader/user_profile_card.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/book_widget.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../controller/home_controller.dart';
+import '../widgets/reader/build_profile_card.dart';
+import '../widgets/reader/user_profile_card.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -94,7 +94,7 @@ class HomeScreen extends GetView<HomeController> {
                 onSeeAll: () {},
               ),
             ),
-
+            SizedBox(height: 0.5.h),
             Obx(() {
               final books = controller.filteredRecentlySignedBooks;
 

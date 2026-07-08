@@ -56,6 +56,19 @@ class SharedPreferencesMethod {
   static Future<bool> setUserInfo1(Data user) async {
     return await SharedPreferencesMethod.storage.setString(LocalDBKeys.USERDETAIL, jsonEncode(user));
   }
+
+  // Profile Image Methods
+  static Future<void> setProfileImagePath(String imagePath) async {
+    await storage.setString('profile_image_path', imagePath);
+  }
+
+  static String? getProfileImagePath() {
+    return storage.getString('profile_image_path');
+  }
+
+  static Future<void> clearProfileImage() async {
+    await storage.remove('profile_image_path');
+  }
 }
 class Data {
   String? id;

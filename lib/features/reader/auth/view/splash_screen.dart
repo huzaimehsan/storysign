@@ -39,8 +39,8 @@ class SplashScreen extends StatelessWidget {
                 // Horizontally center
                 children: [
                   SizedBox(height: 3.h),
-                  Image.asset("assets/icon/logo.png"),
-                  SizedBox(height: 2.5.h),
+                  Image.asset("assets/icon/logo.png",height: 38.w,width: 55.w,),
+                  SizedBox(height: 2.h),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 18.w),
                     child: customText(

@@ -35,10 +35,12 @@ Widget buttonWidget(
         boxShadow: [
           if(isShadow == true)
           BoxShadow(
-            color: Colors.black.withOpacity(0.4), // Shadow ko light rakhein
-            blurRadius: 6,    // Shadow ko blur karein taake wo soft lage
-            spreadRadius: 0,  // Spread ko 0 rakhein taake wo button ke bahar na nikalay
-            offset: const Offset(0, 3),// Shadow moves downward
+
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
+            // Shadow moves downward
           ),
         ],
         borderRadius: BorderRadius.circular(17.sp),

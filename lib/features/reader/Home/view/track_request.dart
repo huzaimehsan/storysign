@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/book_widget.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/search_widget.dart';
-import '../../../search/widgets/header_widget.dart';
-import '../../../search/widgets/search_author_widget.dart';
-import '../../controller/reader/home_controller.dart';
-import '../../widgets/reader/user_profile_card.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/book_widget.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/search_widget.dart';
+import '../../search/widgets/header_widget.dart';
+import '../../search/widgets/search_author_widget.dart';
+import '../controller/home_controller.dart';
+import '../widgets/reader/user_profile_card.dart';
 
 class TrackRequest extends GetView<HomeController> {
   const TrackRequest({super.key});
@@ -116,7 +116,10 @@ class TrackRequest extends GetView<HomeController> {
                       bookTitle: book["bookTitle"] ?? "",
                       authorName: book["authorName"] ?? "",
                       date: book["date"] ?? "",
-                      trackRequest: () {},
+                      trackRequest: () {
+
+                        Get.toNamed("/tracking");
+                      },
                       status: book["status"] ?? "",
                     );
                   },

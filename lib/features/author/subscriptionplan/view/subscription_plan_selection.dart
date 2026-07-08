@@ -61,7 +61,7 @@ class SubscriptionPlanSelectionScreen
                               amountValue: selectedPlan['price'] as String,
                             ),
                             SizedBox(height: 2.h),
-                            const AuthorPaymentSection(),
+                             AuthorPaymentSection(),
                           ],
                         ),
                       ),

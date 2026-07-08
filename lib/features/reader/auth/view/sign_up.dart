@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
@@ -24,6 +26,63 @@ class _SignUpState extends State<SignUp> {
   bool get isAuthor => role == 'author';
   final MediaPickerService _mediaPickerService = MediaPickerService();
   File? _profileImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
+
+  Future<void> _loadProfileImage() async {
+    try {
+      final imagePath = SharedPreferencesMethod.getProfileImagePath();
+      print('📂 Loading image from: $imagePath');
+      
+      if (imagePath != null && File(imagePath).existsSync()) {
+        setState(() {
+          _profileImage = File(imagePath);
+        });
+        print('✅ Image loaded successfully');
+      } else {
+        print('⚠️ Image file not found or path is null');
+      }
+    } catch (e) {
+      print('❌ Error loading image: $e');
+    }
+  }
+
+  Future<void> _saveImageToLocalStorage(File imageFile) async {
+    try {
+      print('📸 Picked file path: ${imageFile.path}');
+      print('📸 File exists: ${imageFile.existsSync()}');
+      
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final fileName =
+          'profile_image_${DateTime.now().millisecondsSinceEpoch}.png';
+      final savePath = '${appDocDir.path}/$fileName';
+      
+      print('📸 Saving to: $savePath');
+      
+      final savedImage = await imageFile.copy(savePath);
+      
+      print('📸 Saved image exists: ${savedImage.existsSync()}');
+      print('📸 Saved image path: ${savedImage.path}');
+
+      await SharedPreferencesMethod.setProfileImagePath(savedImage.path);
+      print('💾 Path saved to SharedPreferences');
+
+      setState(() {
+        _profileImage = savedImage;
+      });
+      
+      print('✅ Image saved and displayed successfully!');
+    } catch (e) {
+      print('❌ Error saving image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +168,7 @@ class _SignUpState extends State<SignUp> {
                                   final File? file = await _mediaPickerService
                                       .pickMedia(context);
                                   if (file != null) {
-                                    setState(() {
-                                      _profileImage = file;
-                                    });
+                                    await _saveImageToLocalStorage(file);
                                   }
                                 },
                                 child: Image.asset(
@@ -139,7 +196,7 @@ class _SignUpState extends State<SignUp> {
 
                       if (isAuthor) ...[
                         SizedBox(height: 1.5.h),
-                        emailTextFeild('Bio Graphy', "Write  about yourself"),
+                        emailTextFeild('Bio Graphy', "Write about yourself"),
                       ],
 
                       SizedBox(height: 3.h),

@@ -37,11 +37,11 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                     children: [
                       buttonWidget(
                         'Monthly',
-                        controller.isYearly.value ? whiteColor : buttonColor,
+                        controller.isYearly.value ?  buttonColor: whiteColor,
                         onTap: () => controller.setYearly(false),
                         colors: controller.isYearly.value
-                            ? buttonColor
-                            : whiteColor,
+                            ? whiteColor
+                            : buttonColor,
 
                         fontFamily: 'Poppins',
                         height: 3.5.h,
@@ -52,11 +52,11 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                       SizedBox(width: 5.w),
                       buttonWidget(
                         'Yearly',
-                        controller.isYearly.value ? buttonColor : whiteColor,
+                        controller.isYearly.value ? whiteColor : buttonColor,
                         onTap: () => controller.setYearly(true),
                         colors: controller.isYearly.value
-                            ? whiteColor
-                            : buttonColor,
+                            ? buttonColor
+                            : whiteColor,
 
                         fontFamily: 'Poppins',
                         height: 3.5.h,

@@ -36,6 +36,7 @@ class _AuthorPaymentSectionState extends State<AuthorPaymentSection> {
         ),
         SizedBox(height: 1.h),
         PopupMenuButton<String>(
+          color: white,
           onSelected: (String newValue) {
             setState(() {
               selectedPaymentMethod = newValue;
@@ -45,11 +46,12 @@ class _AuthorPaymentSectionState extends State<AuthorPaymentSection> {
             return paymentMethods.map((String method) {
               return PopupMenuItem<String>(
                 value: method,
-                child: Text(method, style: TextStyle(fontFamily: 'Poppins')),
+                child: Text(method, style: TextStyle(fontFamily: 'Poppins',   fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,)),
               );
             }).toList();
           },
-          offset: const Offset(0, 50),
+          offset: const Offset(0, 53),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
             decoration: BoxDecoration(

@@ -5,27 +5,19 @@ import 'package:storysign/features/reader/Home/widgets/reader/request_detail_wid
 import 'package:storysign/features/reader/Home/widgets/reader/custom_text_field_with_limit.dart';
 import 'package:storysign/features/reader/Home/widgets/reader/fee_field_with_price.dart';
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/custom_text_feild.dart';
-import '../../../search/widgets/author_detail_widget.dart';
-import '../../../search/widgets/header_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/custom_text_feild.dart';
+import '../../../../widgets/sucess_widget.dart';
+import '../../search/widgets/author_detail_widget.dart';
+import '../../search/widgets/header_widget.dart';
 
-class RequestDetail extends StatelessWidget {
-  const RequestDetail({super.key});
+class FinalReview extends StatelessWidget {
+  const FinalReview({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final String role = args?['role'] as String? ?? '';
-    final bool isAlreadySelectedAuthor = role == 'alreadySelectedAuthor';
-    final bool isSelectAuthor = role == 'selectAuthor';
-    final String actionButtonText = isSelectAuthor ? 'Request Autograph' : 'Make Payment';
-    final VoidCallback actionButtonTap = isSelectAuthor
-        ? () => Get.toNamed('/requestautograph')
-        : () => Get.toNamed('/makepayment');
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -33,7 +25,7 @@ class RequestDetail extends StatelessWidget {
           children: [
             customHeader(
               context: context,
-              title: isSelectAuthor ? 'Author Selected' : 'Request Detail',
+              title: "Final Review",
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),
@@ -64,7 +56,7 @@ class RequestDetail extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-        
+            SizedBox(height: 0.5.h),
             AuthorInfoCard(
               imagePath: "assets/png/searchprofile.png",
               bookTitle: "Matt Haig",
@@ -81,24 +73,39 @@ class RequestDetail extends StatelessWidget {
             FeeFieldWithPrice(
               label: 'Signature Price',
               price: "Fee",
+              isPaid: true,
             ),
             SizedBox(height: 7.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: buttonWidget(
-                actionButtonText,
+                "Submit Request",
                 whiteColor,
-                onTap: actionButtonTap,
+                onTap: () {
+                  showSuccessDialog(context,desc: "Your Autograph Request have been sent Successfully",buttonText: "okay",
+
+
+                  ontap:
+                  (){
+                    Get.back();
+                    Get.toNamed("/bottomnav");
+                  }
+                  );
+                },
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.2.h,
+                width: double.infinity,
+                fontsize: 16.sp,
+                fontweight: FontWeight.w600,
               ),
             ),
-        
             SizedBox(height: 2.h),
           ],
         ),
       ),
     );
   }
+
+
 }

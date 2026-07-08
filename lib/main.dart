@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 
@@ -10,9 +10,12 @@ import 'constants/color_constants.dart';
 import 'core/bindings/init_binding.dart';
 import 'core/routes/App_Routing.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  Get.put<SharedPreferences>(prefs);
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

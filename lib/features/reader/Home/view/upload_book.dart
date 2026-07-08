@@ -1,31 +1,34 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/widgets/sucess_widget.dart';
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../../../../widgets/custom_text_feild.dart';
-import '../../../search/widgets/author_detail_widget.dart';
-import '../../../search/widgets/file_upload_widget.dart';
-import 'package:storysign/widgets/image_picker.dart';
-import '../../../search/widgets/header_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/custom_text_feild.dart';
+import '../../../../widgets/image_picker.dart';
+import '../../search/widgets/file_upload_widget.dart';
+import '../../search/widgets/header_widget.dart';
 
-class RequestAutographCard extends StatefulWidget {
-  const RequestAutographCard({super.key});
+class UploadBook extends StatefulWidget {
+   UploadBook({super.key});
 
   @override
-  State<RequestAutographCard> createState() => _RequestAutographCardState();
+  State<UploadBook> createState() => _UploadBookState();
 }
 
-class _RequestAutographCardState extends State<RequestAutographCard> {
+class _UploadBookState extends State<UploadBook> {
   final MediaPickerService _mediaPicker = MediaPickerService();
+
   File? _bookFile;
+
   File? _coverImage;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -33,11 +36,13 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
           children: [
             customHeader(
               context: context,
-              title: "Autograph Request",
+              title: "Upload Book",
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
+        
+        
         
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -72,28 +77,30 @@ class _RequestAutographCardState extends State<RequestAutographCard> {
                     },
                     onRemove: () => setState(() => _coverImage = null),
                   ),
-                  SizedBox(height: 1.5.h),
-                  emailTextFeild(
-                    'Personal Message',
-                    "Write a personal message to the author about why this book is special to you…",
-                    maxLength: 200,
-                    maxLines: 4,
-                  ),
-                  SizedBox(height: 5.h),
+        
+                  SizedBox(height: 8.h),
         
                   buttonWidget(
-                    "Select Author",
+                    "Save Book",
                     whiteColor,
-                    onTap: () => Get.toNamed('/selectauthor'),
+                    onTap: (){
+
+                      showSuccessDialog(context,desc: "Book has been uploaded",buttonText: "Okay",ontap: (){
+
+                        Get.back();
+                        Get.back();
+                      });
+                    },
                     colors: buttonColor,
                     fontFamily: 'Poppins',
                     height: 5.2.h,
+                    // Thoda height badhayi
                     width: double.infinity,
                     fontsize: 16.sp,
                     fontweight: FontWeight.w600,
                   ),
         
-
+                  SizedBox(height: 5.h),
                 ],
               ),
             ),

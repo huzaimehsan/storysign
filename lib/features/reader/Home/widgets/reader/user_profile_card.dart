@@ -15,18 +15,23 @@ Widget userProfileCard({required String imagePath, required String name}) {
         children: [
           // Profile Image
           CircleAvatar(
-            radius: 3.0.h,
+            radius: 3.1.h,
             child: ClipOval(
-              child:Container(
-                color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
-                child: Center(
-                  child: Icon(
-                    Icons.person_rounded,
-                    color: buttonColor.withOpacity(0.6),
-                    size: 12.w, // Size adjust karlein
-                  ),
-                ),
-              ),
+
+
+              child: Image.asset(imagePath),
+
+              //
+              // Container(
+              //   color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
+              //   child: Center(
+              //     child: Icon(
+              //       Icons.person_rounded,
+              //       color: buttonColor.withOpacity(0.6),
+              //       size: 12.w, // Size adjust karlein
+              //     ),
+              //   ),
+              // ),
             ),
           ),
 
@@ -52,8 +57,8 @@ Widget userProfileCard({required String imagePath, required String name}) {
         child: customText(
           color: whiteColor,
           fontFamily: 'Inter',
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w600,
           text: name.contains(" ") ? name.replaceFirst(" ", "\n") : name,
           maxLines: 2,
           textAlign: TextAlign.center,

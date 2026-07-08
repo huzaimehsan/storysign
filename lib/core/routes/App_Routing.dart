@@ -8,25 +8,31 @@ import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
 
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
-import 'package:storysign/features/reader/Home/view/reader/final_review.dart';
-import 'package:storysign/features/reader/Home/view/reader/make_payment.dart';
-import 'package:storysign/features/reader/Home/view/reader/request_detail.dart';
-import 'package:storysign/features/reader/Home/view/reader/signed_copy.dart';
-import 'package:storysign/features/reader/Home/view/reader/tracking_screen.dart';
-import 'package:storysign/features/reader/Home/view/reader/upload_book.dart';
+import 'package:storysign/features/reader/Home/binding/home_binding.dart';
+import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/view/final_review.dart';
+import 'package:storysign/features/reader/Home/view/make_payment.dart';
+import 'package:storysign/features/reader/Home/view/request_detail.dart';
+import 'package:storysign/features/reader/Home/view/signed_copy.dart';
+import 'package:storysign/features/reader/Home/view/tracking_screen.dart';
+import 'package:storysign/features/reader/Home/view/upload_book.dart';
+import 'package:storysign/features/reader/library/binding/reader_library_binding.dart';
+import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
 import 'package:storysign/features/reader/profile/view/change_password.dart';
 import 'package:storysign/features/reader/profile/view/contact_us.dart';
 import 'package:storysign/features/reader/profile/view/edit_profile.dart';
 import 'package:storysign/features/reader/profile/view/help_and%20_support.dart';
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+import 'package:storysign/features/reader/search/binding/search_binding.dart';
 
 import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
 import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
-import '../../features/reader/Home/view/reader/request_autograph.dart';
-import '../../features/reader/Home/view/reader/select_author.dart';
-import '../../features/reader/Home/view/reader/track_request.dart';
+import '../../features/reader/Home/view/request_autograph.dart';
+import '../../features/reader/Home/view/select_author.dart';
+import '../../features/reader/Home/view/track_request.dart';
 import '../../features/reader/auth/binding/auth_binding.dart';
 import '../../features/reader/auth/view/choose_role.dart';
 import '../../features/reader/auth/view/forgot_password/resend_otp.dart';
@@ -57,46 +63,46 @@ class AppRoutes {
 
 
     GetPage(name: '/bottomnav', page: () => MyBottomBarScreen(),binding: BottomNavBinding()),
-    GetPage(name: '/trackrequest', page: () => TrackRequest(),binding: BottomNavBinding()),
+    GetPage(name: '/trackrequest', page: () => TrackRequest(),binding: HomeBinding()),
 
-    GetPage(name: '/authordetail', page: () => AuthorDetail(),binding: BottomNavBinding()),
-
-
-    GetPage(name: '/readerlibrary', page: () => ReaderLibrary(),binding: BottomNavBinding()),
+    GetPage(name: '/authordetail', page: () => AuthorDetail(),binding: SearchBinding()),
 
 
-
-    GetPage(name: '/requestautograph', page: () => RequestAutograph(),binding: BottomNavBinding()),
+    GetPage(name: '/readerlibrary', page: () => ReaderLibrary(),binding: ReaderLibraryBinding()),
 
 
 
-    GetPage(name: '/notification', page: () => NotificationScreen(),binding: BottomNavBinding()),
+    GetPage(name: '/requestautograph', page: () => RequestAutograph(),binding: SearchBinding()),
 
 
-    GetPage(name: '/requestautographcard', page: () => RequestAutographCard(),binding: BottomNavBinding()),
+
+    GetPage(name: '/notification', page: () => NotificationScreen(),binding: NotificationBinding()),
 
 
-    GetPage(name: '/uploadbook', page: () => UploadBook(),binding: BottomNavBinding()),
+    GetPage(name: '/requestautographcard', page: () => RequestAutographCard(),binding: HomeBinding()),
 
 
-    GetPage(name: '/selectauthor', page: () => SelectAuthor(),binding: BottomNavBinding()),
-    GetPage(name: '/request', page: () => RequestDetail(),binding: BottomNavBinding()),
-    GetPage(name: '/makepayment', page: () => MakePayment(),binding: BottomNavBinding()),
-
-    GetPage(name: '/finalreview', page: () => FinalReview(),binding: BottomNavBinding()),
-
-    GetPage(name: '/tracking', page: () => TrackingScreen(),binding: BottomNavBinding()),
-
-    GetPage(name: '/signedcopy', page: () => SignedCopy(),binding: BottomNavBinding()),
-    GetPage(name: '/profile', page: () => ProfileScreen(),binding: BottomNavBinding()),
-    GetPage(name: '/editprofile', page: () => EditProfile(),binding: BottomNavBinding()),
+    GetPage(name: '/uploadbook', page: () => UploadBook(),binding: HomeBinding()),
 
 
-    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(),binding: BottomNavBinding()),
-    GetPage(name: '/newpass', page: () => ChangePassword(),binding: BottomNavBinding()),
+    GetPage(name: '/selectauthor', page: () => SelectAuthor(),binding: HomeBinding()),
+    GetPage(name: '/request', page: () => RequestDetail(),binding: HomeBinding()),
+    GetPage(name: '/makepayment', page: () => MakePayment(),binding: HomeBinding()),
 
-    GetPage(name: '/contact', page: () => ContactUs(),binding: BottomNavBinding()),
-    GetPage(name: '/privacy', page: () => PrivacyPolicy(),binding: BottomNavBinding()),
+    GetPage(name: '/finalreview', page: () => FinalReview(),binding: HomeBinding()),
+
+    GetPage(name: '/tracking', page: () => TrackingScreen(),binding: HomeBinding()),
+
+    GetPage(name: '/signedcopy', page: () => SignedCopy(),binding: HomeBinding()),
+    GetPage(name: '/profile', page: () => ProfileScreen(),binding: ProfileBinding()),
+    GetPage(name: '/editprofile', page: () => EditProfile(),binding: ProfileBinding()),
+
+
+    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(),binding: ProfileBinding()),
+    GetPage(name: '/newpass', page: () => ChangePassword(),binding: ProfileBinding()),
+
+    GetPage(name: '/contact', page: () => ContactUs(),binding: ProfileBinding()),
+    GetPage(name: '/privacy', page: () => PrivacyPolicy(),binding: ProfileBinding()),
 
     GetPage(name: '/authorbottomnav', page: () => AuthorBottomNavLayout(),binding: AuthorBottomNavBinding()),
 

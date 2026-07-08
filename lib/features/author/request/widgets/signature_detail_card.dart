@@ -65,12 +65,14 @@ class SignatureDetailCard extends StatelessWidget {
             alignment: Alignment.center,
             child: signatureBytes.isEmpty
                 ? CustomPaint(
-                    size: Size(20.w, 6.h),
+                    size: Size(20.w, 5.h),
                     painter: _SquigglePainter(),
                   )
                 : Image.memory(
                     signatureBytes,
                     fit: BoxFit.contain,
+              height: 8.h,
+              width: 18.w,
                   ),
           ),
         ],

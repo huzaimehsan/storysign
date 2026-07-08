@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import '../../../search/widgets/header_widget.dart';
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/custom_text_feild.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../widgets/reader/custom_payment_text_field.dart';
+import '../../search/widgets/header_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/custom_text_feild.dart';
+import '../../../../widgets/button_widget.dart';
+import '../widgets/reader/custom_payment_text_field.dart';
 
 class MakePayment extends StatefulWidget {
   const MakePayment({super.key});
@@ -54,6 +54,9 @@ class _MakePaymentState extends State<MakePayment> {
         
         
                   PopupMenuButton<String>(
+                    color: white,
+                      position: PopupMenuPosition.under, // Ye menu ko button ke niche fix rakhega
+                      offset: Offset(0, 5),
                     onSelected: (String newValue) {
                       setState(() {
                         selectedPaymentMethod = newValue;
@@ -67,8 +70,7 @@ class _MakePaymentState extends State<MakePayment> {
                         );
                       }).toList();
                     },
-        
-                    offset: Offset(0, 50),
+
         
         
                     child: Container(
@@ -144,7 +146,7 @@ class _MakePaymentState extends State<MakePayment> {
                   Expanded(
                     child: CustomPaymentTextField(
                       label: "CVV",
-                      hintText: "***",
+                      hintText: "********",
                       controller: cvvController,
                       keyboardType: TextInputType.number,
                       maxLength: 4,
@@ -165,7 +167,7 @@ class _MakePaymentState extends State<MakePayment> {
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.2.h,
-                // Thoda height badhayi
+
                 width: double.infinity,
                 fontsize: 16.sp,
                 fontweight: FontWeight.w600,
