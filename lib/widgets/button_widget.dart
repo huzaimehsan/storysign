@@ -36,10 +36,10 @@ Widget buttonWidget(
           if(isShadow == true)
           BoxShadow(
 
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 3,
               spreadRadius: 1,
-              offset: const Offset(0, 6),
+              offset: const Offset(0, 3),
             // Shadow moves downward
           ),
         ],

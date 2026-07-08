@@ -6,7 +6,7 @@ class AuthorHomeController extends GetxController {
 
   final RxList<Map<String, String>> requests = <Map<String, String>>[
     {
-      'imagePath': 'assets/png/searchprofile.png',
+      'imagePath': 'assets/png/pendingimg.png',
       'authorName': 'Jane Austen',
       'date': '22 june, 2026',
       'bookName': 'The Origin of Species',

@@ -16,23 +16,8 @@ Widget userProfileCard({required String imagePath, required String name}) {
           // Profile Image
           CircleAvatar(
             radius: 3.1.h,
-            child: ClipOval(
-
-
-              child: Image.asset(imagePath),
-
-              //
-              // Container(
-              //   color: Colors.grey.withOpacity(0.2), // Placeholder ka background color
-              //   child: Center(
-              //     child: Icon(
-              //       Icons.person_rounded,
-              //       color: buttonColor.withOpacity(0.6),
-              //       size: 12.w, // Size adjust karlein
-              //     ),
-              //   ),
-              // ),
-            ),
+            backgroundImage: AssetImage(imagePath),
+            backgroundColor: buttonColor.withAlpha(30),
           ),
 
           Positioned(

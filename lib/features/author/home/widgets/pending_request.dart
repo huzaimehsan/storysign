@@ -31,7 +31,7 @@ class PendingRequest extends StatelessWidget {
           height: 12.5.h,
           width: 100.w,
           margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-          padding: EdgeInsets.all(5.w),
+          padding: EdgeInsets.only(top: 3.w,bottom: 3.w,left: 3.w,right: 5.w),
           decoration: BoxDecoration(
             color: white,
             borderRadius: BorderRadius.circular(20.sp),
@@ -47,31 +47,31 @@ class PendingRequest extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 10.h,
-                width: 10.h,
+                width: 12.h,
+                height: 12.h,
                 decoration: BoxDecoration(
-
-
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     image: AssetImage(imagePath),
                     fit: BoxFit.cover,
                   ),
+                  color: buttonColor.withAlpha(30),
                 ),
               ),
-              SizedBox(width: 4.w),
+              SizedBox(width: 2.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     customText(
                       fontFamily: "Poppins",
                       text: authorName,
                       color: secondryColor,
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),
-                    SizedBox(height: 0.4.h),
+                    SizedBox(height: 0.5.h),
                     customText(
                       fontFamily: "Poppins",
                       text: bookName,
@@ -79,7 +79,7 @@ class PendingRequest extends StatelessWidget {
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(height: 0.4.h),
+                    SizedBox(height: 0.5.h),
                     customText(
                       fontFamily: "Poppins",
                       text: date,

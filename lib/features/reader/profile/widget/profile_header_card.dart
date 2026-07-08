@@ -113,7 +113,7 @@ isShadow: true,
                       fontFamily: 'Poppins',
                       height: 2.7.h,
                       width: 30.w,
-                      borderColor: textFeildContainColor,
+
                       fontsize: 14.sp,
                       fontweight: FontWeight.w500,
                     ),

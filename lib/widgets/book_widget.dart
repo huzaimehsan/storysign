@@ -21,7 +21,7 @@ Widget recentlySignedBooks({
   return Padding(
     padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 0.6.h),
     child: Container(
-      height: 16.h,
+      height: 15.7.h,
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,
       padding: EdgeInsets.all(4.w),
