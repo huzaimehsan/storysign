@@ -2,91 +2,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
 
 import '../../../../constants/color_constants.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
-import '../../../../widgets/image_picker.dart';
 
-class SignUp extends StatefulWidget {
+class SignUp extends GetView<AuthController> {
   const SignUp({super.key});
 
-  @override
-  State<SignUp> createState() => _SignUpState();
-}
 
-class _SignUpState extends State<SignUp> {
-  final String role = Get.arguments ?? 'reader';
-
-  bool get isAuthor => role == 'author';
-  final MediaPickerService _mediaPickerService = MediaPickerService();
-  File? _profileImage;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfileImage();
-  }
-
-  Future<void> _loadProfileImage() async {
-    try {
-      final imagePath = SharedPreferencesMethod.getProfileImagePath();
-      print('📂 Loading image from: $imagePath');
-      
-      if (imagePath != null && File(imagePath).existsSync()) {
-        setState(() {
-          _profileImage = File(imagePath);
-        });
-        print('✅ Image loaded successfully');
-      } else {
-        print('⚠️ Image file not found or path is null');
-      }
-    } catch (e) {
-      print('❌ Error loading image: $e');
-    }
-  }
-
-  Future<void> _saveImageToLocalStorage(File imageFile) async {
-    try {
-      print('📸 Picked file path: ${imageFile.path}');
-      print('📸 File exists: ${imageFile.existsSync()}');
-      
-      final appDocDir = await getApplicationDocumentsDirectory();
-      final fileName =
-          'profile_image_${DateTime.now().millisecondsSinceEpoch}.png';
-      final savePath = '${appDocDir.path}/$fileName';
-      
-      print('📸 Saving to: $savePath');
-      
-      final savedImage = await imageFile.copy(savePath);
-      
-      print('📸 Saved image exists: ${savedImage.existsSync()}');
-      print('📸 Saved image path: ${savedImage.path}');
-
-      await SharedPreferencesMethod.setProfileImagePath(savedImage.path);
-      print('💾 Path saved to SharedPreferences');
-
-      setState(() {
-        _profileImage = savedImage;
-      });
-      
-      print('✅ Image saved and displayed successfully!');
-    } catch (e) {
-      print('❌ Error saving image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final String role = Get.arguments ?? 'reader';
+    final bool isAuthor = role == 'author';
+    final authController = controller;
+
+
+
     return Scaffold(
+
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -96,7 +35,7 @@ class _SignUpState extends State<SignUp> {
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                 top: 3.h,
+                  top: 3.h,
                 ),
                 physics: BouncingScrollPhysics(),
                 child: Container(
@@ -141,23 +80,26 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                               child: ClipOval(
-                                child: _profileImage != null
-                                    ? Image.file(
-                                        _profileImage!,
-                                        fit: BoxFit.cover,
-                                        width: 20.w,
-                                        height: 20.w,
-                                      )
-                                    : Container(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.person_rounded,
-                                            color: buttonColor.withOpacity(0.6),
-                                            size: 12.w,
+                                child: Obx(() {
+                                  final file = authController.profileImage.value;
+                                  return file != null
+                                      ? Image.file(
+                                          file,
+                                          fit: BoxFit.cover,
+                                          width: 20.w,
+                                          height: 20.w,
+                                        )
+                                      : Container(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              color: buttonColor.withOpacity(0.6),
+                                              size: 12.w,
+                                            ),
                                           ),
-                                        ),
-                                      ),
+                                        );
+                                }),
                               ),
                             ),
                             Positioned(
@@ -165,11 +107,7 @@ class _SignUpState extends State<SignUp> {
                               bottom: 2.w,
                               child: GestureDetector(
                                 onTap: () async {
-                                  final File? file = await _mediaPickerService
-                                      .pickMedia(context);
-                                  if (file != null) {
-                                    await _saveImageToLocalStorage(file);
-                                  }
+                                  await authController.pickProfilePicture(context);
                                 },
                                 child: Image.asset(
                                   "assets/png/camera.png",
@@ -186,26 +124,44 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(height: 1.5.h),
 
                       // Fields
-                      emailTextFeild('Full Name', "Lisa Jhon"),
+                      emailTextFeild(
+                        'Full Name',
+                        "Lisa Jhon",
+                        controller: authController.fullNameController,
+                      ),
                       SizedBox(height: 1.5.h),
-                      emailTextFeild('Email', "abc@gmail.com"),
+                      emailTextFeild(
+                        'Email',
+                        "abc@gmail.com",
+                        controller: authController.emailController,
+                      ),
                       SizedBox(height: 1.5.h),
-                      emailTextFeild('Password', "8+ character"),
+                      emailTextFeild(
+                        'Password',
+                        "8+ character",
+                        controller: authController.passwordController,
+                        ispassword: true,
+                        isPasswordHidden: authController.isPasswordHidden,
+                      ),
                       SizedBox(height: 1.5.h),
-                      emailTextFeild('Confirm Password', "**********"),
+                      emailTextFeild(
+                        'Confirm Password',
+                        "**********",
+                        controller: authController.confirmPasswordController,
+                        ispassword: true,
+                        isPasswordHidden: authController.isConfirmPasswordHidden,
+                      ),
 
                       if (isAuthor) ...[
                         SizedBox(height: 1.5.h),
-                        emailTextFeild('Bio Graphy', "Write about yourself"),
+                        emailTextFeild('Bio Graphy', "Write about yourself",controller: authController.bioController),
                       ],
 
                       SizedBox(height: 3.h),
                       buttonWidget(
                         "Sign Up",
                         whiteColor,
-                        onTap: () => isAuthor
-                            ? Get.toNamed('/plan')
-                            : Get.toNamed('/bottomnav'),
+                        onTap: () => authController.signUp(context, role: role),
                         colors: buttonColor,
                         fontFamily: 'Poppins',
                         height: 5.5.h,
@@ -310,3 +266,5 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
+
+

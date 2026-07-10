@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
 import 'package:storysign/widgets/background_image.dart';
 
 import '../../../../../widgets/custom_reset_container.dart';
 import '../../../../../widgets/custom_text_feild.dart';
 
 
-class ResetPassword extends StatelessWidget {
+class ResetPassword extends GetView<AuthController> {
   const ResetPassword({super.key});
 
   @override
@@ -22,10 +23,13 @@ class ResetPassword extends StatelessWidget {
             title: "Forgot Password",
             subtitle: "Enter your email to receive an OTP code",
             buttonText: "Send OTP",
-            onButtonPressed: () => Get.toNamed('/sendotp'),
+            onButtonPressed: (){
+              controller.forgotPassword();
+
+            },
              Decs: 'We will send a 6-digit verification code to your registered email address ',
             children: [
-              emailTextFeild('Email', "abc@gmail.com"),
+              emailTextFeild('Email', "abc@gmail.com",controller: controller.forgotEmailController),
 
 
             ],

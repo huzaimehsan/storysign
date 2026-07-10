@@ -49,35 +49,26 @@ Widget emailTextFeild(
                 obscureText: isPasswordHidden!.value,
                 decoration: InputDecoration(
                   filled: true,
-                  // 🔥 IMPORTANT
-                  fillColor: Colors.white,
-                  //
+                  fillColor: textFeildContainColor,
                   isDense: true,
                   hintText: hinttext,
                   hintStyle: TextStyle(
-                    color: borderGreyColor,
-                    fontFamily: "inter",
-                    fontSize: 14.5.sp,
+                    color: textFeildColor,
+                    fontFamily: "Poppins",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
                   ),
 
-                  contentPadding: EdgeInsets.symmetric(vertical: 1.5.h),
-
-                  /// 🔹 PREFIX
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(width: 3.w),
-
-                      Container(
-                        height: 2.5.h,
-                        width: 1,
-                        color: borderGreyColor,
-                      ),
-                      SizedBox(width: 2.w),
-                    ],
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 1.h,
+                    horizontal: 4.w,
                   ),
 
-                  /// 🔥 SUFFIX CONSTRAINTS
+                  prefixIconConstraints: BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
+
                   suffixIconConstraints: BoxConstraints(
                     minHeight: 4.3.h,
                     minWidth: 4.3.h,
@@ -89,15 +80,15 @@ Widget emailTextFeild(
                     },
                     child: Padding(
                       padding: EdgeInsets.only(
-                        right: 4.w, // 🔹 Add padding from right
+                        right: 4.w,
                       ),
                       child: Obx(
-                        () => Image.asset(
+                        () => Icon(
                           isPasswordHidden.value
-                              ? "assets/png/auth_image/field-icons-close-eye.png"
-                              : "assets/png/auth_image/open-eye.png",
-                          width: 4.w,
-                          height: 4.w,
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: borderGreyColor,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -274,12 +265,10 @@ Widget customTextField(
                         },
                         child: Padding(
                           padding: EdgeInsets.only(right: 4.w),
-                          child: Image.asset(
-                            isObscure.value
-                                ? "assets/png/auth_image/field-icons-close-eye.png"
-                                : "assets/png/auth_image/open-eye.png",
-                            width: 4.w,
-                            height: 4.w,
+                          child: Icon(
+                            isObscure.value ? Icons.visibility_off : Icons.visibility,
+                            color: borderGreyColor,
+                            size: 24,
                           ),
                         ),
                       ),

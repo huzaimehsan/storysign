@@ -14,8 +14,11 @@ import '../../controller/auth_controller.dart';
 class SendOtp extends GetView<AuthController> {
   const SendOtp({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments;
+    final String email = args is Map<String, dynamic> ? args['email'] ?? "" : "";
     return Scaffold(
       body: Stack(
         children: [
@@ -67,7 +70,11 @@ class SendOtp extends GetView<AuthController> {
                       fontFamily: "Poppins",
                     ),
                     SizedBox(height: 1.h),
-                    CustomOtpField(length: 6, onCompleted: (pin) {}),
+                    CustomOtpField(length: 6, onCompleted: (pin) {
+
+                      controller.otpController;
+
+                    }),
 
                     SizedBox(height: 2.h),
 
@@ -75,7 +82,10 @@ class SendOtp extends GetView<AuthController> {
                     buttonWidget(
                       "Send OTP",
                       Colors.white,
-                      onTap: () => Get.toNamed('/signin'),
+                      onTap: (){
+                        Get.toNamed("/resendotp");
+                        controller.verifyOtp(email);
+                      },
                       colors: buttonColor,
                       fontFamily: 'Poppins',
                       height: 5.2.h,
