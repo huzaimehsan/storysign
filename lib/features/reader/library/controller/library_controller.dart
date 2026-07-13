@@ -1,41 +1,30 @@
+import 'dart:convert';
+
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../../constants/local_db_key.dart';
+import '../../../../core/services/apiendpoints.dart';
+import '../../../../core/services/base_services.dart';
+import '../../../../utils/shared_prefrences_methods.dart';
+import '../../../../utils/utility.dart';
+import '../model/library_model.dart';
 
 class ReaderController extends GetxController {
   RxString selectedTab = "All".obs;
   RxString searchQuery = "".obs;
   RxString sortBy = "None".obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
   RxString filterStatus = "All".obs; // "All", "Signed", "In process", "Delivered", "Unsigned"
+  RxBool isLoading = false.obs;
 
-  var libraryBooksList = <Map<String, String>>[
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "Pride and Prejudice",
-      "authorName": "Jane Austen",
-      "date": "22 june, 2026",
-      "status": "Signed",
-    },
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "The Great Gatsby",
-      "authorName": "F. Scott Fitzgerald",
-      "date": "25 june, 2026",
-      "status": "In process",
-    },
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "The Great Gatsby",
-      "authorName": "F. Scott Fitzgerald",
-      "date": "25 june, 2026",
-      "status": "Delivered",
-    },
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "Hamlet",
-      "authorName": "William Shakespeare",
-      "date": "18 june, 2026",
-      "status": "Unsigned",
-    },
-  ].obs;
+  var booksList = <BookItem>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchBooksData();
+  }
 
   void selectTab(String tab) {
     selectedTab.value = tab;
@@ -43,6 +32,9 @@ class ReaderController extends GetxController {
 
   DateTime _parseDate(String dateStr) {
     try {
+      final parsed = DateTime.tryParse(dateStr);
+      if (parsed != null) return parsed;
+
       final parts = dateStr.toLowerCase().replaceAll(',', '').split(' ');
       if (parts.length >= 3) {
         final day = int.tryParse(parts[0]) ?? 1;
@@ -71,7 +63,12 @@ class ReaderController extends GetxController {
   }
 
   List<Map<String, String>> get filteredBooks {
-    List<Map<String, String>> books = List.from(libraryBooksList);
+    List<Map<String, String>> books = List.from(booksList.map((book) => {
+      "bookTitle": book.title ?? "",
+      "authorName": book.id ?? "",
+      "date": book.uploadDate ?? "",
+      "status": book..status ,
+    }).toList());
 
     // 1. Filter by Tab selection ("All", "Signed", "Unsigned")
     if (selectedTab.value == "Signed") {
@@ -118,5 +115,49 @@ class ReaderController extends GetxController {
     }
 
     return books;
+  }
+
+
+
+
+  Future<void> fetchBooksData() async {
+    try {
+      isLoading.value = true;
+      EasyLoading.show(status: 'Loading books...', maskType: EasyLoadingMaskType.black);
+
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+      if (token.isEmpty) {
+        Utils.showToast('Please login again', true);
+        return;
+      }
+
+
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.listMyBook}');
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final responseBody = jsonDecode(response.body);
+        print(responseBody);
+
+
+        if (responseBody['items'] != null) {
+          final BookResponseModel model = BookResponseModel.fromJson(responseBody);
+          booksList.assignAll(model.items);
+        }
+      } else {
+        Utils.showToast('Failed to load books', true);
+      }
+    } catch (e) {
+      Utils.showToast('Something went wrong: $e', true);
+    } finally {
+      isLoading.value = false;
+      EasyLoading.dismiss();
+    }
   }
 }

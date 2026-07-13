@@ -30,8 +30,15 @@ class AuthController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
+  final TextEditingController signInEmailController = TextEditingController();
+  final TextEditingController signInpasswordController = TextEditingController();
+
+
+
   final TextEditingController forgotEmailController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController = TextEditingController();
@@ -75,10 +82,15 @@ class AuthController extends GetxController {
   @override
   void onClose() {
     _timer?.cancel();
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    // fullNameController.dispose();
+    // emailController.dispose();
+    // passwordController.dispose();
+    // signInEmailController.dispose();
+    // signInpasswordController.dispose();
+    // otpController.dispose();
+    // newPasswordController.dispose();
+    // confirmNewPasswordController.dispose();
+    // confirmPasswordController.dispose();
     super.onClose();
   }
 
@@ -183,7 +195,7 @@ class AuthController extends GetxController {
 
       if (streamedResponse.statusCode == 201) {
         Utils.showToast(responseMap['message'] ?? 'Signup successful', false);
-
+        clearSignUpFeild();
         final data = responseMap['user'];
         if (data != null && data['email'] != null) {
           email = data['email'];
@@ -196,7 +208,7 @@ class AuthController extends GetxController {
             ? '/authorbottomnav'
             : '/bottomnav';
 
-        clearSignUpFeild();
+
 
         Future.microtask(() {
           Get.offAllNamed(redirectRoute);
@@ -221,18 +233,18 @@ class AuthController extends GetxController {
 
   void clearSignUpFeild(){
 
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    fullNameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
   }
 
 
   //---------------------------------------------------------------------------------------//
   //login//
   Future<void> login() async {
-    final String email = emailController.text.trim();
-    final String password = passwordController.text.trim();
+    final String email = signInEmailController.text.trim();
+    final String password = signInpasswordController.text.trim();
 
     if (email.isEmpty) {
       Utils.showToast('Email is required', true);
@@ -301,13 +313,15 @@ class AuthController extends GetxController {
       await prefs.setString(LocalDBKeys.TOKEN, token);
 
       Utils.showToast(successMessage ?? 'Login successful', false);
+
+      clearLoginFeilds();
       final String role = user['role']?.toString().toLowerCase() ?? 'reader';
       if (role == 'author') {
         Get.offAllNamed('/authorbottomnav');
       } else {
         Get.offAllNamed('/bottomnav');
       }
-      clearLoginFeilds();
+
     } on TimeoutException {
       Utils.showToast('Request timed out', true);
     } on SocketException {
@@ -323,8 +337,8 @@ class AuthController extends GetxController {
 
   void clearLoginFeilds(){
 
-    emailController.dispose();
-    passwordController.dispose();
+    signInEmailController.clear();
+    signInpasswordController.clear();
   }
 
 
@@ -365,7 +379,8 @@ class AuthController extends GetxController {
         Utils.showToast(responseMap['message'] ?? 'Reset link sent to your email', false);
 
 
-        Get.toNamed('/sendotp', arguments: {'email': email});
+        Get.toNamed("/resendotp");
+      //  Get.toNamed('/sendotp', arguments: {'email': email});
 
       } else {
         Utils.showToast(responseMap['message'] ?? 'Failed to send reset link', true);
@@ -480,8 +495,8 @@ class AuthController extends GetxController {
 
   void clearResetPasswordFeilds(){
 
-    newPasswordController.dispose();
-    confirmNewPasswordController.dispose();
+    newPasswordController.clear();
+    confirmNewPasswordController.clear();
   }
 
 

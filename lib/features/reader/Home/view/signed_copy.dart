@@ -58,13 +58,13 @@ class SignedCopy extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             recentlySignedBooks(
-              imagePath: "assets/png/book.png",
+              imageUrl: "assets/png/book.png",
               bookTitle: "Things Fall Apart",
               authorName: "Chinua Achebe",
               date: "22 june, 2026",
               trackRequest: () {},
               status: 'Signed',
-              showArrow: false,
+              showArrow: false, imagePath: '',
             ),
             SizedBox(height: 1.h),
             signedCopyMessageCard(

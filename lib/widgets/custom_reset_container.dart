@@ -88,15 +88,15 @@ class AuthCard extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
 
-            customText(
-              textAlign: TextAlign.center,
-              color: lightTextColor,
-              fontFamily: 'Inter',
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w500,
-              text:
-                  "We will send a 6-digit verification code to you registered email address ",
-            ),
+            // customText(
+            //   textAlign: TextAlign.center,
+            //   color: lightTextColor,
+            //   fontFamily: 'Inter',
+            //   fontSize: 15.sp,
+            //   fontWeight: FontWeight.w500,
+            //   text:
+            //       "We will send a 6-digit verification code to you registered email address ",
+            // ),
           ],
         ),
       ),

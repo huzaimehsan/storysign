@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
 
+import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
@@ -16,6 +17,7 @@ class SignIn extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final authController = controller;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -49,11 +51,28 @@ class SignIn extends GetView<AuthController> {
                     ),
                     SizedBox(height: 2.5.h),
 
-                    emailTextFeild('Email', "abc@gmail.com" ,controller: authController.emailController),
-                    SizedBox(height: 2.h),
-
-                    emailTextFeild('Password', "••••••••",controller: authController.passwordController, ispassword: true,
-                      isPasswordHidden: authController.isConfirmPasswordHidden,),
+                    Form(
+                      key: authController.formKey,
+                      child: Column(
+                        children: [
+                          emailTextFeild(
+                            'Email',
+                            "abc@gmail.com",
+                            controller: authController.signInEmailController,
+                            validator: (value) => HelperFunction.emailValidate(value ?? ''),
+                          ),
+                          SizedBox(height: 2.h),
+                          emailTextFeild(
+                            'Password',
+                            "••••••••",
+                            controller: authController.signInpasswordController,
+                            ispassword: true,
+                            isPasswordHidden: authController.isConfirmPasswordHidden,
+                            validator: (value) => HelperFunction.passwordValidate(value ?? ''),
+                          ),
+                        ],
+                      ),
+                    ),
 
                     SizedBox(height: 1.3.h),
                     InkWell(
@@ -74,7 +93,9 @@ class SignIn extends GetView<AuthController> {
                       "Sign In",
                       whiteColor,
                       onTap: () {
-                        authController.login();
+                        if (authController.formKey.currentState?.validate() ?? false) {
+                          authController.login();
+                        }
                       },
                       colors: buttonColor,
                       fontFamily: 'Poppins',

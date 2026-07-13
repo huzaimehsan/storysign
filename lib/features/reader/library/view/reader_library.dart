@@ -5,15 +5,16 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:sizer/sizer.dart';
 
 
-import '../../../../../constants/color_constants.dart';
-import '../../../../../widgets/book_widget.dart';
-import '../../../../../widgets/button_widget.dart';
-import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/search_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/book_widget.dart';
+import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/search_widget.dart';
 
-import '../../../Home/widgets/reader/user_profile_card.dart';
-import '../../../search/widgets/header_widget.dart';
-import '../../controller/reader/reader_controller.dart';
+import '../../Home/widgets/reader/user_profile_card.dart';
+import '../../search/widgets/header_widget.dart';
+import '../controller/library_controller.dart';
+import '../model/library_model.dart';
 
 class ReaderLibrary extends GetView<ReaderController> {
   const ReaderLibrary({super.key});
@@ -131,7 +132,13 @@ class ReaderLibrary extends GetView<ReaderController> {
         
             Expanded(
               child: Obx(() {
-                final books = controller.filteredBooks;
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(color: buttonColor),
+                  );
+                }
+
+                final List<BookItem> books = controller.booksList.toList();
                 if (books.isEmpty) {
                   return Center(
                     child: customText(
@@ -149,14 +156,13 @@ class ReaderLibrary extends GetView<ReaderController> {
                   itemBuilder: (context, index) {
                     final book = books[index];
                     return recentlySignedBooks(
-                      imagePath: book["imagePath"] ?? "assets/png/book.png",
-                      bookTitle: book["bookTitle"] ?? "",
-                      authorName: book["authorName"] ?? "",
-                      date: book["date"] ?? "",
-                      status: book["status"] ?? "",
-                      trackRequest: () {
+                      imagePath: book.coverImage,
 
-                      },
+                      bookTitle: book.title,
+                      authorName: book.readerId.isNotEmpty ? book.readerId : "Unknown Author",
+                      date: book.uploadDate,
+                      status: book.status,
+                      trackRequest: () {},
                     );
                   },
                 );

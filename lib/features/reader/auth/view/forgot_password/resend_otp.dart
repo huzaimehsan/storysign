@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
+import '../../../../../utils/helper_functions.dart';
 import '../../../../../widgets/background_image.dart';
 import '../../../../../widgets/custom_reset_container.dart';
 import '../../../../../widgets/custom_text_feild.dart';
@@ -26,24 +28,40 @@ class ResendOtp extends GetView<AuthController> {
             buttonText: "Change Password",
             onButtonPressed: (){
 
-              controller.resetPassword(email, code);
+              if (controller.formKey.currentState?.validate() ?? false){
+                controller.resetPassword(email, code);
+
+              }
+
+
             },
             Decs: 'Enter a new password and confirm it to update your account.',
             children: [
-              emailTextFeild(
-                'New Password',
-                "••••••••",
-                controller: controller.newPasswordController,
-                ispassword: true,
-                isPasswordHidden: controller.isPasswordHidden,
-              ),
-              emailTextFeild(
-                'Confirm Password',
-                "••••••••",
-                controller: controller.confirmNewPasswordController,
-                ispassword: true,
-                isPasswordHidden: controller.isConfirmPasswordHidden,
-              ),
+             Form(
+               key: controller.formKey,
+               child: Column(
+                 children: [
+                   emailTextFeild(
+                     'New Password',
+                     "••••••••",
+                     controller: controller.newPasswordController,
+                     ispassword: true,
+                     isPasswordHidden: controller.isPasswordHidden,
+                     validator: (value) => HelperFunction.emailValidate(value ?? ''),
+                   ),
+                   SizedBox(height: 1.5.h,),
+                   emailTextFeild(
+                     'Confirm Password',
+                     "••••••••",
+                     controller: controller.confirmNewPasswordController,
+
+                     validator: (value) => HelperFunction.passwordValidate(value ?? ''),
+                     ispassword: true,
+                     isPasswordHidden: controller.isConfirmPasswordHidden,
+                   ),
+                 ],
+               ),
+             )
             ],
           ),
         ],

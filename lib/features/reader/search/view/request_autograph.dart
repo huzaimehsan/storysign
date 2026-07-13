@@ -11,7 +11,7 @@ import '../../../../widgets/custom_text_feild.dart';
 
 import '../../../../widgets/image_picker.dart';
 import '../../../../widgets/sucess_widget.dart';
-import '../widgets/author_detail_widget.dart';
+import '../../../../widgets/author_detail_widget.dart';
 import '../widgets/file_upload_widget.dart';
 import '../widgets/header_widget.dart';
 

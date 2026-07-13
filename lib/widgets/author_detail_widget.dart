@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../constants/color_constants.dart';
-import '../../../../widgets/customText_widget.dart';
+import '../constants/color_constants.dart';
+import 'customText_widget.dart';
 
 
 class AuthorInfoCard extends StatelessWidget {
-  final String imagePath;
+  final String? imagePath;
   final String bookTitle;
-  final String date;
+  final dynamic date;
 
   const AuthorInfoCard({
     super.key,
@@ -20,6 +23,32 @@ class AuthorInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String formattedDate;
+
+    if (date is DateTime) {
+      formattedDate = 'Joined ${DateFormat('dd MMM yyyy').format(date as DateTime)}';
+    } else if (date is String && (date as String).trim().isNotEmpty) {
+      final text = (date as String).trim();
+      formattedDate = text.startsWith('Joined') ? text : 'Joined $text';
+    } else {
+      formattedDate = 'Joined recently';
+    }
+
+    final String path = imagePath?.toString() ?? "";
+
+    // 1. ImageProvider define karein
+    ImageProvider? imageProvider;
+    bool isPlaceholder = (path.isEmpty || path == "null");
+
+    if (!isPlaceholder) {
+      if (path.startsWith('http')) {
+        imageProvider = NetworkImage(path);
+      } else if (path.startsWith('/')) {
+        imageProvider = FileImage(File(path));
+      } else {
+        imageProvider = AssetImage(path);
+      }
+    }
     return Container(
       height: 9.5.h,
       width: 100.w,
@@ -45,11 +74,18 @@ class AuthorInfoCard extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(color: buttonColor, width: 1.2),
               shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage(imagePath),
-                fit: BoxFit.cover,
-              ),
+
+              color: isPlaceholder ? Colors.grey.withOpacity(0.2) : null,
+              image: !isPlaceholder
+                  ? DecorationImage(image: imageProvider!, fit: BoxFit.cover)
+                  : null,
             ),
+
+            child: isPlaceholder
+                ? Center(
+              child: Icon(Icons.person_rounded, color: buttonColor.withOpacity(0.6), size: 9.w),
+            )
+                : null,
           ),
           SizedBox(width: 4.w),
           Expanded(
@@ -66,7 +102,7 @@ class AuthorInfoCard extends StatelessWidget {
                 SizedBox(height: 0.6.h),
                 customText(
                   fontFamily: "Poppins",
-                  text: date,
+                  text: formattedDate,
                   color: secondryColor.withOpacity(0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,

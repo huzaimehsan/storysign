@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -7,49 +9,88 @@ import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
 
 
-Widget userProfileCard({required String imagePath, required String name}) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Stack(
-        children: [
-          // Profile Image
-          CircleAvatar(
-            radius: 3.1.h,
-            backgroundImage: AssetImage(imagePath),
-            backgroundColor: buttonColor.withAlpha(30),
-          ),
+Widget userProfileCard({required dynamic imagePath, required String name, required VoidCallback ontap}) {
+  final String path = imagePath?.toString() ?? "";
 
-          Positioned(
-            right: 0.1.h,
-            bottom: 0.5.h,
-            child: Container(
-              height: 1.2.h,
-              width: 1.2.h,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-      SizedBox(height: 0.5.h),
 
-      SizedBox(
-        width: 20.w,
+  Widget imageWidget;
 
-        child: customText(
-          color: whiteColor,
-          fontFamily: 'Inter',
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w600,
-          text: name.contains(" ") ? name.replaceFirst(" ", "\n") : name,
-          maxLines: 2,
-          textAlign: TextAlign.center,
+  if (path.isEmpty || path == "null") {
+    imageWidget = Container(
+      color: Colors.grey.withOpacity(0.2),
+
+      child: Center(
+        child: Icon(
+          Icons.person_rounded,
+          color: buttonColor.withOpacity(0.6),
+          size: 12.w,
         ),
       ),
-    ],
+    );
+  } else if (path.startsWith('http')) {
+    // Network image (Server se)
+    imageWidget = Image.network(path, fit: BoxFit.cover);
+  } else if (path.startsWith('/')) {
+    // Local File path (Jo aapne AuthController mein save kiya tha)
+    imageWidget = Image.file(File(path), fit: BoxFit.cover);
+  } else {
+    // Asset image
+    imageWidget = Image.asset(path, fit: BoxFit.cover);
+  }
+  final displayName = name.trim().isEmpty
+      ? 'Author'
+      : (name.contains(" ") ? name.replaceFirst(" ", "\n") : name);
+
+  return InkWell(
+    onTap: ontap,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 6.2.h,
+              width: 6.2.h,
+              decoration: BoxDecoration(
+                color: buttonColor.withAlpha(30),
+                shape: BoxShape.circle,
+              ),
+              child: ClipOval(
+                child: imageWidget,
+              ),
+            ),
+
+            Positioned(
+              right: 0.1.h,
+              bottom: 0.5.h,
+              child: Container(
+                height: 1.2.h,
+                width: 1.2.h,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 0.4.h),
+
+        SizedBox(
+          width: 18.w,
+          child: customText(
+            color: whiteColor,
+            fontFamily: 'Inter',
+            fontSize: 13.2.sp,
+            fontWeight: FontWeight.w600,
+            text: displayName,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    ),
   );
 }
 

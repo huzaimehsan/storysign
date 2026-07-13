@@ -16,6 +16,7 @@ Widget emailTextFeild(
   int? maxLength,
   int? maxLines,
   bool? showSuffix,
+String? Function(String?)? validator,
   bool? isPaymentScreen = false,
 }) {
   return Column(
@@ -43,7 +44,8 @@ Widget emailTextFeild(
       SizedBox(height: 1.h),
       ispassword == true
           ? Obx(() {
-              return TextField(
+              return TextFormField(
+                validator: validator,
                 maxLength: maxLength,
                 controller: controller,
                 obscureText: isPasswordHidden!.value,
@@ -108,10 +110,25 @@ Widget emailTextFeild(
                       width: 0.2.h,
                     ),
                   ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24.sp),
+                    borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 0.15.h,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24.sp),
+                    borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 0.2.h,
+                    ),
+                  ),
                 ),
               );
             })
-          : TextField(
+          : TextFormField(
+        validator: validator,
               controller: controller,
               maxLength: maxLength,
               maxLines: maxLines,
@@ -162,6 +179,14 @@ Widget emailTextFeild(
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24.sp),
                   borderSide: BorderSide(color: borderGreyColor, width: 0.2.h),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24.sp),
+                  borderSide: BorderSide(color: Colors.red, width: 0.15.h),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24.sp),
+                  borderSide: BorderSide(color: Colors.red, width: 0.2.h),
                 ),
               ),
             ),

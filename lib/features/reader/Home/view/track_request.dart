@@ -112,7 +112,7 @@ class TrackRequest extends GetView<HomeController> {
                   itemBuilder: (context, index) {
                     final book = books[index];
                     return recentlySignedBooks(
-                      imagePath: book["imagePath"] ?? "",
+                      imageUrl: book["imagePath"] ?? "",
                       bookTitle: book["bookTitle"] ?? "",
                       authorName: book["authorName"] ?? "",
                       date: book["date"] ?? "",
@@ -120,7 +120,7 @@ class TrackRequest extends GetView<HomeController> {
 
                         Get.toNamed("/tracking");
                       },
-                      status: book["status"] ?? "",
+                      status: book["status"] ?? "", imagePath: '',
                     );
                   },
                 );

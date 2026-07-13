@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../controller/reader/reader_controller.dart';
+import '../controller/library_controller.dart';
 
 class ReaderLibraryBinding implements Bindings {
   @override

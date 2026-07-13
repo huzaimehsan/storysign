@@ -16,6 +16,8 @@ class HomeScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+
+    final homeController = controller;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 7.h),
@@ -48,38 +50,43 @@ class HomeScreen extends GetView<HomeController> {
               padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: sectionHeader(title: "All Authors", onSeeAll: () {}),
             ),
-            SizedBox(height: 1.h),
+            SizedBox(height: 2.h),
 
             Obx(() {
-              final authorsList = controller.filteredAuthors;
-              if (authorsList.isEmpty) {
-                return SizedBox(
-                  height: 10.h,
-                  child: Center(
-                    child: customText(
-                      text: "No Author At All",
+              final authorsList = homeController.welcomes;
 
-                      color: greyColor,
-                      fontSize: 15.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+              // 1. Loading state check
+              if (controller.isLoading.value) {
+                return SizedBox( // Yahan 'return' add karein
+                  height: 20.h,
+                  child: const Center(child: CircularProgressIndicator()),
                 );
               }
 
-              return SizedBox(
-                height: 27.w,
+              // 2. Data available state
+              return Container( // Yahan bhi 'return' hona chahiye
+                height: 23.w,
+                padding: EdgeInsets.symmetric(horizontal: 1.w),
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
                   itemCount: authorsList.length,
-                  separatorBuilder: (context, index) => SizedBox(width: 1.w),
+                  separatorBuilder: (context, index) => SizedBox(width: 2.w),
                   itemBuilder: (context, index) {
                     final author = authorsList[index];
-                    return userProfileCard(
-                      imagePath: author["imagePath"]!,
-                      name: author["name"]!,
+                    return SizedBox(
+                      width: 17.w,
+                      child: userProfileCard(
+                        imagePath: author.profilePicture,
+                        name: author.fullName,
+                        ontap: () {
+                          print(author.id);
+                          Get.toNamed('/authordetail', arguments: {
+                            'authorId': author.id,
+                            'role': 'allAuthor'
+                          });
+                        },
+                      ),
                     );
                   },
                 ),
@@ -123,14 +130,14 @@ class HomeScreen extends GetView<HomeController> {
                     itemBuilder: (context, index) {
                       final book = books[index];
                       return recentlySignedBooks(
-                        imagePath: book["imagePath"]!,
+                        imageUrl: book["imagePath"]!,
                         bookTitle: book["bookTitle"]!,
                         authorName: book["authorName"]!,
                         date: book["date"]!,
                         status: book["status"]!,
                         trackRequest: () {
                           Get.toNamed("/signedcopy");
-                        },
+                        }, imagePath: '',
                       );
                     },
                   ),

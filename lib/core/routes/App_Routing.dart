@@ -43,7 +43,7 @@ import '../../features/reader/auth/view/sign_up.dart';
 import '../../features/reader/auth/view/splash_screen.dart';
 import '../../features/reader/bottomNav/binding/bottom_nav_binding.dart';
 import '../../features/reader/bottomNav/view/bottom_nav_layout.dart';
-import '../../features/reader/library/view/reader/reader_library.dart';
+import '../../features/reader/library/view/reader_library.dart';
 import '../../features/reader/notification/view/notification.dart';
 import '../../features/reader/search/view/author_detail.dart';
 import '../../features/reader/search/view/request_autograph.dart';

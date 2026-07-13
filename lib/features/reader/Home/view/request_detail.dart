@@ -9,7 +9,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
-import '../../search/widgets/author_detail_widget.dart';
+import '../../../../widgets/author_detail_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
 class RequestDetail extends StatelessWidget {

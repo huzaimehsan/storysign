@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 
 
 import '../../../../../constants/color_constants.dart';
+import '../../../../../utils/helper_functions.dart';
 import '../../../../../widgets/background_image.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
@@ -70,11 +71,15 @@ class SendOtp extends GetView<AuthController> {
                       fontFamily: "Poppins",
                     ),
                     SizedBox(height: 1.h),
-                    CustomOtpField(length: 6, onCompleted: (pin) {
+                    Form(
+                      key: controller.formKey,
+                      child: CustomOtpField(length: 6,validator: (value) => HelperFunction.validateOTP(value ?? ''), onCompleted: (pin) {
 
-                      controller.otpController;
 
-                    }),
+                        controller.otpController;
+
+                      }),
+                    ),
 
                     SizedBox(height: 2.h),
 
@@ -83,8 +88,13 @@ class SendOtp extends GetView<AuthController> {
                       "Send OTP",
                       Colors.white,
                       onTap: (){
-                        Get.toNamed("/resendotp");
-                        controller.verifyOtp(email);
+
+                        if(controller.formKey.currentState?.validate()?? false){
+                          Get.toNamed("/resendotp");
+                        // controller.verifyOtp(email);
+
+                        }
+
                       },
                       colors: buttonColor,
                       fontFamily: 'Poppins',

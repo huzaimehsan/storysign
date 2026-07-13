@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
@@ -40,9 +41,7 @@ class SignUp extends GetView<AuthController> {
                 physics: BouncingScrollPhysics(),
                 child: Container(
                   width: 90.w,
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height,
-                  ),
+
                   padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: containerColor,
@@ -124,44 +123,71 @@ class SignUp extends GetView<AuthController> {
                       SizedBox(height: 1.5.h),
 
                       // Fields
-                      emailTextFeild(
-                        'Full Name',
-                        "Lisa Jhon",
-                        controller: authController.fullNameController,
-                      ),
-                      SizedBox(height: 1.5.h),
-                      emailTextFeild(
-                        'Email',
-                        "abc@gmail.com",
-                        controller: authController.emailController,
-                      ),
-                      SizedBox(height: 1.5.h),
-                      emailTextFeild(
-                        'Password',
-                        "8+ character",
-                        controller: authController.passwordController,
-                        ispassword: true,
-                        isPasswordHidden: authController.isPasswordHidden,
-                      ),
-                      SizedBox(height: 1.5.h),
-                      emailTextFeild(
-                        'Confirm Password',
-                        "**********",
-                        controller: authController.confirmPasswordController,
-                        ispassword: true,
-                        isPasswordHidden: authController.isConfirmPasswordHidden,
+                      Form(
+                        key: authController.formKey,
+                        child: Column(
+                          children: [
+                            emailTextFeild(
+                              'Full Name',
+                              "Lisa Jhon",
+                              controller: authController.fullNameController,
+                              validator: (value) => HelperFunction.ValidateName(value ?? '', fieldName: 'Full Name'),
+                            ),
+                            SizedBox(height: 1.5.h),
+                            emailTextFeild(
+                              'Email',
+                              "abc@gmail.com",
+                              controller: authController.emailController,
+                              validator: (value) => HelperFunction.emailValidate(value ?? ''),
+                            ),
+                            SizedBox(height: 1.5.h),
+                            emailTextFeild(
+                              'Password',
+                              "8+ character",
+                              controller: authController.passwordController,
+                              ispassword: true,
+                              isPasswordHidden: authController.isPasswordHidden,
+                              validator: (value) => HelperFunction.passwordValidate(value ?? ''),
+                            ),
+                            SizedBox(height: 1.5.h),
+                            emailTextFeild(
+                              'Confirm Password',
+                              "••••••••",
+                              controller: authController.confirmPasswordController,
+                              ispassword: true,
+                              isPasswordHidden: authController.isConfirmPasswordHidden,
+                              validator: (value) {
+                                if ((value ?? '').isEmpty) {
+                                  return 'Confirm password cannot be empty';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            if (isAuthor) ...[
+                              SizedBox(height: 1.5.h),
+                              emailTextFeild('Bio Graphy', "Write about yourself",controller: authController.bioController,
+
+                                validator:   (value)=>
+                                    HelperFunction.bioValidate(value ?? ''),
+
+
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
 
-                      if (isAuthor) ...[
-                        SizedBox(height: 1.5.h),
-                        emailTextFeild('Bio Graphy', "Write about yourself",controller: authController.bioController),
-                      ],
 
                       SizedBox(height: 3.h),
                       buttonWidget(
                         "Sign Up",
                         whiteColor,
-                        onTap: () => authController.signUp(context, role: role),
+                        onTap: () {
+                          if (authController.formKey.currentState?.validate() ?? false) {
+                            authController.signUp(context, role: role);
+                          }
+                        },
                         colors: buttonColor,
                         fontFamily: 'Poppins',
                         height: 5.5.h,

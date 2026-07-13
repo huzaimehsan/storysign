@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -9,6 +11,7 @@ import 'customText_widget.dart';
 
 Widget recentlySignedBooks({
   required String imagePath,
+  String? imageUrl,
   required String bookTitle,
   required String authorName,
   required String date,
@@ -41,12 +44,7 @@ Widget recentlySignedBooks({
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(3.w),
-            child: Image.asset(
-              imagePath,
-              height: 12.h,
-              width: 25.w,
-              fit: BoxFit.cover,
-            ),
+            child: _buildCoverImage(imagePath, imageUrl),
           ),
           SizedBox(width: 4.w),
           Expanded(
@@ -108,6 +106,53 @@ Widget recentlySignedBooks({
     ),
   );
 }
+
+Widget _buildCoverImage(String imagePath, String? imageUrl) {
+  final String path = imageUrl?.trim().isNotEmpty == true ? imageUrl!.trim() : imagePath.trim();
+  final uri = Uri.tryParse(path);
+  final isNetwork = uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+
+  if (path.isEmpty || path == 'null') {
+    return Container(
+      color: Colors.grey.withOpacity(0.2),
+      child: Center(
+        child: Icon(
+          Icons.book_rounded,
+          color: buttonColor.withOpacity(0.6),
+          size: 12.w,
+        ),
+      ),
+    );
+  } else if (isNetwork) {
+    return Image.network(
+      path,
+      height: 12.h,
+      width: 25.w,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Image.asset(
+        imagePath,
+        height: 12.h,
+        width: 25.w,
+        fit: BoxFit.cover,
+      ),
+    );
+  } else if (path.startsWith('/')) {
+    return Image.file(
+      File(path),
+      height: 12.h,
+      width: 25.w,
+      fit: BoxFit.cover,
+    );
+  } else {
+    return Image.asset(
+      path,
+      height: 12.h,
+      width: 25.w,
+      fit: BoxFit.cover,
+    );
+  }
+}
+
 Widget signedCopyMessageCard({
   String? title, // String? (Nullable)
   required String message,

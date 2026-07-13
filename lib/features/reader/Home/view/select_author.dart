@@ -8,7 +8,7 @@ import 'package:storysign/features/reader/Home/widgets/reader/widget_select_auth
 
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/search_widget.dart';
-import '../../search/widgets/author_detail_widget.dart';
+import '../../../../widgets/author_detail_widget.dart';
 import '../../search/widgets/file_upload_widget.dart';
 import '../../search/widgets/header_widget.dart';
 import '../../search/widgets/search_author_widget.dart';

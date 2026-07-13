@@ -15,7 +15,7 @@ import 'package:storysign/features/author/request/view/add_message.dart';
 import 'package:storysign/features/author/request/view/final_review.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
-import '../../../reader/library/view/reader/reader_library.dart';
+import '../../../reader/library/view/reader_library.dart';
 
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {

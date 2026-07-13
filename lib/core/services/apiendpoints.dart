@@ -12,7 +12,16 @@ class ApiEndPoints{
 
   static const String verifyForgotOtp = '/auth/verify-forgot-password-otp';
 
-  static const String addVehicle = '/fleet/vehicles';
+  static const String allAuthor = '/reader/authors?search=';
+static const String authorDetail = '/reader/authors';
+
+  static const String uploadBook = '/reader/books/upload';
+  static const String listMyBook = '/reader/library?page=1&limit=10';
+
+
+
+
+
   static const String addEquipment = '/fleet/equipment';
   static const String getProfile = '/users/me';
 
