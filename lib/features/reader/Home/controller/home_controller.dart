@@ -22,47 +22,28 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchHomeData();
+    debugPrint("HomeController onInit called");
+    Future.delayed(Duration(milliseconds: 500), () {
+      fetchTrackRequestData();
+    });
   }
+
   RxString selectedTab = "All".obs;
 
   final TextEditingController bookTitleController = TextEditingController();
+  final TextEditingController bookTitleControllerRequest =
+      TextEditingController();
+  final TextEditingController personalMessageController =
+      TextEditingController();
+
+  RxList<BookItem> trackRequest = <BookItem>[].obs;
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
 
   RxInt selectedAuthorIndex = 0.obs;
 
-  var authors = <Map<String, dynamic>>[
-    {
-      "name": "James Davenport",
-      "imagePath": "assets/png/authorimg.png",
-      "date": "Joined: 22 june, 2026",
-      "active": true,
-    },
-    {
-      "name": "Jane Austen",
-      "imagePath": "assets/png/authorimg1.png",
-      "date": "Joined: 22 june, 2026",
-      "active": true,
-    },
-    {
-      "name": "F. Scott Fitzgerald",
-      "imagePath": "assets/png/authorimg2.png",
-      "date": "Joined: 22 june, 2026",
-      "active": true,
-    },
-    {
-      "name": "William Shakespeare",
-      "imagePath": "assets/png/authorimg3.png",
-      "date": "Joined: 22 june, 2026",
-      "active": false,
-    },
-    {
-      "name": "Leo Tolstoy",
-      "imagePath": "assets/png/authorimg4.png",
-      "date": "Joined: 22 june, 2026",
-      "active": true,
-    },
-  ].obs;
+  // HomeController mein
+  RxString selectedAuthorId = "".obs;
 
   var recentlySignedBooksList = <Map<String, String>>[
     {
@@ -86,24 +67,25 @@ class HomeController extends GetxController {
       "date": "25 june, 2026",
       "status": "Delivered",
     },
-
-
   ].obs;
 
   RxString searchQuery = "".obs;
   RxList<AllAuthorModel> welcomes = <AllAuthorModel>[].obs;
   Rxn<AuthorDetailModel> authorDetailData = Rxn<AuthorDetailModel>();
+
   RxBool isLoading = false.obs;
+
+  RxBool trackRequestLoading = false.obs;
+  RxBool isFetchHome = false.obs;
   RxString errorMessage = ''.obs;
 
-  List<Map<String, dynamic>> get filteredAuthors {
+  List<AllAuthorModel> get filteredAuthors {
     if (searchQuery.value.trim().isEmpty) {
-      return authors;
+      return welcomes;
     }
-    final query = searchQuery.value.toLowerCase();
-    return authors
-        .where((author) =>
-            (author["name"] as String).toLowerCase().contains(query))
+    final query = searchQuery.value.toLowerCase().trim();
+    return welcomes
+        .where((author) => author.fullName.toLowerCase().contains(query))
         .toList();
   }
 
@@ -112,7 +94,8 @@ class HomeController extends GetxController {
 
     return recentlySignedBooksList.where((book) {
       final status = book["status"] ?? "";
-      final matchesTab = selectedTab.value == "All" ||
+      final matchesTab =
+          selectedTab.value == "All" ||
           (selectedTab.value == "In Process" && status == "In process") ||
           (selectedTab.value == "Delivered" && status == "Delivered");
 
@@ -124,6 +107,76 @@ class HomeController extends GetxController {
       final author = (book["authorName"] ?? "").toLowerCase();
       return title.contains(query) || author.contains(query);
     }).toList();
+  }
+
+  // -----------------------------------------------------------------------------------------//
+  RxString sortBy = "None"
+      .obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
+  RxString filterStatus =
+      "All".obs; // "All", "In process", "Delivered", "Signed", "Unsigned"
+
+  // ye helper method bhi add karein (class ke andar kahin bhi):
+  DateTime _parseDate(String dateStr) {
+    try {
+      final parsed = DateTime.tryParse(dateStr);
+      if (parsed != null) return parsed;
+    } catch (_) {}
+    return DateTime.now();
+  }
+
+  // filteredBooks getter POORI TARAH HATA DEIN (booksList declare hi nahi hai yahan)
+
+  // filteredTrackRequest ko is se replace karein:
+  List<BookItem> get filteredTrackRequest {
+    List<BookItem> requests = List<BookItem>.from(trackRequest);
+
+    // 1. Tab filter (All / In Process / Delivered)
+    if (selectedTab.value == "In Process") {
+      requests = requests.where((item) => item.status == "In process").toList();
+    } else if (selectedTab.value == "Delivered") {
+      requests = requests.where((item) => item.status == "Delivered").toList();
+    }
+
+    // 2. Search query
+    if (searchQuery.value.trim().isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      requests = requests.where((item) {
+        final title = item.title.toLowerCase();
+        final author = item.author.fullName.toLowerCase();
+        return title.contains(query) || author.contains(query);
+      }).toList();
+    }
+
+    // 3. Status filter (dropdown se)
+    if (filterStatus.value != "All") {
+      requests = requests
+          .where((item) => item.status == filterStatus.value)
+          .toList();
+    }
+
+    // 4. Sort
+    if (sortBy.value == "Title A-Z") {
+      requests.sort((a, b) => a.title.compareTo(b.title));
+    } else if (sortBy.value == "Title Z-A") {
+      requests.sort((a, b) => b.title.compareTo(a.title));
+    } else if (sortBy.value == "Date Newest") {
+      requests.sort(
+        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+      );
+    } else if (sortBy.value == "Date Oldest") {
+      requests.sort(
+        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+      );
+    }
+
+    return requests;
+  }
+
+  // resetFilter ko bhi update kar dein taake sort/filter bhi reset ho:
+  void resetFilter() {
+    selectTab("All");
+    sortBy.value = "None";
+    filterStatus.value = "All";
   }
 
   void selectAuthor(int index) {
@@ -138,15 +191,11 @@ class HomeController extends GetxController {
     selectTab(tab);
   }
 
-  void resetFilter() {
-    selectTab("All");
-  }
-
   Future<void> fetchHomeData() async {
     try {
-      isLoading.value = true;
+      isFetchHome.value = true;
       errorMessage.value = '';
-      EasyLoading.show(status: 'Please wait...', maskType: EasyLoadingMaskType.black);
+      // EasyLoading.show(status: 'Please wait...', maskType: EasyLoadingMaskType.black);
 
       final prefs = SharedPreferencesMethod.storage;
       final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
@@ -157,7 +206,9 @@ class HomeController extends GetxController {
         return;
       }
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.allAuthor}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.allAuthor}',
+      );
       final response = await http.get(
         uri,
         headers: {
@@ -171,20 +222,25 @@ class HomeController extends GetxController {
         final List<dynamic> items = responseBody is List
             ? responseBody
             : (responseBody is Map && responseBody['data'] is List
-                ? responseBody['data'] as List
-                : const []);
+                  ? responseBody['data'] as List
+                  : const []);
 
-        welcomes.assignAll(items.map((e) => AllAuthorModel.fromJson(e as Map<String, dynamic>)).toList());
+        welcomes.assignAll(
+          items
+              .map((e) => AllAuthorModel.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        );
       } else {
         final responseBody = jsonDecode(response.body);
-        errorMessage.value = responseBody['message']?.toString() ?? 'Failed to load home data';
+        errorMessage.value =
+            responseBody['message']?.toString() ?? 'Failed to load home data';
         Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {
       errorMessage.value = 'Something went wrong while loading data';
       Utils.showToast(errorMessage.value, true);
     } finally {
-      isLoading.value = false;
+      isFetchHome.value = false;
       EasyLoading.dismiss();
     }
   }
@@ -220,12 +276,14 @@ class HomeController extends GetxController {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final dynamic decodedBody = jsonDecode(response.body);
-        final dynamic data = decodedBody is Map ? (decodedBody['data'] ?? decodedBody) : null;
-
-
+        final dynamic data = decodedBody is Map
+            ? (decodedBody['data'] ?? decodedBody)
+            : null;
 
         if (data is Map) {
-          authorDetailData.value = AuthorDetailModel.fromJson(Map<String, dynamic>.from(data));
+          authorDetailData.value = AuthorDetailModel.fromJson(
+            Map<String, dynamic>.from(data),
+          );
           debugPrint('Success! Author ID: ${authorDetailData.value?.id}');
         } else {
           errorMessage.value = 'Invalid author detail response';
@@ -250,11 +308,8 @@ class HomeController extends GetxController {
     }
   }
 
-
-
   //---------------------------------------------------------------------------//
-// upload book function //
-
+  // upload book function //
 
   Future<void> uploadBook(BuildContext context) async {
     final String title = bookTitleController.text.trim();
@@ -280,11 +335,15 @@ class HomeController extends GetxController {
         maskType: EasyLoadingMaskType.black,
       );
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.uploadBook}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.uploadBook}',
+      );
       final request = http.MultipartRequest('POST', uri);
 
       // Agar auth token chahiye header mein
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+      final token = SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
       if (token != null && token.isNotEmpty) {
         request.headers['Authorization'] = 'Bearer $token';
       }
@@ -293,33 +352,46 @@ class HomeController extends GetxController {
 
       // PDF file
       final pdfFile = bookPdfFile.value!;
-      request.files.add(await http.MultipartFile.fromPath(
-        'bookPdf',
-        pdfFile.path,
-        filename: pdfFile.path.split('/').last,
-        contentType: http.MediaType('application', 'pdf'),
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'bookPdf',
+          pdfFile.path,
+          filename: pdfFile.path.split('/').last,
+          contentType: http.MediaType('application', 'pdf'),
+        ),
+      );
 
       // Cover image
       final coverFile = bookCoverImage.value!;
-      request.files.add(await http.MultipartFile.fromPath(
-        'coverImage',
-        coverFile.path,
-        filename: coverFile.path.split('/').last,
-        contentType: http.MediaType('image', 'png'), // agar jpg ho to 'jpeg' kar dein
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'coverImage',
+          coverFile.path,
+          filename: coverFile.path.split('/').last,
+          contentType: http.MediaType(
+            'image',
+            'png',
+          ), // agar jpg ho to 'jpeg' kar dein
+        ),
+      );
 
       print('⏳ UPLOAD BOOK API CALLING: $uri');
       print('➡ Fields: ${request.fields}');
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 60),
+      );
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
       print('✅ RESPONSE: $responseMap');
 
-      if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
-        Utils.showToast(responseMap['message'] ?? 'Book uploaded successfully', false);
+      if (streamedResponse.statusCode == 200 ||
+          streamedResponse.statusCode == 201) {
+        Utils.showToast(
+          responseMap['message'] ?? 'Book uploaded successfully',
+          false,
+        );
         clearUploadBookFields();
         Get.back(); // ya jahan navigate karna hai
         return;
@@ -344,5 +416,187 @@ class HomeController extends GetxController {
     bookCoverImage.value = null;
   }
 
+  Future<void> requestAutograph(BuildContext context, String authorId) async {
+    final String title = bookTitleControllerRequest.text.trim();
+    final String personalMessage = personalMessageController.text.trim();
 
+    if (authorId.isEmpty) {
+      Utils.showToast('Author ID is required', true);
+      return;
+    }
+
+    if (title.isEmpty) {
+      Utils.showToast('Book title is required', true);
+      return;
+    }
+
+    if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) {
+      Utils.showToast('PDF file is required', true);
+      return;
+    }
+
+    if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) {
+      Utils.showToast('Cover image is required', true);
+      return;
+    }
+
+    try {
+      EasyLoading.show(
+        status: 'Sending autograph request...',
+        maskType: EasyLoadingMaskType.black,
+      );
+
+      final uri = Uri.parse(
+        '${BaseService().baseURL}/reader/autograph-requests',
+      );
+      final request = http.MultipartRequest('POST', uri);
+
+      // Auth token header mein
+      final token = SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
+      if (token != null && token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Text fields
+      request.fields['authorId'] = authorId;
+      request.fields['bookTitle'] = title;
+      request.fields['personalMessage'] = personalMessage;
+
+      // PDF file
+      final pdfFile = bookPdfFile.value!;
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'bookPdf',
+          pdfFile.path,
+          filename: pdfFile.path.split('/').last,
+          contentType: http.MediaType('application', 'pdf'),
+        ),
+      );
+
+      // Cover image
+      final coverFile = bookCoverImage.value!;
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'coverImage',
+          coverFile.path,
+          filename: coverFile.path.split('/').last,
+          contentType: http.MediaType(
+            'image',
+            'png',
+          ), // jpg ho to 'jpeg' kar dein
+        ),
+      );
+
+      print('⏳ AUTOGRAPH REQUEST API CALLING: $uri');
+      print('➡ Fields: ${request.fields}');
+
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 60),
+      );
+      final responseString = await streamedResponse.stream.bytesToString();
+      final responseMap = json.decode(responseString);
+
+      print('✅ RESPONSE: $responseMap');
+
+      if (streamedResponse.statusCode == 200 ||
+          streamedResponse.statusCode == 201) {
+        Utils.showToast(
+          responseMap['message'] ?? 'Autograph request sent successfully',
+          false,
+        );
+        clearRequestBookFields();
+        Get.back();
+        return;
+      }
+
+      Utils.showToast(
+        responseMap['message'] ?? 'Autograph request failed',
+        true,
+      );
+    } on TimeoutException {
+      Utils.showToast('Request timed out', true);
+    } on SocketException {
+      Utils.showToast('No Internet connection', true);
+    } catch (e) {
+      print('Autograph Request Error: $e');
+      Utils.showToast('Unexpected error: $e', true);
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  void clearRequestBookFields() {
+    bookTitleControllerRequest.clear();
+    personalMessageController.clear();
+
+    bookPdfFile.value = null;
+    bookCoverImage.value = null;
+  }
+
+  ///////////////////////////////////////
+  RxInt currentPage = 1.obs;
+  RxInt totalPages = 1.obs;
+  RxInt totalItems = 0.obs;
+
+  Future<void> fetchTrackRequestData() async {
+    try {
+      trackRequestLoading.value = true;
+      errorMessage.value = '';
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final prefs = SharedPreferencesMethod.storage;
+      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+
+      if (token.isEmpty) {
+        errorMessage.value = 'Token not found';
+        Utils.showToast('Please login again', true);
+        return;
+      }
+
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.trackRequest}',
+      );
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final responseBody = jsonDecode(response.body);
+
+        // Poora response TrackRequest model se parse karo (items + pagination sab)
+        final Map<String, dynamic> data =
+            responseBody is Map && responseBody['data'] is Map
+            ? responseBody['data']
+            : responseBody;
+
+        final trackRequestData = TrackRequestModel.fromJson(data);
+
+        trackRequest.assignAll(trackRequestData.items);
+        currentPage.value = trackRequestData.page;
+        totalPages.value = trackRequestData.totalPages;
+        totalItems.value = trackRequestData.total;
+      } else {
+        final responseBody = jsonDecode(response.body);
+        errorMessage.value =
+            responseBody['message']?.toString() ?? 'Failed to load data';
+        Utils.showToast(errorMessage.value, true);
+      }
+    } catch (e) {
+      errorMessage.value = 'Something went wrong while loading data: $e';
+      debugPrint('fetchTrackRequestData error: $e');
+      Utils.showToast(errorMessage.value, true);
+    } finally {
+      trackRequestLoading.value = false;
+      debugPrint("Loader ab ${trackRequestLoading.value} hai");
+
+      debugPrint("Loader ab ${trackRequestLoading.value} hai");
+    }
+  }
 }

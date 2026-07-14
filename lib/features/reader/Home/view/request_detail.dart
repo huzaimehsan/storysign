@@ -17,14 +17,17 @@ class RequestDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args = (Get.arguments is Map<String, dynamic>)
+        ? Get.arguments as Map<String, dynamic>
+        : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final String role = args?['role'] as String? ?? '';
+    final String authorId = args?['authorId']?.toString() ?? '';
     final bool isAlreadySelectedAuthor = role == 'alreadySelectedAuthor';
     final bool isSelectAuthor = role == 'selectAuthor';
     final String actionButtonText = isSelectAuthor ? 'Request Autograph' : 'Make Payment';
     final VoidCallback actionButtonTap = isSelectAuthor
-        ? () => Get.toNamed('/requestautograph')
-        : () => Get.toNamed('/makepayment');
+        ? () => Get.toNamed('/requestautograph', arguments: {'authorId': authorId})
+        : () => Get.toNamed('/makepayment', arguments: {'authorId': authorId});
 
     return Scaffold(
       body: SafeArea(
@@ -86,12 +89,10 @@ class RequestDetail extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: buttonWidget(
-                "Make Payment",
+                actionButtonText,
                 fontsize: 16.sp,
                 whiteColor,
-                onTap: (){
-                  Get.toNamed("/makepayment");
-                },
+                onTap: actionButtonTap,
                 colors: buttonColor,   fontweight: FontWeight.w600,
 
                 fontFamily: 'Poppins',

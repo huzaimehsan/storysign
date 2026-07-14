@@ -56,7 +56,7 @@ class HomeScreen extends GetView<HomeController> {
               final authorsList = homeController.welcomes;
 
               // 1. Loading state check
-              if (controller.isLoading.value) {
+              if (controller.isFetchHome.value) {
                 return SizedBox( // Yahan 'return' add karein
                   height: 20.h,
                   child: const Center(child: CircularProgressIndicator()),
@@ -86,6 +86,8 @@ class HomeScreen extends GetView<HomeController> {
                             'role': 'allAuthor'
                           });
                         },
+
+
                       ),
                     );
                   },
@@ -104,7 +106,9 @@ class HomeScreen extends GetView<HomeController> {
             SizedBox(height: 0.5.h),
             Obx(() {
               final books = controller.filteredRecentlySignedBooks;
-
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
               if (books.isEmpty) {
                 return Expanded(
                   child: Center(
@@ -137,7 +141,7 @@ class HomeScreen extends GetView<HomeController> {
                         status: book["status"]!,
                         trackRequest: () {
                           Get.toNamed("/signedcopy");
-                        }, imagePath: '',
+                        }, imagePath: '', showAuthor: true,
                       );
                     },
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -40,7 +41,10 @@ class TrackRequest extends GetView<HomeController> {
               padding: EdgeInsets.only(right: 5.w, left: 3.w),
               child: Row(
                 children: [
-                  ...tabs.asMap().entries.map((entry) {
+                  ...tabs
+                      .asMap()
+                      .entries
+                      .map((entry) {
                     int index = entry.key;
                     String tab = entry.value;
 
@@ -71,22 +75,23 @@ class TrackRequest extends GetView<HomeController> {
                   }),
 
                   SizedBox(width: 2.w),
-                  GestureDetector(
-                    onTap: () => _showFilterBottomSheet(context),
-                    child: Container(
-                      height: 4.5.h,
-                      width: 10.5.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5E6D3),
-                        borderRadius: BorderRadius.circular(17.sp),
-                      ),
-                      child: Icon(
-                        Icons.tune_rounded,
-                        color: buttonColor,
-                        size: 16.sp,
-                      ),
-                    ),
-                  ),
+                  buildFilterDropdown(context),
+                  // GestureDetector(
+                  //   onTap: () => _buildFilterDropdown(context),
+                  //   child: Container(
+                  //     height: 4.5.h,
+                  //     width: 10.5.w,
+                  //     decoration: BoxDecoration(
+                  //       color: const Color(0xFFF5E6D3),
+                  //       borderRadius: BorderRadius.circular(17.sp),
+                  //     ),
+                  //     child: Icon(
+                  //       Icons.tune_rounded,
+                  //       color: buttonColor,
+                  //       size: 16.sp,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -94,7 +99,15 @@ class TrackRequest extends GetView<HomeController> {
 
             Expanded(
               child: Obx(() {
-                final books = controller.filteredRecentlySignedBooks;
+                if (controller.trackRequestLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: buttonColor),
+                  );
+                }
+
+                final books = controller
+                    .filteredTrackRequest; // ✅ sirf ye line change hui
+
                 if (books.isEmpty) {
                   return Center(
                     child: customText(
@@ -111,16 +124,30 @@ class TrackRequest extends GetView<HomeController> {
                   itemCount: books.length,
                   itemBuilder: (context, index) {
                     final book = books[index];
-                    return recentlySignedBooks(
-                      imageUrl: book["imagePath"] ?? "",
-                      bookTitle: book["bookTitle"] ?? "",
-                      authorName: book["authorName"] ?? "",
-                      date: book["date"] ?? "",
-                      trackRequest: () {
 
-                        Get.toNamed("/tracking");
-                      },
-                      status: book["status"] ?? "", imagePath: '',
+                    // Safe Date Formatting
+                    String formattedDate = "Joined: N/A";
+                    try {
+                      if (book.uploadDate.isNotEmpty) {
+                        final DateTime dateTime = DateTime.parse(
+                            book.uploadDate);
+                        formattedDate = "Joined: ${DateFormat('dd MMMM, yyyy')
+                            .format(dateTime)}";
+                      }
+                    } catch (e) {
+                      debugPrint("Date Parsing Error: $e");
+                      formattedDate = "Joined: Invalid Date";
+                    }
+
+                    return recentlySignedBooks(
+                      imageUrl: book.coverImage,
+                      bookTitle: book.title,
+                      authorName: book.author.fullName,
+                      date: formattedDate,
+                      trackRequest: () => Get.toNamed("/tracking"),
+                      status: book.status,
+                      imagePath: '',
+                      showAuthor: true,
                     );
                   },
                 );
@@ -134,96 +161,111 @@ class TrackRequest extends GetView<HomeController> {
     );
   }
 
-  void _showFilterBottomSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
-        decoration: BoxDecoration(
-          color: white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.sp),
-            topRight: Radius.circular(20.sp),
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                customText(
-                  text: "Filter Requests",
-                  color: buttonColor,
-                  fontSize: 18.sp,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w700,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    controller.resetFilter();
-                    Get.back();
-                  },
-                  child: customText(
-                    text: "Reset",
-                    color: greyColor,
-                    fontSize: 14.sp,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            customText(
-              text: "Status",
+  // ✅ Dropdown menu — button ke bilkul neeche khulta hai, bottom sheet NAHI hai
+  Widget buildFilterDropdown(BuildContext context) {
+    return PopupMenuButton<String>(
+      color: white,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.sp),
+      ),
+      offset: Offset(0, 5.h),
+      onSelected: (value) {
+        if (value == "Reset") {
+          controller.sortBy.value = "None";
+          controller.filterStatus.value = "All";
+        } else if (value.startsWith("sort:")) {
+          controller.sortBy.value = value.replaceFirst("sort:", "");
+        } else if (value.startsWith("status:")) {
+          controller.filterStatus.value = value.replaceFirst("status:", "");
+        }
+      },
+      itemBuilder: (context) {
+        return [
+          PopupMenuItem<String>(
+            enabled: false,
+            child: customText(
+              text: "Sort By",
               color: secondryColor,
-              fontSize: 15.sp,
+              fontSize: 13.sp,
               fontFamily: "Poppins",
               fontWeight: FontWeight.w600,
             ),
-            SizedBox(height: 1.5.h),
-            Wrap(
-              spacing: 2.w,
-              runSpacing: 1.h,
-              children: [
-                _buildFilterChip("All"),
-                _buildFilterChip("In Process"),
-                _buildFilterChip("Delivered"),
-
-                _buildFilterChip("Signed"),
-
-                _buildFilterChip("Unsigned"),
-              ],
+          ),
+          ..._sortOptions.map((label) => _buildMenuItem("sort:$label", label, controller.sortBy.value)),
+          const PopupMenuDivider(),
+          PopupMenuItem<String>(
+            enabled: false,
+            child: customText(
+              text: "Filter by Status",
+              color: secondryColor,
+              fontSize: 13.sp,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600,
             ),
-          ],
+          ),
+          ..._statusOptions.map((label) => _buildMenuItem("status:$label", label, controller.filterStatus.value)),
+          const PopupMenuDivider(),
+          PopupMenuItem<String>(
+            value: "Reset",
+            child: customText(
+              text: "Reset",
+              color: greyColor,
+              fontSize: 14.sp,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ];
+      },
+      child: Container(
+        height: 4.5.h,
+        width: 10.5.w,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5E6D3),
+          borderRadius: BorderRadius.circular(17.sp),
+        ),
+        child: Icon(
+          Icons.tune_rounded,
+          color: buttonColor,
+          size: 16.sp,
         ),
       ),
-      isScrollControlled: true,
     );
   }
 
-  Widget _buildFilterChip(String label) {
-    final isSelected = controller.selectedTab.value == label;
+  static const List<String> _sortOptions = [
+    "None",
+    "Title A-Z",
+    "Title Z-A",
+    "Date Newest",
+    "Date Oldest",
+  ];
 
-    return GestureDetector(
-      onTap: () {
-        controller.applyFilter(label);
-        Get.back();
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-        decoration: BoxDecoration(
-          color: isSelected ? buttonColor : const Color(0xFFF5E6D3),
-          borderRadius: BorderRadius.circular(16.sp),
-        ),
-        child: customText(
-          text: label,
-          color: isSelected ? whiteColor : buttonColor,
-          fontSize: 13.sp,
-          fontFamily: "Poppins",
-          fontWeight: FontWeight.w600,
-        ),
+  static const List<String> _statusOptions = [
+    "All",
+    "Signed",
+    "In process",
+    "Delivered",
+    "Unsigned",
+  ];
+
+  PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {
+    final isSelected = currentValue == label;
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          customText(
+            text: label,
+            color: isSelected ? buttonColor : secondryColor,
+            fontSize: 14.sp,
+            fontFamily: "Poppins",
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          ),
+          if (isSelected) Icon(Icons.check, size: 16.sp, color: buttonColor),
+        ],
       ),
     );
   }

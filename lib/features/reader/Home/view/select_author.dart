@@ -5,6 +5,8 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/widgets/reader/widget_select_author.dart';
+import '../../../../constants/color_constants.dart';
+import '../model/home_model.dart';
 
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/search_widget.dart';
@@ -18,32 +20,6 @@ class SelectAuthor extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> authors = [
-      {
-        'imagePath': 'assets/png/searchprofile.png',
-        'bookTitle': 'Madeline Miller',
-        'date': 'Joined: 22 june, 2026',
-        'active': true,
-      },
-      {
-        'imagePath': 'assets/png/searchprofile.png',
-        'bookTitle': 'Matt Haig',
-        'date': 'Joined: 22 june, 2026',
-        'active': true,
-      },
-      {
-        'imagePath': 'assets/png/searchprofile.png',
-        'bookTitle': 'Colleen Hoover',
-        'date': 'Joined: 22 june, 2026',
-        'active': false,
-      },
-      {
-        'imagePath': 'assets/png/searchprofile.png',
-        'bookTitle': 'Pride and Prejudice',
-        'date': 'Joined: 22 june, 2026',
-        'active': true,
-      },
-    ];
 
     return Scaffold(
       body: SafeArea(
@@ -62,9 +38,15 @@ class SelectAuthor extends GetView<HomeController> {
               onChanged: (value) => controller.searchQuery.value = value,
               hintText: 'Search authors',
             ),
-        
+
             SizedBox(height: 0.5.h),
             Obx(() {
+
+              if (controller.trackRequestLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: buttonColor),
+                );
+              }
               final authorsList = controller.filteredAuthors;
               return Expanded(
                 child: SingleChildScrollView(
@@ -75,17 +57,21 @@ class SelectAuthor extends GetView<HomeController> {
                     itemCount: authorsList.length,
                     itemBuilder: (context, index) {
                       final author = authorsList[index];
-                      final active = author['active'] as bool? ?? false;
+                      const active = true;
                       return WidgetSelectAuthor(
-                        imagePath: author['imagePath'] as String,
-                        bookTitle: author['name'] as String,
-                        date: author['date'] as String,
-                        activity: active ? 'Active' : 'Inactive',
+                        imagePath: author.profilePicture?.toString() ?? "",
+                        bookTitle: author.fullName,
+                        date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
+
                         isActive: active,
                         ontap: () {
-                          if (active) {
-                            Get.toNamed("/request", arguments: {'role': 'selectAuthor'});
-                          }
+                          // SelectAuthor Screen mein
+
+                            if (active) {
+
+                              Get.back(result: author.id);
+
+                          };
                         },
                       );
                     },
@@ -93,7 +79,7 @@ class SelectAuthor extends GetView<HomeController> {
                 ),
               );
             }),
-        
+
           ],
         ),
       ),

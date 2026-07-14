@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -20,6 +19,8 @@ Widget recentlySignedBooks({
   EdgeInsetsGeometry? margin,
   bool? iconBadge,
   bool showArrow = true,
+
+  required bool showAuthor,
 }) {
   return Padding(
     padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 0.6.h),
@@ -51,21 +52,30 @@ Widget recentlySignedBooks({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                customText(
-                  fontFamily: "Poppins",
-                  text: bookTitle,
-                  color: secondryColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+                Flexible(
+                  child: customText(
+                    fontFamily: "Poppins",
+                    text: bookTitle,
+                    color: secondryColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                    overFlow: TextOverflow.ellipsis,
+                  ),
                 ),
-                SizedBox(height: 0.6.h),
-                customText(
-                  fontFamily: "Poppins",
-                  text: authorName,
-                  color: primaryColor,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+
+// Konditional check: Sirf tabhi space aur text dikhayein jab showAuthor true ho
+                if (showAuthor) ...[
+                  SizedBox(height: 0.6.h),
+                  customText(
+                    fontFamily: "Poppins",
+                    text: authorName,
+                    color: primaryColor,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ],
+
                 SizedBox(height: 0.6.h),
                 customText(
                   fontFamily: "Poppins",
@@ -74,6 +84,8 @@ Widget recentlySignedBooks({
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
+
+
                 SizedBox(height: 1.h),
                 buttonWidget(
 
@@ -111,9 +123,14 @@ Widget _buildCoverImage(String imagePath, String? imageUrl) {
   final String path = imageUrl?.trim().isNotEmpty == true ? imageUrl!.trim() : imagePath.trim();
   final uri = Uri.tryParse(path);
   final isNetwork = uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+  final String resolvedPath = isNetwork && uri.host == 'localhost' && Platform.isAndroid
+      ? path.replaceFirst('localhost', '10.0.2.2')
+      : path;
 
-  if (path.isEmpty || path == 'null') {
+  Widget placeholder() {
     return Container(
+      height: 12.h,
+      width: 25.w,
       color: Colors.grey.withOpacity(0.2),
       child: Center(
         child: Icon(
@@ -123,18 +140,30 @@ Widget _buildCoverImage(String imagePath, String? imageUrl) {
         ),
       ),
     );
+  }
+
+  if (path.isEmpty || path == 'null') {
+    return placeholder();
   } else if (isNetwork) {
     return Image.network(
-      path,
+      resolvedPath,
       height: 12.h,
       width: 25.w,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        imagePath,
-        height: 12.h,
-        width: 25.w,
-        fit: BoxFit.cover,
-      ),
+      errorBuilder: (context, error, stackTrace) {
+        final fallbackUri = Uri.tryParse(imagePath);
+        final fallbackIsNetwork = fallbackUri != null && (fallbackUri.scheme == 'http' || fallbackUri.scheme == 'https');
+        if (imagePath.trim().isEmpty || imagePath == 'null' || fallbackIsNetwork || imagePath.startsWith('/')) {
+          return placeholder();
+        }
+        return Image.asset(
+          imagePath,
+          height: 12.h,
+          width: 25.w,
+          fit: BoxFit.cover,
+          errorBuilder: (context, err, stack) => placeholder(),
+        );
+      },
     );
   } else if (path.startsWith('/')) {
     return Image.file(
@@ -142,6 +171,7 @@ Widget _buildCoverImage(String imagePath, String? imageUrl) {
       height: 12.h,
       width: 25.w,
       fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => placeholder(),
     );
   } else {
     return Image.asset(
@@ -149,6 +179,7 @@ Widget _buildCoverImage(String imagePath, String? imageUrl) {
       height: 12.h,
       width: 25.w,
       fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => placeholder(),
     );
   }
 }

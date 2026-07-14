@@ -64,7 +64,7 @@ class SignedCopy extends StatelessWidget {
               date: "22 june, 2026",
               trackRequest: () {},
               status: 'Signed',
-              showArrow: false, imagePath: '',
+              showArrow: false, imagePath: '', showAuthor: true,
             ),
             SizedBox(height: 1.h),
             signedCopyMessageCard(

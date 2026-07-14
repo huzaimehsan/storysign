@@ -4,33 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-
+import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/search/controller/search_page_controller.dart';
 
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
-
 import '../../../../widgets/image_picker.dart';
-import '../../../../widgets/sucess_widget.dart';
 import '../../../../widgets/author_detail_widget.dart';
 import '../widgets/file_upload_widget.dart';
 import '../widgets/header_widget.dart';
 
-class RequestAutograph extends StatefulWidget {
+class RequestAutograph extends GetView<HomeController> {
   const RequestAutograph({super.key});
 
   @override
-  State<RequestAutograph> createState() => _RequestAutographState();
-}
-
-class _RequestAutographState extends State<RequestAutograph> {
-  final MediaPickerService _mediaPicker = MediaPickerService();
-
-  File? _bookFile;
-
-  File? _coverImage;
-
-  @override
   Widget build(BuildContext context) {
+    final MediaPickerService mediaPicker = MediaPickerService();
+    final String authorId = Get.arguments?['authorId'] ?? '';
+
+    final searchController = Get.find<SearchPageController>();
+    final author = searchController.authorDetailData.value;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -43,87 +37,90 @@ class _RequestAutographState extends State<RequestAutograph> {
               onIconPressed: () {},
             ),
             SizedBox(height: 1.h),
-         Expanded(
-           child: SingleChildScrollView(
-             child: Column(
-               children: [
-                 AuthorInfoCard(
-                   imagePath: "assets/png/searchprofile.png",
-                   bookTitle: "Matt Haig",
-                   date: "Joined: 22 june, 2026",
-                 ),
-             
-                 SizedBox(height: 2.h),
-             
-                 Padding(
-                   padding: EdgeInsets.symmetric(horizontal: 4.w),
-                   child: Column(
-                     children: [
-                       emailTextFeild('Book Name', "Things Fall Apart"),
-                       SizedBox(height: 1.5.h),
-             
-                       FileUploadWidget(
-                         title: 'Upload Book',
-                         description: 'Tap to select a pdf file from your device',
-                         file: _bookFile,
-                         onTap: () async {
-                           final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.document);
-                           if (file != null) {
-                             setState(() => _bookFile = file);
-                           }
-                         },
-                         onRemove: () => setState(() => _bookFile = null),
-                       ),
-                       SizedBox(height: 1.5.h),
-             
-                       FileUploadWidget(
-                         title: 'Upload Cover Photo',
-                         description: 'Tap to select a png format from your device',
-                         file: _coverImage,
-                         onTap: () async {
-                           final File? file = await _mediaPicker.pickMedia(context, mode: PickMode.image);
-                           if (file != null) {
-                             setState(() => _coverImage = file);
-                           }
-                         },
-                         onRemove: () => setState(() => _coverImage = null),
-                       ),
-             
-                       SizedBox(height: 1.5.h),
-                       emailTextFeild(
-                         'Personal Message',
-                         "Write a personal message to the author about why this book is special to you…",
-                         maxLength: 200,
-                         maxLines: 4,
-                       ),
-                       SizedBox(height: 3.h),
-             
-                       buttonWidget(
-                         "Request Autograph",
-                         whiteColor,
-                         onTap: () {
-             
-                           Get.toNamed("/request" , arguments: {'role': 'alreadySelectedAuthor'} );
-             
-             
-                         },
-                         colors: buttonColor,
-                         fontFamily: 'Poppins',
-                         height: 5.2.h,
-                         // Thoda height badhayi
-                         width: double.infinity,
-                         fontsize: 16.sp,
-                         fontweight: FontWeight.w600,
-                       ),
-             
-                       SizedBox(height: 5.h),
-                     ],
-                   ),
-                 ),
-               ],
-             ),
-           ),
-         )
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    AuthorInfoCard(
+                      imagePath: author?.profilePicture,
+                      bookTitle: author?.fullName ?? 'Author',
+                      date: author?.dateJoined,
+                    ),
+                
+                    SizedBox(height: 2.h),
+                
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Obx(
+                        () => Column(
+                          children: [
+                            emailTextFeild(
+                              'Book Name',
+                              "Things Fall Apart",
+                              controller: controller.bookTitleControllerRequest,
+                            ),
+                            SizedBox(height: 1.5.h),
+                
+                            FileUploadWidget(
+                              title: 'Upload Book',
+                              description: 'Tap to select a pdf file from your device',
+                              file: controller.bookPdfFile.value,
+                              onTap: () async {
+                                final File? file = await mediaPicker.pickMedia(context, mode: PickMode.document);
+                                if (file != null) {
+                                  controller.bookPdfFile.value = file;
+                                }
+                              },
+                              onRemove: () => controller.bookPdfFile.value = null,
+                            ),
+                            SizedBox(height: 1.5.h),
+                
+                            FileUploadWidget(
+                              title: 'Upload Cover Photo',
+                              description: 'Tap to select a png format from your device',
+                              file: controller.bookCoverImage.value,
+                              onTap: () async {
+                                final File? file = await mediaPicker.pickMedia(context, mode: PickMode.image);
+                                if (file != null) {
+                                  controller.bookCoverImage.value = file;
+                                }
+                              },
+                              onRemove: () => controller.bookCoverImage.value = null,
+                            ),
+                
+                            SizedBox(height: 1.5.h),
+                            emailTextFeild(
+                              'Personal Message',
+                              "Write a personal message to the author about why this book is special to you…",
+                              maxLength: 200,
+                              maxLines: 4,
+                              controller: controller.personalMessageController,
+                            ),
+                            SizedBox(height: 3.h),
+                
+                            buttonWidget(
+                              "Request Autograph",
+                              whiteColor,
+                              onTap: () {
+                                controller.requestAutograph(context, authorId);
+                              },
+                              colors: buttonColor,
+                              fontFamily: 'Poppins',
+                              height: 5.2.h,
+                              width: double.infinity,
+                              fontsize: 16.sp,
+                              fontweight: FontWeight.w600,
+                            ),
+                
+                            SizedBox(height: 5.h),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),

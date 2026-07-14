@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
@@ -34,7 +32,7 @@ class ReaderLibrary extends GetView<ReaderController> {
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
-        
+
             searchWidget(
               onChanged: (val) {
                 controller.searchQuery.value = val;
@@ -48,9 +46,9 @@ class ReaderLibrary extends GetView<ReaderController> {
                   ...tabs.asMap().entries.map((entry) {
                     int index = entry.key;
                     String tab = entry.value;
-        
+
                     int flexValue = index == 0 ? 2 : 3;
-        
+
                     return Expanded(
                       flex: flexValue,
                       child: Obx(() {
@@ -64,7 +62,6 @@ class ReaderLibrary extends GetView<ReaderController> {
                             colors: isSelected
                                 ? buttonColor
                                 : const Color(0xFFF5E6D3),
-        
                             height: 4.5.h,
                             fontFamily: "Poppins",
                             fontsize: 14.sp,
@@ -74,29 +71,14 @@ class ReaderLibrary extends GetView<ReaderController> {
                       }),
                     );
                   }),
-        
+
                   SizedBox(width: 2.w),
-                  GestureDetector(
-                    onTap: () => _showFilterBottomSheet(context),
-                    child: Container(
-                      height: 4.5.h,
-                      width: 10.5.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5E6D3),
-                        borderRadius: BorderRadius.circular(17.sp),
-                      ),
-                      child: Icon(
-                        Icons.tune_rounded,
-                        color: buttonColor,
-                        size: 16.sp,
-                      ),
-                    ),
-                  ),
+                  buildFilterDropdown(context), // ✅ dropdown seedha yahan
                 ],
               ),
             ),
             SizedBox(height: 2.h),
-        
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: Row(
@@ -113,14 +95,10 @@ class ReaderLibrary extends GetView<ReaderController> {
                   buttonWidget(
                     "Upload Book",
                     whiteColor,
-                    onTap: () => {
-                      
-                      Get.toNamed("/uploadbook")
-                    },
+                    onTap: () => {Get.toNamed("/uploadbook")},
                     colors: buttonColor,
                     width: 35.w,
                     height: 4.4.h,
-        
                     fontFamily: "Poppins",
                     fontsize: 14.sp,
                     fontweight: FontWeight.w500,
@@ -129,16 +107,16 @@ class ReaderLibrary extends GetView<ReaderController> {
               ),
             ),
             SizedBox(height: 1.h),
-        
+
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value) {
-                  return Center(
+                if (controller.isLibrary.value) {
+                  return const Center(
                     child: CircularProgressIndicator(color: buttonColor),
                   );
                 }
 
-                final List<BookItem> books = controller.booksList.toList();
+                final List<BookItem> books = controller.filteredBooks;
                 if (books.isEmpty) {
                   return Center(
                     child: customText(
@@ -150,158 +128,142 @@ class ReaderLibrary extends GetView<ReaderController> {
                     ),
                   );
                 }
+
                 return ListView.builder(
                   padding: EdgeInsets.only(bottom: 12.h),
                   itemCount: books.length,
                   itemBuilder: (context, index) {
                     final book = books[index];
+
+                    final DateTime dateTime = DateTime.parse(book.uploadDate);
+                    final formattedDate =
+                        "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
+
                     return recentlySignedBooks(
                       imagePath: book.coverImage,
-
                       bookTitle: book.title,
-                      authorName: book.readerId.isNotEmpty ? book.readerId : "Unknown Author",
-                      date: book.uploadDate,
+                      authorName: "",
+                      date: formattedDate,
                       status: book.status,
                       trackRequest: () {},
+                      showAuthor: false,
                     );
                   },
                 );
               }),
             ),
-        
-        
           ],
         ),
       ),
     );
   }
-
-  void _showFilterBottomSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
-        decoration: BoxDecoration(
-          color: white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.sp),
-            topRight: Radius.circular(20.sp),
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                customText(
-                  text: "Filter & Sort",
-                  color: buttonColor,
-                  fontSize: 18.sp,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w700,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    controller.sortBy.value = "None";
-                    controller.filterStatus.value = "All";
-                  },
-                  child: customText(
-                    text: "Reset",
-                    color: greyColor,
-                    fontSize: 14.sp,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            Divider(height: 3.h, color: greyColor.withOpacity(0.2)),
-            
-            customText(
+// ✅ Dropdown menu — button ke bilkul neeche khulta hai, bottom sheet NAHI hai
+  Widget buildFilterDropdown(BuildContext context) {
+    return PopupMenuButton<String>(
+      color: white,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.sp),
+      ),
+      offset: Offset(0, 5.h),
+      onSelected: (value) {
+        if (value == "Reset") {
+          controller.sortBy.value = "None";
+          controller.filterStatus.value = "All";
+        } else if (value.startsWith("sort:")) {
+          controller.sortBy.value = value.replaceFirst("sort:", "");
+        } else if (value.startsWith("status:")) {
+          controller.filterStatus.value = value.replaceFirst("status:", "");
+        }
+      },
+      itemBuilder: (context) {
+        return [
+          PopupMenuItem<String>(
+            enabled: false,
+            child: customText(
               text: "Sort By",
               color: secondryColor,
-              fontSize: 15.sp,
+              fontSize: 13.sp,
               fontFamily: "Poppins",
               fontWeight: FontWeight.w600,
             ),
-            SizedBox(height: 1.5.h),
-            Wrap(
-              spacing: 2.w,
-              runSpacing: 1.h,
-              children: [
-                _buildFilterChip("None", controller.sortBy),
-                _buildFilterChip("Title A-Z", controller.sortBy),
-                _buildFilterChip("Title Z-A", controller.sortBy),
-                _buildFilterChip("Date Newest", controller.sortBy),
-                _buildFilterChip("Date Oldest", controller.sortBy),
-              ],
-            ),
-            SizedBox(height: 3.h),
-
-            customText(
+          ),
+          ..._sortOptions.map((label) => _buildMenuItem("sort:$label", label, controller.sortBy.value)),
+          const PopupMenuDivider(),
+          PopupMenuItem<String>(
+            enabled: false,
+            child: customText(
               text: "Filter by Status",
               color: secondryColor,
-              fontSize: 15.sp,
+              fontSize: 13.sp,
               fontFamily: "Poppins",
               fontWeight: FontWeight.w600,
             ),
-            SizedBox(height: 1.5.h),
-            Wrap(
-              spacing: 2.w,
-              runSpacing: 1.h,
-              children: [
-                _buildFilterChip("All", controller.filterStatus),
-                _buildFilterChip("Signed", controller.filterStatus),
-                _buildFilterChip("In process", controller.filterStatus),
-                _buildFilterChip("Delivered", controller.filterStatus),
-                _buildFilterChip("Unsigned", controller.filterStatus),
-              ],
+          ),
+          ..._statusOptions.map((label) => _buildMenuItem("status:$label", label, controller.filterStatus.value)),
+          const PopupMenuDivider(),
+          PopupMenuItem<String>(
+            value: "Reset",
+            child: customText(
+              text: "Reset",
+              color: greyColor,
+              fontSize: 14.sp,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w500,
             ),
-            SizedBox(height: 4.h),
-
-            SizedBox(
-              width: double.infinity,
-              child: buttonWidget(
-                "Apply Filters",
-                whiteColor,
-                onTap: () => Get.back(),
-                colors: buttonColor,
-                height: 5.h,
-                fontFamily: "Poppins",
-                fontsize: 15.sp,
-                fontweight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
+        ];
+      },
+      child: Container(
+        height: 4.5.h,
+        width: 10.5.w,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5E6D3),
+          borderRadius: BorderRadius.circular(17.sp),
+        ),
+        child: Icon(
+          Icons.tune_rounded,
+          color: buttonColor,
+          size: 16.sp,
         ),
       ),
-      isScrollControlled: true,
     );
   }
 
-  Widget _buildFilterChip(String label, RxString reactiveVar) {
-    return Obx(() {
-      final isSelected = reactiveVar.value == label;
-      return GestureDetector(
-        onTap: () {
-          reactiveVar.value = label;
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-          decoration: BoxDecoration(
-            color: isSelected ? buttonColor : const Color(0xFFF5E6D3),
-            borderRadius: BorderRadius.circular(15.sp),
-          ),
-          child: customText(
+  static const List<String> _sortOptions = [
+    "None",
+    "Title A-Z",
+    "Title Z-A",
+    "Date Newest",
+    "Date Oldest",
+  ];
+
+  static const List<String> _statusOptions = [
+    "All",
+    "Signed",
+    "In process",
+    "Delivered",
+    "Unsigned",
+  ];
+
+  PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {
+    final isSelected = currentValue == label;
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          customText(
             text: label,
-            color: isSelected ? whiteColor : buttonColor,
-            fontSize: 13.sp,
+            color: isSelected ? buttonColor : secondryColor,
+            fontSize: 14.sp,
             fontFamily: "Poppins",
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
-        ),
-      );
-    });
+          if (isSelected) Icon(Icons.check, size: 16.sp, color: buttonColor),
+        ],
+      ),
+    );
   }
+
 }

@@ -15,8 +15,10 @@ Widget customText({
   Color? decorationColor,
   double? letterSpacing,
   TextDirection? textDirection,
+
   int? maxLines,
   double? height,
+
 }) {
   return Text(
     text ?? '',
@@ -24,6 +26,7 @@ Widget customText({
     textDirection: textDirection,
     maxLines: maxLines,
     overflow: overFlow,
+
     style: TextStyle(
       fontFamily: fontFamily ?? 'inter', // Ensure it is applied here
       color: color,

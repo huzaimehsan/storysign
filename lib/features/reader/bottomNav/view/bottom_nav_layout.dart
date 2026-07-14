@@ -13,15 +13,7 @@ import '../../search/view/search_screen.dart';
 import '../controller/bottom_nav_controller.dart';
 
 class MyBottomBarScreen extends GetView<BottomNavController> {
-  MyBottomBarScreen({super.key});
-
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
+  const MyBottomBarScreen({super.key});
 
   // Tab 0 (Home) ka initial route tree
   Route _buildHomeRoute(RouteSettings settings) {
@@ -39,12 +31,15 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
 
   Route _buildSeacrhRoute(RouteSettings settings) {
     switch (settings.name) {
-
-      case  '/authordetail':
-        return MaterialPageRoute(builder: (_) => const AuthorDetail());
+      case '/authordetail':
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => AuthorDetail(
+            authorId: args?['authorId']?.toString() ?? '',
+            role: args?['role']?.toString() ?? '',
+          ),
+        );
       default:
-
-
         return MaterialPageRoute(builder: (_) => const SearchScreen());
     }
   }
@@ -55,7 +50,7 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         final currentNavigator =
-            _navigatorKeys[controller.currentIndex.value].currentState;
+            controller.navigatorKeys[controller.currentIndex.value].currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
         }
@@ -68,31 +63,31 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
             children: [
               // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
               Navigator(
-                key: _navigatorKeys[0],
+                key: controller.navigatorKeys[0],
                 onGenerateRoute: _buildHomeRoute,
               ),
               // Tab 1: Search
               Navigator(
-                key: _navigatorKeys[1],
+                key: controller.navigatorKeys[1],
                 onGenerateRoute: _buildSeacrhRoute,
               ),
               // Tab 2: Library
               Navigator(
-                key: _navigatorKeys[2],
+                key: controller.navigatorKeys[2],
                 onGenerateRoute: (_) => MaterialPageRoute(
                     builder: (_) => ReaderLibrary()
                         ),
               ),
               // Tab 3: Notifications
               Navigator(
-                key: _navigatorKeys[3],
+                key: controller.navigatorKeys[3],
                 onGenerateRoute: (_) => MaterialPageRoute(
                     builder: (_) =>
                         NotificationScreen()),
               ),
               // Tab 4: Profile
               Navigator(
-                key: _navigatorKeys[4],
+                key: controller.navigatorKeys[4],
                 onGenerateRoute: (_) => MaterialPageRoute(
                     builder: (_) =>
                        ProfileScreen()),

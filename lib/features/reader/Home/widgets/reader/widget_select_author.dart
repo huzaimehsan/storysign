@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -10,7 +11,7 @@ import '../../../../../widgets/customText_widget.dart';
 class WidgetSelectAuthor extends StatelessWidget {
   final String imagePath;
   final String bookTitle;
-  final String activity;
+
   final bool isActive;
   final VoidCallback ontap;
   final String date;
@@ -19,7 +20,7 @@ class WidgetSelectAuthor extends StatelessWidget {
     super.key,
     required this.imagePath,
     required this.bookTitle,
-    required this.activity,
+
     required this.isActive,
     required this.date,
     required this.ontap,
@@ -27,13 +28,75 @@ class WidgetSelectAuthor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final String path = imagePath.toString();
+    Widget imageWidget;
+
+    if (path.isEmpty || path == "null") {
+      imageWidget = Container(
+        color: Colors.grey.withOpacity(0.2),
+        child: Center(
+          child: Icon(
+            Icons.person_rounded,
+            color: buttonColor.withOpacity(0.6),
+            size: 6.h,
+          ),
+        ),
+      );
+    } else if (path.startsWith('http')) {
+      imageWidget = Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    } else if (path.startsWith('/') || path.startsWith('file://')) {
+      final cleanPath = path.startsWith('file://') ? path.substring(7) : path;
+      imageWidget = Image.file(
+        File(cleanPath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    } else {
+      imageWidget = Image.asset(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
         height: 15.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.symmetric(horizontal: 5.w ,vertical: 4.w),
+        padding: EdgeInsets.symmetric(horizontal: 4.w ,vertical: 4.w),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -52,17 +115,14 @@ class WidgetSelectAuthor extends StatelessWidget {
               height: 10.h,
               width: 10.h,
               decoration: BoxDecoration(
-
                 border: Border.all(
                   color: isActive ? buttonColor : const Color(0xFFACACAC),
                   width: 1.2,
-
                 ),
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
+              ),
+              child: ClipOval(
+                child: imageWidget,
               ),
             ),
             SizedBox(width: 4.w),
@@ -81,13 +141,6 @@ class WidgetSelectAuthor extends StatelessWidget {
                   SizedBox(height: 0.4.h),
 
 
-                  customText(
-                    fontFamily: "Poppins",
-                    text: activity,
-                    color: isActive ? buttonColor : const Color(0xFFACACAC),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
 
                   SizedBox(height: 0.4.h),
                   customText(

@@ -16,7 +16,11 @@ class ReaderController extends GetxController {
   RxString searchQuery = "".obs;
   RxString sortBy = "None".obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
   RxString filterStatus = "All".obs; // "All", "Signed", "In process", "Delivered", "Unsigned"
-  RxBool isLoading = false.obs;
+
+
+  RxBool isLibrary = false.obs;
+
+
 
   var booksList = <BookItem>[].obs;
 
@@ -62,56 +66,43 @@ class ReaderController extends GetxController {
     return DateTime.now();
   }
 
-  List<Map<String, String>> get filteredBooks {
-    List<Map<String, String>> books = List.from(booksList.map((book) => {
-      "bookTitle": book.title ?? "",
-      "authorName": book.id ?? "",
-      "date": book.uploadDate ?? "",
-      "status": book..status ,
-    }).toList());
+  List<BookItem> get filteredBooks {
+    List<BookItem> books = List<BookItem>.from(booksList);
 
     // 1. Filter by Tab selection ("All", "Signed", "Unsigned")
     if (selectedTab.value == "Signed") {
       books = books.where((book) {
-        final status = book["status"] ?? "";
+        final status = book.status;
         return status == "Signed" || status == "In process" || status == "Delivered";
       }).toList();
     } else if (selectedTab.value == "Unsigned") {
-      books = books.where((book) => book["status"] == "Unsigned").toList();
+      books = books.where((book) => book.status == "Unsigned").toList();
     }
 
     // 2. Filter by search query
     if (searchQuery.value.trim().isNotEmpty) {
       final query = searchQuery.value.toLowerCase();
       books = books.where((book) {
-        final title = (book["bookTitle"] ?? "").toLowerCase();
-        final author = (book["authorName"] ?? "").toLowerCase();
+        final title = book.title.toLowerCase();
+        final author = book.id.toLowerCase(); // ya book.author.fullName agar available ho
         return title.contains(query) || author.contains(query);
       }).toList();
     }
 
-    // 3. Filter by filterStatus (from the tune filter dialog)
+    // 3. Filter by filterStatus (tune filter dialog se)
     if (filterStatus.value != "All") {
-      books = books.where((book) => book["status"] == filterStatus.value).toList();
+      books = books.where((book) => book.status == filterStatus.value).toList();
     }
 
     // 4. Sort books
     if (sortBy.value == "Title A-Z") {
-      books.sort((a, b) => (a["bookTitle"] ?? "").compareTo(b["bookTitle"] ?? ""));
+      books.sort((a, b) => a.title.compareTo(b.title));
     } else if (sortBy.value == "Title Z-A") {
-      books.sort((a, b) => (b["bookTitle"] ?? "").compareTo(a["bookTitle"] ?? ""));
+      books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sortBy.value == "Date Newest") {
-      books.sort((a, b) {
-        final dateA = _parseDate(a["date"] ?? "");
-        final dateB = _parseDate(b["date"] ?? "");
-        return dateB.compareTo(dateA);
-      });
+      books.sort((a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)));
     } else if (sortBy.value == "Date Oldest") {
-      books.sort((a, b) {
-        final dateA = _parseDate(a["date"] ?? "");
-        final dateB = _parseDate(b["date"] ?? "");
-        return dateA.compareTo(dateB);
-      });
+      books.sort((a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)));
     }
 
     return books;
@@ -122,9 +113,8 @@ class ReaderController extends GetxController {
 
   Future<void> fetchBooksData() async {
     try {
-      isLoading.value = true;
-      EasyLoading.show(status: 'Loading books...', maskType: EasyLoadingMaskType.black);
-
+      isLibrary.value = true;
+      await Future.microtask(() => null);
       final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
       if (token.isEmpty) {
         Utils.showToast('Please login again', true);
@@ -146,6 +136,8 @@ class ReaderController extends GetxController {
         print(responseBody);
 
 
+
+
         if (responseBody['items'] != null) {
           final BookResponseModel model = BookResponseModel.fromJson(responseBody);
           booksList.assignAll(model.items);
@@ -156,8 +148,7 @@ class ReaderController extends GetxController {
     } catch (e) {
       Utils.showToast('Something went wrong: $e', true);
     } finally {
-      isLoading.value = false;
-      EasyLoading.dismiss();
+      isLibrary.value = false;
     }
   }
 }

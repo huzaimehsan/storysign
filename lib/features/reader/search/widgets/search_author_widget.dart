@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
@@ -6,9 +7,9 @@ import '../../../../widgets/customText_widget.dart';
 
 
 class SearchAuthorCard extends StatelessWidget {
-  final String imagePath;
+  final dynamic imagePath;
   final String bookTitle;
- final VoidCallback requestAutoGraph;
+  final VoidCallback requestAutoGraph;
 
   final VoidCallback authorDetail;
   final String date;
@@ -23,13 +24,75 @@ class SearchAuthorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String path = imagePath?.toString() ?? "";
+    Widget imageWidget;
+
+    if (path.isEmpty || path == "null") {
+      imageWidget = Container(
+        color: Colors.grey.withOpacity(0.2),
+        child: Center(
+          child: Icon(
+            Icons.person_rounded,
+            color: buttonColor.withOpacity(0.6),
+            size: 6.h,
+          ),
+        ),
+      );
+    } else if (path.startsWith('http')) {
+      imageWidget = Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    } else if (path.startsWith('/') || path.startsWith('file://')) {
+      final cleanPath = path.startsWith('file://') ? path.substring(7) : path;
+      imageWidget = Image.file(
+        File(cleanPath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    } else {
+      imageWidget = Image.asset(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: Icon(
+              Icons.person_rounded,
+              color: buttonColor.withOpacity(0.6),
+              size: 6.h,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
         height: 13.8.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.all(5.w),
+        padding: EdgeInsets.only(top: 5.w,bottom: 4.w,right: 4.w,left:4.w ),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -48,17 +111,14 @@ class SearchAuthorCard extends StatelessWidget {
               height: 10.h,
               width: 10.h,
               decoration: BoxDecoration(
-
                 border: Border.all(
-                    color: buttonColor,
+                  color: buttonColor,
                   width: 1.2,
-
                 ),
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
+              ),
+              child: ClipOval(
+                child: imageWidget,
               ),
             ),
             SizedBox(width: 4.w),
@@ -74,15 +134,15 @@ class SearchAuthorCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
 
-                  SizedBox(height: 0.6.h),
+                  SizedBox(height: 0.1.h),
                   customText(
                     fontFamily: "Poppins",
                     text: date,
                     color: secondryColor.withOpacity(0.7),
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                   ),
-                  SizedBox(height: 0.6.h),
+                  SizedBox(height: 1.h),
                   buttonWidget(
                     onTap: requestAutoGraph,
                     "Request Autograph",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -14,6 +15,8 @@ import 'core/routes/App_Routing.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  Stripe.publishableKey = "pk_test_YOUR_PUBLISHABLE_KEY";
+  await Stripe.instance.applySettings();
   // Initialize SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   Get.put<SharedPreferences>(prefs);

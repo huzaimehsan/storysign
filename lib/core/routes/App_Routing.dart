@@ -63,9 +63,28 @@ class AppRoutes {
 
 
     GetPage(name: '/bottomnav', page: () => MyBottomBarScreen(),binding: BottomNavBinding()),
-    GetPage(name: '/trackrequest', page: () => TrackRequest(),binding: HomeBinding()),
+    GetPage(
+      name: '/trackrequest',
+      page: ()
+        // Har baar route open hone par fresh data fetch — same as search screen pattern
+        // Get.find<HomeController>().fetchTrackRequestData();
+        // return const
+   => TrackRequest(),
 
-    GetPage(name: '/authordetail', page: () => AuthorDetail(),binding: SearchBinding()),
+      binding: HomeBinding(),
+    ),
+
+    GetPage(
+      name: '/authordetail',
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>?;
+        return AuthorDetail(
+          authorId: args?['authorId']?.toString() ?? '',
+          role: args?['role']?.toString() ?? '',
+        );
+      },
+      binding: SearchBinding(),
+    ),
 
 
     GetPage(name: '/readerlibrary', page: () => ReaderLibrary(),binding: ReaderLibraryBinding()),

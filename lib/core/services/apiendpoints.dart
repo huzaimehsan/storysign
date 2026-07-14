@@ -18,6 +18,10 @@ static const String authorDetail = '/reader/authors';
   static const String uploadBook = '/reader/books/upload';
   static const String listMyBook = '/reader/library?page=1&limit=10';
 
+static const String requestAutoGraphHome = '/reader/autograph-requests';
+
+static const String trackRequest = '/reader/autograph-requests?page=1&limit=10';
+
 
 
 
