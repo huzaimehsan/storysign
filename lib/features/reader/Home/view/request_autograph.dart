@@ -123,14 +123,34 @@ class RequestAutographCard extends GetView<HomeController> {
                       buttonWidget(
                         "Request Autograph",
                         whiteColor,
-                        onTap: () async {
-                          if (controller.selectedAuthorId.value.isEmpty) {
-                            Get.snackbar("Error", "Please select an author first!");
-                            return;
-                          }
-                          await controller.requestAutograph(context, controller.selectedAuthorId.value);
-                          debugPrint("Submitting with ID: ${controller.selectedAuthorId.value}");
-                        },
+                          onTap: () async {
+                            if (controller.selectedAuthorId.value.isEmpty) {
+                              Get.snackbar("Error", "Please select an author first!");
+                              return;
+                            }
+
+                            debugPrint("Attempting request for ID: ${controller.selectedAuthorId.value}");
+
+                            final String? requestId = await controller.requestAutograph(
+                              context,
+                              controller.selectedAuthorId.value,
+                            );
+
+
+                            debugPrint("Request Result ID: $requestId");
+
+                            if (requestId != null && requestId.isNotEmpty) {
+                              Get.toNamed("/request", arguments: {
+                                'autographRequestId': requestId,
+                                'role': 'alreadySelectedAuthor',
+                              });
+                            } else {
+                              // Agar yahan print hota hai, to matlab API se response nahi mila
+                              debugPrint("Request ID is null or empty");
+                            }
+
+                          },
+
                         colors: buttonColor,
                         fontFamily: 'Poppins',
                         height: 5.2.h,

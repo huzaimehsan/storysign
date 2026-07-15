@@ -102,6 +102,7 @@ class RequestAutograph extends GetView<HomeController> {
                               "Request Autograph",
                               whiteColor,
                               onTap: () {
+
                                 controller.requestAutograph(context, authorId);
                               },
                               colors: buttonColor,

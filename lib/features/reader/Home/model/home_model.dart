@@ -114,7 +114,7 @@ class TrackRequestModel {
 
 class BookItem {
   final String id;
-  final String title; // Aapka JSON mein bookTitle hai
+  final String title;
   final String coverImage;
   final String bookPdfUrl;
   final String? signedPdfUrl;
@@ -122,7 +122,7 @@ class BookItem {
   final String status;
   final String? rejectionReason;
   final String? authorMessage;
-  final String uploadDate; // Aapka JSON mein requestDate hai
+  final String uploadDate;
   final int feeAmount;
   final bool isPaid;
   final Reader reader;
@@ -146,22 +146,60 @@ class BookItem {
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> data = Map<String, dynamic>.from(json);
+    final dynamic readerJson = data['reader'] ?? data['readerData'] ?? {};
+    final dynamic authorJson = data['author'] ?? data['authorData'] ?? {};
+
     return BookItem(
-      id: json['id'],
-      title: json['bookTitle'],
-      coverImage: json['coverImage'],
-      bookPdfUrl: json['bookPdfUrl'],
-      signedPdfUrl: json['signedPdfUrl'],
-      personalMessage: json['personalMessage'],
-      status: json['status'],
-      rejectionReason: json['rejectionReason'],
-      authorMessage: json['authorMessage'],
-      uploadDate: json['requestDate'],
-      feeAmount: json['feeAmount'],
-      isPaid: json['isPaid'],
-      reader: Reader.fromJson(json['reader']),
-      author: Author.fromJson(json['author']),
+      id: data['id']?.toString() ?? '',
+      title: data['bookTitle']?.toString() ?? data['title']?.toString() ?? '',
+      coverImage: data['coverImage']?.toString() ?? '',
+      bookPdfUrl: data['bookPdfUrl']?.toString() ?? '',
+      signedPdfUrl: data['signedPdfUrl']?.toString(),
+      personalMessage: data['personalMessage']?.toString() ?? data['message']?.toString() ?? '',
+      status: data['status']?.toString() ?? '',
+      rejectionReason: data['rejectionReason']?.toString(),
+      authorMessage: data['authorMessage']?.toString(),
+      uploadDate: data['requestDate']?.toString() ?? data['createdAt']?.toString() ?? '',
+      feeAmount: int.tryParse(data['feeAmount']?.toString() ?? '') ?? 0,
+      isPaid: data['isPaid'] is bool
+          ? data['isPaid'] as bool
+          : (data['isPaid']?.toString().toLowerCase() == 'true'),
+      reader: Reader.fromJson(Map<String, dynamic>.from(readerJson is Map ? readerJson : {})),
+      author: Author.fromJson(Map<String, dynamic>.from(authorJson is Map ? authorJson : {})),
     );
+  }
+
+  static BookItem? fromResponse(dynamic response) {
+    if (response is Map<String, dynamic>) {
+      if (response.containsKey('items') && response['items'] is List && (response['items'] as List).isNotEmpty) {
+        final firstItem = (response['items'] as List).first;
+        if (firstItem is Map) {
+          return BookItem.fromJson(Map<String, dynamic>.from(firstItem));
+        }
+      }
+
+      if (response.containsKey('data')) {
+        return fromResponse(response['data']);
+      }
+      if (response.containsKey('request')) {
+        return fromResponse(response['request']);
+      }
+      if (response.containsKey('autographRequest')) {
+        return fromResponse(response['autographRequest']);
+      }
+
+      return BookItem.fromJson(response);
+    }
+
+    if (response is List && response.isNotEmpty) {
+      final firstItem = response.first;
+      if (firstItem is Map) {
+        return BookItem.fromJson(Map<String, dynamic>.from(firstItem));
+      }
+    }
+
+    return null;
   }
 }
 

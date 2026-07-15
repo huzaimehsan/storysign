@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -375,8 +375,8 @@ class HomeController extends GetxController {
         ),
       );
 
-      print('⏳ UPLOAD BOOK API CALLING: $uri');
-      print('➡ Fields: ${request.fields}');
+      print('â³ UPLOAD BOOK API CALLING: $uri');
+      print('âž¡ Fields: ${request.fields}');
 
       final streamedResponse = await request.send().timeout(
         const Duration(seconds: 60),
@@ -384,7 +384,7 @@ class HomeController extends GetxController {
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
-      print('✅ RESPONSE: $responseMap');
+      print('âœ… RESPONSE: $responseMap');
 
       if (streamedResponse.statusCode == 200 ||
           streamedResponse.statusCode == 201) {
@@ -416,28 +416,28 @@ class HomeController extends GetxController {
     bookCoverImage.value = null;
   }
 
-  Future<void> requestAutograph(BuildContext context, String authorId) async {
+  Future<String?> requestAutograph(BuildContext context, String authorId) async {
     final String title = bookTitleControllerRequest.text.trim();
     final String personalMessage = personalMessageController.text.trim();
 
     if (authorId.isEmpty) {
       Utils.showToast('Author ID is required', true);
-      return;
+  
     }
 
     if (title.isEmpty) {
       Utils.showToast('Book title is required', true);
-      return;
+ 
     }
 
     if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) {
       Utils.showToast('PDF file is required', true);
-      return;
+
     }
 
     if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) {
       Utils.showToast('Cover image is required', true);
-      return;
+    
     }
 
     try {
@@ -489,8 +489,8 @@ class HomeController extends GetxController {
         ),
       );
 
-      print('⏳ AUTOGRAPH REQUEST API CALLING: $uri');
-      print('➡ Fields: ${request.fields}');
+      print(' AUTOGRAPH REQUEST API CALLING: $uri');
+      print(' Fields: ${request.fields}');
 
       final streamedResponse = await request.send().timeout(
         const Duration(seconds: 60),
@@ -498,7 +498,7 @@ class HomeController extends GetxController {
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
-      print('✅ RESPONSE: $responseMap');
+      print('RESPONSE: $responseMap');
 
       if (streamedResponse.statusCode == 200 ||
           streamedResponse.statusCode == 201) {
@@ -507,8 +507,8 @@ class HomeController extends GetxController {
           false,
         );
         clearRequestBookFields();
-        Get.back();
-        return;
+        Get.toNamed('/request');
+       
       }
 
       Utils.showToast(
@@ -600,3 +600,4 @@ class HomeController extends GetxController {
     }
   }
 }
+

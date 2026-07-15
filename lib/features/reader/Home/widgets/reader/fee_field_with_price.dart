@@ -7,6 +7,7 @@ import '../../../../../widgets/custom_text_feild.dart';
 class FeeFieldWithPrice extends StatefulWidget {
   final String label;
   final String price;
+  final String amount;
   final TextEditingController? controller;
   final bool? isPaid;
 
@@ -15,7 +16,7 @@ class FeeFieldWithPrice extends StatefulWidget {
     required this.label,
     required this.price,
     this.controller,
-    this.isPaid = false,
+    this.isPaid = false, required this.amount,
   });
 
   @override
@@ -88,7 +89,7 @@ class _FeeFieldWithPriceState extends State<FeeFieldWithPrice> {
 
                   customText(
                     fontFamily: "Poppins",
-                    text: "\$10.00",
+                    text: widget.amount,
                     color: buttonColor,
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,

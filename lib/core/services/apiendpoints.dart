@@ -23,7 +23,9 @@ static const String requestAutoGraphHome = '/reader/autograph-requests';
 static const String trackRequest = '/reader/autograph-requests?page=1&limit=10';
 
 
-
+  static String getAutographRequestDetails(String autographRequestId) {
+    return '/reader/autograph-requests/$autographRequestId';
+  }
 
 
   static const String addEquipment = '/fleet/equipment';

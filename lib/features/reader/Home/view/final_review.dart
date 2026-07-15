@@ -63,17 +63,15 @@ class FinalReview extends StatelessWidget {
               date: "Joined: 22 june, 2026",
             ),
             SizedBox(height: 1.h),
-            CustomTextFieldWithLimit(
+            CustomMessageDisplay(
               label: 'Personal Message',
-              hintText: "Write a personal message to the author about why this book is special to you…",
-              maxLength: 200,
-              maxLines: 4,
+              message: "Yeh kitab mere liye bahut khaas hai kyunki...",
             ),
             SizedBox(height: 1.5.h),
             FeeFieldWithPrice(
               label: 'Signature Price',
               price: "Fee",
-              isPaid: true,
+              isPaid: true, amount: '',
             ),
             SizedBox(height: 7.h),
             Padding(
