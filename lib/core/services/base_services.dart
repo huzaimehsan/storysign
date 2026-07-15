@@ -77,6 +77,15 @@ class BaseService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var jsonData = json.decode(response.body);
 
+        if (jsonData is List) {
+          return {
+            "success": true,
+            "data": jsonData, // List ko 'data' key mein dal diya
+            "statusCode": response.statusCode
+          };
+        }
+
+        // Agar response pehle se hi Map hai
         return {
           "success": true,
           ...jsonData,
@@ -152,13 +161,20 @@ class BaseService {
       // ---------- SUCCESS ----------
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var jsonData = json.decode(response.body);
+        if (jsonData is List) {
+          return {
+            "success": true,
+            "data": jsonData,
+            "statusCode": response.statusCode
+          };
+        }
+        // Agar JSON Map hai
         return {
           "success": true,
           ...jsonData,
           "statusCode": response.statusCode
         };
       }
-
       // ---------- ERROR ----------
       if (response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);

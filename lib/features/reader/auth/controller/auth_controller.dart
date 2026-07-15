@@ -316,6 +316,8 @@ class AuthController extends GetxController {
 
       clearLoginFeilds();
       final String role = user['role']?.toString().toLowerCase() ?? 'reader';
+
+      await prefs.setString('role', role);
       if (role == 'author') {
         Get.offAllNamed('/authorbottomnav');
       } else {

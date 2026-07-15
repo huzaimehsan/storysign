@@ -101,9 +101,14 @@ class RequestAutograph extends GetView<HomeController> {
                             buttonWidget(
                               "Request Autograph",
                               whiteColor,
-                              onTap: () {
-
-                                controller.requestAutograph(context, authorId);
+                              onTap: () async {
+                                final String? requestId = await controller.requestAutograph(context, authorId);
+                                if (requestId != null && requestId.isNotEmpty) {
+                                  Get.offNamed('/request', arguments: {
+                                    'autographRequestId': requestId,
+                                    'role': 'alreadySelectedAuthor',
+                                  });
+                                }
                               },
                               colors: buttonColor,
                               fontFamily: 'Poppins',

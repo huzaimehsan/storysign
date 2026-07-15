@@ -31,7 +31,12 @@ class HomeScreen extends GetView<HomeController> {
                   Navigator.of(context).pushNamed('/trackrequest');
                 },
                 onAutographPressed: () {
-                  Get.toNamed("/requestautographcard");
+                  // Agar aapke paas koi author ya book selected hai, toh uski ID yahan pass karein
+                  Get.toNamed("/requestautographcard", arguments: {
+                    'authorId': 'authorId',
+                    'bookId': 'bookId',
+                    'isFromHome': true,
+                  });
                 },
                 onUploadBookPressed: () {
                   Get.toNamed("/uploadbook");

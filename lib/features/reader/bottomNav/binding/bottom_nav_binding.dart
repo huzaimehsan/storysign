@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:storysign/features/reader/profile/controller/help_support_controller.dart';
+import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 
 import '../../Home/controller/home_controller.dart';
 import '../../library/controller/library_controller.dart';

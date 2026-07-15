@@ -35,7 +35,19 @@ class HelperFunction {
     return null;
   }
 
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return "Joined recently";
 
+    try {
+      // API se aayi hui string ko DateTime mein convert karein
+      DateTime dateTime = DateTime.parse(dateString);
+
+      // Apni marzi ka format set karein (e.g., "10 Jul, 2026")
+      return DateFormat('dd MMM, yyyy').format(dateTime);
+    } catch (e) {
+      return dateString; // Agar error aaye to original string return karein
+    }
+  }
   // HelperFunction class mein ye add karein
   static String? bioValidate(String? val) {
     if (val == null || val.isEmpty) {

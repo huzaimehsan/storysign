@@ -37,11 +37,23 @@ Widget profileHeaderCard({
           decoration: BoxDecoration(
             border: Border.all(color: buttonColor, width: 1.2),
             shape: BoxShape.circle,
-            image: DecorationImage(
+            color: textFeildContainColor, // Background color tab dikhega jab image nahi hogi
+            // Agar image hai toh image dikhao, warna null (taake container khali rahe)
+            image: (imagePath.isNotEmpty)
+                ? DecorationImage(
               image: AssetImage(imagePath),
               fit: BoxFit.cover,
-            ),
+            )
+                : null,
           ),
+          // Agar image nahi hai, toh child mein Icon dikhao
+          child: (imagePath.isEmpty)
+              ? Icon(
+            Icons.person_rounded,
+            color: buttonColor.withOpacity(0.6),
+            size: 4.w,
+          )
+              : null,
         ),
         SizedBox(width: 4.w),
         Expanded(

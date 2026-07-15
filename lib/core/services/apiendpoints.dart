@@ -23,13 +23,29 @@ static const String requestAutoGraphHome = '/reader/autograph-requests';
 static const String trackRequest = '/reader/autograph-requests?page=1&limit=10';
 
 
-  static String getAutographRequestDetails(String autographRequestId) {
-    return '/reader/autograph-requests/$autographRequestId';
+  static String getAutographRequestDetails(String id) {
+    return '/reader/autograph-requests/$id';
   }
 
 
-  static const String addEquipment = '/fleet/equipment';
-  static const String getProfile = '/users/me';
+  static const String verifyPayment = "/reader/autograph-requests/confirm-payment";
+
+  static const String contactUs = "/reader/contact";
+
+  static const String faqs = "/reader/faqs";
+
+
+  static const String helpSupport = "/reader/help";
+
+  static const String notifications = "/reader/notifications?page=1&limit=20";
+static const String profile = "/reader/profile";
+static const String editProfile = "/reader/profile";
+  static const String libraryStats = "/reader/profile/stats";
+
+  static String markNotificationAsRead(String notificationId) {
+    return '/reader/notifications/$notificationId/read';
+  }
+
 
 
 

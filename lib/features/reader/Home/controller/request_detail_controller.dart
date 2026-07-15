@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
@@ -19,49 +18,41 @@ class AuthorDetailController extends GetxController {
   RxString errorMessage = ''.obs;
   Rxn<BookItem> selectedRequest = Rxn<BookItem>();
 
+
+  @override
   void onInit() {
     super.onInit();
 
-   authorDetail(autographRequestId);
-  }
+    var args = Get.arguments;
+    if (args != null && args is Map) {
+      // Check karein autographRequestId, agar na mile to bookId utha lein
+      autographRequestId = args['autographRequestId'] ?? args['bookId'];
 
+      debugPrint('Controller onInit: ID received -> $autographRequestId');
 
-  void setRequestId(String? id) {
-    final normalizedId = id?.trim();
-    debugPrint('RequestDetailController setRequestId: $normalizedId');
-    if ((autographRequestId ?? '') == normalizedId) return;
-
-    autographRequestId = normalizedId;
-    if ((normalizedId ?? '').isNotEmpty) {
-      authorDetail(normalizedId);
-    } else {
-      selectedRequest.value = null;
+      if (autographRequestId != null && autographRequestId!.isNotEmpty) {
+        authorDetail(autographRequestId);
+      }
     }
   }
-
   Future<void> authorDetail(String? requestId) async {
     final normalizedId = requestId?.trim();
-    if ((normalizedId ?? '').isEmpty) {
+    if (normalizedId == null || normalizedId.isEmpty) {
       errorMessage.value = 'Request id not found';
-      Utils.showToast('Request not found', true);
       return;
     }
 
     try {
       isloading.value = true;
-      errorMessage.value = '';
+      EasyLoading.show(status: 'Loading...'); // Loading spinner start
 
-      final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
 
       if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
+        throw Exception('User not logged in');
       }
 
-      final endpoint = ApiEndPoints.getAutographRequestDetails(normalizedId!);
-      debugPrint('RequestDetailController fetching: ${BaseService().baseURL}$endpoint');
+      final endpoint = ApiEndPoints.getAutographRequestDetails(normalizedId);
       final uri = Uri.parse('${BaseService().baseURL}$endpoint');
 
       final response = await http.get(
@@ -73,20 +64,18 @@ class AuthorDetailController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        debugPrint('RequestDetailController response body: ${response.body}');
         final decodedBody = jsonDecode(response.body);
+
+        // Ensure fromResponse handles the map correctly
         final parsedRequest = BookItem.fromResponse(decodedBody);
 
         if (parsedRequest != null) {
-          debugPrint('RequestDetailController parsed request: ${parsedRequest.title}');
           selectedRequest.value = parsedRequest;
         } else {
-          errorMessage.value = 'Unexpected response format';
-          Utils.showToast(errorMessage.value, true);
+          throw Exception('Failed to parse data');
         }
       } else {
-        errorMessage.value = 'Failed to load details';
-        Utils.showToast(errorMessage.value, true);
+        throw Exception('Server Error: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -94,9 +83,41 @@ class AuthorDetailController extends GetxController {
       Utils.showToast(errorMessage.value, true);
     } finally {
       isloading.value = false;
-      EasyLoading.dismiss();
+      EasyLoading.dismiss(); // Loading spinner end
     }
   }
+  //
+  //
+  // Future<void> processPayment({
+  //   required String clientSecret,
+  //   required String paymentIntentId,
+  //   required VoidCallback onSuccess,
+  // }) async {
+  //   try {
+  //     // 1. Stripe Payment Sheet Initialize
+  //     await Stripe.instance.initPaymentSheet(
+  //       paymentSheetParameters: SetupPaymentSheetParameters(
+  //         paymentIntentClientSecret: clientSecret,
+  //         merchantDisplayName: 'StorySign',
+  //       ),
+  //     );
+  //
+  //     // 2. Show Payment Sheet
+  //     await Stripe.instance.presentPaymentSheet();
+  //
+  //     // 3. Server Verification
+  //     final BaseService baseService = BaseService();
+  //     final response = await baseService.(paymentIntentId);
+  //
+  //     if (response['success'] == true) {
+  //       Utils.showToast("Payment Successful!", false);
+  //       onSuccess(); // Yeh callback UI ya original controller ko update karega
+  //     }
+  //   } on StripeException catch (e) {
+  //     debugPrint('Stripe Error: $e');
+  //     Utils.showToast('Payment Cancelled', true);
+  //   } catch (e) {
+  //     debugPrint('Error: $e');
+  //   }
+  // }
 }
-
-

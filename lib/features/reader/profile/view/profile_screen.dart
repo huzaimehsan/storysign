@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 
@@ -15,7 +17,7 @@ import '../widget/settings_group_card.dart';
 import '../widget/section_header.dart';
 import '../../../../widgets/customText_widget.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends GetView<HelpAndSupportController> {
   const ProfileScreen({super.key});
 
   @override
@@ -38,110 +40,132 @@ class ProfileScreen extends StatelessWidget {
 
             Expanded(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  child: Column(
-                    children: [
-                      profileHeaderCard(
-                        imagePath: 'assets/png/searchprofile.png',
-                        name: 'John Smith',
-                        email: 'johnsmith@gmail.com',
-                        joinedDate: '22 june, 2026',
-                        onEdit: () {
+                child: Obx(
+                   () {
 
-                          Get.toNamed('/editprofile', arguments: {'role': 'reader'});
-                        }, author: false,
-                      ),
-                
-                      SizedBox(height: 2.h),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: customText(
-                          fontFamily: 'Poppins',
-                          text: 'Library',
-                          color: whiteColor,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+
+                     final profile =controller.profileModel.value;
+                     String formattedDate = "";
+                     if (profile?.dateJoined != null && profile!.dateJoined.isNotEmpty) {
+                       try {
+                         DateTime dateTime = DateTime.parse(profile.dateJoined);
+                         formattedDate = DateFormat('dd MMM, yyyy').format(dateTime); // Output: 15 Jul, 2026
+                       } catch (e) {
+                         formattedDate = profile.dateJoined; // Error aaye toh original string dikha do
+                       }
+                     }
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Column(
                         children: [
-                          libraryStatCard(
-                            title: 'Total Books',
-                            value: '18',
-                            subtitle: '',
+                      profileHeaderCard(
+                      imagePath: profile?.profilePicture ?? "", // Nullable handle
+                        name: profile?.fullName ?? "No Name",     // Dynamic name
+                        email: profile?.email ?? "No Email",       // Dynamic email
+                        joinedDate:formattedDate ?? "",     // Dynamic date
+                        author: false,
+                        onEdit: () {
+                          Get.toNamed('/editprofile', arguments: {'role': 'reader'});
+                        },
+                      ),
+
+                          SizedBox(height: 2.h),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: customText(
+                              fontFamily: 'Poppins',
+                              text: 'Library',
+                              color: whiteColor,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          libraryStatCard(
-                            title: 'Signed Books',
-                            value: '10',
-                            subtitle: '',
+
+                          Obx(
+                             () {
+                               final stats = controller.libraryStats.value;
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  libraryStatCard(
+                                    title: 'Total Books',
+                                    value: stats?.totalUploadedBooks?.toString() ?? "0",
+                                    subtitle: '',
+                                  ),
+                                  libraryStatCard(
+                                    title: 'Signed Books',
+                                    value:  stats?.signedBooks?.toString() ?? "0",
+                                    subtitle: '',
+                                  ),
+                                  libraryStatCard(
+                                    title: 'Sign Rejected',
+                                    value: stats?.signRejected?.toString() ?? "0",
+                                    subtitle: '',
+                                  ),
+                                ],
+                              );
+                            }
                           ),
-                          libraryStatCard(
-                            title: 'Sign Rejected',
-                            value: '08',
-                            subtitle: '',
+                          SizedBox(height: 1.h),
+                          sectionHeader(
+                            title: 'Recently Signed Books',
+                            onSeeAll: () {},
                           ),
+
+                          recentSignedBookCard(
+                            title: 'Things Fall Apart',
+                            price: '\u0024 10.00',
+                            date: '22 june, 2026',
+                            status: 'Completed',
+                          ),
+                          recentSignedBookCard(
+                            title: 'God of Small Things',
+                            price: '\u0024 10.00',
+                            date: '22 june, 2026',
+                            status: 'Completed',
+                          ),
+                          recentSignedBookCard(
+                            title: 'Pride and Prejudice',
+                            price: '\u0024 10.00',
+                            date: '22 june, 2026',
+                            status: 'Completed',
+                          ),
+                          SizedBox(height: 1.h),
+                          sectionHeader(title: 'Download History', onSeeAll: () {}),
+
+                          downloadHistoryCard(
+                            imagePath: 'assets/png/book.png',
+                            title: 'God of small Things',
+                            author: 'Chinua Achebe',
+                            date: '22 june, 2026',
+                          ),
+                          downloadHistoryCard(
+                            imagePath: 'assets/png/book.png',
+                            title: 'Things Fall Apart',
+                            author: 'Chinua Achebe',
+                            date: '22 june, 2026',
+                          ),
+                          SizedBox(height: 1.h),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: customText(
+                              text: "Settings",
+                              fontSize: 16.sp,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w600,
+                              color: whiteColor,
+                            ),
+                          ),
+                          SizedBox(height: 1.h),
+                          settingsGroupCard(),
+                          SizedBox(height: 2.h),
+                          settingsSignoutCard(),
+                          SizedBox(height: 12.h),
                         ],
                       ),
-                      SizedBox(height: 1.h),
-                      sectionHeader(
-                        title: 'Recently Signed Books',
-                        onSeeAll: () {},
-                      ),
-                
-                      recentSignedBookCard(
-                        title: 'Things Fall Apart',
-                        price: '\u0024 10.00',
-                        date: '22 june, 2026',
-                        status: 'Completed',
-                      ),
-                      recentSignedBookCard(
-                        title: 'God of Small Things',
-                        price: '\u0024 10.00',
-                        date: '22 june, 2026',
-                        status: 'Completed',
-                      ),
-                      recentSignedBookCard(
-                        title: 'Pride and Prejudice',
-                        price: '\u0024 10.00',
-                        date: '22 june, 2026',
-                        status: 'Completed',
-                      ),
-                      SizedBox(height: 1.h),
-                      sectionHeader(title: 'Download History', onSeeAll: () {}),
-                
-                      downloadHistoryCard(
-                        imagePath: 'assets/png/book.png',
-                        title: 'God of small Things',
-                        author: 'Chinua Achebe',
-                        date: '22 june, 2026',
-                      ),
-                      downloadHistoryCard(
-                        imagePath: 'assets/png/book.png',
-                        title: 'Things Fall Apart',
-                        author: 'Chinua Achebe',
-                        date: '22 june, 2026',
-                      ),
-                      SizedBox(height: 1.h),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: customText(
-                          text: "Settings",
-                          fontSize: 16.sp,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w600,
-                          color: whiteColor,
-                        ),
-                      ),
-                      SizedBox(height: 1.h),
-                      settingsGroupCard(),
-                      SizedBox(height: 2.h),
-                      settingsSignoutCard(),
-                      SizedBox(height: 12.h),
-                    ],
-                  ),
+                    );
+                  }
                 ),
               ),
             ),

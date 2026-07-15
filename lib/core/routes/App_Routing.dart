@@ -22,7 +22,7 @@ import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
 import 'package:storysign/features/reader/profile/view/change_password.dart';
 import 'package:storysign/features/reader/profile/view/contact_us.dart';
 import 'package:storysign/features/reader/profile/view/edit_profile.dart';
-import 'package:storysign/features/reader/profile/view/help_and%20_support.dart';
+
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 import 'package:storysign/features/reader/search/binding/search_binding.dart';
@@ -45,6 +45,7 @@ import '../../features/reader/bottomNav/binding/bottom_nav_binding.dart';
 import '../../features/reader/bottomNav/view/bottom_nav_layout.dart';
 import '../../features/reader/library/view/reader_library.dart';
 import '../../features/reader/notification/view/notification.dart';
+import '../../features/reader/profile/view/help_and_support.dart';
 import '../../features/reader/search/view/author_detail.dart';
 import '../../features/reader/search/view/request_autograph.dart';
 

@@ -416,117 +416,73 @@ class HomeController extends GetxController {
     bookCoverImage.value = null;
   }
 
+  var receivedBookId = ''.obs; // Controller mein
   Future<String?> requestAutograph(BuildContext context, String authorId) async {
     final String title = bookTitleControllerRequest.text.trim();
     final String personalMessage = personalMessageController.text.trim();
 
-    if (authorId.isEmpty) {
-      Utils.showToast('Author ID is required', true);
-  
-    }
-
-    if (title.isEmpty) {
-      Utils.showToast('Book title is required', true);
- 
-    }
-
-    if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) {
-      Utils.showToast('PDF file is required', true);
-
-    }
-
-    if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) {
-      Utils.showToast('Cover image is required', true);
-    
-    }
+    // Basic Validations
+    if (authorId.isEmpty) { Utils.showToast('Author ID is required', true); return null; }
+    if (title.isEmpty) { Utils.showToast('Book title is required', true); return null; }
+    if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) { Utils.showToast('PDF file is required', true); return null; }
+    if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) { Utils.showToast('Cover image is required', true); return null; }
 
     try {
-      EasyLoading.show(
-        status: 'Sending autograph request...',
-        maskType: EasyLoadingMaskType.black,
-      );
+      EasyLoading.show(status: 'Sending autograph request...', maskType: EasyLoadingMaskType.black);
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}/reader/autograph-requests',
-      );
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}');
       final request = http.MultipartRequest('POST', uri);
 
-      // Auth token header mein
-      final token = SharedPreferencesMethod.storage.getString(
-        LocalDBKeys.TOKEN,
-      );
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
       if (token != null && token.isNotEmpty) {
         request.headers['Authorization'] = 'Bearer $token';
       }
 
-      // Text fields
       request.fields['authorId'] = authorId;
       request.fields['bookTitle'] = title;
       request.fields['personalMessage'] = personalMessage;
 
-      // PDF file
-      final pdfFile = bookPdfFile.value!;
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'bookPdf',
-          pdfFile.path,
-          filename: pdfFile.path.split('/').last,
-          contentType: http.MediaType('application', 'pdf'),
-        ),
-      );
+      request.files.add(await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path));
+      request.files.add(await http.MultipartFile.fromPath('coverImage', bookCoverImage.value!.path));
 
-      // Cover image
-      final coverFile = bookCoverImage.value!;
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'coverImage',
-          coverFile.path,
-          filename: coverFile.path.split('/').last,
-          contentType: http.MediaType(
-            'image',
-            'png',
-          ), // jpg ho to 'jpeg' kar dein
-        ),
-      );
-
-      print(' AUTOGRAPH REQUEST API CALLING: $uri');
-      print(' Fields: ${request.fields}');
-
-      final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 60),
-      );
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
       print('RESPONSE: $responseMap');
 
-      if (streamedResponse.statusCode == 200 ||
-          streamedResponse.statusCode == 201) {
-        Utils.showToast(
-          responseMap['message'] ?? 'Autograph request sent successfully',
-          false,
-        );
+      if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
+        Utils.showToast(responseMap['message'] ?? 'Autograph request sent successfully', false);
         clearRequestBookFields();
-        Get.toNamed('/request');
-       
+
+        final String? requestId = responseMap['id']?.toString()
+            ?? responseMap['_id']?.toString() // MongoDB mein aksar _id hoti hai
+            ?? responseMap['data']?['id']?.toString()
+            ?? responseMap['request']?['id']?.toString();
+
+        print('DEBUG: FINAL CHECK - Extracted ID: $requestId');
+        print('EXTRACTED REQUEST ID: $requestId');
+        return requestId;
+
       }
 
-      Utils.showToast(
-        responseMap['message'] ?? 'Autograph request failed',
-        true,
-      );
+      Utils.showToast(responseMap['message'] ?? 'Autograph request failed', true);
+      return null;
+
     } on TimeoutException {
       Utils.showToast('Request timed out', true);
+      return null;
     } on SocketException {
       Utils.showToast('No Internet connection', true);
+      return null;
     } catch (e) {
       print('Autograph Request Error: $e');
       Utils.showToast('Unexpected error: $e', true);
+      return null;
     } finally {
       EasyLoading.dismiss();
     }
   }
-
   void clearRequestBookFields() {
     bookTitleControllerRequest.clear();
     personalMessageController.clear();

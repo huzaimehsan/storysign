@@ -46,16 +46,20 @@ class BookItem {
   final String bookTitle;
   final String coverImage;
   final String bookPdfUrl;
-  final String? signedPdfUrl; // Nullable
+  final String? signedPdfUrl;
   final String personalMessage;
   final String status;
-  final String? rejectionReason; // Nullable
-  final String? authorMessage; // Nullable
+  final String? rejectionReason;
+  final String? authorMessage;
   final DateTime requestDate;
   final int feeAmount;
   final bool isPaid;
   final Reader reader;
   final Author author;
+
+  // Stripe Fields Added
+  final String? clientSecret;
+  final String? paymentIntentId;
 
   BookItem({
     required this.id,
@@ -72,6 +76,8 @@ class BookItem {
     required this.isPaid,
     required this.reader,
     required this.author,
+    this.clientSecret,      // Added
+    this.paymentIntentId,   // Added
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) => BookItem(
@@ -89,6 +95,8 @@ class BookItem {
     isPaid: json["isPaid"] ?? false,
     reader: Reader.fromJson(json["reader"]),
     author: Author.fromJson(json["author"]),
+    clientSecret: json["clientSecret"],       // Mapping added
+    paymentIntentId: json["paymentIntentId"], // Mapping added
   );
 
   Map<String, dynamic> toJson() => {
@@ -106,6 +114,8 @@ class BookItem {
     "isPaid": isPaid,
     "reader": reader.toJson(),
     "author": author.toJson(),
+    "clientSecret": clientSecret,         // Mapping added
+    "paymentIntentId": paymentIntentId,   // Mapping added
   };
 }
 

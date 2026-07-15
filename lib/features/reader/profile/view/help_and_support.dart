@@ -1,0 +1,149 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../constants/color_constants.dart';
+import '../../../../utils/utility.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/search_widget.dart';
+import '../../search/widgets/header_widget.dart';
+import '../controller/profile_controller.dart';
+import '../widget/help_support_widget.dart';
+import '../widget/library_stat_card.dart';
+
+class HelpAndSupport extends GetView<HelpAndSupportController> {
+  const HelpAndSupport({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            customHeader(
+              context: context,
+              title: "Help & Support",
+              onBack: () => Get.back(),
+              onIconPressed: () {},
+            ),
+            SizedBox(height: 2.h),
+            searchWidget(
+              onChanged: (val) {
+                controller.searchQuery.value = val;
+              },
+            ),
+            SizedBox(height: 1.5.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: Obx(() {
+                final data = controller.supportData.value;
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ab ye puri width par kaam karega
+                  children: [
+                    // 1. EMAIL BUTTON
+                    libraryStatCardIcon(
+                      title: 'Email',
+                      imagePath: "assets/png/email.png",
+                      value: '',
+                      subtitle: '',
+                      ontap: () async {
+                        if (data != null && data.email.isNotEmpty) {
+                          final Uri emailUri = Uri(scheme: 'mailto', path: data.email);
+                          if (await canLaunchUrl(emailUri)) {
+                            await launchUrl(emailUri);
+                          }
+                        } else {
+                          Utils.showToast("Email not available", true);
+                        }
+                      },
+                    ),
+
+                    // 2. CHAT BUTTON
+                    libraryStatCardIcon(
+                      title: 'Chat',
+                      imagePath: "assets/png/chat.png",
+                      value: '',
+                      subtitle: '',
+                      ontap: () async {
+                        if (data != null && data.supportUrl.isNotEmpty) {
+                          final Uri url = Uri.parse(data.supportUrl);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                          }
+                        } else {
+                          Get.toNamed("/contact");
+                        }
+                      },
+                    ),
+
+                    // 3. CALL BUTTON
+                    libraryStatCardIcon(
+                      title: 'Call',
+                      imagePath: "assets/png/call.png",
+                      value: '',
+                      subtitle: '',
+                      ontap: () async {
+                        if (data != null && data.phone.isNotEmpty) {
+                          final Uri callUri = Uri(scheme: 'tel', path: data.phone);
+                          if (await canLaunchUrl(callUri)) {
+                            await launchUrl(callUri);
+                          }
+                        } else {
+                          Utils.showToast("Phone number not available", true);
+                        }
+                      },
+                    ),
+                  ],
+                );
+              }),
+            ),
+            SizedBox(height: 1.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: customText(
+                  text: "FAQS",
+                  fontSize: 16.sp,
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w600,
+                  color: whiteColor,
+                ),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Obx(() {
+              // Loading state show karein agar data load ho raha ho
+              if (controller.isFaqsLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return Expanded(
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.faqList.length, // Api wali list use karein
+                    itemBuilder: (context, index) {
+                      final faq = controller.faqList[index]; // FaqModel ka object
+                      return faqItemWidget(
+                        title: faq.question,      // Model field use karein
+                        description: faq.answer,  // Model field use karein
+                      );
+                    },
+                  ),
+                ),
+              );
+            }),
+            SizedBox(height: 2.h),
+          ],
+        ),
+      ),
+    );
+  }
+}

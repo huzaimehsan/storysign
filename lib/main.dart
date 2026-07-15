@@ -9,17 +9,40 @@ import 'package:sizer/sizer.dart';
 
  // Yahan apni routes wali file import karein
 import 'constants/color_constants.dart';
+import 'constants/local_db_key.dart';
 import 'core/bindings/init_binding.dart';
 import 'core/routes/App_Routing.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Stripe.publishableKey = "pk_test_YOUR_KEY_HERE";
   //
-  // Stripe.publishableKey = "pk_test_YOUR_PUBLISHABLE_KEY";
   // await Stripe.instance.applySettings();
-  // Initialize SharedPreferences
+
+
+
+  runApp(const MyApp());
   final prefs = await SharedPreferences.getInstance();
   Get.put<SharedPreferences>(prefs);
+  final String? token =
+  prefs.getString(LocalDBKeys.TOKEN);
+
+
+  final String role =
+      prefs.getString('role') ?? 'reader';
+
+
+  String initialRoute = '/';
+
+
+  if (token != null && token.isNotEmpty) {
+
+    initialRoute =
+    (role == 'author')
+        ? '/authorbottomnav'
+        : '/bottomnav';
+
+  }
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

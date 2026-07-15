@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 import '../../library/controller/library_controller.dart';
 import '../../search/controller/search_page_controller.dart';
 
@@ -43,6 +44,13 @@ class BottomNavController extends GetxController{
     if (index == 2) {
       if (Get.isRegistered<ReaderController>()) {
         Get.find<ReaderController>().fetchBooksData();
+      }
+    }
+
+
+    if (index == 4) {
+      if (Get.isRegistered<HelpAndSupportController>()) {
+        Get.find<HelpAndSupportController>(). getProfile();
       }
     }
   }

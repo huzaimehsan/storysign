@@ -99,7 +99,7 @@ class AuthorInfoCard extends StatelessWidget {
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                 ),
-                SizedBox(height: 0.6.h),
+                SizedBox(height: 0.3.h),
                 customText(
                   fontFamily: "Poppins",
                   text: formattedDate,

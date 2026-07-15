@@ -21,6 +21,7 @@ class TrackRequest extends GetView<HomeController> {
     final List<String> tabs = ["All", "In Process", "Delivered"];
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             customHeader(
@@ -139,22 +140,31 @@ class TrackRequest extends GetView<HomeController> {
                       formattedDate = "Joined: Invalid Date";
                     }
 
-                    return recentlySignedBooks(
+                   return recentlySignedBooks(
                       imageUrl: book.coverImage,
                       bookTitle: book.title,
                       authorName: book.author.fullName,
                       date: formattedDate,
-                      trackRequest: () => Get.toNamed("/tracking"),
+                      trackRequest: () {
+ print(book.id.toString());
+                        Get.toNamed(
+                          "/request",
+                          arguments: {
+                            'bookId': book.id.toString(),
+                          },
+                        );
+                      },
                       status: book.status,
                       imagePath: '',
                       showAuthor: true,
                     );
+
                   },
                 );
               }),
             ),
 
-            SizedBox(height: 7.h),
+
           ],
         ),
       ),

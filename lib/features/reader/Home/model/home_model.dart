@@ -147,26 +147,42 @@ class BookItem {
 
   factory BookItem.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = Map<String, dynamic>.from(json);
-    final dynamic readerJson = data['reader'] ?? data['readerData'] ?? {};
-    final dynamic authorJson = data['author'] ?? data['authorData'] ?? {};
+    final dynamic bookJson = _firstMap(data, ['book', 'bookData', 'bookDetails', 'ebook']);
+    final dynamic readerJson = _firstMap(data, ['reader', 'readerData', 'readerDetails']);
+    final dynamic authorJson = _firstMap(data, ['author', 'authorData', 'authorDetails', 'authorInfo']);
+
+    final title = _stringValue(data, ['bookTitle', 'title', 'book_title', 'bookName', 'name'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['title', 'bookTitle', 'book_title', 'name']));
+    final coverImage = _stringValue(data, ['coverImage', 'cover_image', 'coverImageUrl', 'imageUrl', 'bookCover'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['coverImage', 'cover_image', 'coverImageUrl', 'imageUrl', 'bookCover']));
+    final personalMessage = _stringValue(data, ['personalMessage', 'message', 'personal_message', 'note', 'requestMessage'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['personalMessage', 'message', 'personal_message', 'note']));
+    final status = _stringValue(data, ['status', 'requestStatus', 'request_status', 'state']);
+    final feeAmountText = _stringValue(data, ['feeAmount', 'fee_amount', 'price', 'totalAmount', 'total_amount']);
+    final isPaid = _boolValue(data, ['isPaid', 'is_paid', 'paid']);
+    final uploadDate = _stringValue(data, ['requestDate', 'createdAt', 'created_at', 'updatedAt', 'updated_at']);
+    final authorName = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['fullName', 'name', 'authorName', 'full_name']);
+    final authorProfilePicture = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['profilePicture', 'profile_picture', 'avatar', 'image']);
+    final authorDateJoined = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['dateJoined', 'joinedAt', 'createdAt', 'created_at']);
 
     return BookItem(
       id: data['id']?.toString() ?? '',
-      title: data['bookTitle']?.toString() ?? data['title']?.toString() ?? '',
-      coverImage: data['coverImage']?.toString() ?? '',
-      bookPdfUrl: data['bookPdfUrl']?.toString() ?? '',
-      signedPdfUrl: data['signedPdfUrl']?.toString(),
-      personalMessage: data['personalMessage']?.toString() ?? data['message']?.toString() ?? '',
-      status: data['status']?.toString() ?? '',
-      rejectionReason: data['rejectionReason']?.toString(),
-      authorMessage: data['authorMessage']?.toString(),
-      uploadDate: data['requestDate']?.toString() ?? data['createdAt']?.toString() ?? '',
-      feeAmount: int.tryParse(data['feeAmount']?.toString() ?? '') ?? 0,
-      isPaid: data['isPaid'] is bool
-          ? data['isPaid'] as bool
-          : (data['isPaid']?.toString().toLowerCase() == 'true'),
+      title: title,
+      coverImage: coverImage,
+      bookPdfUrl: _stringValue(data, ['bookPdfUrl', 'book_pdf_url', 'pdfUrl', 'bookPdf']),
+      signedPdfUrl: _stringValue(data, ['signedPdfUrl', 'signed_pdf_url']),
+      personalMessage: personalMessage,
+      status: status,
+      rejectionReason: _stringValue(data, ['rejectionReason', 'rejection_reason']),
+      authorMessage: _stringValue(data, ['authorMessage', 'author_message']),
+      uploadDate: uploadDate,
+      feeAmount: int.tryParse(feeAmountText) ?? 0,
+      isPaid: isPaid,
       reader: Reader.fromJson(Map<String, dynamic>.from(readerJson is Map ? readerJson : {})),
-      author: Author.fromJson(Map<String, dynamic>.from(authorJson is Map ? authorJson : {})),
+      author: Author.fromJson({
+        'id': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['id']),
+        'fullName': authorName,
+        'profilePicture': authorProfilePicture,
+        'bio': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['bio', 'about']),
+        'dateJoined': authorDateJoined,
+      }),
     );
   }
 
@@ -203,6 +219,44 @@ class BookItem {
   }
 }
 
+Map<String, dynamic>? _firstMap(Map<String, dynamic> data, List<String> keys) {
+  for (final key in keys) {
+    final value = data[key];
+    if (value is Map) {
+      return Map<String, dynamic>.from(value as dynamic);
+    }
+  }
+  return null;
+}
+
+String _stringValue(Map<String, dynamic> data, List<String> keys, {String? fallback}) {
+  for (final key in keys) {
+    final value = data[key];
+    if (value != null) {
+      final stringValue = value.toString().trim();
+      if (stringValue.isNotEmpty) {
+        return stringValue;
+      }
+    }
+  }
+  return fallback ?? '';
+}
+
+bool _boolValue(Map<String, dynamic> data, List<String> keys, {bool fallback = false}) {
+  for (final key in keys) {
+    final value = data[key];
+    if (value is bool) {
+      return value;
+    }
+    if (value != null) {
+      final stringValue = value.toString().trim().toLowerCase();
+      if (stringValue == 'true') return true;
+      if (stringValue == 'false') return false;
+    }
+  }
+  return fallback;
+}
+
 class Reader {
   final String id;
   final String fullName;
@@ -212,9 +266,9 @@ class Reader {
 
   factory Reader.fromJson(Map<String, dynamic> json) {
     return Reader(
-      id: json['id'],
-      fullName: json['fullName'],
-      profilePicture: json['profilePicture'] ?? '',
+      id: json['id']?.toString() ?? '',
+      fullName: _stringValue(Map<String, dynamic>.from(json), ['fullName', 'name', 'full_name']),
+      profilePicture: _stringValue(Map<String, dynamic>.from(json), ['profilePicture', 'profile_picture', 'avatar', 'image']),
     );
   }
 }
@@ -229,12 +283,13 @@ class Author {
   Author({required this.id, required this.fullName, this.profilePicture, required this.bio, required this.dateJoined});
 
   factory Author.fromJson(Map<String, dynamic> json) {
+    final data = Map<String, dynamic>.from(json);
     return Author(
-      id: json['id'],
-      fullName: json['fullName'],
-      profilePicture: json['profilePicture'],
-      bio: json['bio'],
-      dateJoined: json['dateJoined'],
+      id: data['id']?.toString() ?? '',
+      fullName: _stringValue(data, ['fullName', 'name', 'full_name', 'authorName']),
+      profilePicture: _stringValue(data, ['profilePicture', 'profile_picture', 'avatar', 'image']),
+      bio: _stringValue(data, ['bio', 'about']),
+      dateJoined: _stringValue(data, ['dateJoined', 'joinedAt', 'createdAt', 'created_at']),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
@@ -13,174 +14,169 @@ import '../../../../widgets/sucess_widget.dart';
 import '../../../author/profile/widget/author_biography_card.dart';
 import '../../search/widgets/header_widget.dart';
 
-class EditProfile extends StatefulWidget {
+class EditProfile extends GetView<HelpAndSupportController> {
   const EditProfile({super.key});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
-}
-
-class _EditProfileState extends State<EditProfile> {
-  late String role;
-
-  @override
-  void initState() {
-    super.initState();
-
-    var args = Get.arguments;
-    role = (args != null && args['role'] != null) ? args['role'] : 'reader';
-  }
-
-  final MediaPickerService _mediaPickerService = MediaPickerService();
-
-  File? _profileImage;
-
-  @override
   Widget build(BuildContext context) {
+    // Arguments handle karne ke liye (ya phir controller mein onInit par set karein)
+    final String role = Get.arguments?['role'] ?? 'reader';
+    controller.nameController.text = controller.profileModel.value?.fullName ?? "";
+    controller.emailController.text = controller.profileModel.value?.email ?? "";
     return Scaffold(
       backgroundColor: containerColor,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            customHeader(
-              context: context,
-              title: "Edit Profile",
-              onBack: () => Get.back(),
-              onIconPressed: () {},
-            ),
-            SizedBox(height: 3.h),
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 30.w,
-                    width: 30.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: textFeildContainColor,
-                      border: Border.all(
-                        color: whiteColor.withOpacity(0.2),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: _profileImage != null
-                          ? Image.file(
-                              _profileImage!,
-                              fit: BoxFit.cover,
-                              width: 20.w, // Container size ke mutabiq
-                              height: 20.w,
-                            )
-                          : Container(
-                              color: Colors.grey.withOpacity(0.2),
-                              // Placeholder ka background color
-                              child: Center(
-                                child: Icon(
-                                  Icons.person_rounded,
-                                  color: buttonColor.withOpacity(0.6),
-                                  size: 12.w, // Size adjust karlein
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                  Positioned(
-                    right: -1.w,
-                    bottom: 2.w,
-                    child: GestureDetector(
-                      onTap: () async {
-                        final File? file = await _mediaPickerService.pickMedia(
-                          context,
-                        );
-
-                        if (file != null) {
-                          setState(() {
-                            _profileImage = file;
-                          });
-                        }
-                      },
-                      child: Image.asset(
-                        "assets/png/camera.png",
-                        height: 8.w,
-                        width: 8.w,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ],
+        child: SingleChildScrollView(
+          // Scrollable banayein taake keyboard se overflow na ho
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              customHeader(
+                context: context,
+                title: "Edit Profile",
+                onBack: () => Get.back(),
+                onIconPressed: () {},
               ),
-            ),
-            SizedBox(height: 4.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: emailTextFeild('Name', 'John Smith'),
-            ),
-            SizedBox(height: 2.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: emailTextFeild('Email', 'johnsmith@gmail.com'),
-            ),
+              SizedBox(height: 3.h),
 
-            if (role == 'author')
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-                child: Column(
+              // Profile Image - Obx se wrap kiya
+              Center(
+                child: Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: customText(
-                        text: 'Biography',
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: whiteColor,
-                        fontFamily: 'Poppins',
+                    Obx(
+                          () => Container(
+                        height: 30.w,
+                        width: 30.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: textFeildContainColor,
+                        ),
+                        child: ClipOval(
+                          child: controller.profileImage.value != null
+                              ? Image.file(
+                            controller.profileImage.value!, // Yahan ! zaroori hai
+                            fit: BoxFit.cover,
+                            width: 30.w,
+                            height: 30.w,
+                          )
+                              : Icon(
+                            Icons.person_rounded,
+                            color: buttonColor.withOpacity(0.6),
+                            size: 12.w,
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 1.5.h),
-                    authorBiographyCard(
-                      bio:
-                          'Award-winning author of five literary novels exploring memory, identity, and human connection. Winner of the Booker Prize 2022. Based in Edinburgh, Scotland.',
+                    Positioned(
+                      right: -1.w,
+                      bottom: 2.w,
+                      child: GestureDetector(
+                        onTap: () => controller.pickImage(context),
+                        child: Image.asset(
+                          "assets/png/camera.png",
+                          height: 8.w,
+                          width: 8.w,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
 
-            SizedBox(height: 11.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: buttonWidget(
-                "Save Changes",
-                whiteColor,
-                onTap: () {
-                  showSuccessDialog(
-                    ontap: () {
-                      Get.back();
+              SizedBox(height: 4.h),
+              // Fields
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child:
+                Column(
+                  children: [
+                    emailTextFeild(
+                      'Name',
+                      'John Smith',
+                      controller: controller.nameUpdateController,
+                    ),
 
-                      // Route Navigation
-                      if (role == "reader") {
-                        Get.toNamed("/bottomnav");
-                      } else {
-                        Get.toNamed('/authorbottomnav');
-                      }
-                    },
+                    SizedBox(height: 2.h),
 
-                    context,
+                    emailTextFeild(
+                      'Email',
+                      'johnsmith@gmail.com',
+                      controller: controller.emailUpdateController,
+                    ),
+                  ],
+                )
 
-                    desc: "Your Profile have been updated Suscessfully",
-                  );
-                },
-                colors: buttonColor,
-                fontFamily: 'Poppins',
-                height: 5.2.h,
-                width: double.infinity,
-                fontsize: 16.sp,
-                fontweight: FontWeight.w600,
               ),
-            ),
-            SizedBox(height: 3.h),
-          ],
+
+
+              if (role == 'author')
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4.w,
+                    vertical: 1.4.h,
+                  ),
+
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+
+                        child: customText(
+                          text: 'Biography',
+
+                          fontSize: 15.sp,
+
+                          fontWeight: FontWeight.w600,
+
+                          color: whiteColor,
+
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+
+                      SizedBox(height: 1.5.h),
+
+                      authorBiographyCard(
+                        bio:
+                            'Award-winning author of five literary novels exploring memory, identity, and human connection. Winner of the Booker Prize 2022. Based in Edinburgh, Scotland.',
+                      ),
+                    ],
+                  ),
+                ),
+              SizedBox(height: 11.h),
+              // Save Changes button wale Obx ko aise likhein:
+              Obx(() {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: controller.isLoading.value
+                      ? Center(child: CircularProgressIndicator())
+                      : buttonWidget(
+                    "Save Changes",
+                    whiteColor,
+                    onTap: () {
+                      // 1. Data Map
+                      Map<String, dynamic> updateData = {
+                        "fullName": controller.nameUpdateController.text.trim(),
+                        "email": controller.emailUpdateController.text.trim(),
+                      };
+
+                      // 2. Image File (agar user ne select ki hai)
+                      File? imageFile = controller.selectedImage.value != null
+                          ? File(controller.selectedImage.value!.path)
+                          : null;
+
+                      // 3. Controller function call
+                      controller.updateProfileWithImage(controller.selectedImage.value);
+                    },
+                    colors: buttonColor,
+                    height: 5.2.h,
+                    width: double.infinity,
+                  ),
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );
