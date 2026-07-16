@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../utils/utility.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../search/widgets/file_upload_widget.dart';
@@ -17,10 +19,12 @@ class RequestAutographCard extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final MediaPickerService mediaPicker = MediaPickerService();
 
-
     final args = Get.arguments;
     String? receivedBookId;
+    String? role = args['role']; // Yahan se role get hoga
 
+    // 2. AB FLAG BNAYEIN
+    bool isLibraryRequest = (role == "fromLibrary");
     if (args != null && args is Map) {
       receivedBookId = args['bookId'];
       debugPrint("Received Book ID: $receivedBookId");
@@ -52,65 +56,62 @@ class RequestAutographCard extends GetView<HomeController> {
                 child: Column(
                   children: [
                     Obx(() {
+                      bool isLibraryRequest = (role == "fromLibrary");
+
                       return Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.w),
                         child: Column(
                           children: [
-                            emailTextFeild(
-                              'Book Name',
-                              "Things Fall Apart",
-                              controller: homeController.bookTitleControllerRequest,
-                            ),
-                            SizedBox(height: 1.5.h),
-                
-                            FileUploadWidget(
-                              title: 'Upload Book',
-                              description:
-                              'Tap to select a pdf file from your device',
-                              file: homeController.bookPdfFile.value,
-                              onTap: () async {
-                                final file = await mediaPicker.pickMedia(
-                                  context,
-                                  mode: PickMode.document,
-                                );
-                                if (file != null) {
-                                  controller.bookPdfFile.value = file;
-                                }
-                              },
-                              onRemove: () => homeController.bookPdfFile.value = null,
-                            ),
-                            SizedBox(height: 1.5.h),
-                
-                            FileUploadWidget(
-                              title: 'Upload Cover Photo',
-                              description:
-                              'Tap to select a png format from your device',
-                              file: homeController.bookCoverImage.value,
-                              onTap: () async {
-                                final file = await mediaPicker.pickMedia(
-                                  context,
-                                  mode: PickMode.image,
-                                );
-                                if (file != null) {
-                                  homeController.bookCoverImage.value = file;
-                                }
-                              },
-                              onRemove: () =>
-                              homeController.bookCoverImage.value = null,
-                            ),
-                            SizedBox(height: 1.5.h),
-                
+                            // 2. Sirf tab dikhayein agar Library request NAHI hai
+                            if (!isLibraryRequest) ...[
+                              emailTextFeild(
+                                'Book Name',
+                                "Things Fall Apart",
+                                controller:
+                                homeController.bookTitleControllerRequest,
+                              ),
+                              SizedBox(height: 1.5.h),
+
+                              // Upload Book File
+                              // FileUploadWidget ko controller.bookPdfFile.value ke saath bind rakhein
+                              FileUploadWidget(
+                                title: 'Upload Book',
+                                description: controller.bookPdfFile.value != null ? "File Selected" : 'Tap to select a pdf file',
+                                file: controller.bookPdfFile.value,
+                                onTap: () async {
+                                  final file = await mediaPicker.pickMedia(context, mode: PickMode.document);
+                                  if (file != null) controller.bookPdfFile.value = file;
+                                },
+                                onRemove: () => controller.bookPdfFile.value = null,
+                              ),
+                              SizedBox(height: 1.5.h),
+
+                              // Upload Cover Photo
+                              FileUploadWidget(
+                                title: 'Upload Cover Photo',
+                                description: controller.bookCoverImage.value != null ? "Image Selected" : 'Tap to select a png format',
+                                file: controller.bookCoverImage.value,
+                                onTap: () async {
+                                  final file = await mediaPicker.pickMedia(context, mode: PickMode.image);
+                                  if (file != null) controller.bookCoverImage.value = file;
+                                },
+                                onRemove: () => controller.bookCoverImage.value = null,
+                              ),
+                              SizedBox(height: 1.5.h),
+                            ],
+
+                            // 3. Personal Message (Hamesha dikhega)
                             emailTextFeild(
                               'Personal Message',
-                              "Write a personal message to the author about why this book is special to you…",
+                              "Write a personal message...",
                               maxLength: 200,
                               maxLines: 4,
-                              controller: homeController.personalMessageController,
+                              controller:
+                              homeController.personalMessageController,
                             ),
                             SizedBox(height: 5.h),
-                
-                
-                            Obx(() => buttonWidget(
+
+                            buttonWidget(
                               controller.selectedAuthorId.value.isNotEmpty
                                   ? "Author Selected ✅"
                                   : "Select Author",
@@ -121,42 +122,39 @@ class RequestAutographCard extends GetView<HomeController> {
                               fontsize: 16.sp,
                               fontweight: FontWeight.w600,
                               onTap: () async {
-                                final result = await Get.toNamed("/selectauthor");
+                                final result = await Get.toNamed(
+                                  "/selectauthor",
+                                );
                                 if (result != null && result is String) {
                                   controller.selectedAuthorId.value = result;
                                 }
                               },
-                              colors: controller.selectedAuthorId.value.isNotEmpty ? lightTextColor : buttonColor ,
+                              colors:
+                              controller.selectedAuthorId.value.isNotEmpty
+                                  ? lightTextColor
+                                  : buttonColor,
                               // ... baki properties
-                            )),
+                            ),
                             SizedBox(height: 2.h),
-                
-                // Submit Button
+
+                            // Submit Button
                             buttonWidget(
                               "Request Autograph",
                               whiteColor,
-                
                               onTap: () async {
-                                // 1. Validation: Author Select
-                
-                
-                                // 3. API Call
+                                // Pass bookId only if it's a library request
                                 final String? requestId = await controller.requestAutograph(
-                                  context,
-                                  controller.selectedAuthorId.value,
+                                    context,
+                                    controller.selectedAuthorId.value,
+                                    bookId: isLibraryRequest ? receivedBookId : null
                                 );
-                
-                                // 4. Navigation
+
                                 if (requestId != null && requestId.isNotEmpty) {
-                                  debugPrint("Navigating to /request with ID: $requestId");
-                
-                                  Get.offNamed("/request", arguments: {
+                                  Get.offNamed('/request', arguments: {
                                     'autographRequestId': requestId,
-                                    'bookId': receivedBookId, // Aapka local variable
-                                    'role': 'alreadySelectedAuthor',
+                                    'bookId': isLibraryRequest ? receivedBookId : null,
+                                    'role': isLibraryRequest ? 'fromLibrary' : 'fromHome',
                                   });
-                                } else {
-                                  debugPrint("Navigation cancelled: Request ID is null");
                                 }
                               },
                               colors: buttonColor,
@@ -173,7 +171,7 @@ class RequestAutographCard extends GetView<HomeController> {
                     }),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

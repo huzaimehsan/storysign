@@ -15,34 +15,15 @@ import 'core/routes/App_Routing.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey = "pk_test_YOUR_KEY_HERE";
-  //
-  // await Stripe.instance.applySettings();
 
+  WidgetsFlutterBinding.ensureInitialized();
 
-
-  runApp(const MyApp());
   final prefs = await SharedPreferences.getInstance();
   Get.put<SharedPreferences>(prefs);
-  final String? token =
-  prefs.getString(LocalDBKeys.TOKEN);
 
-
-  final String role =
-      prefs.getString('role') ?? 'reader';
-
-
-  String initialRoute = '/';
-
-
-  if (token != null && token.isNotEmpty) {
-
-    initialRoute =
-    (role == 'author')
-        ? '/authorbottomnav'
-        : '/bottomnav';
-
-  }
+  bool hasSeenOnboarding = prefs.getBool(LocalDBKeys.SPLASH) ?? false;
+ bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+  String? role = prefs.getString('role');
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -54,11 +35,23 @@ void main() async {
     ),
   );
 
-  runApp(const MyApp());
+  String initialRoute;
+  if (!hasSeenOnboarding) {
+    initialRoute = '/';
+  } else {
+    initialRoute = '/signin';
+  }
+  // //else if (isLoggedIn) {
+  // initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
+  // }
+  // 4. Sirf EK baar runApp call karein
+  runApp(MyApp(initialRoute : initialRoute));
 }
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute; // Ye variable add karein
+
+  // Constructor update karein
+  const MyApp({super.key, required this.initialRoute, });
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +62,9 @@ class MyApp extends StatelessWidget {
           builder: EasyLoading.init(),
           debugShowCheckedModeBanner: false,
 
-          // Yahan aapki file ka reference use hoga
-          initialRoute: '/',
+          // Ab yahan variable use karein
+          initialRoute: initialRoute,
           getPages: AppRoutes.routes,
-
-
 
           theme: ThemeData(
             scaffoldBackgroundColor: containerColor,

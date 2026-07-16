@@ -19,5 +19,9 @@ class LocalDBKeys {
   static const String ISMEMEBERAPPROVED = "ISMEMEBERAPPROVED";
   static const String REMEMBERME = "REMEMBERME";
 
+
+  static const String USERDATA = "USERDATA";
+
+
   static const String SELECTEDLANGUAGE = "SELECTEDLANGUAGE";
 }

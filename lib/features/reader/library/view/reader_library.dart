@@ -109,48 +109,65 @@ class ReaderLibrary extends GetView<ReaderController> {
             SizedBox(height: 1.h),
 
             Expanded(
-              child: Obx(() {
-                if (controller.isLibrary.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: buttonColor),
-                  );
-                }
-
-                final List<BookItem> books = controller.filteredBooks;
-                if (books.isEmpty) {
-                  return Center(
-                    child: customText(
-                      text: "No books found",
-                      color: greyColor,
-                      fontSize: 15.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-
-                    final DateTime dateTime = DateTime.parse(book.uploadDate);
-                    final formattedDate =
-                        "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
-
-                    return recentlySignedBooks(
-                      imagePath: book.coverImage,
-                      bookTitle: book.title,
-                      authorName: "",
-                      date: formattedDate,
-                      status: book.status,
-                      trackRequest: () {},
-                      showAuthor: false,
+              child: RefreshIndicator(
+                onRefresh: () => controller.refreshRequests(),
+                child: Obx(() {
+                  if (controller.isLibrary.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
                     );
-                  },
-                );
-              }),
+                  }
+
+                  final List<BookItem> books = controller.filteredBooks;
+                  if (books.isEmpty) {
+                    return Center(
+                      child: customText(
+                        text: "No books found",
+                        color: greyColor,
+                        fontSize: 15.sp,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.only(bottom: 12.h),
+                    itemCount: books.length,
+                    itemBuilder: (context, index) {
+                      final book = books[index];
+
+                      final DateTime dateTime = DateTime.parse(book.uploadDate);
+                      final formattedDate =
+                          "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
+
+                      return recentlySignedBooks(
+                        imagePath: book.coverImage,
+                        bookTitle: book.title,
+                        authorName: "",
+                        date: formattedDate,
+                        status: book.status,
+                        trackRequest: () {
+                          print(book.id.toString());
+                          Get.toNamed(
+                            "/requestautographcard",
+                            arguments: {
+                              'bookId': book.id.toString(),
+                              'bookTitle' : book.title.toString(),
+                              'role' :"fromLibrary",
+                            },
+                          );
+                        },
+
+
+
+
+                        showAuthor: false,
+                      );
+                    },
+                  );
+                }),
+              ),
             ),
           ],
         ),

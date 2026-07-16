@@ -416,68 +416,60 @@ class HomeController extends GetxController {
     bookCoverImage.value = null;
   }
 
-  var receivedBookId = ''.obs; // Controller mein
-  Future<String?> requestAutograph(BuildContext context, String authorId) async {
-    final String title = bookTitleControllerRequest.text.trim();
-    final String personalMessage = personalMessageController.text.trim();
+  var receivedBookId = ''.obs; //
 
-    // Basic Validations
+
+  // Controller mein
+  Future<String?> requestAutograph(BuildContext context, String authorId, {String? bookId}) async {
+    bool isLibrary = bookId != null && bookId.isNotEmpty;
+
+    // 1. Validation Logic
     if (authorId.isEmpty) { Utils.showToast('Author ID is required', true); return null; }
-    if (title.isEmpty) { Utils.showToast('Book title is required', true); return null; }
-    if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) { Utils.showToast('PDF file is required', true); return null; }
-    if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) { Utils.showToast('Cover image is required', true); return null; }
+
+    // Only validate files if it's NOT a Library request
+    if (!isLibrary) {
+      if (bookTitleControllerRequest.text.isEmpty) { Utils.showToast('Book title is required', true); return null; }
+      if (bookPdfFile.value == null) { Utils.showToast('PDF file is required', true); return null; }
+      if (bookCoverImage.value == null) { Utils.showToast('Cover image is required', true); return null; }
+    }
 
     try {
-      EasyLoading.show(status: 'Sending autograph request...', maskType: EasyLoadingMaskType.black);
-
+      EasyLoading.show(status: 'Sending...', maskType: EasyLoadingMaskType.black);
       final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}');
       final request = http.MultipartRequest('POST', uri);
 
+      // Auth headers
       final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
-      if (token != null && token.isNotEmpty) {
-        request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Basic Fields
+      request.fields['authorId'] = authorId;
+      request.fields['personalMessage'] = personalMessageController.text.trim();
+
+      if (isLibrary) {
+        // Library Flow: Just the ID
+        request.fields['bookId'] = bookId!;
+      } else {
+        // Home Flow: Original working logic
+        request.fields['bookTitle'] = bookTitleControllerRequest.text.trim();
+        request.files.add(await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path));
+        request.files.add(await http.MultipartFile.fromPath('coverImage', bookCoverImage.value!.path));
       }
 
-      request.fields['authorId'] = authorId;
-      request.fields['bookTitle'] = title;
-      request.fields['personalMessage'] = personalMessage;
-
-      request.files.add(await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path));
-      request.files.add(await http.MultipartFile.fromPath('coverImage', bookCoverImage.value!.path));
-
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final streamedResponse = await request.send();
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
-      print('RESPONSE: $responseMap');
-
       if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
-        Utils.showToast(responseMap['message'] ?? 'Autograph request sent successfully', false);
         clearRequestBookFields();
-
-        final String? requestId = responseMap['id']?.toString()
-            ?? responseMap['_id']?.toString() // MongoDB mein aksar _id hoti hai
-            ?? responseMap['data']?['id']?.toString()
-            ?? responseMap['request']?['id']?.toString();
-
-        print('DEBUG: FINAL CHECK - Extracted ID: $requestId');
-        print('EXTRACTED REQUEST ID: $requestId');
-        return requestId;
-
+        // ID extraction: Adjust the key here if your response uses a different structure
+        return responseMap['request']?['id']?.toString() ?? responseMap['id']?.toString();
       }
 
-      Utils.showToast(responseMap['message'] ?? 'Autograph request failed', true);
-      return null;
-
-    } on TimeoutException {
-      Utils.showToast('Request timed out', true);
-      return null;
-    } on SocketException {
-      Utils.showToast('No Internet connection', true);
+      Utils.showToast(responseMap['message'] ?? 'Request failed', true);
       return null;
     } catch (e) {
-      print('Autograph Request Error: $e');
-      Utils.showToast('Unexpected error: $e', true);
+      Utils.showToast('Error: $e', true);
       return null;
     } finally {
       EasyLoading.dismiss();
@@ -490,8 +482,51 @@ class HomeController extends GetxController {
     bookPdfFile.value = null;
     bookCoverImage.value = null;
   }
+  var receivedBookIdLibrary = ''.obs; // Controller mein
+  Future<String?> requestLibraryAutograph(BuildContext context, String authorId, {required String bookId}) async {
+    try {
+      EasyLoading.show(status: 'Sending request...', maskType: EasyLoadingMaskType.black);
 
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}');
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+
+      // Simple JSON POST request (No Multipart)
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'authorId': authorId,
+          'bookId': bookId,
+          'personalMessage': personalMessageController.text.trim(),
+        }),
+      );
+
+      final responseMap = json.decode(response.body);
+      EasyLoading.dismiss();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.showToast('Request sent successfully', false);
+        return responseMap['request']?['id']?.toString();
+      }
+
+      Utils.showToast(responseMap['message'] ?? 'Request failed', true);
+      return null;
+    } catch (e) {
+      EasyLoading.dismiss();
+      Utils.showToast('Error: $e', true);
+      return null;
+    }
+  }
   ///////////////////////////////////////
+
+  // HomeController mein ye function add karein
+  Future<void> refreshRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+    await fetchTrackRequestData();
+  }
   RxInt currentPage = 1.obs;
   RxInt totalPages = 1.obs;
   RxInt totalItems = 0.obs;

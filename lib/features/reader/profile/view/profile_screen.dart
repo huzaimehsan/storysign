@@ -133,19 +133,27 @@ class ProfileScreen extends GetView<HelpAndSupportController> {
                           ),
                           SizedBox(height: 1.h),
                           sectionHeader(title: 'Download History', onSeeAll: () {}),
+                          Obx(() {
+                            if (controller.isLoading.value) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
 
-                          downloadHistoryCard(
-                            imagePath: 'assets/png/book.png',
-                            title: 'God of small Things',
-                            author: 'Chinua Achebe',
-                            date: '22 june, 2026',
-                          ),
-                          downloadHistoryCard(
-                            imagePath: 'assets/png/book.png',
-                            title: 'Things Fall Apart',
-                            author: 'Chinua Achebe',
-                            date: '22 june, 2026',
-                          ),
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.bookList.length, // Ab list use hogi
+                              itemBuilder: (context, index) {
+                                final book = controller.bookList[index];
+
+                                return downloadHistoryCard(
+                                  imagePath: 'assets/png/book.png',
+                                  title: book.bookTitle,
+                                  author: 'Chinua Achebe', // Agar API mein author field nahi hai to hardcoded
+                                  date: book.createdAt.toString().split(' ')[0],
+                                );
+                              },
+                            );
+                          }),
                           SizedBox(height: 1.h),
                           Align(
                             alignment: Alignment.topLeft,

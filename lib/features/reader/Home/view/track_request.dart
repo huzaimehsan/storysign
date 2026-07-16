@@ -99,69 +99,72 @@ class TrackRequest extends GetView<HomeController> {
             SizedBox(height: 1.h),
 
             Expanded(
-              child: Obx(() {
-                if (controller.trackRequestLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: buttonColor),
-                  );
-                }
-
-                final books = controller
-                    .filteredTrackRequest; // ✅ sirf ye line change hui
-
-                if (books.isEmpty) {
-                  return Center(
-                    child: customText(
-                      text: "No Tracking Request",
-                      color: greyColor,
-                      fontSize: 15.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                }
-                return ListView.builder(
-                  padding: EdgeInsets.only(bottom: 2.h),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-
-                    // Safe Date Formatting
-                    String formattedDate = "Joined: N/A";
-                    try {
-                      if (book.uploadDate.isNotEmpty) {
-                        final DateTime dateTime = DateTime.parse(
-                            book.uploadDate);
-                        formattedDate = "Joined: ${DateFormat('dd MMMM, yyyy')
-                            .format(dateTime)}";
-                      }
-                    } catch (e) {
-                      debugPrint("Date Parsing Error: $e");
-                      formattedDate = "Joined: Invalid Date";
-                    }
-
-                   return recentlySignedBooks(
-                      imageUrl: book.coverImage,
-                      bookTitle: book.title,
-                      authorName: book.author.fullName,
-                      date: formattedDate,
-                      trackRequest: () {
- print(book.id.toString());
-                        Get.toNamed(
-                          "/request",
-                          arguments: {
-                            'bookId': book.id.toString(),
-                          },
-                        );
-                      },
-                      status: book.status,
-                      imagePath: '',
-                      showAuthor: true,
+              child: RefreshIndicator(
+                onRefresh: () => controller.refreshRequests(),
+                child: Obx(() {
+                  if (controller.trackRequestLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
                     );
+                  }
 
-                  },
-                );
-              }),
+                  final books = controller
+                      .filteredTrackRequest; // ✅ sirf ye line change hui
+
+                  if (books.isEmpty) {
+                    return Center(
+                      child: customText(
+                        text: "No Tracking Request",
+                        color: greyColor,
+                        fontSize: 15.sp,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    padding: EdgeInsets.only(bottom: 2.h),
+                    itemCount: books.length,
+                    itemBuilder: (context, index) {
+                      final book = books[index];
+
+                      // Safe Date Formatting
+                      String formattedDate = "Joined: N/A";
+                      try {
+                        if (book.uploadDate.isNotEmpty) {
+                          final DateTime dateTime = DateTime.parse(
+                              book.uploadDate);
+                          formattedDate = "Joined: ${DateFormat('dd MMMM, yyyy')
+                              .format(dateTime)}";
+                        }
+                      } catch (e) {
+                        debugPrint("Date Parsing Error: $e");
+                        formattedDate = "Joined: Invalid Date";
+                      }
+
+                     return recentlySignedBooks(
+                        imageUrl: book.coverImage,
+                        bookTitle: book.title,
+                        authorName: book.author.fullName,
+                        date: formattedDate,
+                        trackRequest: () {
+                 print(book.id.toString());
+                          Get.toNamed(
+                            "/request",
+                            arguments: {
+                              'bookId': book.id.toString(),
+                            },
+                          );
+                        },
+                        status: book.status,
+                        imagePath: '',
+                        showAuthor: true,
+                      );
+
+                    },
+                  );
+                }),
+              ),
             ),
 
 

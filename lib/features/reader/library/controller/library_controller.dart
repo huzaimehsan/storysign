@@ -109,7 +109,10 @@ class ReaderController extends GetxController {
   }
 
 
-
+  Future<void> refreshRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+    await fetchBooksData();
+  }
 
   Future<void> fetchBooksData() async {
     try {

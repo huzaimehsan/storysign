@@ -9,7 +9,9 @@ import '../../../../../widgets/customText_widget.dart';
 
 
 Widget buildProfileCard({
-  String? name,
+  required String? name,
+  required String? role,
+
   required VoidCallback onTrackPressed,
   required VoidCallback onAutographPressed,
   required VoidCallback onUploadBookPressed,
@@ -47,7 +49,8 @@ Widget buildProfileCard({
                         fontFamily: 'Poppins',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        text: "Welcome, Reader",
+                        // Role parameter ko "Welcome" ke saath combine kar diya
+                        text: "Welcome, ${role}",
                       ),
                     
                     ],

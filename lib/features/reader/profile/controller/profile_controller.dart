@@ -77,6 +77,7 @@ class HelpAndSupportController extends GetxController {
     getFaqs();
     getProfile();
     fetchLibraryStats();
+    downloadHistory();
 
   }
 
@@ -310,4 +311,45 @@ RxBool isStatsLoading = false.obs;
       isStatsLoading.value = false;
     }
   }
+
+  // Controller mein ye list define karein
+  var bookList = <BookItem>[].obs;
+  var isbookLoading = false.obs;
+
+  Future<void> downloadHistory() async {
+    try {
+      isbookLoading.value = true;
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.bookHistory}');
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> decodedBody = jsonDecode(response.body);
+        print("API DATA: $decodedBody");
+
+
+        // Yahan BookResponse model use karein
+        BookResponse data = BookResponse.fromJson(decodedBody);  print("ITEMS COUNT: ${data.items.length}");
+
+        bookList.assignAll(data.items); // List update ho gayi
+
+        debugPrint('Success! Books loaded: ${bookList.length}');
+      } else {
+        Utils.showToast('Failed to load history', true);
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      Utils.showToast('Something went wrong', true);
+    } finally {
+      isbookLoading.value = false;
+    }
+  }
+
 }

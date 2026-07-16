@@ -41,6 +41,7 @@ static const String trackRequest = '/reader/autograph-requests?page=1&limit=10';
 static const String profile = "/reader/profile";
 static const String editProfile = "/reader/profile";
   static const String libraryStats = "/reader/profile/stats";
+ static const String bookHistory = "/reader/download-history?page=1&limit=10";
 
   static String markNotificationAsRead(String notificationId) {
     return '/reader/notifications/$notificationId/read';

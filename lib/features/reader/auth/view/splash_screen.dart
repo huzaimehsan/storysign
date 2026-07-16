@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/reader/auth/controller/splash_controller.dart';
 import 'package:storysign/widgets/customText_widget.dart';
 
+import '../../../../constants/local_db_key.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends GetView<SplashController> {
   const SplashScreen({super.key});
 
   @override
@@ -57,10 +60,14 @@ class SplashScreen extends StatelessWidget {
                   SizedBox(height: 4.h),
                   buttonWidget(
 
-                    onTap: (){
-                      Get.toNamed('/signin');
+                    onTap: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool(LocalDBKeys.SPLASH, true);
 
-                    },
+                  Get.toNamed('/chooserole');
+
+                  },
+
                     "Get Started",
                     Colors.white,
                     colors: buttonColor,
@@ -87,6 +94,7 @@ class SplashScreen extends StatelessWidget {
 
                       InkWell(
                         onTap: (){
+
                           Get.toNamed('/chooserole');
 
                         },

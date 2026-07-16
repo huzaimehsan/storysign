@@ -19,4 +19,12 @@ class LocalDBKeys {
   static const String PROFILECOMPLETED = "PROFILECOMPLETED";
   static const String ONBOARDINGSTEP = "ONBOARDINGSTEP";
   static const String SELECTEDLANGUAGE = "SELECTEDLANGUAGE";
+
+  static const String USERDATA = "USERDATA";
+  static const String SPLASH = "SPLASH";
+
+
+
+
+
 }

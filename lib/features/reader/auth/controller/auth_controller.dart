@@ -201,8 +201,35 @@ class AuthController extends GetxController {
           email = data['email'];
         }
 
+
+        final dynamic dataValue = responseMap['data'] ?? responseMap;
+        final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic> ? dataValue : null;
+        final Map<String, dynamic>? user = responseMap['user'] is Map<String, dynamic>
+            ? responseMap['user'] as Map<String, dynamic>
+            : (dataMap != null && dataMap['user'] is Map<String, dynamic>
+            ? dataMap['user'] as Map<String, dynamic>
+            : null);
+        final String? token = responseMap['accessToken'] as String? ?? dataMap?['accessToken'] as String?;
+
+
+
+        if (user == null || token == null) {
+          Utils.showToast('Invalid server response', true);
+          return;
+        }
+
         final prefsInstance = await SharedPreferences.getInstance();
-        await prefsInstance.setString(LocalDBKeys.USERFULLNAME, fullNameController.text.trim());
+
+        await prefsInstance.setString(LocalDBKeys.USERDATA, jsonEncode(user));
+
+        final prefs = SharedPreferencesMethod.storage;
+       await prefsInstance.setString(LocalDBKeys.TOKEN, token);
+      await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
+
+        final String role = user['role']?.toString().toLowerCase() ?? 'reader';
+
+        await prefsInstance.setString('role', role);
+
 
         final redirectRoute = role.toLowerCase() == 'author'
             ? '/authorbottomnav'
@@ -306,12 +333,11 @@ class AuthController extends GetxController {
       final prefs = SharedPreferencesMethod.storage;
       await prefs.setString(LocalDBKeys.USERDETAIL, jsonEncode(user));
       await prefs.setString(LocalDBKeys.USERID, user['id'] ?? "");
-      await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullname'] ?? "");
-      await prefs.setString(LocalDBKeys.USEREMAIL, user['email'] ?? "");
-      await prefs.setString(LocalDBKeys.PHONENUMBER, user['phone'] ?? "");
-      await prefs.setString(LocalDBKeys.USERPROFILEPIC, user['profilePicture'] ?? "");
-      await prefs.setString(LocalDBKeys.TOKEN, token);
+   // Yahan ensure karein ye instance wahi hai
+      await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
 
+      await prefs.setString(LocalDBKeys.TOKEN, token);
+      await prefs.setBool('isLoggedIn', true);
       Utils.showToast(successMessage ?? 'Login successful', false);
 
       clearLoginFeilds();
