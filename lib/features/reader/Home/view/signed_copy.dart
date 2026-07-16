@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
@@ -8,11 +9,22 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-class SignedCopy extends StatelessWidget {
+class SignedCopy extends GetView<HomeController> {
   const SignedCopy({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args = Get.arguments as Map<String, dynamic>? ?? {};
+
+    final String requestId = args['requestId']?.toString() ?? '';
+    final String coverImage = args['coverImage']?.toString() ?? '';
+    final String bookName = args['bookName']?.toString() ?? 'Unknown Book';
+    final String authorName = args['authorName']?.toString() ?? 'Unknown Author';
+    final String date = args['dateJoined']?.toString() ?? '';
+    final String status = args['status']?.toString() ?? '';
+    final String message = args['message']?.toString() ?? '';
     return Scaffold(
 
       body: SafeArea(
@@ -58,27 +70,31 @@ class SignedCopy extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             recentlySignedBooks(
-              imageUrl: "assets/png/book.png",
-              bookTitle: "Things Fall Apart",
-              authorName: "Chinua Achebe",
-              date: "22 june, 2026",
+              imageUrl: args['coverImage'] ?? '', // Yahan cover image pass karein
+              bookTitle: args['bookName'] ?? 'No Title',
+              authorName: args['authorName'] ?? 'No Author',
+              date: args['dateJoined'] ?? '',
+              status: args['status'] ?? '',
               trackRequest: () {},
-              status: 'Signed',
-              showArrow: false, imagePath: '', showAuthor: true,
+              showArrow: false,
+              imagePath: '',
+              showAuthor: true,
             ),
             SizedBox(height: 1.h),
             signedCopyMessageCard(
               title: "Message",
-              message: "To lily- may this story inspire your greatest adventure. Dream boldly, read widely.",
+              message: args['message'],
               margin: EdgeInsets.symmetric(horizontal: 4.w),
             ),
             SizedBox(height: 10.h),
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 4.w),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: buttonWidget(
                 "Download Book",
                 whiteColor,
-                onTap: () {},
+                onTap: () {
+                  controller.downloadBook(requestId, bookName);
+                },
                 colors: buttonColor,
                 fontFamily: 'Poppins',
                 height: 5.2.h,
@@ -94,7 +110,7 @@ class SignedCopy extends StatelessWidget {
                 "Back To Dashboard",
                 whiteColor,
                 onTap: () {
-                  Get.toNamed('/home');
+                  // Get.toNamed('/home');
                 },
                 colors: greyColor,
                 fontFamily: 'Poppins',

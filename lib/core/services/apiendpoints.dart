@@ -48,7 +48,9 @@ static const String editProfile = "/reader/profile";
   }
 
 
-
+  static String downloadBook(String bookId) {
+    return '/reader/downloads/$bookId';
+  }
 
   // //Vehical
   // static const String getVehicles = '/fleet/vehicles?search=';

@@ -7,6 +7,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
@@ -26,6 +28,11 @@ class HomeController extends GetxController {
     Future.delayed(Duration(milliseconds: 500), () {
       fetchTrackRequestData();
     });
+  }
+
+  Future<void> refreshHomeRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+    fetchHomeData();
   }
 
   RxString selectedTab = "All".obs;
@@ -189,6 +196,19 @@ class HomeController extends GetxController {
 
   void applyFilter(String tab) {
     selectTab(tab);
+  }
+
+  List<AllAuthorModel> get allAuthor {
+    // 1. Agar search bar khali hai, toh poori list (welcomes) wapas kar do.
+    if (searchQuery.value.trim().isEmpty) {
+      return welcomes;
+    }
+
+    final query = searchQuery.value.toLowerCase().trim();
+
+    return welcomes
+        .where((author) => author.fullName.toLowerCase().contains(query))
+        .toList();
   }
 
   Future<void> fetchHomeData() async {
@@ -418,28 +438,50 @@ class HomeController extends GetxController {
 
   var receivedBookId = ''.obs; //
 
-
   // Controller mein
-  Future<String?> requestAutograph(BuildContext context, String authorId, {String? bookId}) async {
+  Future<String?> requestAutograph(
+    BuildContext context,
+    String authorId, {
+    String? bookId,
+  }) async {
     bool isLibrary = bookId != null && bookId.isNotEmpty;
 
     // 1. Validation Logic
-    if (authorId.isEmpty) { Utils.showToast('Author ID is required', true); return null; }
+    if (authorId.isEmpty) {
+      Utils.showToast('Author ID is required', true);
+      return null;
+    }
 
     // Only validate files if it's NOT a Library request
     if (!isLibrary) {
-      if (bookTitleControllerRequest.text.isEmpty) { Utils.showToast('Book title is required', true); return null; }
-      if (bookPdfFile.value == null) { Utils.showToast('PDF file is required', true); return null; }
-      if (bookCoverImage.value == null) { Utils.showToast('Cover image is required', true); return null; }
+      if (bookTitleControllerRequest.text.isEmpty) {
+        Utils.showToast('Book title is required', true);
+        return null;
+      }
+      if (bookPdfFile.value == null) {
+        Utils.showToast('PDF file is required', true);
+        return null;
+      }
+      if (bookCoverImage.value == null) {
+        Utils.showToast('Cover image is required', true);
+        return null;
+      }
     }
 
     try {
-      EasyLoading.show(status: 'Sending...', maskType: EasyLoadingMaskType.black);
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}');
+      EasyLoading.show(
+        status: 'Sending...',
+        maskType: EasyLoadingMaskType.black,
+      );
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}',
+      );
       final request = http.MultipartRequest('POST', uri);
 
       // Auth headers
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+      final token = SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
       request.headers['Authorization'] = 'Bearer $token';
 
       // Basic Fields
@@ -452,18 +494,27 @@ class HomeController extends GetxController {
       } else {
         // Home Flow: Original working logic
         request.fields['bookTitle'] = bookTitleControllerRequest.text.trim();
-        request.files.add(await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path));
-        request.files.add(await http.MultipartFile.fromPath('coverImage', bookCoverImage.value!.path));
+        request.files.add(
+          await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path),
+        );
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'coverImage',
+            bookCoverImage.value!.path,
+          ),
+        );
       }
 
       final streamedResponse = await request.send();
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
-      if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
+      if (streamedResponse.statusCode == 200 ||
+          streamedResponse.statusCode == 201) {
         clearRequestBookFields();
         // ID extraction: Adjust the key here if your response uses a different structure
-        return responseMap['request']?['id']?.toString() ?? responseMap['id']?.toString();
+        return responseMap['request']?['id']?.toString() ??
+            responseMap['id']?.toString();
       }
 
       Utils.showToast(responseMap['message'] ?? 'Request failed', true);
@@ -475,6 +526,7 @@ class HomeController extends GetxController {
       EasyLoading.dismiss();
     }
   }
+
   void clearRequestBookFields() {
     bookTitleControllerRequest.clear();
     personalMessageController.clear();
@@ -482,51 +534,25 @@ class HomeController extends GetxController {
     bookPdfFile.value = null;
     bookCoverImage.value = null;
   }
-  var receivedBookIdLibrary = ''.obs; // Controller mein
-  Future<String?> requestLibraryAutograph(BuildContext context, String authorId, {required String bookId}) async {
-    try {
-      EasyLoading.show(status: 'Sending request...', maskType: EasyLoadingMaskType.black);
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}');
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
 
-      // Simple JSON POST request (No Multipart)
-      final response = await http.post(
-        uri,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'authorId': authorId,
-          'bookId': bookId,
-          'personalMessage': personalMessageController.text.trim(),
-        }),
-      );
 
-      final responseMap = json.decode(response.body);
-      EasyLoading.dismiss();
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.showToast('Request sent successfully', false);
-        return responseMap['request']?['id']?.toString();
-      }
-
-      Utils.showToast(responseMap['message'] ?? 'Request failed', true);
-      return null;
-    } catch (e) {
-      EasyLoading.dismiss();
-      Utils.showToast('Error: $e', true);
-      return null;
-    }
+  @override
+  void onClose() {
+    searchController.dispose();
+    bookTitleController.dispose();
+    bookTitleControllerRequest.dispose();
+    personalMessageController.dispose();
+    super.onClose();
   }
-  ///////////////////////////////////////
 
-  // HomeController mein ye function add karein
+
+
   Future<void> refreshRequests() async {
-    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+
     await fetchTrackRequestData();
   }
+
   RxInt currentPage = 1.obs;
   RxInt totalPages = 1.obs;
   RxInt totalItems = 0.obs;
@@ -590,5 +616,90 @@ class HomeController extends GetxController {
       debugPrint("Loader ab ${trackRequestLoading.value} hai");
     }
   }
-}
 
+
+  Future<void> downloadBook(String autographRequestId, String? fileName) async {
+    if (autographRequestId.trim().isEmpty) {
+      Utils.showToast('Unable to download book: request ID missing', true);
+      return;
+    }
+
+    try {
+      EasyLoading.show(status: 'Downloading...', maskType: EasyLoadingMaskType.black);
+      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+      if (token.isEmpty) {
+        Utils.showToast('Please login again', true);
+        return;
+      }
+
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.downloadBook(autographRequestId)}');
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'autographRequestId': autographRequestId,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final contentType = response.headers['content-type']?.toLowerCase() ?? '';
+
+        if (contentType.contains('application/json')) {
+          final responseBody = tryDecodeJson(response.body);
+          if (responseBody is! Map<String, dynamic>) {
+            Utils.showToast('Server returned invalid JSON response', true);
+            return;
+          }
+
+          final String? filePath = responseBody['downloadedFilePath']?.toString();
+          if (filePath == null || filePath.isEmpty) {
+            Utils.showToast('Download path is missing in response', true);
+            return;
+          }
+
+          final String downloadUrl = Uri.parse('${BaseService().baseURL}/$filePath').toString();
+          final fileResponse = await http.get(
+            Uri.parse(downloadUrl),
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          );
+
+          if (fileResponse.statusCode == 200) {
+            final directory = await getApplicationDocumentsDirectory();
+            final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
+            await file.writeAsBytes(fileResponse.bodyBytes);
+            Utils.showToast('Book downloaded successfully', false);
+          } else {
+            Utils.showToast('Failed to download PDF file', true);
+          }
+        } else {
+          final directory = await getApplicationDocumentsDirectory();
+          final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
+          await file.writeAsBytes(response.bodyBytes);
+          Utils.showToast('Book downloaded successfully', false);
+          print(file);
+          await OpenFile.open(file.path);
+        }
+      } else {
+        Utils.showToast('Error: ${response.statusCode}', true);
+      }
+    } catch (e) {
+      Utils.showToast('Error: $e', true);
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+  dynamic tryDecodeJson(String source) {
+    try {
+      return jsonDecode(source);
+    } catch (e) {
+      print("JSON Decode Error: $e");
+      return null; // Agar error aaye toh null return karega
+    }
+  }
+
+}

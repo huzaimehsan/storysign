@@ -134,12 +134,27 @@ class ProfileScreen extends GetView<HelpAndSupportController> {
                           SizedBox(height: 1.h),
                           sectionHeader(title: 'Download History', onSeeAll: () {}),
                           Obx(() {
-                            if (controller.isLoading.value) {
+                            if (controller.isbookLoading.value) {
                               return const Center(child: CircularProgressIndicator());
+                            }
+                            if (controller.bookList.isEmpty) {
+                              return SizedBox(
+                                height: 10.h,
+                                child: Center(
+                                  child: customText(
+                                    text: "No books found",
+                                    color: greyColor,
+                                    fontSize: 15.sp,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
                             }
 
                             return ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: controller.bookList.length, // Ab list use hogi
                               itemBuilder: (context, index) {

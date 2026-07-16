@@ -15,15 +15,11 @@ import '../model/profile_model.dart';
 import 'package:http/http.dart' as http;
 
 class HelpAndSupportController extends GetxController {
-
   final nameController = TextEditingController();
   final emailController = TextEditingController();
 
-
   final nameUpdateController = TextEditingController();
   final emailUpdateController = TextEditingController();
-
-
 
   final subjectController = TextEditingController();
   final messageController = TextEditingController();
@@ -31,32 +27,59 @@ class HelpAndSupportController extends GetxController {
   RxBool isFaqsLoading = false.obs; // FAQ load ke liye
 
   var profileImage = Rxn<File>();
+
   // Original data
   final List<Map<String, String>> allFaqs = [
-    {'title': '1. What is StorySign?', 'description': 'StorySign is a digital platform...'},
-    {'title': '2. How does StorySign work?', 'description': 'Readers can browse author profiles...'},
-    {'title': '3. Can readers upload their own ebooks?', 'description': 'Yes. Readers can upload...'},
-    {'title': '4. Do authors need a subscription plan?', 'description': 'Yes. Authors must subscribe...'},
-    {'title': '5. What subscription plans are available?', 'description': 'Starter Plan – 25 signatures...'},
-    {'title': '6. Can authors reject signature requests?', 'description': 'Yes. Authors can either...'},
-    {'title': '7. What payment methods are supported?', 'description': 'StorySign supports secure...'},
+    {
+      'title': '1. What is StorySign?',
+      'description': 'StorySign is a digital platform...',
+    },
+    {
+      'title': '2. How does StorySign work?',
+      'description': 'Readers can browse author profiles...',
+    },
+    {
+      'title': '3. Can readers upload their own ebooks?',
+      'description': 'Yes. Readers can upload...',
+    },
+    {
+      'title': '4. Do authors need a subscription plan?',
+      'description': 'Yes. Authors must subscribe...',
+    },
+    {
+      'title': '5. What subscription plans are available?',
+      'description': 'Starter Plan – 25 signatures...',
+    },
+    {
+      'title': '6. Can authors reject signature requests?',
+      'description': 'Yes. Authors can either...',
+    },
+    {
+      'title': '7. What payment methods are supported?',
+      'description': 'StorySign supports secure...',
+    },
   ];
 
   // Search query state
   var searchQuery = ''.obs;
 
-
   List<Map<String, String>> get filteredFaqs {
     if (searchQuery.value.isEmpty) {
       return allFaqs;
     } else {
-      return allFaqs.where((faq) =>
-      faq['title']!.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-          faq['description']!.toLowerCase().contains(searchQuery.value.toLowerCase())
-      ).toList();
+      return allFaqs
+          .where(
+            (faq) =>
+                faq['title']!.toLowerCase().contains(
+                  searchQuery.value.toLowerCase(),
+                ) ||
+                faq['description']!.toLowerCase().contains(
+                  searchQuery.value.toLowerCase(),
+                ),
+          )
+          .toList();
     }
   }
-
 
   Future<void> pickImage(BuildContext context) async {
     final File? file = await MediaPickerService().pickMedia(context);
@@ -65,9 +88,8 @@ class HelpAndSupportController extends GetxController {
     }
   }
 
-
   // Model ko store karne ke liye observable variable
-// Explicitly initialize karein
+  // Explicitly initialize karein
   Rxn<HelpSupportModel> supportData = Rxn<HelpSupportModel>(null);
 
   @override
@@ -78,7 +100,6 @@ class HelpAndSupportController extends GetxController {
     getProfile();
     fetchLibraryStats();
     downloadHistory();
-
   }
 
   Future<void> getHelpSupportData() async {
@@ -107,9 +128,6 @@ class HelpAndSupportController extends GetxController {
     }
   }
 
-
-
-
   Future<void> sendContactForm() async {
     // Basic Validation
     if (nameController.text.isEmpty || emailController.text.isEmpty) {
@@ -133,7 +151,10 @@ class HelpAndSupportController extends GetxController {
 
       // API Call (POST)
       // ApiEndPoints.contactUs (yahan apna contact endpoint daalein)
-      final response = await baseService.basePostAPI(ApiEndPoints.contactUs, body);
+      final response = await baseService.basePostAPI(
+        ApiEndPoints.contactUs,
+        body,
+      );
 
       if (response['success'] == true) {
         Utils.showToast("Message sent successfully!", false);
@@ -158,20 +179,24 @@ class HelpAndSupportController extends GetxController {
     messageController.clear();
   }
 
-
   RxList<FaqModel> faqList = <FaqModel>[].obs;
+
   Future<void> getFaqs() async {
     try {
       isFaqsLoading.value = true;
       final BaseService baseService = BaseService();
 
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.faqs);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(
+        ApiEndPoints.faqs,
+      );
 
       if (response['success'] == true) {
         // Ab hum response['data'] se list nikal sakte hain
         List<dynamic> list = response['data'] ?? [];
 
-        faqList.value = list.map((item) => FaqModel.fromJson(item as Map<String, dynamic>)).toList();
+        faqList.value = list
+            .map((item) => FaqModel.fromJson(item as Map<String, dynamic>))
+            .toList();
       } else {
         Utils.showToast(response['message'] ?? "Error", true);
       }
@@ -181,7 +206,8 @@ class HelpAndSupportController extends GetxController {
       isFaqsLoading.value = false;
     }
   }
-// 1. RxList ki jagah Rxn<ProfileModel> use karein (kyunke API sirf 1 profile object de rahi hai)
+
+  // 1. RxList ki jagah Rxn<ProfileModel> use karein (kyunke API sirf 1 profile object de rahi hai)
   Rxn<ProfileModel> profileModel = Rxn<ProfileModel>();
   RxBool isProfileLoading = false.obs; // Isay bhi define karna hoga
   RxString errorMessage = ''.obs;
@@ -217,7 +243,9 @@ class HelpAndSupportController extends GetxController {
           profileModel.value = ProfileModel.fromJson(
             Map<String, dynamic>.from(decodedBody),
           );
-          debugPrint('Success! Profile loaded for: ${profileModel.value?.email}');
+          debugPrint(
+            'Success! Profile loaded for: ${profileModel.value?.email}',
+          );
         } else {
           errorMessage.value = 'Invalid profile response';
           Utils.showToast(errorMessage.value, true);
@@ -241,18 +269,22 @@ class HelpAndSupportController extends GetxController {
   }
 
   var selectedImage = Rxn<File>();
+
   Future<void> updateProfileWithImage(File? imageFile) async {
     isLoading.value = true;
 
     try {
       // 1. Multipart request banayein
-      var request = http.MultipartRequest('PATCH', Uri.parse('${BaseService().baseURL}${ApiEndPoints.editProfile}'));
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse('${BaseService().baseURL}${ApiEndPoints.editProfile}'),
+      );
 
       // 2. Headers add karein
-      var token = await SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
-      request.headers.addAll({
-        'Authorization': 'Bearer $token',
-      });
+      var token = await SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
+      request.headers.addAll({'Authorization': 'Bearer $token'});
 
       // 3. Text fields add karein
       request.fields['fullName'] = nameUpdateController.text.trim();
@@ -260,7 +292,9 @@ class HelpAndSupportController extends GetxController {
 
       // 4. Agar image hai toh file add karein
       if (imageFile != null) {
-        request.files.add(await http.MultipartFile.fromPath('profilePicture', imageFile.path));
+        request.files.add(
+          await http.MultipartFile.fromPath('profilePicture', imageFile.path),
+        );
       }
 
       // 5. Request bhejein
@@ -285,21 +319,20 @@ class HelpAndSupportController extends GetxController {
   void clearEditProfile() {
     nameUpdateController.clear();
     emailUpdateController.clear();
-
   }
-
-
-
 
   // Library Statistics Model (Agar aap model banana chahein)
   // Controller mein
   var libraryStats = Rxn<LibraryStatsModel>();
-RxBool isStatsLoading = false.obs;
+  RxBool isStatsLoading = false.obs;
+
   Future<void> fetchLibraryStats() async {
     try {
       isStatsLoading.value = true;
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.libraryStats);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.libraryStats,
+      );
 
       // Agar response direct data object hai:
       if (response != null) {
@@ -319,9 +352,12 @@ RxBool isStatsLoading = false.obs;
   Future<void> downloadHistory() async {
     try {
       isbookLoading.value = true;
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+      final token =
+          SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.bookHistory}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.bookHistory}',
+      );
       final response = await http.get(
         uri,
         headers: {
@@ -329,14 +365,15 @@ RxBool isStatsLoading = false.obs;
           'Authorization': 'Bearer $token',
         },
       );
-
+      print("DEBUG: Status Code: ${response.statusCode}");
+      print("DEBUG: Response Body: ${response.body}");
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final Map<String, dynamic> decodedBody = jsonDecode(response.body);
         print("API DATA: $decodedBody");
 
-
         // Yahan BookResponse model use karein
-        BookResponse data = BookResponse.fromJson(decodedBody);  print("ITEMS COUNT: ${data.items.length}");
+        BookResponse data = BookResponse.fromJson(decodedBody);
+        print("ITEMS COUNT: ${data.items.length}");
 
         bookList.assignAll(data.items); // List update ho gayi
 
@@ -351,5 +388,4 @@ RxBool isStatsLoading = false.obs;
       isbookLoading.value = false;
     }
   }
-
 }

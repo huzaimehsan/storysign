@@ -51,7 +51,7 @@ Widget profileHeaderCard({
               ? Icon(
             Icons.person_rounded,
             color: buttonColor.withOpacity(0.6),
-            size: 4.w,
+            size: 6.w,
           )
               : null,
         ),

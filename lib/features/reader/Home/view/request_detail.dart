@@ -40,77 +40,107 @@ class RequestDetail extends GetView<AuthorDetailController> {
 
                 // LOADING STATE
                 if (isLoading && data == null)
-                  SizedBox(height: 30.h, child: Center(child: CircularProgressIndicator(color: buttonColor)))
-
+                  SizedBox(
+                    height: 30.h,
+                    child: Center(
+                      child: CircularProgressIndicator(color: buttonColor),
+                    ),
+                  )
                 // ERROR STATE
                 else if (error.isNotEmpty && data == null)
                   Padding(
                     padding: EdgeInsets.all(4.w),
-                    child: Center(child: Text(error, style: TextStyle(color: Colors.red))),
+                    child: Center(
+                      child: Text(error, style: TextStyle(color: Colors.red)),
+                    ),
                   )
-
                 // DATA LOADED STATE
                 else if (data != null) ...[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: customText(text: "Book Detail", color: whiteColor, fontSize: 16.sp, fontWeight: FontWeight.w500),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: customText(
+                      text: "Book Detail",
+                      color: whiteColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(height: 0.5.h),
-                    RequestDetailWidget(
-                      imagePath: data.coverImage,
-                      bookTitle: data.title ?? 'No Title',
-                      authorName: data.author.fullName,
-                      status: data.status,
-                      showSubmittedBadge: true,
+                  ),
+                  SizedBox(height: 0.5.h),
+                  RequestDetailWidget(
+                    imagePath: data.coverImage,
+                    bookTitle: data.title ?? 'No Title',
+                    authorName: data.author.fullName,
+                    status: data.status,
+                    showSubmittedBadge: true,
+                  ),
+                  SizedBox(height: 1.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: customText(
+                      text: "About Author",
+                      color: whiteColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(height: 1.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: customText(text: "About Author", color: whiteColor, fontSize: 16.sp, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(height: 0.5.h),
-                    // Author Info
-                    AuthorInfoCard(
-                      imagePath: data.author.profilePicture ?? "",
-                      bookTitle: data.author.fullName,
-                      date: _formatDate(data.author.dateJoined),
-                    ),
+                  ),
+                  SizedBox(height: 0.5.h),
+                  // Author Info
+                  AuthorInfoCard(
+                    imagePath: data.author.profilePicture ?? "",
+                    bookTitle: data.author.fullName,
+                    date: _formatDate(data.author.dateJoined),
+                  ),
 
-                    SizedBox(height: 1.5.h),
-                    CustomMessageDisplay(
-                      label: 'Personal Message',
-                      message: data.personalMessage.isNotEmpty ? data.personalMessage : 'No message provided.',
-                    ),
+                  SizedBox(height: 1.5.h),
+                  CustomMessageDisplay(
+                    label: 'Personal Message',
+                    message: data.personalMessage.isNotEmpty
+                        ? data.personalMessage
+                        : 'No message provided.',
+                  ),
 
-                    SizedBox(height: 1.5.h),
-                    FeeFieldWithPrice(
-                      label: 'Signature Price',
-                      price: data.isPaid ? 'Paid' : 'Fee',
-                      amount: '${data.feeAmount}',
-                      isPaid: data.isPaid,
-                    ),
+                  SizedBox(height: 1.5.h),
+                  FeeFieldWithPrice(
+                    label: 'Signature Price',
+                    price: data.isPaid ? 'Paid' : 'Fee',
+                    amount: '${data.feeAmount}',
+                    isPaid: true,
+                  ),
 
-                    SizedBox(height: 7.h),
+                  SizedBox(height: 7.h),
 
-                    // MAKE PAYMENT BUTTON
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: buttonWidget(
-                        data.isPaid ? "Already Paid" : "Make Payment",
-                        fontsize: 16.sp,
-                        whiteColor,
-                        onTap: data.isPaid ? null : () {
-                          // Yahan payment screen par navigate karein
-                          // Get.toNamed("/payment", arguments: {'requestId': data.id});
-                        },
-                        colors: data.isPaid ? Colors.grey : buttonColor,
-                        fontweight: FontWeight.w600,
-                        fontFamily: 'Poppins',
-                        height: 5.2.h,
-                      ),
+                  // MAKE PAYMENT BUTTON
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: buttonWidget(
+                      data.isPaid ? "Already Paid" : "Make Payment",
+                      fontsize: 16.sp,
+                      whiteColor,
+                      onTap: data.isPaid
+                          ? null
+                          : () {
+                              Get.toNamed(
+                                "/signedcopy",
+                                arguments: {
+                                  'requestId': data.id,
+                                  'coverImage': data.coverImage,
+                                  'bookName': data.title,
+                                  'authorName': data.author.fullName,
+                                  'dateJoined': data.uploadDate,
+
+                                  "status" : data.status,
+                                  'message' : data.personalMessage,
+                                },
+                              );
+                            },
+                      colors: data.isPaid ? Colors.grey : buttonColor,
+                      fontweight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
                     ),
-                    SizedBox(height: 2.h),
-                  ],
+                  ),
+                  SizedBox(height: 2.h),
+                ],
               ],
             ),
           );

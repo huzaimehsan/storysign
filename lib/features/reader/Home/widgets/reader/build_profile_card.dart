@@ -65,6 +65,8 @@ Widget buildProfileCard({
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
                         text: name ?? "User",
+                        overFlow: TextOverflow.ellipsis, // Ye text ke aage '...' laga dega
+                        maxLines: 1,                    // Text ko ek line se upar nahi jaane dega
                       ),
                       GestureDetector(
                         onTap: onTrackPressed,
