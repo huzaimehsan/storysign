@@ -232,7 +232,7 @@ class AuthController extends GetxController {
 
 
         final redirectRoute = role.toLowerCase() == 'author'
-            ? '/authorbottomnav'
+            ? '/plan'
             : '/bottomnav';
 
 
@@ -345,7 +345,7 @@ class AuthController extends GetxController {
 
       await prefs.setString('role', role);
       if (role == 'author') {
-        Get.offAllNamed('/authorbottomnav');
+        Get.offAllNamed('/plan');
       } else {
         Get.offAllNamed('/bottomnav');
       }

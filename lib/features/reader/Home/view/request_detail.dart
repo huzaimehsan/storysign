@@ -12,6 +12,8 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/author_detail_widget.dart';
 import '../../search/widgets/header_widget.dart';
+import '../controller/payment_controller.dart';
+import 'package:http/http.dart' as http;
 // ... imports ...
 
 class RequestDetail extends GetView<AuthorDetailController> {
@@ -112,32 +114,47 @@ class RequestDetail extends GetView<AuthorDetailController> {
                   // MAKE PAYMENT BUTTON
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: buttonWidget(
-                      data.isPaid ? "Already Paid" : "Make Payment",
-                      fontsize: 16.sp,
-                      whiteColor,
-                      onTap: data.isPaid
-                          ? null
-                          : () {
-                              Get.toNamed(
-                                "/signedcopy",
-                                arguments: {
-                                  'requestId': data.id,
-                                  'coverImage': data.coverImage,
-                                  'bookName': data.title,
-                                  'authorName': data.author.fullName,
-                                  'dateJoined': data.uploadDate,
+                    child: Obx(() {
+                      // Obx add karein taaki loading par button update ho sake
+                      final controller =
+                          Get.find<PaymentController>(); // Get.find use karein
 
-                                  "status" : data.status,
-                                  'message' : data.personalMessage,
-                                },
-                              );
-                            },
-                      colors: data.isPaid ? Colors.grey : buttonColor,
-                      fontweight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                      height: 5.2.h,
-                    ),
+                      return buttonWidget(
+                        controller.isPaymentLoading.value
+                            ? "Processing..."
+                            : (data.isPaid ? "Already Paid" : "Make Payment"),
+                        fontsize: 16.sp,
+                        whiteColor,
+                        onTap: isLoading
+                            ? () {}
+                            : () async {
+                                final success = await controller
+                                    .processPayment();
+
+                                  if (success) {
+                                    Get.toNamed(
+                                      "/signedcopy",
+                                      arguments: {
+                                        'requestId': data.id,
+                                        'coverImage': data.coverImage,
+                                        'bookName': data.title,
+                                        'authorName': data.author.fullName,
+                                        'dateJoined': data.uploadDate,
+                                        "status": data.status,
+                                        'message': data.personalMessage,
+                                      },
+                                    );
+                                  }
+                              },
+                        colors:
+                            (data.isPaid || controller.isPaymentLoading.value)
+                            ? Colors.grey
+                            : buttonColor,
+                        fontweight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                        height: 5.2.h,
+                      );
+                    }),
                   ),
                   SizedBox(height: 2.h),
                 ],

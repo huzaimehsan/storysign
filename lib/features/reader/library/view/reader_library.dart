@@ -118,7 +118,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                     );
                   }
 
-                  final List<BookItem> books = controller.filteredBooks;
+                  final List<BookItem> books = controller.filteredBooksRx.value;
                   if (books.isEmpty) {
                     return Center(
                       child: customText(
@@ -158,10 +158,6 @@ class ReaderLibrary extends GetView<ReaderController> {
                             },
                           );
                         },
-
-
-
-
                         showAuthor: false,
                       );
                     },
@@ -258,8 +254,6 @@ class ReaderLibrary extends GetView<ReaderController> {
   static const List<String> _statusOptions = [
     "All",
     "Signed",
-    "In process",
-    "Delivered",
     "Unsigned",
   ];
 

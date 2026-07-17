@@ -23,6 +23,28 @@ class HelperFunction {
     }
   }
 
+
+  // Subject ke liye validation
+  static String? subjectValidate(String val) {
+  if (val.isEmpty) {
+  return 'Subject cannot be empty';
+  } else if (val.length < 3) {
+  return 'Subject is too short';
+  }
+  return null;
+  }
+
+  // Message ke liye validation
+  static String? messageValidate(String val) {
+  if (val.isEmpty) {
+  return 'Message cannot be empty';
+  } else if (val.length < 10) {
+  return 'Message must be at least 10 characters';
+  }
+  return null;
+  }
+
+
   static String? validateOTP(String val) {
     // Check agar field khali hai
     if (val.isEmpty) {

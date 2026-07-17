@@ -20,7 +20,7 @@ class HelpAndSupportController extends GetxController {
 
   final nameUpdateController = TextEditingController();
   final emailUpdateController = TextEditingController();
-
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final subjectController = TextEditingController();
   final messageController = TextEditingController();
   RxBool isLoading = false.obs; // Data load ke liye

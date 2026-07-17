@@ -153,7 +153,7 @@ class EditProfile extends GetView<HelpAndSupportController> {
                       ? Center(child: CircularProgressIndicator())
                       : buttonWidget(
                     "Save Changes",
-                    whiteColor,
+
                     onTap: () {
                       // 1. Data Map
                       Map<String, dynamic> updateData = {
@@ -172,6 +172,8 @@ class EditProfile extends GetView<HelpAndSupportController> {
                     colors: buttonColor,
                     height: 5.2.h,
                     width: double.infinity,
+                    fontFamily: 'Poppins',
+                    whiteColor,
                   ),
                 );
               }),

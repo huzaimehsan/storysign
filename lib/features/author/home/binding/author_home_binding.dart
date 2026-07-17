@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../controller/author_home_controller.dart';
+import '../controller/home_controller.dart';
 
 class AuthorHomeBinding implements Bindings {
   @override

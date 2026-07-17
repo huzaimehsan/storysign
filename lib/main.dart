@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,11 @@ import 'core/routes/App_Routing.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+
+  Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+  await Stripe.instance.applySettings();
 
   final prefs = await SharedPreferences.getInstance();
   Get.put<SharedPreferences>(prefs);

@@ -8,7 +8,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../../reader/Home/widgets/reader/user_profile_card.dart';
-import '../controller/author_home_controller.dart';
+import '../controller/home_controller.dart';
 import '../widgets/active_subscription.dart';
 import '../widgets/book_info_widget.dart';
 
@@ -31,35 +31,47 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
               onChanged: controller.filterRequests,
             ),
             SizedBox(height: 1.h),
-            Wrap(
-              spacing: 5.5.w,
-              runSpacing: 1.5.h,
-              alignment: WrapAlignment.center,
-              children: [
-                bookInfoWidget(
-                  title: 'Signed Request',
-                  value: '12',
-                  backgroundColor: buttonColor,
-                  textColor: bottomNavColor,
-                  subtitle: 'Pending till date',
-                  subtitleColor: bottomNavColor,
-                ),
-                bookInfoWidget(
-                  title: 'Signed Books',
-                  value: '24',
-                  backgroundColor: white,
-                  textColor: secondryColor,
-                  subtitle: 'This Month',
-                ),
-                bookInfoWidget(
-                  title: 'Remaining Sign',
-                  value: '8',
-                  backgroundColor: bottomNavColor,
-                  textColor: buttonColor,
-                  subtitle: 'Pending till date',
-                ),
-              ],
-            ),
+            Obx(() {
+              final stats = controller.authorStats.value;
+
+              // Agar stats null hai (data abhi fetch ho raha hai), toh loading show karein
+              if (stats == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              // Agar stats mil gaya hai, toh UI show karein
+              return Wrap(
+                spacing: 5.5.w,
+                runSpacing: 1.5.h,
+                alignment: WrapAlignment.center,
+                children: [
+                  bookInfoWidget(
+                    title: 'Sign Request',
+                    value: stats.totalSignRequests.toString(), // '!' hata diya
+                    backgroundColor: buttonColor,
+                    textColor: bottomNavColor,
+                    subtitle: 'Pending till date',
+                    subtitleColor: bottomNavColor,
+                  ),
+                  bookInfoWidget(
+                    title: 'Signed Books',
+                    value: stats.signedBooks.toString(), // '!' hata diya
+                    backgroundColor: white,
+                    textColor: secondryColor,
+                    subtitle: 'This Month',
+                  ),
+                  bookInfoWidget(
+                    title: 'Remaining Sign',
+                    value: stats.remainingSigns.toString(), // '!' hata diya
+                    backgroundColor: bottomNavColor,
+                    textColor: buttonColor,
+                    subtitle: 'Pending till date',
+                  ),
+                ],
+              );
+            }),
             activeSubscription(
               ontap: (){
 

@@ -30,19 +30,18 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               ),
               SizedBox(height: 2.h),
               Obx(
-                () => Padding(
+                    () => Padding(
                   padding:  EdgeInsets.only(bottom: 1.h),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       buttonWidget(
                         'Monthly',
-                        controller.isYearly.value ?  buttonColor: whiteColor,
+                        controller.isYearly.value ? buttonColor : whiteColor,
                         onTap: () => controller.setYearly(false),
                         colors: controller.isYearly.value
                             ? whiteColor
                             : buttonColor,
-
                         fontFamily: 'Poppins',
                         height: 3.5.h,
                         width: 24.w,
@@ -57,7 +56,6 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                         colors: controller.isYearly.value
                             ? buttonColor
                             : whiteColor,
-
                         fontFamily: 'Poppins',
                         height: 3.5.h,
                         width: 24.w,
@@ -68,26 +66,44 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                   ),
                 ),
               ),
-        
+              SizedBox(height: 1.h),
               Expanded(
                 child: Obx(
-                  () => ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: controller.plans.length,
-                    itemBuilder: (context, index) {
-                      final plan = controller.plans[index];
-                      return SubscriptionPlanCard(
-                        title: plan['title'] as String,
-                        subtitle: plan['subtitle'] as String,
-                        price: plan['price'] as String,
-                        features: List<String>.from(
-                          plan['features'] as List<dynamic>,
-                        ),
-                        isMostPopular: plan['isMostPopular'] as bool,
-                        onSelect: () => controller.selectPlan(plan),
+                      () {
+                    if (controller.isLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: buttonColor),
                       );
-                    },
-                  ),
+                    }
+
+                    if (controller.plans.isEmpty) {
+                      return Center(
+                        child: customText(
+                          text: 'No subscription plans available',
+                          color: greyColor,
+                          fontSize: 15.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: controller.plans.length,
+                      itemBuilder: (context, index) {
+                        final plan = controller.plans[index];
+                        return SubscriptionPlanCard(
+                          title: plan.name,
+                          subtitle: plan.planType,
+                          price: plan.price.toString(),
+                          features: plan.features,
+                          isMostPopular: plan.name.toLowerCase().contains('pro'),
+                          onSelect: () => controller.selectPlan(plan),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
