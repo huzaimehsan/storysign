@@ -14,7 +14,7 @@ import '../../../../widgets/image_picker.dart';
 import '../model/profile_model.dart';
 import 'package:http/http.dart' as http;
 
-class HelpAndSupportController extends GetxController {
+class ProfileController extends GetxController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
 
@@ -97,6 +97,14 @@ class HelpAndSupportController extends GetxController {
     super.onInit();
     getHelpSupportData();
     getFaqs();
+    getProfile();
+    fetchLibraryStats();
+    downloadHistory();
+  }
+
+
+  Future<void> refreshRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
     getProfile();
     fetchLibraryStats();
     downloadHistory();

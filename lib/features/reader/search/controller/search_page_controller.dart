@@ -25,6 +25,11 @@ class SearchPageController extends GetxController {
     fetchHomeData();
   }
 
+
+  Future<void> refreshSearchRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+    fetchHomeData();
+  }
   RxList<AllAuthorModel> welcomes = <AllAuthorModel>[].obs;
   Rxn<AuthorDetailModel> authorDetailData = Rxn<AuthorDetailModel>();
   RxBool isLoading = false.obs;       // for list loading (search screen)

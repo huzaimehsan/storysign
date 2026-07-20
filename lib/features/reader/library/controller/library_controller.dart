@@ -140,6 +140,7 @@ class ReaderController extends GetxController {
   Future<void> refreshRequests() async {
     // Apni wahi API call yahan dobara call karein jo data fetch karti hai
     await fetchBooksData();
+    await _fetchBooksWithStatus('all');
   }
 
   // 'status' parameter add karein (default 'signed' rakhein)

@@ -32,7 +32,7 @@ class TrackingScreen extends StatelessWidget {
           children: [
             customHeader(
               context: context,
-              title: "Request Submitted",
+              title: "Tracking",
               onBack: () => Get.back(),
               onIconPressed: () {},
             ),
@@ -92,11 +92,11 @@ class TrackingScreen extends StatelessWidget {
                   children: [
                     // 1. Payment Card
                     buildInfoCard(
-                      imagePath: (book.status.toLowerCase() == "paid" || book.status.toLowerCase() == "delivered")
+                      imagePath: (book.isPaid || book.status.toLowerCase() == "paid" || book.status.toLowerCase() == "delivered")
                           ? "assets/png/confirmed.png" : "assets/png/noconfirm.png",
                       title: "Payment Status",
-                      subtitle: (book.status.toLowerCase() == "paid" || book.status.toLowerCase() == "delivered")
-                          ? "Paid: \$${book.status.toLowerCase() ?? '0'}" : "Payment Pending",
+                      subtitle: (book.isPaid || book.status.toLowerCase() == "paid" || book.status.toLowerCase() == "delivered")
+                          ? "Paid: \$${book.feeAmount}" : "Payment Pending",
                       date: (book.uploadDate != null && book.uploadDate!.isNotEmpty) ? book.uploadDate!.split('T')[0] : "N/A",
                     ),
                     SizedBox(height: 2.h),

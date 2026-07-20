@@ -10,7 +10,7 @@ import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/sucess_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-class ContactUs extends GetView<HelpAndSupportController> {
+class ContactUs extends GetView<ProfileController> {
   // Controller initialize karein
 
   @override

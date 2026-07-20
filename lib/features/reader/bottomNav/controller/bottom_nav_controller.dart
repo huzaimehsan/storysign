@@ -54,8 +54,8 @@ class BottomNavController extends GetxController{
 
 
     if (index == 4) {
-      if (Get.isRegistered<HelpAndSupportController>()) {
-        Get.find<HelpAndSupportController>(). getProfile();
+      if (Get.isRegistered<ProfileController>()) {
+        Get.find<ProfileController>(). getProfile();
       }
     }
   }

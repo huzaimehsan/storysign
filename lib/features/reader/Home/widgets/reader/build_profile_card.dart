@@ -11,11 +11,84 @@ import '../../../../../widgets/customText_widget.dart';
 Widget buildProfileCard({
   required String? name,
   required String? role,
+  required String? imagePath,
 
   required VoidCallback onTrackPressed,
   required VoidCallback onAutographPressed,
   required VoidCallback onUploadBookPressed,
 }) {
+  Widget _buildProfileImage() {
+    final path = imagePath?.trim() ?? '';
+
+    if (path.isEmpty) {
+      return Container(
+        height: 17.w,
+        width: 17.w,
+        color: Colors.white12,
+        child: Center(
+          child: Icon(
+            Icons.person,
+            size: 10.w,
+            color: whiteColor,
+          ),
+        ),
+      );
+    }
+
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return Image.network(
+        path,
+        height: 17.w,
+        width: 17.w,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return SizedBox(
+            height: 17.w,
+            width: 17.w,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                    : null,
+                color: whiteColor,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return  Container(
+            height: 17.w,
+            width: 17.w,
+            color: Colors.white12,
+            child: Center(
+              child: Icon(
+                Icons.person,
+                size: 10.w,
+                color: whiteColor,
+              ),
+            ),
+          );;
+        },
+      );
+    }
+
+    return Image.asset(
+      path,
+      height: 17.w,
+      width: 17.w,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.asset(
+          'assets/png/profile.png',
+          height: 17.w,
+          width: 17.w,
+          fit: BoxFit.cover,
+        );
+      },
+    );
+  }
+
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
     width: double.infinity,
@@ -26,18 +99,13 @@ Widget buildProfileCard({
     child: Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20.sp),
-              child: Image.asset(
-                "assets/png/profile.png",
-                height: 17.w,
-                width: 17.w,
-                fit: BoxFit.cover,
-              ),
+              child: _buildProfileImage(),
             ),
-            SizedBox(width: 2.w),
+            SizedBox(width: 3.w),
             Expanded(
               child: Column(
                 children: [
@@ -52,7 +120,7 @@ Widget buildProfileCard({
                         // Role parameter ko "Welcome" ke saath combine kar diya
                         text: "Welcome, ${role}",
                       ),
-                    
+
                     ],
                   ),
                   SizedBox(height: 0.8.h),

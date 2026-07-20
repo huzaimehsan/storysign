@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/controller/signed_copy_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
@@ -9,7 +9,7 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-class SignedCopy extends GetView<HomeController> {
+class SignedCopy extends GetView<SignedCopyController> {
   const SignedCopy({super.key});
 
 

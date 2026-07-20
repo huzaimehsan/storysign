@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
@@ -24,7 +23,7 @@ class HomeScreen extends GetView<HomeController> {
       onRefresh: () => controller.refreshHomeRequests(),
       child: Scaffold(
         body: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 7.h),
             child: Column(
@@ -32,25 +31,18 @@ class HomeScreen extends GetView<HomeController> {
                 Padding(
 
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Builder(
-                    builder: (context) {
-                      final prefs = Get.find<SharedPreferences>();
-                      final userName = prefs.getString(LocalDBKeys.USERFULLNAME);
-                      final userRole = prefs.getString('role');
-
-                      print("DEBUG: All keys in Prefs: ${prefs.getKeys()}");
-
-
-                      print("DEBUG NAME: $userName"); // Console mein check karein
-                      print("DEBUG ROLE: $userRole");
+                  child:Obx(
+                        () {
+                      final name = controller.userName.value;
+                      final role = controller.userRole.value;
                       return buildProfileCard(
-                        name:  userName?? "User",
-
+                        imagePath: controller.userProfile.value?.profilePicture ?? 'assets/png/profile.png',
+                        name: name.isNotEmpty ? name : 'User',
+                        role: role.isNotEmpty ? role : null,
                         onTrackPressed: () {
                           Navigator.of(context).pushNamed('/trackrequest');
                         },
                         onAutographPressed: () {
-                          // Agar aapke paas koi author ya book selected hai, toh uski ID yahan pass karein
                           Get.toNamed("/requestautographcard", arguments: {
                             'authorId': 'authorId',
                             'bookId': 'bookId',
@@ -59,9 +51,9 @@ class HomeScreen extends GetView<HomeController> {
                         },
                         onUploadBookPressed: () {
                           Get.toNamed("/uploadbook");
-                        }, role: userRole,
+                        },
                       );
-                    }
+                    },
                   ),
                 ),
                 SizedBox(height: 2.h),

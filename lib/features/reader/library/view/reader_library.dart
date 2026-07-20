@@ -21,96 +21,97 @@ class ReaderLibrary extends GetView<ReaderController> {
   Widget build(BuildContext context) {
     final List<String> tabs = ["All", "Signed", "Unsigned"];
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            customHeader(
-              context: context,
-              title: "My Library",
-              onBack: () => Get.back(),
-              onIconPressed: () {},
-            ),
-            SizedBox(height: 2.h),
+      body: RefreshIndicator(
+        onRefresh: () => controller.refreshRequests(),
 
-            searchWidget(
-              onChanged: (val) {
-                controller.searchQuery.value = val;
-              },
-            ),
-            SizedBox(height: 1.5.h),
-            Padding(
-              padding: EdgeInsets.only(right: 5.w, left: 3.w),
-              child: Row(
-                children: [
-                  ...tabs.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    String tab = entry.value;
-
-                    int flexValue = index == 0 ? 2 : 3;
-
-                    return Expanded(
-                      flex: flexValue,
-                      child: Obx(() {
-                        bool isSelected = controller.selectedTab.value == tab;
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2.w),
-                          child: buttonWidget(
-                            tab,
-                            isSelected ? whiteColor : buttonColor,
-                            onTap: () => controller.selectTab(tab),
-                            colors: isSelected
-                                ? buttonColor
-                                : const Color(0xFFF5E6D3),
-                            height: 4.5.h,
-                            fontFamily: "Poppins",
-                            fontsize: 14.sp,
-                            fontweight: FontWeight.w600,
-                          ),
-                        );
-                      }),
-                    );
-                  }),
-
-                  SizedBox(width: 2.w),
-                  buildFilterDropdown(context), // ✅ dropdown seedha yahan
-                ],
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              customHeader(
+                context: context,
+                title: "My Library",
+                onBack: () => Get.back(),
+                onIconPressed: () {},
               ),
-            ),
-            SizedBox(height: 2.h),
+              SizedBox(height: 2.h),
 
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  customText(
-                    color: whiteColor,
-                    fontFamily: 'Poppins',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    text: "All Books",
-                  ),
-                  Spacer(),
-                  buttonWidget(
-                    "Upload Book",
-                    whiteColor,
-                    onTap: () => {Get.toNamed("/uploadbook")},
-                    colors: buttonColor,
-                    width: 35.w,
-                    height: 4.4.h,
-                    fontFamily: "Poppins",
-                    fontsize: 14.sp,
-                    fontweight: FontWeight.w500,
-                  ),
-                ],
+              searchWidget(
+                onChanged: (val) {
+                  controller.searchQuery.value = val;
+                },
               ),
-            ),
-            SizedBox(height: 1.h),
+              SizedBox(height: 1.5.h),
+              Padding(
+                padding: EdgeInsets.only(right: 5.w, left: 3.w),
+                child: Row(
+                  children: [
+                    ...tabs.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      String tab = entry.value;
 
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => controller.refreshRequests(),
+                      int flexValue = index == 0 ? 2 : 3;
+
+                      return Expanded(
+                        flex: flexValue,
+                        child: Obx(() {
+                          bool isSelected = controller.selectedTab.value == tab;
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                            child: buttonWidget(
+                              tab,
+                              isSelected ? whiteColor : buttonColor,
+                              onTap: () => controller.selectTab(tab),
+                              colors: isSelected
+                                  ? buttonColor
+                                  : const Color(0xFFF5E6D3),
+                              height: 4.5.h,
+                              fontFamily: "Poppins",
+                              fontsize: 14.sp,
+                              fontweight: FontWeight.w600,
+                            ),
+                          );
+                        }),
+                      );
+                    }),
+
+                    SizedBox(width: 2.w),
+                    buildFilterDropdown(context), // ✅ dropdown seedha yahan
+                  ],
+                ),
+              ),
+              SizedBox(height: 2.h),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    customText(
+                      color: whiteColor,
+                      fontFamily: 'Poppins',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      text: "All Books",
+                    ),
+                    Spacer(),
+                    buttonWidget(
+                      "Upload Book",
+                      whiteColor,
+                      onTap: () => {Get.toNamed("/uploadbook")},
+                      colors: buttonColor,
+                      width: 35.w,
+                      height: 4.4.h,
+                      fontFamily: "Poppins",
+                      fontsize: 14.sp,
+                      fontweight: FontWeight.w500,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 1.h),
+
+              Expanded(
                 child: Obx(() {
                   if (controller.isLibrary.value) {
                     return const Center(
@@ -164,8 +165,8 @@ class ReaderLibrary extends GetView<ReaderController> {
                   );
                 }),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

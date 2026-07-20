@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:storysign/features/reader/Home/model/user_profile_model.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
@@ -28,6 +26,7 @@ class HomeController extends GetxController {
     Future.delayed(Duration(milliseconds: 500), () {
       fetchTrackRequestData();
     });
+    loadUserProfile();
   }
 
   Future<void> refreshHomeRequests() async {
@@ -46,12 +45,15 @@ class HomeController extends GetxController {
   RxList<BookItem> trackRequest = <BookItem>[].obs;
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
+  Rxn<UserProfile> userProfile = Rxn<UserProfile>();
 
   RxInt selectedAuthorIndex = 0.obs;
 
   // HomeController mein
   RxString selectedAuthorId = "".obs;
-
+  RxString userName = 'User'.obs;
+  RxString userRole = ''.obs;
+  RxBool isUserDataLoading = false.obs;
   var recentlySignedBooksList = <Map<String, String>>[
     {
       "imagePath": "assets/png/book.png",
@@ -265,71 +267,10 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> authorDetail(String? authorId) async {
-    try {
-      isLoading.value = true;
-      errorMessage.value = '';
-      // EasyLoading.show(status: 'Please wait...', maskType: EasyLoadingMaskType.black);
-
-      final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
-
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
-
-      final cleanedId = authorId?.trim();
-      final endpoint = cleanedId != null && cleanedId.isNotEmpty
-          ? '${ApiEndPoints.authorDetail}/${Uri.encodeComponent(cleanedId)}'
-          : ApiEndPoints.authorDetail;
-
-      final uri = Uri.parse('${BaseService().baseURL}$endpoint');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final dynamic decodedBody = jsonDecode(response.body);
-        final dynamic data = decodedBody is Map
-            ? (decodedBody['data'] ?? decodedBody)
-            : null;
-
-        if (data is Map) {
-          authorDetailData.value = AuthorDetailModel.fromJson(
-            Map<String, dynamic>.from(data),
-          );
-          debugPrint('Success! Author ID: ${authorDetailData.value?.id}');
-        } else {
-          errorMessage.value = 'Invalid author detail response';
-          Utils.showToast(errorMessage.value, true);
-        }
-      } else {
-        String message = 'Failed to load author detail';
-        try {
-          final responseBody = jsonDecode(response.body);
-          message = responseBody['message']?.toString() ?? message;
-        } catch (_) {}
-        errorMessage.value = message;
-        Utils.showToast(message, true);
-      }
-    } catch (e) {
-      errorMessage.value = 'Something went wrong while loading data: $e';
-      debugPrint('HomeController authorDetail error: $e');
-      Utils.showToast(errorMessage.value, true);
-    } finally {
-      isLoading.value = false;
-      EasyLoading.dismiss();
-    }
-  }
-
   //---------------------------------------------------------------------------//
-  // upload book function //
+  // upload book function — moved to UploadBookController
+  // authorDetail — moved to AuthorDetailController
+  // downloadBook — moved to SignedCopyController
 
   Future<void> uploadBook(BuildContext context) async {
     final String title = bookTitleController.text.trim();
@@ -420,11 +361,6 @@ class HomeController extends GetxController {
       Utils.showToast(responseMap['message'] ?? 'Book upload failed', true);
     } on TimeoutException {
       Utils.showToast('Request timed out', true);
-    } on SocketException {
-      Utils.showToast('No Internet connection', true);
-    } catch (e) {
-      print('Upload Book Error: $e');
-      Utils.showToast('Unexpected error: $e', true);
     } finally {
       EasyLoading.dismiss();
     }
@@ -440,10 +376,7 @@ class HomeController extends GetxController {
 
   // Controller mein
 
-
-
   Future<void> refreshRequests() async {
-
     await fetchTrackRequestData();
   }
 
@@ -480,15 +413,12 @@ class HomeController extends GetxController {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final responseBody = jsonDecode(response.body);
-
-        // Poora response TrackRequest model se parse karo (items + pagination sab)
         final Map<String, dynamic> data =
             responseBody is Map && responseBody['data'] is Map
             ? responseBody['data']
             : responseBody;
 
         final trackRequestData = TrackRequestModel.fromJson(data);
-
         trackRequest.assignAll(trackRequestData.items);
         currentPage.value = trackRequestData.page;
         totalPages.value = trackRequestData.totalPages;
@@ -505,95 +435,52 @@ class HomeController extends GetxController {
       Utils.showToast(errorMessage.value, true);
     } finally {
       trackRequestLoading.value = false;
-      debugPrint("Loader ab ${trackRequestLoading.value} hai");
-
-      debugPrint("Loader ab ${trackRequestLoading.value} hai");
     }
   }
 
 
-  Future<void> downloadBook(String autographRequestId, String? fileName) async {
-    if (autographRequestId.trim().isEmpty) {
-      Utils.showToast('Unable to download book: request ID missing', true);
+Future<void> loadUserProfile() async {
+  try {
+    isUserDataLoading.value = true;
+    final prefs = SharedPreferencesMethod.storage;
+    userRole.value = prefs.getString('role') ?? '';
+
+    final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+    if (token.isEmpty) {
       return;
     }
 
-    try {
-      EasyLoading.show(status: 'Downloading...', maskType: EasyLoadingMaskType.black);
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      if (token.isEmpty) {
-        Utils.showToast('Please login again', true);
-        return;
-      }
+    final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.profile}');
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.downloadBook(autographRequestId)}');
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'autographRequestId': autographRequestId,
-        }),
-      );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody is Map) {
+        final profileData = responseBody['data'] is Map
+            ? responseBody['data'] as Map<String, dynamic>
+            : Map<String, dynamic>.from(responseBody);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final contentType = response.headers['content-type']?.toLowerCase() ?? '';
+        userProfile.value = UserProfile.fromJson(profileData);
 
-        if (contentType.contains('application/json')) {
-          final responseBody = tryDecodeJson(response.body);
-          if (responseBody is! Map<String, dynamic>) {
-            Utils.showToast('Server returned invalid JSON response', true);
-            return;
-          }
-
-          final String? filePath = responseBody['downloadedFilePath']?.toString();
-          if (filePath == null || filePath.isEmpty) {
-            Utils.showToast('Download path is missing in response', true);
-            return;
-          }
-
-          final String downloadUrl = Uri.parse('${BaseService().baseURL}/$filePath').toString();
-          final fileResponse = await http.get(
-            Uri.parse(downloadUrl),
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-          );
-
-          if (fileResponse.statusCode == 200) {
-            final directory = await getApplicationDocumentsDirectory();
-            final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-            await file.writeAsBytes(fileResponse.bodyBytes);
-            Utils.showToast('Book downloaded successfully', false);
-          } else {
-            Utils.showToast('Failed to download PDF file', true);
-          }
-        } else {
-          final directory = await getApplicationDocumentsDirectory();
-          final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-          await file.writeAsBytes(response.bodyBytes);
-          Utils.showToast('Book downloaded successfully', false);
-          print(file);
-          await OpenFile.open(file.path);
+        final fullName = userProfile.value?.fullName ??
+            profileData['fullName']?.toString() ??
+            profileData['name']?.toString() ??
+            '';
+        if (fullName.isNotEmpty) {
+          userName.value = fullName;
         }
-      } else {
-        Utils.showToast('Error: ${response.statusCode}', true);
       }
-    } catch (e) {
-      Utils.showToast('Error: $e', true);
-    } finally {
-      EasyLoading.dismiss();
     }
+  } catch (e) {
+    debugPrint('HomeController loadUserProfile error: $e');
+  } finally {
+    isUserDataLoading.value = false;
   }
-  dynamic tryDecodeJson(String source) {
-    try {
-      return jsonDecode(source);
-    } catch (e) {
-      print("JSON Decode Error: $e");
-      return null; // Agar error aaye toh null return karega
-    }
-  }
-
+}
 }

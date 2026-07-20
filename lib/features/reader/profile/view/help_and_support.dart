@@ -12,7 +12,7 @@ import '../controller/profile_controller.dart';
 import '../widget/help_support_widget.dart';
 import '../widget/library_stat_card.dart';
 
-class HelpAndSupport extends GetView<HelpAndSupportController> {
+class HelpAndSupport extends GetView<ProfileController> {
   const HelpAndSupport({super.key});
 
   @override

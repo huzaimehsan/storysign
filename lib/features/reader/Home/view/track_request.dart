@@ -14,7 +14,7 @@ import '../../search/widgets/search_author_widget.dart';
 import '../controller/home_controller.dart';
 import '../widgets/reader/user_profile_card.dart';
 
-class TrackRequest extends GetView<HomeController> {
+class TrackRequest extends GetView<TrackRequestController> {
   const TrackRequest({super.key});
 
   @override

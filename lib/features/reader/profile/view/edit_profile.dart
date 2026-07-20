@@ -14,7 +14,7 @@ import '../../../../widgets/sucess_widget.dart';
 import '../../../author/profile/widget/author_biography_card.dart';
 import '../../search/widgets/header_widget.dart';
 
-class EditProfile extends GetView<HelpAndSupportController> {
+class EditProfile extends GetView<ProfileController> {
   const EditProfile({super.key});
 
   @override

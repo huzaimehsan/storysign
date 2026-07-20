@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/controller/select_author_controller.dart';
 import 'package:storysign/features/reader/Home/widgets/reader/widget_select_author.dart';
 import '../../../../constants/color_constants.dart';
 import '../model/home_model.dart';
@@ -15,7 +15,7 @@ import '../../search/widgets/file_upload_widget.dart';
 import '../../search/widgets/header_widget.dart';
 import '../../search/widgets/search_author_widget.dart';
 
-class SelectAuthor extends GetView<HomeController> {
+class SelectAuthor extends GetView<SelectAuthorController> {
   const SelectAuthor({super.key});
 
   @override
@@ -42,7 +42,7 @@ class SelectAuthor extends GetView<HomeController> {
             SizedBox(height: 0.5.h),
             Obx(() {
 
-              if (controller.trackRequestLoading.value) {
+              if (controller.isFetchHome.value) {
                 return const Center(
                   child: CircularProgressIndicator(color: buttonColor),
                 );

@@ -12,6 +12,9 @@ import 'package:storysign/features/reader/Home/binding/home_binding.dart';
 import 'package:storysign/features/reader/Home/binding/request_autograph_binding.dart';
 import 'package:storysign/features/reader/Home/binding/request_detail_binding.dart';
 import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
+import 'package:storysign/features/reader/Home/binding/payment_binding.dart';
+import 'package:storysign/features/reader/Home/binding/select_author_binding.dart';
+import 'package:storysign/features/reader/Home/binding/signed_copy_binding.dart';
 import 'package:storysign/features/reader/Home/binding/upload_book_binding.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/view/final_review.dart';
@@ -76,7 +79,7 @@ class AppRoutes {
         // return const
    => TrackRequest(),
 
-      binding: HomeBinding(),
+      binding: TrackRequestBinding(),
     ),
 
     GetPage(
@@ -109,15 +112,15 @@ class AppRoutes {
     GetPage(name: '/uploadbook', page: () => UploadBook(),binding: UploadBookBinding()),
 
 
-    GetPage(name: '/selectauthor', page: () => SelectAuthor(),binding: HomeBinding()),
-    GetPage(name: '/request', page: () => RequestDetail(),binding: HomeBinding()),
-    GetPage(name: '/makepayment', page: () => MakePayment(),binding: HomeBinding()),
+    GetPage(name: '/selectauthor', page: () => SelectAuthor(), binding: SelectAuthorBinding()),
+    GetPage(name: '/request', page: () => RequestDetail(), bindings: [RequestDetailBinding(), PaymentBinding()]),
+    GetPage(name: '/makepayment', page: () => MakePayment(), binding: PaymentBinding()),
 
-    GetPage(name: '/finalreview', page: () => FinalReview(),binding: HomeBinding()),
+    GetPage(name: '/finalreview', page: () => FinalReview(), binding: PaymentBinding()),
 
-    GetPage(name: '/tracking', page: () => TrackingScreen(),binding: HomeBinding()),
+    GetPage(name: '/tracking', page: () => TrackingScreen(), binding: TrackRequestBinding()),
 
-    GetPage(name: '/signedcopy', page: () => SignedCopy(),binding: HomeBinding()),
+    GetPage(name: '/signedcopy', page: () => SignedCopy(), binding: SignedCopyBinding()),
     GetPage(name: '/profile', page: () => ProfileScreen(),binding: ProfileBinding()),
     GetPage(name: '/editprofile', page: () => EditProfile(),binding: ProfileBinding()),
 

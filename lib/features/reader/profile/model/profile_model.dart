@@ -18,7 +18,6 @@ class HelpSupportModel {
   }
 }
 
-
 class FaqModel {
   final String id;
   final String question;
@@ -79,64 +78,65 @@ class LibraryStatsModel {
   }
 }
 
-
 class BookResponse {
-List<BookItem> items;
-int total;
-int page;
-int limit;
-int totalPages;
+  List<BookItem> items;
+  int total;
+  int page;
+  int limit;
+  int totalPages;
 
-BookResponse({
-  required this.items,
-  required this.total,
-  required this.page,
-  required this.limit,
-  required this.totalPages,
-});
+  BookResponse({
+    required this.items,
+    required this.total,
+    required this.page,
+    required this.limit,
+    required this.totalPages,
+  });
 
-factory BookResponse.fromJson(Map<String, dynamic> json) {
-return BookResponse(
-items: List<BookItem>.from(json['items'].map((x) => BookItem.fromJson(x))),
-total: json['total'],
-page: json['page'],
-limit: json['limit'],
-totalPages: json['totalPages'],
-);
-}
+  factory BookResponse.fromJson(Map<String, dynamic> json) {
+    return BookResponse(
+      items: List<BookItem>.from(
+        json['items'].map((x) => BookItem.fromJson(x)),
+      ),
+      total: json['total'],
+      page: json['page'],
+      limit: json['limit'],
+      totalPages: json['totalPages'],
+    );
+  }
 }
 
 class BookItem {
-String id;
-String readerId;
-String bookId;
-String? autographRequestId; // null ho sakta hai
-String bookTitle;
-String downloadedFilePath;
-DateTime createdAt;
-DateTime updatedAt;
+  String id;
+  String readerId;
+  String bookId;
+  String? autographRequestId; // null ho sakta hai
+  String bookTitle;
+  String downloadedFilePath;
+  DateTime createdAt;
+  DateTime updatedAt;
 
-BookItem({
-required this.id,
-required this.readerId,
-required this.bookId,
-this.autographRequestId,
-required this.bookTitle,
-required this.downloadedFilePath,
-required this.createdAt,
-required this.updatedAt,
-});
+  BookItem({
+    required this.id,
+    required this.readerId,
+    required this.bookId,
+    this.autographRequestId,
+    required this.bookTitle,
+    required this.downloadedFilePath,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
-factory BookItem.fromJson(Map<String, dynamic> json) {
-return BookItem(
-id: json['_id'],
-readerId: json['readerId'],
-bookId: json['bookId'],
-autographRequestId: json['autographRequestId'],
-bookTitle: json['bookTitle'],
-downloadedFilePath: json['downloadedFilePath'],
-createdAt: DateTime.parse(json['createdAt']),
-updatedAt: DateTime.parse(json['updatedAt']),
-);
-}
+  factory BookItem.fromJson(Map<String, dynamic> json) {
+    return BookItem(
+      id: json['_id'],
+      readerId: json['readerId'],
+      bookId: json['bookId'],
+      autographRequestId: json['autographRequestId'],
+      bookTitle: json['bookTitle'],
+      downloadedFilePath: json['downloadedFilePath'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
 }
