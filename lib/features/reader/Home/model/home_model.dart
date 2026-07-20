@@ -110,9 +110,7 @@ class TrackRequestModel {
       totalPages: json['totalPages'],
     );
   }
-}
-
-class BookItem {
+}class BookItem {
   final String id;
   final String title;
   final String coverImage;
@@ -125,6 +123,8 @@ class BookItem {
   final String uploadDate;
   final int feeAmount;
   final bool isPaid;
+  final String paymentIntentId;
+  final String clientSecret;
   final Reader reader;
   final Author author;
 
@@ -141,120 +141,114 @@ class BookItem {
     required this.uploadDate,
     required this.feeAmount,
     required this.isPaid,
+    required this.paymentIntentId,
+    required this.clientSecret,
     required this.reader,
     required this.author,
   });
 
+  // --- copyWith method ---
+  BookItem copyWith({
+    String? id,
+    String? title,
+    String? coverImage,
+    String? bookPdfUrl,
+    String? signedPdfUrl,
+    String? personalMessage,
+    String? status,
+    String? rejectionReason,
+    String? authorMessage,
+    String? uploadDate,
+    int? feeAmount,
+    bool? isPaid,
+    String? paymentIntentId,
+    String? clientSecret,
+    Reader? reader,
+    Author? author,
+  }) {
+    return BookItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      coverImage: coverImage ?? this.coverImage,
+      bookPdfUrl: bookPdfUrl ?? this.bookPdfUrl,
+      signedPdfUrl: signedPdfUrl ?? this.signedPdfUrl,
+      personalMessage: personalMessage ?? this.personalMessage,
+      status: status ?? this.status,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
+      authorMessage: authorMessage ?? this.authorMessage,
+      uploadDate: uploadDate ?? this.uploadDate,
+      feeAmount: feeAmount ?? this.feeAmount,
+      isPaid: isPaid ?? this.isPaid,
+      paymentIntentId: paymentIntentId ?? this.paymentIntentId,
+      clientSecret: clientSecret ?? this.clientSecret,
+      reader: reader ?? this.reader,
+      author: author ?? this.author,
+    );
+  }
+
   factory BookItem.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = Map<String, dynamic>.from(json);
+
     final dynamic bookJson = _firstMap(data, ['book', 'bookData', 'bookDetails', 'ebook']);
     final dynamic readerJson = _firstMap(data, ['reader', 'readerData', 'readerDetails']);
     final dynamic authorJson = _firstMap(data, ['author', 'authorData', 'authorDetails', 'authorInfo']);
 
-    final title = _stringValue(data, ['bookTitle', 'title', 'book_title', 'bookName', 'name'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['title', 'bookTitle', 'book_title', 'name']));
-    final coverImage = _stringValue(data, ['coverImage', 'cover_image', 'coverImageUrl', 'imageUrl', 'bookCover'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['coverImage', 'cover_image', 'coverImageUrl', 'imageUrl', 'bookCover']));
-    final personalMessage = _stringValue(data, ['personalMessage', 'message', 'personal_message', 'note', 'requestMessage'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['personalMessage', 'message', 'personal_message', 'note']));
-    final status = _stringValue(data, ['status', 'requestStatus', 'request_status', 'state']);
-    final feeAmountText = _stringValue(data, ['feeAmount', 'fee_amount', 'price', 'totalAmount', 'total_amount']);
-    final isPaid = _boolValue(data, ['isPaid', 'is_paid', 'paid']);
-    final uploadDate = _stringValue(data, ['requestDate', 'createdAt', 'created_at', 'updatedAt', 'updated_at']);
-    final authorName = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['fullName', 'name', 'authorName', 'full_name']);
-    final authorProfilePicture = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['profilePicture', 'profile_picture', 'avatar', 'image']);
-    final authorDateJoined = _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['dateJoined', 'joinedAt', 'createdAt', 'created_at']);
-
     return BookItem(
       id: data['id']?.toString() ?? '',
-      title: title,
-      coverImage: coverImage,
-      bookPdfUrl: _stringValue(data, ['bookPdfUrl', 'book_pdf_url', 'pdfUrl', 'bookPdf']),
+      title: _stringValue(data, ['bookTitle', 'title', 'name'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['title', 'name'])),
+      coverImage: _stringValue(data, ['coverImage', 'imageUrl'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['coverImage', 'imageUrl'])),
+      bookPdfUrl: _stringValue(data, ['bookPdfUrl', 'book_pdf_url', 'pdfUrl']),
       signedPdfUrl: _stringValue(data, ['signedPdfUrl', 'signed_pdf_url']),
-      personalMessage: personalMessage,
-      status: status,
+      personalMessage: _stringValue(data, ['personalMessage', 'message', 'note'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['message'])),
+      status: _stringValue(data, ['status', 'requestStatus', 'state']),
       rejectionReason: _stringValue(data, ['rejectionReason', 'rejection_reason']),
       authorMessage: _stringValue(data, ['authorMessage', 'author_message']),
-      uploadDate: uploadDate,
-      feeAmount: int.tryParse(feeAmountText) ?? 0,
-      isPaid: isPaid,
+      uploadDate: _stringValue(data, ['requestDate', 'createdAt', 'updatedAt']),
+      feeAmount: int.tryParse(_stringValue(data, ['feeAmount', 'price', 'totalAmount'])) ?? 0,
+      isPaid: _boolValue(data, ['isPaid', 'is_paid', 'paid']),
+      paymentIntentId: _stringValue(data, ['paymentIntentId', 'payment_intent_id']),
+      clientSecret: _stringValue(data, ['clientSecret', 'client_secret']),
       reader: Reader.fromJson(Map<String, dynamic>.from(readerJson is Map ? readerJson : {})),
       author: Author.fromJson({
         'id': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['id']),
-        'fullName': authorName,
-        'profilePicture': authorProfilePicture,
+        'fullName': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['fullName', 'name', 'authorName']),
+        'profilePicture': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['profilePicture', 'avatar']),
         'bio': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['bio', 'about']),
-        'dateJoined': authorDateJoined,
+        'dateJoined': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['dateJoined', 'createdAt']),
       }),
     );
   }
 
   static BookItem? fromResponse(dynamic response) {
     if (response is Map<String, dynamic>) {
-      if (response.containsKey('items') && response['items'] is List && (response['items'] as List).isNotEmpty) {
-        final firstItem = (response['items'] as List).first;
-        if (firstItem is Map) {
-          return BookItem.fromJson(Map<String, dynamic>.from(firstItem));
-        }
+      Map<String, dynamic> merged = Map<String, dynamic>.from(response);
+      if (response.containsKey('request') && response['request'] is Map) {
+        merged = Map<String, dynamic>.from(response['request']);
+        if (response.containsKey('clientSecret')) merged['clientSecret'] = response['clientSecret'];
+        if (response.containsKey('paymentIntentId')) merged['paymentIntentId'] = response['paymentIntentId'];
       }
-
-      if (response.containsKey('data')) {
-        return fromResponse(response['data']);
-      }
-      if (response.containsKey('request')) {
-        return fromResponse(response['request']);
-      }
-      if (response.containsKey('autographRequest')) {
-        return fromResponse(response['autographRequest']);
-      }
-
-      return BookItem.fromJson(response);
+      return BookItem.fromJson(merged);
     }
-
-    if (response is List && response.isNotEmpty) {
-      final firstItem = response.first;
-      if (firstItem is Map) {
-        return BookItem.fromJson(Map<String, dynamic>.from(firstItem));
-      }
-    }
-
     return null;
   }
 }
 
-Map<String, dynamic>? _firstMap(Map<String, dynamic> data, List<String> keys) {
-  for (final key in keys) {
-    final value = data[key];
-    if (value is Map) {
-      return Map<String, dynamic>.from(value as dynamic);
-    }
-  }
-  return null;
+// Helpers
+dynamic _firstMap(Map<String, dynamic> data, List<String> keys) {
+  for (final key in keys) { if (data[key] is Map) return data[key]; }
+  return {};
 }
 
-String _stringValue(Map<String, dynamic> data, List<String> keys, {String? fallback}) {
-  for (final key in keys) {
-    final value = data[key];
-    if (value != null) {
-      final stringValue = value.toString().trim();
-      if (stringValue.isNotEmpty) {
-        return stringValue;
-      }
-    }
-  }
-  return fallback ?? '';
-}
-
-bool _boolValue(Map<String, dynamic> data, List<String> keys, {bool fallback = false}) {
-  for (final key in keys) {
-    final value = data[key];
-    if (value is bool) {
-      return value;
-    }
-    if (value != null) {
-      final stringValue = value.toString().trim().toLowerCase();
-      if (stringValue == 'true') return true;
-      if (stringValue == 'false') return false;
-    }
-  }
+String _stringValue(Map<String, dynamic> data, List<String> keys, {String fallback = ''}) {
+  for (final key in keys) { if (data[key] != null) return data[key].toString(); }
   return fallback;
+}
+
+bool _boolValue(Map<String, dynamic> data, List<String> keys) {
+  for (final key in keys) {
+    if (data[key] == true || data[key].toString().toLowerCase() == 'true') return true;
+  }
+  return false;
 }
 
 class Reader {

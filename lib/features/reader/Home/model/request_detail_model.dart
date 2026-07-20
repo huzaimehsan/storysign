@@ -38,6 +38,8 @@ class RequestDetailModel {
     "limit": limit,
     "totalPages": totalPages,
   };
+
+
 }
 
 /// --- Book Item Model ---
@@ -56,8 +58,6 @@ class BookItem {
   final bool isPaid;
   final Reader reader;
   final Author author;
-
-  // Stripe Fields Added
   final String? clientSecret;
   final String? paymentIntentId;
 
@@ -76,8 +76,8 @@ class BookItem {
     required this.isPaid,
     required this.reader,
     required this.author,
-    this.clientSecret,      // Added
-    this.paymentIntentId,   // Added
+    this.clientSecret,
+    this.paymentIntentId,
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) => BookItem(
@@ -95,8 +95,8 @@ class BookItem {
     isPaid: json["isPaid"] ?? false,
     reader: Reader.fromJson(json["reader"]),
     author: Author.fromJson(json["author"]),
-    clientSecret: json["clientSecret"],       // Mapping added
-    paymentIntentId: json["paymentIntentId"], // Mapping added
+    clientSecret: json["clientSecret"],
+    paymentIntentId: json["paymentIntentId"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -114,9 +114,34 @@ class BookItem {
     "isPaid": isPaid,
     "reader": reader.toJson(),
     "author": author.toJson(),
-    "clientSecret": clientSecret,         // Mapping added
-    "paymentIntentId": paymentIntentId,   // Mapping added
+    "clientSecret": clientSecret,
+    "paymentIntentId": paymentIntentId,
   };
+
+  // Mukammal copyWith method:
+  BookItem copyWith({
+    bool? isPaid,
+    String? status,
+  }) {
+    return BookItem(
+      id: this.id,
+      bookTitle: this.bookTitle,
+      coverImage: this.coverImage,
+      bookPdfUrl: this.bookPdfUrl,
+      signedPdfUrl: this.signedPdfUrl,
+      personalMessage: this.personalMessage,
+      status: status ?? this.status,
+      rejectionReason: this.rejectionReason,
+      authorMessage: this.authorMessage,
+      requestDate: this.requestDate,
+      feeAmount: this.feeAmount,
+      isPaid: isPaid ?? this.isPaid,
+      reader: this.reader,
+      author: this.author,
+      clientSecret: this.clientSecret,
+      paymentIntentId: this.paymentIntentId,
+    );
+  }
 }
 
 /// --- Reader Model ---

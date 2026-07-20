@@ -5,12 +5,10 @@ import 'package:storysign/features/reader/Home/controller/request_detail_control
 import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 
 
-class HomeBinding implements Bindings {
+class TrackRequestBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<AuthorDetailController>(() =>AuthorDetailController());
-   Get.lazyPut<PaymentController>(() =>PaymentController());
-    Get.lazyPut<TrackRequestController>(() =>TrackRequestController());
+    Get.lazyPut<TrackRequestController>(() => TrackRequestController());
+
   }
 }

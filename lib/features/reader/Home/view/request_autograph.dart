@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/utility.dart';
@@ -11,8 +11,9 @@ import '../../../../widgets/custom_text_feild.dart';
 import '../../search/widgets/file_upload_widget.dart';
 import 'package:storysign/widgets/image_picker.dart';
 import '../../search/widgets/header_widget.dart';
+import '../controller/payment_controller.dart';
 
-class RequestAutographCard extends GetView<HomeController> {
+class RequestAutographCard extends GetView<RequestAutographController> {
   const RequestAutographCard({super.key});
 
   @override
@@ -68,7 +69,7 @@ class RequestAutographCard extends GetView<HomeController> {
                                 'Book Name',
                                 "Things Fall Apart",
                                 controller:
-                                homeController.bookTitleControllerRequest,
+                                    homeController.bookTitleControllerRequest,
                               ),
                               SizedBox(height: 1.5.h),
 
@@ -76,26 +77,42 @@ class RequestAutographCard extends GetView<HomeController> {
                               // FileUploadWidget ko controller.bookPdfFile.value ke saath bind rakhein
                               FileUploadWidget(
                                 title: 'Upload Book',
-                                description: controller.bookPdfFile.value != null ? "File Selected" : 'Tap to select a pdf file',
+                                description:
+                                    controller.bookPdfFile.value != null
+                                    ? "File Selected"
+                                    : 'Tap to select a pdf file',
                                 file: controller.bookPdfFile.value,
                                 onTap: () async {
-                                  final file = await mediaPicker.pickMedia(context, mode: PickMode.document);
-                                  if (file != null) controller.bookPdfFile.value = file;
+                                  final file = await mediaPicker.pickMedia(
+                                    context,
+                                    mode: PickMode.document,
+                                  );
+                                  if (file != null)
+                                    controller.bookPdfFile.value = file;
                                 },
-                                onRemove: () => controller.bookPdfFile.value = null,
+                                onRemove: () =>
+                                    controller.bookPdfFile.value = null,
                               ),
                               SizedBox(height: 1.5.h),
 
                               // Upload Cover Photo
                               FileUploadWidget(
                                 title: 'Upload Cover Photo',
-                                description: controller.bookCoverImage.value != null ? "Image Selected" : 'Tap to select a png format',
+                                description:
+                                    controller.bookCoverImage.value != null
+                                    ? "Image Selected"
+                                    : 'Tap to select a png format',
                                 file: controller.bookCoverImage.value,
                                 onTap: () async {
-                                  final file = await mediaPicker.pickMedia(context, mode: PickMode.image);
-                                  if (file != null) controller.bookCoverImage.value = file;
+                                  final file = await mediaPicker.pickMedia(
+                                    context,
+                                    mode: PickMode.image,
+                                  );
+                                  if (file != null)
+                                    controller.bookCoverImage.value = file;
                                 },
-                                onRemove: () => controller.bookCoverImage.value = null,
+                                onRemove: () =>
+                                    controller.bookCoverImage.value = null,
                               ),
                               SizedBox(height: 1.5.h),
                             ],
@@ -107,7 +124,7 @@ class RequestAutographCard extends GetView<HomeController> {
                               maxLength: 200,
                               maxLines: 4,
                               controller:
-                              homeController.personalMessageController,
+                                  homeController.personalMessageController,
                             ),
                             SizedBox(height: 5.h),
 
@@ -130,7 +147,7 @@ class RequestAutographCard extends GetView<HomeController> {
                                 }
                               },
                               colors:
-                              controller.selectedAuthorId.value.isNotEmpty
+                                  controller.selectedAuthorId.value.isNotEmpty
                                   ? lightTextColor
                                   : buttonColor,
                               // ... baki properties
@@ -138,31 +155,42 @@ class RequestAutographCard extends GetView<HomeController> {
                             SizedBox(height: 2.h),
 
                             // Submit Button
+                            // Submit Button
                             buttonWidget(
                               "Request Autograph",
                               whiteColor,
                               onTap: () async {
-                                // Pass bookId only if it's a library request
-                                final String? requestId = await controller.requestAutograph(
-                                    context,
-                                    controller.selectedAuthorId.value,
-                                    bookId: isLibraryRequest ? receivedBookId : null
+                                // 1. Request Submit (Sirf Request create karein)
+                                final Map<String, dynamic>? result = await controller.requestAutograph(
+                                  context,
+                                  controller.selectedAuthorId.value,
+                                  bookId: isLibraryRequest ? receivedBookId : null,
                                 );
 
-                                if (requestId != null && requestId.isNotEmpty) {
-                                  Get.offNamed('/request', arguments: {
-                                    'autographRequestId': requestId,
-                                    'bookId': isLibraryRequest ? receivedBookId : null,
-                                    'role': isLibraryRequest ? 'fromLibrary' : 'fromHome',
-                                  });
+                                // 2. Data check (Check karein ke request create ho gayi)
+                                if (result != null && result['requestId'] != null) {
+
+                                  // 3. Payment logic yahan se hata kar, data ko /request screen par bhej dein
+                                  Get.offNamed(
+                                    '/request',
+                                    arguments: {
+                                      'autographRequestId': result['requestId'],
+                                      'clientSecret': result['clientSecret'],      // <--- Yahan se bhej rahe hain
+                                      'paymentIntentId': result['paymentIntentId'], // <--- Yahan se bhej rahe hain
+                                      'bookId': isLibraryRequest ? receivedBookId : null,
+                                      'role': isLibraryRequest ? 'fromLibrary' : 'fromHome',
+                                    },
+                                  );
+                                } else {
+                                  Utils.showToast("Request failed, please try again", true);
                                 }
                               },
                               colors: buttonColor,
-                              fontFamily: 'Poppins',
                               height: 5.2.h,
                               width: double.infinity,
                               fontsize: 16.sp,
                               fontweight: FontWeight.w600,
+                              // ... baki properties
                             ),
                             SizedBox(height: 1.h),
                           ],

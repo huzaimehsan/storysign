@@ -17,9 +17,10 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
         backgroundColor: Colors.transparent,
         child: Container(
           width: 92.w,
+
           padding: EdgeInsets.symmetric(
             vertical: 4.h,
-            horizontal: 4.w,
+            horizontal: 4.4.w,
           ),
           decoration: BoxDecoration(
             color: textFeildContainColor,

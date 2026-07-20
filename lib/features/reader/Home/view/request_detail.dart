@@ -8,13 +8,13 @@ import 'package:storysign/features/reader/Home/widgets/reader/custom_text_field_
 import 'package:storysign/features/reader/Home/widgets/reader/fee_field_with_price.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../utils/utility.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/author_detail_widget.dart';
+import '../../../../widgets/sucess_widget.dart'; // Aapka custom dialog
 import '../../search/widgets/header_widget.dart';
 import '../controller/payment_controller.dart';
-import 'package:http/http.dart' as http;
-// ... imports ...
 
 class RequestDetail extends GetView<AuthorDetailController> {
   const RequestDetail({super.key});
@@ -40,124 +40,100 @@ class RequestDetail extends GetView<AuthorDetailController> {
                 ),
                 SizedBox(height: 2.h),
 
-                // LOADING STATE
                 if (isLoading && data == null)
-                  SizedBox(
-                    height: 30.h,
-                    child: Center(
-                      child: CircularProgressIndicator(color: buttonColor),
-                    ),
-                  )
-                // ERROR STATE
+                  SizedBox(height: 30.h, child: Center(child: CircularProgressIndicator(color: buttonColor)))
                 else if (error.isNotEmpty && data == null)
-                  Padding(
-                    padding: EdgeInsets.all(4.w),
-                    child: Center(
-                      child: Text(error, style: TextStyle(color: Colors.red)),
-                    ),
-                  )
-                // DATA LOADED STATE
+                  Padding(padding: EdgeInsets.all(4.w), child: Center(child: Text(error, style: TextStyle(color: Colors.red))))
                 else if (data != null) ...[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: customText(
-                      text: "Book Detail",
-                      color: whiteColor,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: customText(text: "Book Detail", color: whiteColor, fontSize: 16.sp, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                  SizedBox(height: 0.5.h),
-                  RequestDetailWidget(
-                    imagePath: data.coverImage,
-                    bookTitle: data.title ?? 'No Title',
-                    authorName: data.author.fullName,
-                    status: data.status,
-                    showSubmittedBadge: true,
-                  ),
-                  SizedBox(height: 1.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: customText(
-                      text: "About Author",
-                      color: whiteColor,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
+                    SizedBox(height: 0.5.h),
+                    RequestDetailWidget(
+                      imagePath: data.coverImage,
+                      bookTitle: data.title,
+                      authorName: data.author.fullName,
+                      status: data.status,
+                      showSubmittedBadge: true,
                     ),
-                  ),
-                  SizedBox(height: 0.5.h),
-                  // Author Info
-                  AuthorInfoCard(
-                    imagePath: data.author.profilePicture ?? "",
-                    bookTitle: data.author.fullName,
-                    date: _formatDate(data.author.dateJoined),
-                  ),
+                    SizedBox(height: 1.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: customText(text: "About Author", color: whiteColor, fontSize: 16.sp, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 0.5.h),
+                    AuthorInfoCard(
+                      imagePath: data.author.profilePicture ?? "",
+                      bookTitle: data.author.fullName,
+                      date: _formatDate(data.author.dateJoined),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    CustomMessageDisplay(
+                      label: 'Personal Message',
+                      message: data.personalMessage.isNotEmpty ? data.personalMessage : 'No message provided.',
+                    ),
+                    SizedBox(height: 1.5.h),
 
-                  SizedBox(height: 1.5.h),
-                  CustomMessageDisplay(
-                    label: 'Personal Message',
-                    message: data.personalMessage.isNotEmpty
-                        ? data.personalMessage
-                        : 'No message provided.',
-                  ),
+                    FeeFieldWithPrice(
+                      label: 'Signature Price',
+                      price: data.isPaid ? 'Paid' : 'Fee',
+                      amount: '${data.feeAmount}',
+                      isPaid: data.isPaid,
+                    ),
 
-                  SizedBox(height: 1.5.h),
-                  FeeFieldWithPrice(
-                    label: 'Signature Price',
-                    price: data.isPaid ? 'Paid' : 'Fee',
-                    amount: '${data.feeAmount}',
-                    isPaid: true,
-                  ),
+                    SizedBox(height: 7.h),
 
-                  SizedBox(height: 7.h),
-
-                  // MAKE PAYMENT BUTTON
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: Obx(() {
-                      // Obx add karein taaki loading par button update ho sake
-                      final controller =
-                          Get.find<PaymentController>(); // Get.find use karein
-
-                      return buttonWidget(
-                        controller.isPaymentLoading.value
-                            ? "Processing..."
-                            : (data.isPaid ? "Already Paid" : "Make Payment"),
-                        fontsize: 16.sp,
+                    // MAKE PAYMENT BUTTON
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: buttonWidget(
+                        data.isPaid ? "Submit Request" : "Make Payment",
                         whiteColor,
-                        onTap: isLoading
-                            ? () {}
+                        onTap: data.isPaid
+                            ? () {
+                          // JAB PEHLE SE PAID HAI, TAB DIALOG DIKHAYEIN
+                          showSuccessDialog(
+                              context,
+                              desc: "Your Autograph Request have been sent Successfully",
+                              buttonText: "Back To Dashboard",
+                              ontap: () => Get.offAllNamed('/bottomnav')
+                          );
+                        }
                             : () async {
-                                final success = await controller
-                                    .processPayment();
+                          final paymentController = Get.find<PaymentController>();
+                          final args = Get.arguments;
+                          final String? clientSecret = args?['clientSecret'];
+                          final String? paymentIntentId = args?['paymentIntentId'];
 
-                                  if (success) {
-                                    Get.toNamed(
-                                      "/signedcopy",
-                                      arguments: {
-                                        'requestId': data.id,
-                                        'coverImage': data.coverImage,
-                                        'bookName': data.title,
-                                        'authorName': data.author.fullName,
-                                        'dateJoined': data.uploadDate,
-                                        "status": data.status,
-                                        'message': data.personalMessage,
-                                      },
-                                    );
-                                  }
-                              },
-                        colors:
-                            (data.isPaid || controller.isPaymentLoading.value)
-                            ? Colors.grey
-                            : buttonColor,
+                          if (clientSecret != null && paymentIntentId != null) {
+                            bool isPaid = await paymentController.processPayment(
+                              clientSecret: clientSecret,
+                              paymentIntentId: paymentIntentId,
+                            );
+
+                            if (isPaid) {
+                              // PAYMENT SUCCESS: Bas UI update karein (dialog nahi dikhana)
+                              // Obx rebuild hoga aur button/price khud update ho jayenge
+                              controller.selectedRequest.value = data.copyWith(
+                                  isPaid: true,
+                                  status: "Paid" // Agar aap status bhi update karna chahte hain
+                              );
+                            }
+                          } else {
+                            Utils.showToast("Payment details not found.", true);
+                          }
+                        },
+                        colors: data.isPaid ? buttonColor : buttonColor,
                         fontweight: FontWeight.w600,
                         fontFamily: 'Poppins',
                         height: 5.2.h,
-                      );
-                    }),
-                  ),
-                  SizedBox(height: 2.h),
-                ],
+                        width: double.infinity,
+                        fontsize: 16.sp,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                  ],
               ],
             ),
           );
@@ -168,15 +144,10 @@ class RequestDetail extends GetView<AuthorDetailController> {
 
   String _formatDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return "Joined recently";
-
     try {
-      // API se aayi hui string ko DateTime mein convert karein
-      DateTime dateTime = DateTime.parse(dateString);
-
-      // Apni marzi ka format set karein (e.g., "10 Jul, 2026")
-      return DateFormat('dd MMM, yyyy').format(dateTime);
+      return DateFormat('dd MMM, yyyy').format(DateTime.parse(dateString));
     } catch (e) {
-      return dateString; // Agar error aaye to original string return karein
+      return dateString;
     }
   }
 }

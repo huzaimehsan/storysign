@@ -9,6 +9,10 @@ import 'package:storysign/features/author/request/view/place_signature.dart';
 
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
 import 'package:storysign/features/reader/Home/binding/home_binding.dart';
+import 'package:storysign/features/reader/Home/binding/request_autograph_binding.dart';
+import 'package:storysign/features/reader/Home/binding/request_detail_binding.dart';
+import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
+import 'package:storysign/features/reader/Home/binding/upload_book_binding.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/view/final_review.dart';
 import 'package:storysign/features/reader/Home/view/make_payment.dart';
@@ -92,17 +96,17 @@ class AppRoutes {
 
 
 
-    GetPage(name: '/requestautograph', page: () => RequestAutograph(),binding: SearchBinding()),
+    GetPage(name: '/requestautograph', page: () => RequestAutograph(),binding: RequestAutographBinding()),
 
 
 
     GetPage(name: '/notification', page: () => NotificationScreen(),binding: NotificationBinding()),
 
 
-    GetPage(name: '/requestautographcard', page: () => RequestAutographCard(),binding: HomeBinding()),
+    GetPage(name: '/requestautographcard', page: () => RequestAutographCard(),binding: RequestAutographBinding()),
 
 
-    GetPage(name: '/uploadbook', page: () => UploadBook(),binding: HomeBinding()),
+    GetPage(name: '/uploadbook', page: () => UploadBook(),binding: UploadBookBinding()),
 
 
     GetPage(name: '/selectauthor', page: () => SelectAuthor(),binding: HomeBinding()),

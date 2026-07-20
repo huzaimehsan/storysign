@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 import '../../library/controller/library_controller.dart';
 import '../../search/controller/search_page_controller.dart';
@@ -23,13 +24,17 @@ class BottomNavController extends GetxController{
 
     if (index == 0) {
       try {
+        // 1. Home Controller check
         if (Get.isRegistered<HomeController>()) {
           Get.find<HomeController>().fetchHomeData();
-          Get.find<HomeController>().fetchTrackRequestData();
-
-
         }
-      } catch (_) {}
+        // 2. Sahi tarika 'else if' ka use karna hai
+        else if (Get.isRegistered<TrackRequestController>()) {
+          Get.find<TrackRequestController>().fetchTrackRequestData();
+        }
+      } catch (e) {
+        debugPrint("Error: $e");
+      }
     }
     if (index == 1) {
       try {

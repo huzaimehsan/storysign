@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
@@ -60,7 +61,7 @@ class TrackRequest extends GetView<HomeController> {
                           child: buttonWidget(
                             tab,
                             isSelected ? whiteColor : buttonColor,
-                            onTap: () => controller.selectTab(tab),
+                            onTap: () => controller.selectedTab(tab),
                             colors: isSelected
                                 ? buttonColor
                                 : const Color(0xFFF5E6D3),
@@ -147,15 +148,20 @@ class TrackRequest extends GetView<HomeController> {
                         bookTitle: book.title,
                         authorName: book.author.fullName,
                         date: formattedDate,
-                        trackRequest: () {
-                 print(book.id.toString());
-                          Get.toNamed(
-                            "/request",
-                            arguments: {
-                              'bookId': book.id.toString(),
-                            },
-                          );
-                        },
+                       trackRequest: () {
+                         // 1. Debug print lagayein
+                         print("DEBUG: Sending book title: ${book.title}");
+
+                         // 2. Yahan check karein ke 'book' null to nahi
+                         if (book != null) {
+                           Get.toNamed("/tracking", arguments: {'bookData': book});
+                         }
+                         else {
+                           print("DEBUG: ERROR - Book object is null!");
+                         }
+                       },
+
+
                         status: book.status,
                         imagePath: '',
                         showAuthor: true,

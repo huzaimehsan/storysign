@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
 import 'package:storysign/features/reader/search/controller/search_page_controller.dart';
 
+import '../../../../utils/utility.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/image_picker.dart';
@@ -14,7 +16,7 @@ import '../../../../widgets/author_detail_widget.dart';
 import '../widgets/file_upload_widget.dart';
 import '../widgets/header_widget.dart';
 
-class RequestAutograph extends GetView<HomeController> {
+class RequestAutograph extends GetView<RequestAutographController> {
   const RequestAutograph({super.key});
 
   @override
@@ -97,17 +99,24 @@ class RequestAutograph extends GetView<HomeController> {
                               controller: controller.personalMessageController,
                             ),
                             SizedBox(height: 3.h),
-                
+
                             buttonWidget(
                               "Request Autograph",
                               whiteColor,
                               onTap: () async {
-                                final String? requestId = await controller.requestAutograph(context, authorId);
-                                if (requestId != null && requestId.isNotEmpty) {
+                                // Controller se Map return karwayein
+                                final Map<String, dynamic>? result = await controller.requestAutograph(context, authorId);
+
+                                // Check karein ke result valid hai
+                                if (result != null && result['requestId'] != null) {
                                   Get.offNamed('/request', arguments: {
-                                    'autographRequestId': requestId,
+                                    'autographRequestId': result['requestId'],
+                                    'clientSecret': result['clientSecret'],       // Yeh zaroori hai
+                                    'paymentIntentId': result['paymentIntentId'], // Yeh zaroori hai
                                     'role': 'alreadySelectedAuthor',
                                   });
+                                } else {
+                                  Utils.showToast("Request failed. Please try again.", true);
                                 }
                               },
                               colors: buttonColor,
