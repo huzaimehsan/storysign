@@ -25,6 +25,8 @@ class AllPendingRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasImage = imagePath.trim().isNotEmpty;
+    final bool isNetworkImage = hasImage && (imagePath.startsWith('http://') || imagePath.startsWith('https://'));
     return InkWell(
       onTap: ontap,
       child: Padding(
@@ -51,13 +53,42 @@ class AllPendingRequest extends StatelessWidget {
               Container(
                 height: 6.h,
                 width: 6.h,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.cover,
-                  ),
+                  color: buttonColor.withOpacity(0.1),
                 ),
+                child: hasImage
+                    ? ClipOval(
+                        child: isNetworkImage
+                            ? Image.network(
+                                imagePath,
+                                height: double.infinity,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.person,
+                                  color: buttonColor,
+                                  size: 3.h,
+                                ),
+                              )
+                            : Image.asset(
+                                imagePath,
+                                height: double.infinity,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.person,
+                                  color: buttonColor,
+                                  size: 3.h,
+                                ),
+                              ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        color: buttonColor,
+                        size: 3.h,
+                      ),
               ),
               SizedBox(width: 4.w),
               Expanded(

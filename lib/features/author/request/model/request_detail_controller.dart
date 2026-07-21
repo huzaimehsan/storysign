@@ -1,37 +1,3 @@
-class SubscriptionStats {
-  final int totalSignRequests;
-  final int signedBooks;
-  final int remainingSigns;
-  final int pendingRequests;
-
-  SubscriptionStats({
-    required this.totalSignRequests,
-    required this.signedBooks,
-    required this.remainingSigns,
-    required this.pendingRequests,
-  });
-
-  // JSON se Object banane ke liye factory
-  factory SubscriptionStats.fromJson(Map<String, dynamic> json) {
-    return SubscriptionStats(
-      totalSignRequests: json['totalSignRequests'] ?? 0,
-      signedBooks: json['signedBooks'] ?? 0,
-      remainingSigns: json['remainingSigns'] ?? 0,
-      pendingRequests: json['pendingRequests'] ?? 0,
-    );
-  }
-
-  // Object ko JSON mein convert karne ke liye (agar zaroorat pade)
-  Map<String, dynamic> toJson() {
-    return {
-      'totalSignRequests': totalSignRequests,
-      'signedBooks': signedBooks,
-      'remainingSigns': remainingSigns,
-      'pendingRequests': pendingRequests,
-    };
-  }
-}
-
 class PaginatedAutographResponse {
   final List<AutographItemModel> items;
   final int total;
@@ -77,6 +43,8 @@ class AutographItemModel {
   final bool isPaid;
   final ReaderModel reader;
   final AuthorDetailModel author;
+  final String? signaturePlacement;
+  final String bookId;
 
   AutographItemModel({
     required this.id,
@@ -93,6 +61,8 @@ class AutographItemModel {
     required this.isPaid,
     required this.reader,
     required this.author,
+    this.signaturePlacement,
+    required this.bookId,
   });
 
   factory AutographItemModel.fromJson(Map<String, dynamic> json) {
@@ -111,6 +81,8 @@ class AutographItemModel {
       isPaid: json['isPaid'] ?? false,
       reader: ReaderModel.fromJson(json['reader'] ?? {}),
       author: AuthorDetailModel.fromJson(json['author'] ?? {}),
+      signaturePlacement: json['signaturePlacement'],
+      bookId: json['bookId'] ?? '',
     );
   }
 }
@@ -119,11 +91,13 @@ class ReaderModel {
   final String id;
   final String fullName;
   final String profilePicture;
+  final String email;
 
   ReaderModel({
     required this.id,
     required this.fullName,
     required this.profilePicture,
+    required this.email,
   });
 
   factory ReaderModel.fromJson(Map<String, dynamic> json) {
@@ -131,6 +105,7 @@ class ReaderModel {
       id: json['id'] ?? '',
       fullName: json['fullName'] ?? '',
       profilePicture: json['profilePicture'] ?? '',
+      email: json['email'] ?? '',
     );
   }
 }

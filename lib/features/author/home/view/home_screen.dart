@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/author/home/widgets/author_profile_widget.dart';
 import 'package:storysign/features/author/home/widgets/pending_request.dart';
@@ -16,6 +17,14 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
   AuthorHomeScreen({super.key});
 
 
+  String _formatRequestDate(String dateString) {
+    try {
+      final dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMM, hh:mm a').format(dateTime.toLocal());
+    } catch (_) {
+      return dateString;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +41,28 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
             ),
             SizedBox(height: 1.h),
             Obx(() {
-              final stats = controller.authorStats.value;
-
-              // Agar stats null hai (data abhi fetch ho raha hai), toh loading show karein
-              if (stats == null) {
+              if (controller.isStatsLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(color: buttonColor,),
                 );
               }
 
-              // Agar stats mil gaya hai, toh UI show karein
+              final stats = controller.authorStats.value;
+              if (stats == null) {
+                return SizedBox(
+                  height: 15.h,
+                  child: Center(
+                    child: customText(
+                      text: 'Unable to load stats',
+                      color: whiteColor,
+                      fontSize: 14.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }
+
               return Wrap(
                 spacing: 5.5.w,
                 runSpacing: 1.5.h,
@@ -94,7 +115,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
               () => Expanded(
                 child:
 
-                controller.filteredRequests.isEmpty
+                controller.isFetchPending.value
                     ? Center(
                   child: customText(
                     text: "No pending requests",
@@ -109,17 +130,18 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                     padding: EdgeInsets.only(bottom: 12.h),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.filteredRequests.length,
+                    itemCount: controller.autographList.length,
                     itemBuilder: (context, index) {
-                      final request = controller.filteredRequests[index];
+                      final request = controller.autographList[index];
+                      final formattedDate = _formatRequestDate(request.requestDate);
                       return PendingRequest(
-                        imagePath: request['imagePath'] ?? '',
-                        authorName: request['authorName'] ?? '',
-                        date: request['date'] ?? '',
+                        imagePath: request.reader.profilePicture,
+                        authorName: request.author.fullName,
+                        date: formattedDate,
                         authorDetail: () {
                           Get.toNamed("/allRequest");
                         },
-                        bookName: request['bookName'] ?? '',
+                        bookName:request.bookTitle,
                       );
                     },
                   ),

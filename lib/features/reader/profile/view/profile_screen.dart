@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 
@@ -17,7 +17,7 @@ import '../widget/settings_group_card.dart';
 import '../widget/section_header.dart';
 import '../../../../widgets/customText_widget.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends GetView<ProfileScreenController> {
   const ProfileScreen({super.key});
 
   @override

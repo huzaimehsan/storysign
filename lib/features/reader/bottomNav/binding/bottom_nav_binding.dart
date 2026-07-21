@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
 
 import '../../Home/controller/home_controller.dart';
 import '../../Home/controller/track_request_controller.dart';
@@ -19,7 +19,7 @@ class BottomNavBinding implements Bindings {
     Get.lazyPut<ReaderController>(()=> ReaderController());
 
     Get.lazyPut<SearchPageController>(()=> SearchPageController());
-    Get.lazyPut<ProfileController>(()=> ProfileController());
+    Get.lazyPut<ProfileScreenController>(()=> ProfileScreenController());
   }
 }
 

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import 'package:storysign/features/reader/profile/controller/edit_profile_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
@@ -14,15 +14,12 @@ import '../../../../widgets/sucess_widget.dart';
 import '../../../author/profile/widget/author_biography_card.dart';
 import '../../search/widgets/header_widget.dart';
 
-class EditProfile extends GetView<ProfileController> {
+class EditProfile extends GetView<EditProfileController> {
   const EditProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Arguments handle karne ke liye (ya phir controller mein onInit par set karein)
     final String role = Get.arguments?['role'] ?? 'reader';
-    controller.nameController.text = controller.profileModel.value?.fullName ?? "";
-    controller.emailController.text = controller.profileModel.value?.email ?? "";
     return Scaffold(
       backgroundColor: containerColor,
       body: SafeArea(
@@ -173,6 +170,7 @@ class EditProfile extends GetView<ProfileController> {
                     height: 5.2.h,
                     width: double.infinity,
                     fontFamily: 'Poppins',
+                    fontsize: 16.sp,
                     whiteColor,
                   ),
                 );

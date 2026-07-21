@@ -9,13 +9,11 @@ import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/request/controller/request_detail_controller.dart';
 
 import '../controller/author_bottom_nav_controller.dart';
-import '../../subscriptionplan/controller/subscription_plan_controller.dart';
 
 class AuthorBottomNavBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AuthorBottomNavController>(() => AuthorBottomNavController());
-    Get.lazyPut<SubscriptionPlanController>(() => SubscriptionPlanController());
     Get.lazyPut<AuthorHomeController>(() => AuthorHomeController());
     Get.lazyPut<AllRequestController>(() => AllRequestController());
     Get.lazyPut<EbookPreviewController>(() => EbookPreviewController());

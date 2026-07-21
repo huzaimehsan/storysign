@@ -8,11 +8,11 @@ import '../../../../utils/utility.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../search/widgets/header_widget.dart';
-import '../controller/profile_controller.dart';
+import '../controller/help_support_controller.dart';
 import '../widget/help_support_widget.dart';
 import '../widget/library_stat_card.dart';
 
-class HelpAndSupport extends GetView<ProfileController> {
+class HelpAndSupport extends GetView<HelpSupportController> {
   const HelpAndSupport({super.key});
 
   @override

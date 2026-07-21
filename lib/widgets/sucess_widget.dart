@@ -9,7 +9,7 @@ import 'button_widget.dart';
 import 'customText_widget.dart';
 void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap ,String? buttonText}) {
   showDialog(
-    context: context,
+    context:Get.context!,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return Dialog(

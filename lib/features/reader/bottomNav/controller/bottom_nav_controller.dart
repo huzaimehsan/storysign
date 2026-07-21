@@ -4,6 +4,7 @@ import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 import '../../library/controller/library_controller.dart';
+import '../../profile/controller/profile_screen_controller.dart';
 import '../../search/controller/search_page_controller.dart';
 
 class BottomNavController extends GetxController{
@@ -54,8 +55,8 @@ class BottomNavController extends GetxController{
 
 
     if (index == 4) {
-      if (Get.isRegistered<ProfileController>()) {
-        Get.find<ProfileController>(). getProfile();
+      if (Get.isRegistered<ProfileScreenController>()) {
+        Get.find<ProfileScreenController>().getProfile();
       }
     }
   }

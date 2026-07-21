@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -8,8 +7,9 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/sucess_widget.dart';
 import '../../search/widgets/header_widget.dart';
+import '../controller/change_password_controller.dart';
 
-class ChangePassword extends StatelessWidget {
+class ChangePassword extends GetView<ChangePasswordController> {
   const ChangePassword({super.key});
 
   @override
@@ -41,17 +41,7 @@ class ChangePassword extends StatelessWidget {
                   "Confirm",
                   whiteColor,
                   onTap: () {
-                    showSuccessDialog(
-                      ontap: () {
-                        Get.back();
-                        Get.back();
-                      },
-                      buttonText: "Okay",
-                      context,
-
-                      desc: "Your Password Has Been changed"
-                          ,
-                    );
+                    controller.submitPasswordChange(context);
                   },
                   colors: buttonColor,
                   fontFamily: 'Poppins',

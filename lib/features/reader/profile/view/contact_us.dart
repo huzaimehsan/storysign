@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import 'package:storysign/features/reader/profile/controller/contact_us_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
@@ -10,9 +10,7 @@ import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/sucess_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-class ContactUs extends GetView<ProfileController> {
-  // Controller initialize karein
-
+class ContactUs extends GetView<ContactUsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

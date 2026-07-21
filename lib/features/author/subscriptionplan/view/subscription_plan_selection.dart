@@ -35,6 +35,7 @@ class SubscriptionPlanSelectionScreen
                 child: Obx(
                   () {
                     final selectedPlan = controller.selectedPlan.value;
+                    final paymentController = Get.find<StripePaymentController>();
                     
                     if (selectedPlan == null) {
                       return Center(
@@ -67,7 +68,7 @@ class SubscriptionPlanSelectionScreen
                           SizedBox(height: 2.h),
 
                       Obx(() {
-                      final isLoading = controller.isPaymentLoading.value;
+                      final isLoading = paymentController.isPaymentLoading.value;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +81,7 @@ class SubscriptionPlanSelectionScreen
                             onTap: isLoading
                                 ? () {}
                                 : () async {
-                              final success = await controller.processPayment();
+                              final success = await paymentController.processPayment(selectedPlan.id);
                               if (success) {
                                 Get.toNamed('/authorbottomnav');
                               }

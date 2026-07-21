@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
-import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
-
 
 class PendingRequest extends StatelessWidget {
   final String imagePath;
   final String authorName;
-
-
   final VoidCallback authorDetail;
   final String date;
   final String bookName;
@@ -17,21 +13,26 @@ class PendingRequest extends StatelessWidget {
   const PendingRequest({
     super.key,
     required this.imagePath,
-
-
-    required this.date, required this.authorDetail, required this.authorName, required this.bookName,
+    required this.date,
+    required this.authorDetail,
+    required this.authorName,
+    required this.bookName,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Check karein ke imagePath khali toh nahi hai
+    bool hasImage = imagePath.trim().isNotEmpty;
+
     return InkWell(
+      onTap: authorDetail, // Yahan onep tap pure card par bhi laga sakte hain agar zaroorat ho
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 0.1.h),
         child: Container(
           height: 12.5.h,
           width: 100.w,
           margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-          padding: EdgeInsets.only(top: 3.w,bottom: 3.w,left: 3.w,right: 5.w),
+          padding: EdgeInsets.only(top: 3.w, bottom: 3.w, left: 3.w, right: 5.w),
           decoration: BoxDecoration(
             color: white,
             borderRadius: BorderRadius.circular(20.sp),
@@ -46,18 +47,37 @@ class PendingRequest extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Image Container with Condition & Placeholder
               Container(
                 width: 12.h,
                 height: 12.h,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.cover,
-                  ),
                   color: buttonColor.withAlpha(30),
                 ),
+                child: hasImage
+                    ? ClipOval(
+                        child: Image.network(
+                          imagePath,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.person,
+                            color: buttonColor,
+                            size: 6.h,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        color: buttonColor,
+                        size: 6.h,
+                      ),
               ),
+
+              
               SizedBox(width: 2.w),
               Expanded(
                 child: Column(
@@ -88,12 +108,11 @@ class PendingRequest extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                     ),
                     SizedBox(height: 0.6.h),
-
                   ],
                 ),
               ),
               GestureDetector(
-                onTap:  authorDetail,
+                onTap: authorDetail,
                 child: Image.asset(
                   "assets/icon/arrowicon.png",
                   height: 4.h,

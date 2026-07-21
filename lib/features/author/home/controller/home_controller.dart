@@ -1,15 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
+import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
+import '../../../../utils/shared_prefrences_methods.dart';
+import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
-
+import 'package:http/http.dart' as http;
 class AuthorHomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   var authorStats = Rxn<SubscriptionStats>();
   RxBool isStatsLoading = false.obs;
 
+  var autographList = <AutographItemModel>[].obs;
+
+  var isFetchPending = false.obs;
+  RxString errorMessage = ''.obs;
 
   final RxList<Map<String, String>> requests = <Map<String, String>>[
     {
@@ -44,8 +54,9 @@ class AuthorHomeController extends GetxController {
   @override
   void onInit() {
     filteredRequests.assignAll(requests);
-
     super.onInit();
+    fetchLibraryStats();
+    fetchAutographRequests();
   }
 
   void filterRequests(String query) {
@@ -85,6 +96,58 @@ class AuthorHomeController extends GetxController {
       debugPrint("Error: $e");
     } finally {
       isStatsLoading.value = false;
+    }
+  }
+
+
+  Future<void> fetchAutographRequests() async {
+    try {
+      isFetchPending.value = true;
+      errorMessage.value = '';
+
+      final prefs = SharedPreferencesMethod.storage;
+      final String token = prefs.getString(LocalDBKeys.TOKEN) ?? '';// ya getString use karein
+
+      if (token.isEmpty) {
+        errorMessage.value = 'Token not found';
+        Utils.showToast('Please login again', true);
+        return;
+      }
+
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.pendingRequest}',
+      );
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final responseBody = jsonDecode(response.body);
+
+        // FIX: Paginated response parse karein (jisme items ki list hoti hai)
+        final paginatedData = PaginatedAutographResponse.fromJson(responseBody);
+
+        // FIX: Sahi list variable par assignAll use karein
+        autographList.assignAll(paginatedData.items);
+
+      } else {
+        final responseBody = jsonDecode(response.body);
+        errorMessage.value =
+            responseBody['message']?.toString() ?? 'Failed to load data';
+        Utils.showToast(errorMessage.value, true);
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      errorMessage.value = 'Something went wrong while loading data';
+      Utils.showToast(errorMessage.value, true);
+    } finally {
+      isFetchPending.value = false;
+      EasyLoading.dismiss();
     }
   }
 }

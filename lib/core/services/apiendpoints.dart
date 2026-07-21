@@ -59,10 +59,16 @@ class ApiEndPoints {
   static const String readerStripePayment =
       "/reader/autograph-requests/confirm-payment";
 
+  static const String readerVerifyPayment = "/payments/verify-success";
 
-static const String readerVerifyPayment =
-      "/payments/verify-success";
+  static const String pendingRequest =
+      "/author/requests/pending?page=1&limit=10";
+
+  static String autographRequestDetails(String autographRequestId) {
+    return "/author/requests/$autographRequestId";
+  }
 }
+
 // //Vehical
 // static const String getVehicles = '/fleet/vehicles?search=';
 // static const String getEquipment = '/fleet/equipment?search=';

@@ -6,7 +6,7 @@ import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav
 import 'package:storysign/features/author/delivered/view/delivered_screen.dart';
 import 'package:storysign/features/author/profile/view/author_profile.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
-import 'package:storysign/features/author/home/view/author_home_screen.dart';
+import 'package:storysign/features/author/home/view/home_screen.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/request_detail.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';

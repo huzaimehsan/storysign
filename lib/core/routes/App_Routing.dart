@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_binding.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/home/binding/author_home_binding.dart';
+import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
 
+import 'package:storysign/features/author/subscriptionplan/binding/stripe_payment_binding.dart';
+import 'package:storysign/features/author/subscriptionplan/binding/subscription_plan_binding.dart';
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
-import 'package:storysign/features/reader/Home/binding/home_binding.dart';
+
 import 'package:storysign/features/reader/Home/binding/request_autograph_binding.dart';
-import 'package:storysign/features/reader/Home/binding/request_detail_binding.dart';
+
 import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
 import 'package:storysign/features/reader/Home/binding/payment_binding.dart';
 import 'package:storysign/features/reader/Home/binding/select_author_binding.dart';
@@ -25,11 +29,16 @@ import 'package:storysign/features/reader/Home/view/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/upload_book.dart';
 import 'package:storysign/features/reader/library/binding/reader_library_binding.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
+import 'package:storysign/features/reader/profile/binding/change_password_binding.dart';
+import 'package:storysign/features/reader/profile/binding/contact_us_binding.dart';
+import 'package:storysign/features/reader/profile/binding/edit_profile_binding.dart';
+import 'package:storysign/features/reader/profile/binding/help_support_binding.dart';
+import 'package:storysign/features/reader/profile/binding/privacy_policy_binding.dart';
 import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
 import 'package:storysign/features/reader/profile/view/change_password.dart';
 import 'package:storysign/features/reader/profile/view/contact_us.dart';
 import 'package:storysign/features/reader/profile/view/edit_profile.dart';
-
+import 'package:storysign/features/reader/profile/view/help_and_support.dart';
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 import 'package:storysign/features/reader/search/binding/search_binding.dart';
@@ -37,6 +46,7 @@ import 'package:storysign/features/reader/search/binding/search_binding.dart';
 import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
 import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
+import '../../features/reader/Home/binding/request_detail_binding.dart';
 import '../../features/reader/Home/view/request_autograph.dart';
 import '../../features/reader/Home/view/select_author.dart';
 import '../../features/reader/Home/view/track_request.dart';
@@ -121,23 +131,22 @@ class AppRoutes {
     GetPage(name: '/tracking', page: () => TrackingScreen(), binding: TrackRequestBinding()),
 
     GetPage(name: '/signedcopy', page: () => SignedCopy(), binding: SignedCopyBinding()),
-    GetPage(name: '/profile', page: () => ProfileScreen(),binding: ProfileBinding()),
-    GetPage(name: '/editprofile', page: () => EditProfile(),binding: ProfileBinding()),
+    GetPage(name: '/profile', page: () => ProfileScreen(), binding: ProfileBinding()),
+    GetPage(name: '/editprofile', page: () => EditProfile(), binding: EditProfileBinding()),
 
+    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(), binding: HelpSupportBinding()),
+    GetPage(name: '/newpass', page: () => ChangePassword(), binding: ChangePasswordBinding()),
 
-    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(),binding: ProfileBinding()),
-    GetPage(name: '/newpass', page: () => ChangePassword(),binding: ProfileBinding()),
-
-    GetPage(name: '/contact', page: () => ContactUs(),binding: ProfileBinding()),
-    GetPage(name: '/privacy', page: () => PrivacyPolicy(),binding: ProfileBinding()),
+    GetPage(name: '/contact', page: () => ContactUs(), binding: ContactUsBinding()),
+    GetPage(name: '/privacy', page: () => PrivacyPolicy(), binding: PrivacyPolicyBinding()),
 
     GetPage(name: '/authorbottomnav', page: () => AuthorBottomNavLayout(),binding: AuthorBottomNavBinding()),
 
-  GetPage(name: '/plan', page: () => SubscriptionPlan(),binding: AuthorBottomNavBinding()),
-    GetPage(name: '/selectplan', page: () => SubscriptionPlanSelectionScreen(),binding: AuthorBottomNavBinding()),
+  GetPage(name: '/plan', page: () => SubscriptionPlan(),binding: SubscriptionPlanBinding()),
+    GetPage(name: '/selectplan', page: () => SubscriptionPlanSelectionScreen(),binding: StripePaymentBinding()),
 
 
-    GetPage(name: '/allRequest', page: () => AllRequest(),binding: AuthorBottomNavBinding()),
+    GetPage(name: '/allRequest', page: () => AllRequest(),binding: AuthorHomeBinding()),
 
     GetPage(name: '/requestDetail', page: () => RequestDetailAuthor(),binding: AuthorBottomNavBinding()),
 
