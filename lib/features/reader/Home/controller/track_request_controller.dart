@@ -83,21 +83,37 @@ class TrackRequestController extends GetxController {
     List<BookItem> requests = List<BookItem>.from(trackRequest);
 
     if (selectedTab.value == "In Process") {
-      requests = requests.where((item) => item.status == "In process").toList();
-    } else if (selectedTab.value == "Delivered") {
-      requests = requests.where((item) => item.status == "Delivered").toList();
+      requests = requests.where((item) {
+        final st = item.status.toLowerCase().replaceAll(' ', '_');
+        return st == "in_process" || st == "in_progress" || st == "pending";
+      }).toList();
+    } else if (selectedTab.value == "Delivered" || selectedTab.value == "Signed") {
+      requests = requests.where((item) {
+        final st = item.status.toLowerCase().replaceAll(' ', '_');
+        return st == "delivered" || st == "signed" || st == "completed" || st == "approved";
+      }).toList();
     }
 
     if (searchQuery.value.trim().isNotEmpty) {
-      final query = searchQuery.value.toLowerCase();
+      final query = searchQuery.value.toLowerCase().trim();
       requests = requests.where((item) =>
-      item.title.toLowerCase().contains(query) ||
+          item.title.toLowerCase().contains(query) ||
           item.author.fullName.toLowerCase().contains(query)
       ).toList();
     }
 
     if (filterStatus.value != "All") {
-      requests = requests.where((item) => item.status == filterStatus.value).toList();
+      final targetStatus = filterStatus.value.toLowerCase().replaceAll(' ', '_');
+      requests = requests.where((item) {
+        final st = item.status.toLowerCase().replaceAll(' ', '_');
+        if (targetStatus == "in_process") {
+          return st == "in_process" || st == "in_progress" || st == "pending";
+        }
+        if (targetStatus == "delivered" || targetStatus == "signed") {
+          return st == "delivered" || st == "signed" || st == "completed" || st == "approved";
+        }
+        return st == targetStatus;
+      }).toList();
     }
 
     if (sortBy.value == "Title A-Z") {

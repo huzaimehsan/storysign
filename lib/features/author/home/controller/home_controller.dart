@@ -59,6 +59,23 @@ class AuthorHomeController extends GetxController {
     fetchAutographRequests();
   }
 
+
+  Future<void> refreshHomeRequests() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+    fetchLibraryStats();
+    fetchAutographRequests();
+  }
+
+
+
+  Future<void> refreshPendingRequest() async {
+    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+
+    fetchAutographRequests();
+  }
+
+
+
   void filterRequests(String query) {
     final lowerQuery = query.toLowerCase().trim();
 

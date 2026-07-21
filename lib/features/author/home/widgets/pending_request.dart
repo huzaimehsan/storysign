@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
 class PendingRequest extends StatelessWidget {
   final String imagePath;
@@ -49,8 +50,8 @@ class PendingRequest extends StatelessWidget {
             children: [
               // Image Container with Condition & Placeholder
               Container(
-                width: 12.h,
-                height: 12.h,
+                width: 10.h,
+                height: 10.h,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -66,14 +67,14 @@ class PendingRequest extends StatelessWidget {
                           errorBuilder: (_, __, ___) => Icon(
                             Icons.person,
                             color: buttonColor,
-                            size: 6.h,
+                            size: 4.h,
                           ),
                         ),
                       )
                     : Icon(
                         Icons.person,
                         color: buttonColor,
-                        size: 6.h,
+                        size: 4.h,
                       ),
               ),
 
@@ -100,10 +101,8 @@ class PendingRequest extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                     SizedBox(height: 0.5.h),
-                    customText(
-                      fontFamily: "Poppins",
-                      text: date,
-                      color: secondryColor.withOpacity(0.7),
+                    FormattedRequestDate(
+                      dateString: date,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                     ),

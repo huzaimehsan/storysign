@@ -50,7 +50,10 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
         );
 
         case '/pdfReview':
-        return MaterialPageRoute(builder: (_) => const BookPreviewPage());
+        return MaterialPageRoute(
+          builder: (_) => const BookPreviewPage(),
+          settings: settings,
+        );
       case '/drawSignature':
         return MaterialPageRoute(builder: (_) => const DrawSignatureScreen());
       case '/placeSignature':

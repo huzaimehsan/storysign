@@ -7,6 +7,7 @@ import 'package:storysign/widgets/customText_widget.dart';
 import 'package:storysign/widgets/subscription_header_widget.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../../../services/request_service.dart';
 import '../controller/place_signature_controller.dart';
 
 class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
@@ -24,7 +25,13 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
               child: customHeaderAuthor(
                 context: context,
                 title: 'Place Signature',
-                onBack: () => Get.back(),
+                onBack: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  } else {
+                    Get.back();
+                  }
+                },
                 onIconPressed: () {},
               ),
             ),
@@ -51,20 +58,37 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
                 borderRadius: BorderRadius.circular(5.w),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    controller.containerWidth = constraints.maxWidth;
+                    controller.containerHeight = constraints.maxHeight;
+
+                    final pdfUrl = RequestService.find.bookPdfUrl;
+
                     return Stack(
                       children: [
                         // ── Real PDF viewer ──
-                        SfPdfViewer.asset(
-                          'assets/book/pdf.pdf',
-                          controller: controller.pdfViewerController,
-                          pageLayoutMode: PdfPageLayoutMode.single,
-                          scrollDirection: PdfScrollDirection.horizontal,
-                          onDocumentLoaded: controller.onDocumentLoaded,
-                          onPageChanged: controller.onPageChanged,
-                          canShowScrollHead: false,
-                          canShowScrollStatus: false,
-                          canShowPaginationDialog: false,
-                        ),
+                        pdfUrl.isNotEmpty
+                            ? SfPdfViewer.network(
+                                pdfUrl,
+                                controller: controller.pdfViewerController,
+                                pageLayoutMode: PdfPageLayoutMode.single,
+                                scrollDirection: PdfScrollDirection.horizontal,
+                                onDocumentLoaded: controller.onDocumentLoaded,
+                                onPageChanged: controller.onPageChanged,
+                                canShowScrollHead: false,
+                                canShowScrollStatus: false,
+                                canShowPaginationDialog: false,
+                              )
+                            : SfPdfViewer.asset(
+                                'assets/book/pdf.pdf',
+                                controller: controller.pdfViewerController,
+                                pageLayoutMode: PdfPageLayoutMode.single,
+                                scrollDirection: PdfScrollDirection.horizontal,
+                                onDocumentLoaded: controller.onDocumentLoaded,
+                                onPageChanged: controller.onPageChanged,
+                                canShowScrollHead: false,
+                                canShowScrollStatus: false,
+                                canShowPaginationDialog: false,
+                              ),
 
                         // ── Loading spinner ──
                         Obx(() {

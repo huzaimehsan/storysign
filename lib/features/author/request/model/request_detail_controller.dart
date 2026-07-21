@@ -1,5 +1,5 @@
 class PaginatedAutographResponse {
-  final List<AutographItemModel> items;
+  final List<RequestDetailModel> items;
   final int total;
   final int page;
   final int limit;
@@ -15,8 +15,8 @@ class PaginatedAutographResponse {
 
   factory PaginatedAutographResponse.fromJson(Map<String, dynamic> json) {
     var list = json['items'] as List? ?? [];
-    List<AutographItemModel> itemsList =
-    list.map((i) => AutographItemModel.fromJson(i)).toList();
+    List<RequestDetailModel> itemsList =
+    list.map((i) => RequestDetailModel.fromJson(i)).toList();
 
     return PaginatedAutographResponse(
       items: itemsList,
@@ -28,7 +28,7 @@ class PaginatedAutographResponse {
   }
 }
 
-class AutographItemModel {
+class RequestDetailModel {
   final String id;
   final String bookTitle;
   final String coverImage;
@@ -46,7 +46,7 @@ class AutographItemModel {
   final String? signaturePlacement;
   final String bookId;
 
-  AutographItemModel({
+  RequestDetailModel({
     required this.id,
     required this.bookTitle,
     required this.coverImage,
@@ -65,8 +65,8 @@ class AutographItemModel {
     required this.bookId,
   });
 
-  factory AutographItemModel.fromJson(Map<String, dynamic> json) {
-    return AutographItemModel(
+  factory RequestDetailModel.fromJson(Map<String, dynamic> json) {
+    return RequestDetailModel(
       id: json['id'] ?? '',
       bookTitle: json['bookTitle'] ?? '',
       coverImage: json['coverImage'] ?? '',

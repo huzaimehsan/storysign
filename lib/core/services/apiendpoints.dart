@@ -67,6 +67,22 @@ class ApiEndPoints {
   static String autographRequestDetails(String autographRequestId) {
     return "/author/requests/$autographRequestId";
   }
+
+  static String acceptAutographRequest(String autographRequestId) {
+    return "/author/requests/$autographRequestId/accept";
+  }
+
+  static String rejectAutographRequest(String autographRequestId) {
+    return "/author/requests/$autographRequestId/reject";
+  }
+
+  static String approveSendAutographRequest(String autographRequestId) {
+    return "/author/requests/$autographRequestId/approve-send";
+  }
+
+  static String listMyBooks({int page = 1, int limit = 10}) {
+    return "/reader/library?page=$page&limit=$limit&status=signed";
+  }
 }
 
 // //Vehical

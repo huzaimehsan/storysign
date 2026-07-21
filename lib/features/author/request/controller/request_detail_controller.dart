@@ -1,29 +1,42 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:storysign/features/author/request/model/request_detail_controller.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
+import '../../../../services/request_service.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../home/model/home_model.dart';
 
 import 'package:http/http.dart' as http;
-class RequestDetailController extends GetxController{
+
+class RequestDetailController extends GetxController {
 
   // .obs variable
   var sourceScreen = ''.obs;
   RxString errorMessage = ''.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  String autographRequestId = '';
 
-    if (Get.arguments != null) {
-      sourceScreen.value = Get.arguments['from'] ?? '';
-      print("SOURCE SCREEN IS: ${sourceScreen.value}");
+  // Use this method from your screen's didChangeDependencies to receive values safely
+  void initData(String from, String id) {
+    sourceScreen.value = from;
+    autographRequestId = id;
+
+    print("SOURCE SCREEN IS: ${sourceScreen.value}");
+    print("AUTOGRAPH REQUEST ID: $autographRequestId");
+
+    if (autographRequestId.isNotEmpty) {
+      fetchAutographRequestDetails(autographRequestId);
+    } else {
+      print("ERROR: autographRequestId is empty!");
+      errorMessage.value = 'Request ID not found';
+      Utils.showToast(errorMessage.value, true);
     }
   }
 
@@ -31,7 +44,7 @@ class RequestDetailController extends GetxController{
   bool get isFromDelivered => sourceScreen.value == 'all_delivered';
 
   // Single Autograph Request Details fetch karne ke liye Rxn variable
-  Rxn<AutographItemModel> selectedRequestDetail = Rxn<AutographItemModel>();
+  Rxn<RequestDetailModel> selectedRequestDetail = Rxn<RequestDetailModel>();
   var isFetchDetailLoading = false.obs;
 
   Future<void> fetchAutographRequestDetails(String autographRequestId) async {
@@ -53,6 +66,9 @@ class RequestDetailController extends GetxController{
         '${BaseService().baseURL}${ApiEndPoints.autographRequestDetails(autographRequestId)}',
       );
 
+      print("API URL: $uri");
+      print("API TOKEN: $token");
+
       final response = await http.get(
         uri,
         headers: {
@@ -60,6 +76,9 @@ class RequestDetailController extends GetxController{
           'Authorization': 'Bearer $token',
         },
       );
+
+      print("API Response Status: ${response.statusCode}");
+      print("API Response Body: ${response.body}");
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final responseBody = jsonDecode(response.body);
@@ -69,7 +88,21 @@ class RequestDetailController extends GetxController{
             ? responseBody['data']
             : responseBody;
 
-        selectedRequestDetail.value = AutographItemModel.fromJson(itemJson);
+        print("Parsed Item: $itemJson");
+
+        selectedRequestDetail.value = RequestDetailModel.fromJson(itemJson);
+        final model = selectedRequestDetail.value;
+        if (model != null) {
+          RequestService.find.setRequestData(
+            autographRequestId,
+            pdfUrl: model.bookPdfUrl,
+            rName: model.reader.fullName,
+            rImage: model.reader.profilePicture,
+            bTitle: model.bookTitle,
+            cImage: model.coverImage,
+          );
+        }
+        print("Successfully loaded request detail");
 
       } else {
         final responseBody = jsonDecode(response.body);
@@ -83,6 +116,63 @@ class RequestDetailController extends GetxController{
       Utils.showToast(errorMessage.value, true);
     } finally {
       isFetchDetailLoading.value = false;
+      EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> rejectRequest(BuildContext context, {String? reason}) async {
+    if (autographRequestId.isEmpty) {
+      Utils.showToast('Request ID is missing', true);
+      return;
+    }
+
+    try {
+      EasyLoading.show(
+        status: 'Declining request...',
+        maskType: EasyLoadingMaskType.black,
+      );
+
+      final prefs = SharedPreferencesMethod.storage;
+      final String token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.rejectAutographRequest(autographRequestId)}',
+      );
+
+      print("REJECT API URL: $uri");
+
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'rejectionReason': reason ?? 'I am not accepting this genre at the moment.',
+        }),
+      ).timeout(const Duration(seconds: 30));
+
+      print("REJECT Status: ${response.statusCode}");
+      print("REJECT Body: ${response.body}");
+
+      final responseBody = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        Utils.showToast(responseBody['message'] ?? 'Request declined successfully', false);
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          Get.back();
+        }
+      } else {
+        Utils.showToast(responseBody['message'] ?? 'Failed to decline request', true);
+      }
+    } on TimeoutException {
+      Utils.showToast('Request timed out', true);
+    } catch (e) {
+      debugPrint('Reject error: $e');
+      Utils.showToast('Something went wrong while declining request', true);
+    } finally {
       EasyLoading.dismiss();
     }
   }

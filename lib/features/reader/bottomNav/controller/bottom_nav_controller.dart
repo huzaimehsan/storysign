@@ -28,6 +28,8 @@ class BottomNavController extends GetxController{
         // 1. Home Controller check
         if (Get.isRegistered<HomeController>()) {
           Get.find<HomeController>().fetchHomeData();
+          Get.find<HomeController>(). fetchMyBooks(loadMore: true);
+
         }
         // 2. Sahi tarika 'else if' ka use karna hai
         else if (Get.isRegistered<TrackRequestController>()) {

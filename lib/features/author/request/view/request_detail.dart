@@ -8,22 +8,30 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
 import '../../../../widgets/sucess_widget.dart';
 
 class RequestDetailAuthor extends GetView<RequestDetailController> {
   const RequestDetailAuthor({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final bool isFromDelivered = args?['from'] == 'all_delivered';
+    // Get arguments from ModalRoute when using Navigator.pushNamed()
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String from = args?['from'] ?? '';
+    final String id = args?['autographRequestId'] ?? '';
+
+    print("RECEIVED ARGS - From: $from, ID: $id");
+
+    // Initialize controller with data
+    controller.initData(from, id);
+
+    final bool isFromDelivered = from == 'all_delivered';
     return Scaffold(
       body: SafeArea(
         child: Column(
-
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -57,13 +65,34 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               ),
             ),
 
-            AllPendingRequest(
-              imagePath: "assets/png/searchprofile.png",
-              authorName: "Jane Austen",
-              bookName: "Member: 10 jan,2024",
-              date: "28 june, 2026",
-              ontap: () {},
-            ),
+            Obx(() {
+              if (controller.isFetchDetailLoading.value) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3.h),
+                    child: const CircularProgressIndicator(color: buttonColor),
+                  ),
+                );
+              }
+              final requestDetail = controller.selectedRequestDetail.value;
+              if (requestDetail == null) {
+                return Center(
+                  child: customText(
+                    text: "No request details found",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: whiteColor,
+                  ),
+                );
+              }
+              return AllPendingRequest(
+                imagePath: requestDetail.reader.profilePicture,
+                authorName: requestDetail.reader.fullName,
+                bookName: requestDetail.bookTitle,
+                date: requestDetail.requestDate,
+                ontap: () {},
+              );
+            }),
             SizedBox(height: 2.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -76,11 +105,26 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               ),
             ),
             SizedBox(height: 0.5.h),
-            eBookDetail(
-              imagePath: "assets/icon/bookdetail.png",
-              bookName: "Member: 10 jan,2024",
-              authorName: "Jane Austen",
-            ),
+            Obx(() {
+              if (controller.isFetchDetailLoading.value) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3.h),
+                    child: const CircularProgressIndicator(color: buttonColor),
+                  ),
+                );
+                ;
+              }
+              final bookDetail = controller.selectedRequestDetail.value;
+              if (bookDetail == null) {
+                return const SizedBox.shrink();
+              }
+              return eBookDetail(
+                imagePath: bookDetail.coverImage,
+                bookName: bookDetail.bookTitle,
+                authorName: bookDetail.author.fullName,
+              );
+            }),
             SizedBox(height: 2.h),
 
             Padding(
@@ -96,12 +140,24 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               ),
             ),
             SizedBox(height: 2.h),
-            signedCopyMessageCard(
-              message:
-              "I've read your previous works and they changed my life. My daughter is turning 16 next week. Could you write something encouraging about following your dreams?",
-              margin: EdgeInsets.symmetric(horizontal: 4.w),
-            ),
-
+            Obx(() {
+              if (controller.isFetchDetailLoading.value) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 3.h),
+                    child: const CircularProgressIndicator(color: buttonColor),
+                  ),
+                );
+              }
+              final message = controller.selectedRequestDetail.value;
+              if (message == null) {
+                return const SizedBox.shrink();
+              }
+              return signedCopyMessageCard(
+                message: message.personalMessage,
+                margin: EdgeInsets.symmetric(horizontal: 4.w),
+              );
+            }),
 
             if (!isFromDelivered)
               Padding(
@@ -112,7 +168,10 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     buttonWidget(
                       "Accept Request",
                       whiteColor,
-                      onTap: () => Navigator.of(context).pushNamed('/pdfReview'),
+                      onTap: () => Navigator.of(context).pushNamed(
+                        '/pdfReview',
+                        arguments: {'autographRequestId': id},
+                      ),
                       colors: buttonColor,
                       fontFamily: 'Poppins',
                       height: 5.2.h,
@@ -127,11 +186,12 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                       onTap: () {
                         showDeclineDialog(
                           context,
-                          desc: "Are you sure you want to decline this request?",
+                          desc:
+                              "Are you sure you want to decline this request?",
                           buttonText: "Confirm",
                           ontap: () {
                             Get.back();
-                            Get.back();
+                            controller.rejectRequest(context);
                           },
                         );
                       },

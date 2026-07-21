@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import '../../../../services/request_service.dart';
 
 class PlaceSignatureController extends GetxController {
   Uint8List signatureBytes = Uint8List(0);
@@ -63,6 +64,9 @@ class PlaceSignatureController extends GetxController {
             (2 * 3.141592653589793);
   }
 
+  double containerWidth = 300.0;
+  double containerHeight = 400.0;
+
   int get scalePercentage =>
       ((sigWidth.value / initialWidth) * 100).round();
 
@@ -70,6 +74,20 @@ class PlaceSignatureController extends GetxController {
       ((rotationAngle.value * 180 / 3.141592653589793) % 360).round();
 
   void confirmPlacement(BuildContext context) {
+    double cW = containerWidth > 0 ? containerWidth : 300.0;
+    double cH = containerHeight > 0 ? containerHeight : 400.0;
+
+    RequestService.find.setPlacementData(
+      bytes: signatureBytes,
+      pageIdx: (currentPage.value - 1).clamp(0, 99999),
+      xR: double.parse((xPosition.value / cW).clamp(0.0, 1.0).toStringAsFixed(4)),
+      yR: double.parse((yPosition.value / cH).clamp(0.0, 1.0).toStringAsFixed(4)),
+      wR: double.parse((sigWidth.value / cW).clamp(0.0, 1.0).toStringAsFixed(4)),
+      hR: double.parse((sigHeight.value / cH).clamp(0.0, 1.0).toStringAsFixed(4)),
+      pW: 612.0,
+      pH: 792.0,
+    );
+
     Navigator.of(context).pushNamed('/addMessage');
   }
 

@@ -14,24 +14,38 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
+import '../model/recently_signed_book_model.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
 
+  final RxBool isPageLoading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
-    fetchHomeData();
     debugPrint("HomeController onInit called");
-    Future.delayed(Duration(milliseconds: 500), () {
-      fetchTrackRequestData();
-    });
-    loadUserProfile();
+    _loadAllData();
+  }
+
+  Future<void> _loadAllData() async {
+    isPageLoading.value = true;
+    await Future.wait([
+      fetchHomeData(),
+      fetchMyBooks(),
+      loadUserProfile(),
+    ]);
+    isPageLoading.value = false;
   }
 
   Future<void> refreshHomeRequests() async {
-    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
-    fetchHomeData();
+    isPageLoading.value = true;
+    await Future.wait([
+      fetchHomeData(),
+      fetchMyBooks(),
+      loadUserProfile(),
+    ]);
+    isPageLoading.value = false;
   }
 
   RxString selectedTab = "All".obs;
@@ -272,137 +286,89 @@ class HomeController extends GetxController {
   // authorDetail — moved to AuthorDetailController
   // downloadBook — moved to SignedCopyController
 
-  Future<void> uploadBook(BuildContext context) async {
-    final String title = bookTitleController.text.trim();
+  final RxList<MyBookModel> books = <MyBookModel>[].obs;
+  final RxBool isBookLoading = false.obs;
 
-    if (title.isEmpty) {
-      Utils.showToast('Book title is required', true);
-      return;
-    }
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final int limit = 10;
 
-    if (bookPdfFile.value == null || !bookPdfFile.value!.existsSync()) {
-      Utils.showToast('PDF file is required', true);
-      return;
-    }
-
-    if (bookCoverImage.value == null || !bookCoverImage.value!.existsSync()) {
-      Utils.showToast('Cover image is required', true);
-      return;
+  Future<void> fetchMyBooks({bool loadMore = false}) async {
+    if (loadMore) {
+      if (currentPage.value >= totalPages.value) return;
+      currentPage.value++;
+    } else {
+      // Fresh fetch — reset to page 1 and clear list
+      currentPage.value = 1;
+      books.clear();
     }
 
     try {
-      EasyLoading.show(
-        status: 'Uploading book...',
-        maskType: EasyLoadingMaskType.black,
-      );
+      isBookLoading.value = true;
+      errorMessage.value = '';
 
       final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.uploadBook}',
+        '${BaseService().baseURL}${ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit)}',
       );
-      final request = http.MultipartRequest('POST', uri);
 
-      // Agar auth token chahiye header mein
       final token = SharedPreferencesMethod.storage.getString(
         LocalDBKeys.TOKEN,
       );
-      if (token != null && token.isNotEmpty) {
-        request.headers['Authorization'] = 'Bearer $token';
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              if (token != null && token.isNotEmpty)
+                'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final responseMap = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = MyBooksResponse.fromJson(responseMap);
+
+        if (loadMore) {
+          books.addAll(data.items);
+        } else {
+          books.assignAll(data.items);
+        }
+
+        totalPages.value = data.totalPages;
+      } else {
+        errorMessage.value = responseMap['message'] ?? 'Failed to load books';
+        Utils.showToast(errorMessage.value, true);
       }
-
-      request.fields['title'] = title;
-
-      // PDF file
-      final pdfFile = bookPdfFile.value!;
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'bookPdf',
-          pdfFile.path,
-          filename: pdfFile.path.split('/').last,
-          contentType: http.MediaType('application', 'pdf'),
-        ),
-      );
-
-      // Cover image
-      final coverFile = bookCoverImage.value!;
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'coverImage',
-          coverFile.path,
-          filename: coverFile.path.split('/').last,
-          contentType: http.MediaType(
-            'image',
-            'png',
-          ), // agar jpg ho to 'jpeg' kar dein
-        ),
-      );
-
-      print('â³ UPLOAD BOOK API CALLING: $uri');
-      print('âž¡ Fields: ${request.fields}');
-
-      final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 60),
-      );
-      final responseString = await streamedResponse.stream.bytesToString();
-      final responseMap = json.decode(responseString);
-
-      print('âœ… RESPONSE: $responseMap');
-
-      if (streamedResponse.statusCode == 200 ||
-          streamedResponse.statusCode == 201) {
-        Utils.showToast(
-          responseMap['message'] ?? 'Book uploaded successfully',
-          false,
-        );
-        clearUploadBookFields();
-        Get.back(); // ya jahan navigate karna hai
-        return;
-      }
-
-      Utils.showToast(responseMap['message'] ?? 'Book upload failed', true);
     } on TimeoutException {
-      Utils.showToast('Request timed out', true);
+      errorMessage.value = 'Request timed out';
+      Utils.showToast(errorMessage.value, true);
+    } catch (e) {
+      errorMessage.value = 'Something went wrong: $e';
+      Utils.showToast(errorMessage.value, true);
     } finally {
-      EasyLoading.dismiss();
+      isBookLoading.value = false;
     }
   }
 
-  void clearUploadBookFields() {
-    bookTitleController.clear();
-    bookPdfFile.value = null;
-    bookCoverImage.value = null;
+  Future<void> refreshBooks() async {
+    await fetchMyBooks();
   }
 
-  var receivedBookId = ''.obs; //
-
-  // Controller mein
-
-  Future<void> refreshRequests() async {
-    await fetchTrackRequestData();
-  }
-
-  RxInt currentPage = 1.obs;
-  RxInt totalPages = 1.obs;
-  RxInt totalItems = 0.obs;
-
-  Future<void> fetchTrackRequestData() async {
+  Future<void> loadUserProfile() async {
     try {
-      trackRequestLoading.value = true;
-      errorMessage.value = '';
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
+      isUserDataLoading.value = true;
       final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      userRole.value = prefs.getString('role') ?? '';
 
+      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
       if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
         return;
       }
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.trackRequest}',
-      );
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.profile}');
       final response = await http.get(
         uri,
         headers: {
@@ -413,74 +379,27 @@ class HomeController extends GetxController {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final responseBody = jsonDecode(response.body);
-        final Map<String, dynamic> data =
-            responseBody is Map && responseBody['data'] is Map
-            ? responseBody['data']
-            : responseBody;
+        if (responseBody is Map) {
+          final profileData = responseBody['data'] is Map
+              ? responseBody['data'] as Map<String, dynamic>
+              : Map<String, dynamic>.from(responseBody);
 
-        final trackRequestData = TrackRequestModel.fromJson(data);
-        trackRequest.assignAll(trackRequestData.items);
-        currentPage.value = trackRequestData.page;
-        totalPages.value = trackRequestData.totalPages;
-        totalItems.value = trackRequestData.total;
-      } else {
-        final responseBody = jsonDecode(response.body);
-        errorMessage.value =
-            responseBody['message']?.toString() ?? 'Failed to load data';
-        Utils.showToast(errorMessage.value, true);
-      }
-    } catch (e) {
-      errorMessage.value = 'Something went wrong while loading data: $e';
-      debugPrint('fetchTrackRequestData error: $e');
-      Utils.showToast(errorMessage.value, true);
-    } finally {
-      trackRequestLoading.value = false;
-    }
-  }
+          userProfile.value = UserProfile.fromJson(profileData);
 
-
-Future<void> loadUserProfile() async {
-  try {
-    isUserDataLoading.value = true;
-    final prefs = SharedPreferencesMethod.storage;
-    userRole.value = prefs.getString('role') ?? '';
-
-    final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
-    if (token.isEmpty) {
-      return;
-    }
-
-    final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.profile}');
-    final response = await http.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final responseBody = jsonDecode(response.body);
-      if (responseBody is Map) {
-        final profileData = responseBody['data'] is Map
-            ? responseBody['data'] as Map<String, dynamic>
-            : Map<String, dynamic>.from(responseBody);
-
-        userProfile.value = UserProfile.fromJson(profileData);
-
-        final fullName = userProfile.value?.fullName ??
-            profileData['fullName']?.toString() ??
-            profileData['name']?.toString() ??
-            '';
-        if (fullName.isNotEmpty) {
-          userName.value = fullName;
+          final fullName =
+              userProfile.value?.fullName ??
+              profileData['fullName']?.toString() ??
+              profileData['name']?.toString() ??
+              '';
+          if (fullName.isNotEmpty) {
+            userName.value = fullName;
+          }
         }
       }
+    } catch (e) {
+      debugPrint('HomeController loadUserProfile error: $e');
+    } finally {
+      isUserDataLoading.value = false;
     }
-  } catch (e) {
-    debugPrint('HomeController loadUserProfile error: $e');
-  } finally {
-    isUserDataLoading.value = false;
   }
-}
 }

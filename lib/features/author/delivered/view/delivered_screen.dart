@@ -68,7 +68,13 @@ class DeliveredScreen extends GetView<DeliveredController> {
                       bookName: request['bookName'] ?? '',
                       date: request['date'] ?? '',
                       ontap: () {
-                        Navigator.of(context).pushNamed('/requestDetail' ,arguments: {'from': 'all_delivered'});
+                        Navigator.of(context).pushNamed(
+                          '/requestDetail',
+                          arguments: {
+                            'from': 'all_delivered',
+                            'autographRequestId': request['id'] ?? '',
+                          },
+                        );
                       },
                     );
                   },

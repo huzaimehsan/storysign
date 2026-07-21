@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -13,6 +14,18 @@ Widget profileHeaderCard({
   required bool? author,
   VoidCallback? onEdit,
 }) {
+  ImageProvider? imageProvider;
+  final String path = imagePath.trim();
+  if (path.isNotEmpty && path != "null") {
+    if (path.startsWith('http')) {
+      imageProvider = NetworkImage(path);
+    } else if (path.startsWith('/') || path.contains(':\\') || path.contains(':/')) {
+      imageProvider = FileImage(File(path));
+    } else {
+      imageProvider = AssetImage(path);
+    }
+  }
+
   return Container(
     width: double.infinity,
 
@@ -38,21 +51,20 @@ Widget profileHeaderCard({
             border: Border.all(color: buttonColor, width: 1.2),
             shape: BoxShape.circle,
             color: textFeildContainColor, // Background color tab dikhega jab image nahi hogi
-            // Agar image hai toh image dikhao, warna null (taake container khali rahe)
-            image: (imagePath.isNotEmpty)
+            image: imageProvider != null
                 ? DecorationImage(
-              image: AssetImage(imagePath),
-              fit: BoxFit.cover,
-            )
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  )
                 : null,
           ),
           // Agar image nahi hai, toh child mein Icon dikhao
-          child: (imagePath.isEmpty)
+          child: imageProvider == null
               ? Icon(
-            Icons.person_rounded,
-            color: buttonColor.withOpacity(0.6),
-            size: 6.w,
-          )
+                  Icons.person_rounded,
+                  color: buttonColor.withOpacity(0.6),
+                  size: 6.w,
+                )
               : null,
         ),
         SizedBox(width: 4.w),

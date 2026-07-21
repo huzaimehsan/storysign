@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
 import '../../../../widgets/button_widget.dart';
 import '../controller/ebook_preview_controller.dart';
@@ -13,6 +14,19 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
 
   @override
   Widget build(BuildContext context) {
+    // ModalRoute se arguments lo — same pattern jaise RequestDetailAuthor mein
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String id = args?['autographRequestId'] ?? (Get.arguments is Map ? Get.arguments['autographRequestId'] : '') ?? '';
+
+    print("📄 BookPreviewPage - ID received: $id");
+
+    // Controller ko ID pass karo (ek baar hi call hoga)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (id.isNotEmpty) {
+        controller.initWithId(id);
+      }
+    });
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -22,18 +36,25 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
               child: customHeaderAuthor(
                 context: context,
                 title: 'Ebook Preview',
-                onBack: () => Get.back(),
+                onBack: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  } else {
+                    Get.back();
+                  }
+                },
                 onIconPressed: () {},
               ),
             ),
             SizedBox(height: 4.h),
         
             // PDF Document View container
+            // PDF Document View container
             Container(
               height: 48.h,
               width: 90.w,
               decoration: BoxDecoration(
-                color: white, // warm cream background
+                color: white,
                 borderRadius: BorderRadius.circular(5.w),
                 border: Border.all(color: Colors.white.withAlpha(64), width: 1.5),
                 boxShadow: [
@@ -47,36 +68,54 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5.w),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SfPdfViewer.asset(
-                      'assets/book/pdf.pdf',
-                      controller: controller.pdfViewerController,
-                      onDocumentLoaded: controller.onDocumentLoaded,
-                      onPageChanged: controller.onPageChanged,
-                      pageLayoutMode: PdfPageLayoutMode.single,
-                      onZoomLevelChanged: controller.onZoomLevelChanged,
-                      scrollDirection: PdfScrollDirection.horizontal,
+                child: Obx(() {
+                  // Jab tak PDF url nahi mili — koi placeholder dikhayein
+                  if (controller.bookPdfUrl.value.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                        child: customText(
+                          color: buttonColor,
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          text: "No Book",
+                          height: 1.0,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                    );
+                  }
 
-                      canShowScrollHead: false,
-                      canShowScrollStatus: false,
-                      canShowPaginationDialog: false,
-
-                    ),
-                    Obx(() {
-                      if (controller.isLoading.value) {
-                        return const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(buttonColor),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                  ],
-                ),
+                  // URL mil gayi hai — ab .network() use karein, .asset() nahi
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SfPdfViewer.network(
+                        controller.bookPdfUrl.value,
+                        controller: controller.pdfViewerController,
+                        onDocumentLoaded: controller.onDocumentLoaded,
+                        onPageChanged: controller.onPageChanged,
+                        pageLayoutMode: PdfPageLayoutMode.single,
+                        onZoomLevelChanged: controller.onZoomLevelChanged,
+                        scrollDirection: PdfScrollDirection.horizontal,
+                        canShowScrollHead: false,
+                        canShowScrollStatus: false,
+                        canShowPaginationDialog: false,
+                      ),
+                      Obx(() {
+                        if (controller.isLoading.value) {
+                          return const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(buttonColor),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                    ],
+                  );
+                }),
               ),
             ),
-        
             SizedBox(height: 5.h),
         
             // Zoom Controls Row

@@ -119,7 +119,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                     );
                   }
 
-                  final List<BookItem> books = controller.filteredBooksRx.value;
+                  final List<BookItem> books = controller.filteredBooks;
                   if (books.isEmpty) {
                     return Center(
                       child: customText(

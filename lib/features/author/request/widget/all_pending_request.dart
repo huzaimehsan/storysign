@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
 class AllPendingRequest extends StatelessWidget {
   final String imagePath;
@@ -32,7 +34,7 @@ class AllPendingRequest extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 0.1.h),
         child: Container(
-          height: 9.7.h,
+          height: 9.8.h,
           width: 100.w,
           margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
           padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.w),
@@ -116,11 +118,8 @@ class AllPendingRequest extends StatelessWidget {
                 ),
               ),
 
-              customText(
-                fontFamily: "Poppins",
-                text: date,
-
-                color: secondryColor.withOpacity(0.7),
+              FormattedRequestDate(
+                dateString: date,
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w500,
               ),
@@ -137,6 +136,7 @@ Widget eBookDetail({
   required String? bookName,
   required String? authorName,
 }) {
+  String? imageUrl;
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 0.1.h),
     child: Container(
@@ -160,12 +160,14 @@ Widget eBookDetail({
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12.sp),
-            child: Image.asset(
-              imagePath!,
-              height: 14.w,
-              width: 14.w,
+            child: CoverImageWidget(
+              imageUrl: imageUrl,
+              assetPath: imagePath!,
+              height: 12.h,
+              width: 17.w,
               fit: BoxFit.cover,
             ),
+
           ),
           SizedBox(width: 4.w),
           Expanded(

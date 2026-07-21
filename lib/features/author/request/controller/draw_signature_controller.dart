@@ -4,6 +4,8 @@ import 'package:signature/signature.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/request/controller/place_signature_controller.dart';
 
+import '../../../../services/request_service.dart';
+
 class DrawSignatureController extends GetxController {
   SignatureController signatureController = SignatureController(
     penStrokeWidth: 4.0,
@@ -77,6 +79,7 @@ class DrawSignatureController extends GetxController {
         }
         final placeCtrl = Get.put(PlaceSignatureController());
         placeCtrl.signatureBytes = bytes;
+        RequestService.find.signatureBytes = bytes;
         // Use screen's context so we push through the NESTED navigator (tab 1)
         // This keeps the parent scaffold's bottom nav visible
         Navigator.of(context).pushNamed('/placeSignature');

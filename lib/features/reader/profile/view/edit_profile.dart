@@ -52,16 +52,29 @@ class EditProfile extends GetView<EditProfileController> {
                         child: ClipOval(
                           child: controller.profileImage.value != null
                               ? Image.file(
-                            controller.profileImage.value!, // Yahan ! zaroori hai
-                            fit: BoxFit.cover,
-                            width: 30.w,
-                            height: 30.w,
-                          )
-                              : Icon(
-                            Icons.person_rounded,
-                            color: buttonColor.withOpacity(0.6),
-                            size: 12.w,
-                          ),
+                                  controller.profileImage.value!,
+                                  fit: BoxFit.cover,
+                                  width: 30.w,
+                                  height: 30.w,
+                                )
+                              : (controller.profileModel.value?.profilePicture != null &&
+                                     controller.profileModel.value!.profilePicture.toString().isNotEmpty)
+                                  ? Image.network(
+                                      controller.profileModel.value!.profilePicture.toString(),
+                                      fit: BoxFit.cover,
+                                      width: 30.w,
+                                      height: 30.w,
+                                      errorBuilder: (ctx, err, stack) => Icon(
+                                        Icons.person_rounded,
+                                        color: buttonColor.withOpacity(0.6),
+                                        size: 12.w,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.person_rounded,
+                                      color: buttonColor.withOpacity(0.6),
+                                      size: 12.w,
+                                    ),
                         ),
                       ),
                     ),

@@ -4,10 +4,12 @@ import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_bi
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/home/binding/author_home_binding.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
+import 'package:storysign/features/author/request/binding/ebook_preview_binding.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
+import 'package:storysign/features/author/request/binding/request_detail_binding.dart' as author_request_detail;
 
 import 'package:storysign/features/author/subscriptionplan/binding/stripe_payment_binding.dart';
 import 'package:storysign/features/author/subscriptionplan/binding/subscription_plan_binding.dart';
@@ -68,26 +70,42 @@ import '../../features/reader/search/view/request_autograph.dart';
 
 class AppRoutes {
   static List<GetPage<dynamic>> routes = [
-    GetPage(name: '/', page: () => SplashScreen(),binding: AuthBinding()),
+    GetPage(name: '/', page: () => SplashScreen(), binding: AuthBinding()),
 
-    GetPage(name: '/signin', page: () => SignIn(),binding: AuthBinding()),
-    GetPage(name: '/signup', page: () => SignUp(),binding: AuthBinding()),
+    GetPage(name: '/signin', page: () => SignIn(), binding: AuthBinding()),
+    GetPage(name: '/signup', page: () => SignUp(), binding: AuthBinding()),
 
-    GetPage(name: '/reset', page: () => ResetPassword(),binding: AuthBinding()),
-    GetPage(name: '/sendotp', page: () => SendOtp(),binding: AuthBinding()),
+    GetPage(
+      name: '/reset',
+      page: () => ResetPassword(),
+      binding: AuthBinding(),
+    ),
+    GetPage(name: '/sendotp', page: () => SendOtp(), binding: AuthBinding()),
 
-    GetPage(name: '/resendotp', page: () => ResendOtp(),binding: AuthBinding()),
-    GetPage(name: '/chooserole', page: () => ChooseRole(),binding: AuthBinding()),
+    GetPage(
+      name: '/resendotp',
+      page: () => ResendOtp(),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: '/chooserole',
+      page: () => ChooseRole(),
+      binding: AuthBinding(),
+    ),
 
-
-    GetPage(name: '/bottomnav', page: () => MyBottomBarScreen(),binding: BottomNavBinding()),
+    GetPage(
+      name: '/bottomnav',
+      page: () => MyBottomBarScreen(),
+      binding: BottomNavBinding(),
+    ),
     GetPage(
       name: '/trackrequest',
-      page: ()
-        // Har baar route open hone par fresh data fetch — same as search screen pattern
-        // Get.find<HomeController>().fetchTrackRequestData();
-        // return const
-   => TrackRequest(),
+      page:
+          ()
+          // Har baar route open hone par fresh data fetch — same as search screen pattern
+          // Get.find<HomeController>().fetchTrackRequestData();
+          // return const
+          => TrackRequest(),
 
       binding: TrackRequestBinding(),
     ),
@@ -104,57 +122,147 @@ class AppRoutes {
       binding: SearchBinding(),
     ),
 
+    GetPage(
+      name: '/readerlibrary',
+      page: () => ReaderLibrary(),
+      binding: ReaderLibraryBinding(),
+    ),
 
-    GetPage(name: '/readerlibrary', page: () => ReaderLibrary(),binding: ReaderLibraryBinding()),
+    GetPage(
+      name: '/requestautograph',
+      page: () => RequestAutograph(),
+      binding: RequestAutographBinding(),
+    ),
 
+    GetPage(
+      name: '/notification',
+      page: () => NotificationScreen(),
+      binding: NotificationBinding(),
+    ),
 
+    GetPage(
+      name: '/requestautographcard',
+      page: () => RequestAutographCard(),
+      binding: RequestAutographBinding(),
+    ),
 
-    GetPage(name: '/requestautograph', page: () => RequestAutograph(),binding: RequestAutographBinding()),
+    GetPage(
+      name: '/uploadbook',
+      page: () => UploadBook(),
+      binding: UploadBookBinding(),
+    ),
 
+    GetPage(
+      name: '/selectauthor',
+      page: () => SelectAuthor(),
+      binding: SelectAuthorBinding(),
+    ),
+    GetPage(
+      name: '/request',
+      page: () => RequestDetail(),
+      bindings: [RequestDetailBinding(), PaymentBinding()],
+    ),
+    GetPage(
+      name: '/makepayment',
+      page: () => MakePayment(),
+      binding: PaymentBinding(),
+    ),
 
+    GetPage(
+      name: '/finalreview',
+      page: () => FinalReview(),
+      binding: PaymentBinding(),
+    ),
 
-    GetPage(name: '/notification', page: () => NotificationScreen(),binding: NotificationBinding()),
+    GetPage(
+      name: '/tracking',
+      page: () => TrackingScreen(),
+      binding: TrackRequestBinding(),
+    ),
 
+    GetPage(
+      name: '/signedcopy',
+      page: () => SignedCopy(),
+      binding: SignedCopyBinding(),
+    ),
+    GetPage(
+      name: '/profile',
+      page: () => ProfileScreen(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: '/editprofile',
+      page: () => EditProfile(),
+      binding: EditProfileBinding(),
+    ),
 
-    GetPage(name: '/requestautographcard', page: () => RequestAutographCard(),binding: RequestAutographBinding()),
+    GetPage(
+      name: '/helpandsupport',
+      page: () => HelpAndSupport(),
+      binding: HelpSupportBinding(),
+    ),
+    GetPage(
+      name: '/newpass',
+      page: () => ChangePassword(),
+      binding: ChangePasswordBinding(),
+    ),
 
+    GetPage(
+      name: '/contact',
+      page: () => ContactUs(),
+      binding: ContactUsBinding(),
+    ),
+    GetPage(
+      name: '/privacy',
+      page: () => PrivacyPolicy(),
+      binding: PrivacyPolicyBinding(),
+    ),
 
-    GetPage(name: '/uploadbook', page: () => UploadBook(),binding: UploadBookBinding()),
+    GetPage(
+      name: '/authorbottomnav',
+      page: () => AuthorBottomNavLayout(),
+      binding: AuthorBottomNavBinding(),
+    ),
 
+    GetPage(
+      name: '/plan',
+      page: () => SubscriptionPlan(),
+      binding: SubscriptionPlanBinding(),
+    ),
+    GetPage(
+      name: '/selectplan',
+      page: () => SubscriptionPlanSelectionScreen(),
+      binding: StripePaymentBinding(),
+    ),
 
-    GetPage(name: '/selectauthor', page: () => SelectAuthor(), binding: SelectAuthorBinding()),
-    GetPage(name: '/request', page: () => RequestDetail(), bindings: [RequestDetailBinding(), PaymentBinding()]),
-    GetPage(name: '/makepayment', page: () => MakePayment(), binding: PaymentBinding()),
+    GetPage(
+      name: '/allRequest',
+      page: () => AllRequest(),
+      binding: AuthorHomeBinding(),
+    ),
 
-    GetPage(name: '/finalreview', page: () => FinalReview(), binding: PaymentBinding()),
+    GetPage(
+      name: '/requestDetail',
+      page: () => RequestDetailAuthor(),
+      binding: author_request_detail.RequestDetailBinding(),
+    ),
 
-    GetPage(name: '/tracking', page: () => TrackingScreen(), binding: TrackRequestBinding()),
+    GetPage(
+      name: '/pdfReview',
+      page: () => BookPreviewPage(),
+      binding: EbookPreviewBinding(),
+    ),
+    GetPage(
+      name: '/drawSignature',
+      page: () => const DrawSignatureScreen(),
+      binding: AuthorBottomNavBinding(),
+    ),
 
-    GetPage(name: '/signedcopy', page: () => SignedCopy(), binding: SignedCopyBinding()),
-    GetPage(name: '/profile', page: () => ProfileScreen(), binding: ProfileBinding()),
-    GetPage(name: '/editprofile', page: () => EditProfile(), binding: EditProfileBinding()),
-
-    GetPage(name: '/helpandsupport', page: () => HelpAndSupport(), binding: HelpSupportBinding()),
-    GetPage(name: '/newpass', page: () => ChangePassword(), binding: ChangePasswordBinding()),
-
-    GetPage(name: '/contact', page: () => ContactUs(), binding: ContactUsBinding()),
-    GetPage(name: '/privacy', page: () => PrivacyPolicy(), binding: PrivacyPolicyBinding()),
-
-    GetPage(name: '/authorbottomnav', page: () => AuthorBottomNavLayout(),binding: AuthorBottomNavBinding()),
-
-  GetPage(name: '/plan', page: () => SubscriptionPlan(),binding: SubscriptionPlanBinding()),
-    GetPage(name: '/selectplan', page: () => SubscriptionPlanSelectionScreen(),binding: StripePaymentBinding()),
-
-
-    GetPage(name: '/allRequest', page: () => AllRequest(),binding: AuthorHomeBinding()),
-
-    GetPage(name: '/requestDetail', page: () => RequestDetailAuthor(),binding: AuthorBottomNavBinding()),
-
-
-    GetPage(name: '/pdfReview', page: () => BookPreviewPage(),binding: AuthorBottomNavBinding()),
-    GetPage(name: '/drawSignature', page: () => const DrawSignatureScreen(),binding: AuthorBottomNavBinding()),
-
-    GetPage(name: '/placeSignature', page: () => const PlaceSignatureScreen(),binding: AuthorBottomNavBinding()),
+    GetPage(
+      name: '/placeSignature',
+      page: () => const PlaceSignatureScreen(),
+      binding: AuthorBottomNavBinding(),
+    ),
 
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),

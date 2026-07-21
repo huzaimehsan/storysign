@@ -12,6 +12,9 @@ import '../../../../utils/utility.dart';
 import '../../../../widgets/image_picker.dart';
 import '../model/profile_model.dart';
 
+import '../../Home/controller/home_controller.dart';
+import 'profile_controller.dart';
+
 class EditProfileController extends GetxController {
   final nameUpdateController = TextEditingController();
   final emailUpdateController = TextEditingController();
@@ -103,6 +106,12 @@ class EditProfileController extends GetxController {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         Utils.showToast('Profile updated successfully', false);
         clearEditProfile();
+        if (Get.isRegistered<ProfileController>()) {
+          Get.find<ProfileController>().getProfile();
+        }
+        if (Get.isRegistered<HomeController>()) {
+          Get.find<HomeController>().loadUserProfile();
+        }
         Get.back();
       } else {
         Utils.showToast('Update failed: ${response.statusCode}', true);
