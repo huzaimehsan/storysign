@@ -12,10 +12,10 @@ Widget searchWidget({
   return   Padding(
     padding: EdgeInsets.symmetric(horizontal: 4.w),
     child: Container(
-      height: 5.2.h,
+      height: 4.8.h,
       padding: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
-        color: white,
+        color: whiteColor,
         borderRadius: BorderRadius.circular(20.sp),
         border: Border.all(color: greyColor),
       ),

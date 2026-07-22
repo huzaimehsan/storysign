@@ -36,7 +36,7 @@ Widget buttonWidget(
           if(isShadow == true)
           BoxShadow(
 
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.12),
               blurRadius: 3,
               spreadRadius: 1,
               offset: const Offset(0, 3),

@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/select_author_controller.dart';
 import 'package:storysign/features/reader/Home/widgets/reader/widget_select_author.dart';
 import '../../../../constants/color_constants.dart';
+import '../../../../widgets/customText_widget.dart';
 import '../model/home_model.dart';
 
 import '../../../../widgets/custom_text_feild.dart';
@@ -41,41 +42,48 @@ class SelectAuthor extends GetView<SelectAuthorController> {
 
             SizedBox(height: 0.5.h),
             Obx(() {
-
               if (controller.isFetchHome.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: buttonColor),
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(color: buttonColor),
+                  ),
                 );
               }
+
+              if (controller.filteredAuthors.isEmpty) {
+                return Expanded(
+                  child: Center(
+                    child: customText(
+                      text: "No author",
+                      fontSize: 15.sp,
+                      color: greyColor,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }
+
               final authorsList = controller.filteredAuthors;
               return Expanded(
-                child: SingleChildScrollView(
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: authorsList.length,
-                    itemBuilder: (context, index) {
-                      final author = authorsList[index];
-                      const active = true;
-                      return WidgetSelectAuthor(
-                        imagePath: author.profilePicture?.toString() ?? "",
-                        bookTitle: author.fullName,
-                        date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
-
-                        isActive: active,
-                        ontap: () {
-                          // SelectAuthor Screen mein
-
-                            if (active) {
-
-                              Get.back(result: author.id);
-
-                          };
-                        },
-                      );
-                    },
-                  ),
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: authorsList.length,
+                  itemBuilder: (context, index) {
+                    final author = authorsList[index];
+                    const active = true;
+                    return WidgetSelectAuthor(
+                      imagePath: author.profilePicture?.toString() ?? "",
+                      bookTitle: author.fullName,
+                      date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
+                      isActive: active,
+                      ontap: () {
+                        if (active) {
+                          Get.back(result: author.id);
+                        }
+                      },
+                    );
+                  },
                 ),
               );
             }),

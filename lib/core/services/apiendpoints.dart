@@ -33,9 +33,12 @@ class ApiEndPoints {
   static const String faqs = "/reader/faqs";
 
   static const String helpSupport = "/reader/help";
-
+  static const String authorHelpSupport = "/author/help";
+  static const String authorFaqs = "/author/faqs";
   static const String notifications = "/reader/notifications?page=1&limit=20";
   static const String profile = "/reader/profile";
+
+  static const String authorProfile = "/author/profile";
   static const String editProfile = "/reader/profile";
   static const String libraryStats = "/reader/profile/stats";
   static const String bookHistory = "/reader/download-history?page=1&limit=10";
@@ -60,6 +63,7 @@ class ApiEndPoints {
       "/reader/autograph-requests/confirm-payment";
 
   static const String readerVerifyPayment = "/payments/verify-success";
+  static const String currentSubscription = "/author/subscription/current";
 
   static const String pendingRequest =
       "/author/requests/pending?page=1&limit=10";

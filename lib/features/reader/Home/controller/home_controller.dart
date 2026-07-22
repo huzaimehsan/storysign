@@ -68,29 +68,7 @@ class HomeController extends GetxController {
   RxString userName = 'User'.obs;
   RxString userRole = ''.obs;
   RxBool isUserDataLoading = false.obs;
-  var recentlySignedBooksList = <Map<String, String>>[
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "Pride and Prejudice",
-      "authorName": "Jane Austen",
-      "date": "22 june, 2026",
-      "status": "Signed",
-    },
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "The Great Gatsby",
-      "authorName": "F. Scott Fitzgerald",
-      "date": "25 june, 2026",
-      "status": "In process",
-    },
-    {
-      "imagePath": "assets/png/book.png",
-      "bookTitle": "The Great Gatsby",
-      "authorName": "F. Scott Fitzgerald",
-      "date": "25 june, 2026",
-      "status": "Delivered",
-    },
-  ].obs;
+
 
   RxString searchQuery = "".obs;
   RxList<AllAuthorModel> welcomes = <AllAuthorModel>[].obs;
@@ -112,24 +90,14 @@ class HomeController extends GetxController {
         .toList();
   }
 
-  List<Map<String, String>> get filteredRecentlySignedBooks {
+  List<MyBookModel> get filteredBooks {
+    if (searchQuery.value.trim().isEmpty) {
+      return books;
+    }
     final query = searchQuery.value.toLowerCase().trim();
-
-    return recentlySignedBooksList.where((book) {
-      final status = book["status"] ?? "";
-      final matchesTab =
-          selectedTab.value == "All" ||
-          (selectedTab.value == "In Process" && status == "In process") ||
-          (selectedTab.value == "Delivered" && status == "Delivered");
-
-      if (!matchesTab) return false;
-
-      if (query.isEmpty) return true;
-
-      final title = (book["bookTitle"] ?? "").toLowerCase();
-      final author = (book["authorName"] ?? "").toLowerCase();
-      return title.contains(query) || author.contains(query);
-    }).toList();
+    return books
+        .where((book) => book.title.toLowerCase().contains(query))
+        .toList();
   }
 
   // -----------------------------------------------------------------------------------------//

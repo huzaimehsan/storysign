@@ -124,4 +124,13 @@ class ProfileScreenController extends GetxController {
       isbookLoading.value = false;
     }
   }
+
+  void signOut(){
+
+    final pref = SharedPreferencesMethod.storage;
+    print(LocalDBKeys.TOKEN);
+    pref.clear();
+    Get.toNamed('/signin');
+  }
+
 }

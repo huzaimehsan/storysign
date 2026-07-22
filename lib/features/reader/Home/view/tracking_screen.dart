@@ -50,12 +50,25 @@ class TrackingScreen extends StatelessWidget {
             SizedBox(height: 1.h),
 
             // Dynamic Book Detail
-            RequestDetailWidget(
-              imagePath: book.coverImage,
-              bookTitle: book.title,
-              authorName: book.author?.fullName ?? 'Unknown',
-              showSubmittedBadge: true,
-              status: book.status,
+            InkWell(
+              onTap: () {
+                Get.toNamed("/signedcopy", arguments: {
+                  'requestId': book.id,
+                  'coverImage': book.coverImage,
+                  'bookName': book.title,
+                  'authorName': book.author.fullName ?? 'Unknown Author', // agar model mein field ho
+                  'dateJoined': book.uploadDate,
+                  'status': book.status,
+                  'message': book.personalMessage ?? '', // agar model mein field ho
+                });
+              },
+              child: RequestDetailWidget(
+                imagePath: book.coverImage,
+                bookTitle: book.title,
+                authorName: book.author?.fullName ?? 'Unknown',
+                showSubmittedBadge: true,
+                status: book.status,
+              ),
             ),
 
             SizedBox(height: 1.h),
@@ -116,7 +129,7 @@ class TrackingScreen extends StatelessWidget {
                           ? "assets/png/confirmed.png" : "assets/png/noconfirm.png",
                       title: "Author Review",
                       subtitle: book.status.toLowerCase() == "submitted" ? "Request in review" : "Reviewed by author",
-                      date: "---",
+                      date: "",
                     ),
                     SizedBox(height: 2.h),
 
@@ -125,7 +138,7 @@ class TrackingScreen extends StatelessWidget {
                       imagePath: book.status.toLowerCase() == "delivered" ? "assets/png/confirmed.png" : "assets/png/noconfirm.png",
                       title: "Delivered",
                       subtitle: book.status.toLowerCase() == "delivered" ? "Request Completed" : "Waiting for delivery",
-                      date: "---",
+                      date: "",
                     ),
                   ],
                 ),

@@ -83,6 +83,7 @@ class ContactUs extends GetView<ContactUsController> {
                           colors: buttonColor,
                           height: 5.2.h,
                           width: double.infinity,
+                              fontsize: 16.sp,
                           fontFamily: 'Poppins',
                         ),
                       ),

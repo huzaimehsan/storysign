@@ -3,67 +3,64 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:storysign/features/author/home/model/profile_model.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
+import '../model/active_subscription_model.dart';
 import '../model/home_model.dart';
 import 'package:http/http.dart' as http;
 class AuthorHomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   var authorStats = Rxn<SubscriptionStats>();
+
+  var activeSub = Rxn<activeSubscription>();
   RxBool isStatsLoading = false.obs;
-
+  Rxn<AuthorUserProfile> userAuthorProfile = Rxn<AuthorUserProfile>();
   var autographList = <AutographItemModel>[].obs;
-
+  var filteredAutographList = <AutographItemModel>[].obs;
+  RxString userRole = ''.obs;
   var isFetchPending = false.obs;
+
+  var isUserDataLoading = false.obs;
   RxString errorMessage = ''.obs;
-
-  final RxList<Map<String, String>> requests = <Map<String, String>>[
-    {
-      'imagePath': 'assets/png/pendingimg.png',
-      'authorName': 'Jane Austen',
-      'date': '22 june, 2026',
-      'bookName': 'The Origin of Species',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'Emily Bronte',
-      'date': '24 june, 2026',
-      'bookName': 'Wuthering Heights',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'George Orwell',
-      'date': '26 june, 2026',
-      'bookName': '1984',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'Mark Twain',
-      'date': '28 june, 2026',
-      'bookName': 'Adventures of Tom Sawyer',
-    },
-  ].obs;
-
-  final RxList<Map<String, String>> filteredRequests =
-      <Map<String, String>>[].obs;
+  RxString searchQuery = ''.obs;
 
   @override
   void onInit() {
-    filteredRequests.assignAll(requests);
     super.onInit();
     fetchLibraryStats();
     fetchAutographRequests();
+    loadAuthorProfile();
+    fetchSubscriptionPlan();
+    // Search query change hone par list filter karo
+    ever(searchQuery, (_) => _applyFilter());
+  }
+
+  void _applyFilter() {
+    final q = searchQuery.value.toLowerCase().trim();
+    if (q.isEmpty) {
+      filteredAutographList.assignAll(autographList);
+    } else {
+      filteredAutographList.assignAll(
+        autographList.where((item) {
+          final book = item.bookTitle.toLowerCase();
+          final reader = item.reader.fullName.toLowerCase();
+          return book.contains(q) || reader.contains(q);
+        }).toList(),
+      );
+    }
   }
 
 
   Future<void> refreshHomeRequests() async {
-    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
     fetchLibraryStats();
     fetchAutographRequests();
+    fetchSubscriptionPlan();
+    loadAuthorProfile();
   }
 
 
@@ -77,27 +74,14 @@ class AuthorHomeController extends GetxController {
 
 
   void filterRequests(String query) {
-    final lowerQuery = query.toLowerCase().trim();
-
-    if (lowerQuery.isEmpty) {
-      filteredRequests.assignAll(requests);
-      return;
-    }
-
-    filteredRequests.assignAll(
-      requests.where((request) {
-        final authorName = request['authorName']?.toLowerCase() ?? '';
-        final bookName = request['bookName']?.toLowerCase() ?? '';
-        return authorName.contains(lowerQuery) || bookName.contains(lowerQuery);
-      }).toList(),
-    );
+    searchQuery.value = query;
   }
 
-  @override
-  void onClose() {
-    searchController.dispose();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   searchController.dispose();
+  //   super.onClose();
+  // }
 
   Future<void> fetchLibraryStats() async {
     try {
@@ -151,6 +135,8 @@ class AuthorHomeController extends GetxController {
 
         // FIX: Sahi list variable par assignAll use karein
         autographList.assignAll(paginatedData.items);
+        // Fetch ke baad filtered list bhi update karo
+        _applyFilter();
 
       } else {
         final responseBody = jsonDecode(response.body);
@@ -167,4 +153,63 @@ class AuthorHomeController extends GetxController {
       EasyLoading.dismiss();
     }
   }
+
+  Future<void> fetchSubscriptionPlan() async {
+    try {
+      final response = await BaseService().baseGetAPI(ApiEndPoints.currentSubscription);
+      if (response != null) {
+        activeSub.value = activeSubscription.fromJson(response);
+      }
+    } catch (e) {
+      debugPrint("fetchSubscriptionPlan error: $e");
+    }
+  }
+
+
+  Future<void> loadAuthorProfile() async {
+    try {
+      isUserDataLoading.value = true;
+      final prefs = SharedPreferencesMethod.storage;
+      userRole.value = prefs.getString('role') ?? '';
+
+      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      if (token.isEmpty) {
+        return;
+      }
+
+      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.authorProfile}');
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody is Map) {
+          final profileData = responseBody['data'] is Map
+              ? responseBody['data'] as Map<String, dynamic>
+              : Map<String, dynamic>.from(responseBody);
+
+          userAuthorProfile.value = AuthorUserProfile.fromJson(profileData);
+
+          final fullName =
+              userAuthorProfile.value?.fullName ??
+                  profileData['fullName']?.toString() ??
+                  profileData['name']?.toString() ??
+                  '';
+          if (fullName.isNotEmpty) {
+            userAuthorProfile.value = fullName as AuthorUserProfile?;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('HomeController loadUserProfile error: $e');
+    } finally {
+      isUserDataLoading.value = false;
+    }
+  }
+
 }

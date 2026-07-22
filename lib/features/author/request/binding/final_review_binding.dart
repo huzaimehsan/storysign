@@ -7,15 +7,10 @@ import '../controller/place_signature_controller.dart';
 import '../controller/request_detail_controller.dart';
 import '../controller/final_review_controller.dart';
 
-class RequestBinding implements Bindings {
+class AuthorFinalReviewBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AllRequestController>(() => AllRequestController());
-    Get.lazyPut<EbookPreviewController>(() => EbookPreviewController());
-    Get.lazyPut<DrawSignatureController>(() => DrawSignatureController());
-    Get.lazyPut<PlaceSignatureController>(() => PlaceSignatureController());
-    Get.lazyPut<AddMessageController>(() => AddMessageController());
-    Get.lazyPut<RequestDetailController>(() => RequestDetailController());
+
     Get.lazyPut<FinalReviewController>(() => FinalReviewController());
   }
 }

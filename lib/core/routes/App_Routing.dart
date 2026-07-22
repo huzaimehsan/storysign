@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_binding.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
-import 'package:storysign/features/author/home/binding/author_home_binding.dart';
+import 'package:storysign/features/author/home/binding/home_binding.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
+import 'package:storysign/features/author/profile/binding/help_support_binding.dart';
+import 'package:storysign/features/author/request/binding/draw_signature_binding.dart';
 import 'package:storysign/features/author/request/binding/ebook_preview_binding.dart';
+import 'package:storysign/features/author/request/binding/final_review_binding.dart';
+import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
+import 'package:storysign/features/author/request/view/final_review.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
 import 'package:storysign/features/author/request/binding/request_detail_binding.dart' as author_request_detail;
 
@@ -197,9 +202,10 @@ class AppRoutes {
     ),
 
     GetPage(
+
       name: '/helpandsupport',
       page: () => HelpAndSupport(),
-      binding: HelpSupportBinding(),
+      bindings: [HelpSupportBinding(),AuthorHelpSupportBinding()],
     ),
     GetPage(
       name: '/newpass',
@@ -255,15 +261,19 @@ class AppRoutes {
     GetPage(
       name: '/drawSignature',
       page: () => const DrawSignatureScreen(),
-      binding: AuthorBottomNavBinding(),
+      binding: DrawSignatureBinding(),
     ),
 
     GetPage(
       name: '/placeSignature',
       page: () => const PlaceSignatureScreen(),
-      binding: AuthorBottomNavBinding(),
+      binding: PlaceSignatureBinding(),
     ),
-
+    GetPage(
+      name: '/authorFinalReview',
+      page: () => const FinalReviewScreen(),
+      binding: AuthorFinalReviewBinding(),
+    ),
     // GetPage(name: '/onboardingone', page: () => OnboardingOne(),binding: OnboardingBinding()),
     // GetPage(name: '/helpsupport', page: () => SettingScreen(),binding: SettingBinding()),
     // GetPage(name: '/aboutus', page: () => AboutUsScreen(),binding: SettingBinding()),

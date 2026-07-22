@@ -144,6 +144,7 @@ class ReaderLibrary extends GetView<ReaderController> {
 
                       return recentlySignedBooks(
                         imagePath: book.coverImage,
+                        signed: book.status,
                         bookTitle: book.title,
                         authorName: "",
                         date: formattedDate,
@@ -184,10 +185,18 @@ class ReaderLibrary extends GetView<ReaderController> {
         if (value == "Reset") {
           controller.sortBy.value = "None";
           controller.filterStatus.value = "All";
+          // Reset karne par current tab ke hisaab se re-fetch
+          controller.selectTab(controller.selectedTab.value);
         } else if (value.startsWith("sort:")) {
           controller.sortBy.value = value.replaceFirst("sort:", "");
         } else if (value.startsWith("status:")) {
-          controller.filterStatus.value = value.replaceFirst("status:", "");
+          final selectedStatus = value.replaceFirst("status:", "");
+          controller.filterStatus.value = selectedStatus;
+          // Status filter ke liye All tab pe switch karo taake pura data ho
+          if (selectedStatus != "All") {
+            controller.selectedTab.value = "All";
+            controller.fetchBooksData(status: 'all');
+          }
         }
       },
       itemBuilder: (context) {

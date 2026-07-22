@@ -47,40 +47,45 @@ class AllRequest extends GetView<AuthorHomeController> {
             ),
 
             Obx(
-              () => Expanded(
+                  () => Expanded(
                 child: controller.isFetchPending.value
+                    ? const Center(
+                  child: CircularProgressIndicator(color: buttonColor),
+                )
+                    : controller.filteredAutographList.isEmpty
                     ? Center(
-                        child: customText(
-                          text: "No pending requests",
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: whiteColor,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
+                  child: customText(
+                    text: "No pending requests",
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: greyColor,
+                    fontFamily: "Poppins",
+                    textAlign: TextAlign.center,
+                  ),
+                )
                     : ListView.builder(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        itemCount: controller.autographList.length,
-                        itemBuilder: (context, index) {
-                          final request = controller.autographList[index];
-                          return AllPendingRequest(
-                            imagePath: request.reader.profilePicture,
-                            authorName: request.author.fullName,
-                            bookName: request.bookTitle,
-                            date: request.requestDate,
-                            ontap: () {
-                              print("NAVIGATING WITH ID: ${request.id}");
-                              Navigator.of(context).pushNamed(
-                                '/requestDetail',
-                                arguments: {
-                                  'from': 'all_request',
-                                  'autographRequestId': request.id,
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  itemCount: controller.filteredAutographList.length,
+                  itemBuilder: (context, index) {
+                    final request = controller.filteredAutographList[index];
+                    return AllPendingRequest(
+                      imagePath: request.reader.profilePicture,
+                      authorName: request.author.fullName,
+                      bookName: request.bookTitle,
+                      date: request.requestDate,
+                      ontap: () {
+                        print("NAVIGATING WITH ID: ${request.id}");
+                        Navigator.of(context).pushNamed(
+                          '/requestDetail',
+                          arguments: {
+                            'from': 'all_request',
+                            'autographRequestId': request.id,
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

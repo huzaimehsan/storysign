@@ -11,6 +11,9 @@ Widget profileHeaderCard({
   required String name,
   required String email,
   required String joinedDate,
+  required String plan,
+  required String autograph,
+
   required bool? author,
   VoidCallback? onEdit,
 }) {
@@ -19,7 +22,9 @@ Widget profileHeaderCard({
   if (path.isNotEmpty && path != "null") {
     if (path.startsWith('http')) {
       imageProvider = NetworkImage(path);
-    } else if (path.startsWith('/') || path.contains(':\\') || path.contains(':/')) {
+    } else if (path.startsWith('/') ||
+        path.contains(':\\') ||
+        path.contains(':/')) {
       imageProvider = FileImage(File(path));
     } else {
       imageProvider = AssetImage(path);
@@ -30,12 +35,12 @@ Widget profileHeaderCard({
     width: double.infinity,
 
     padding: EdgeInsets.all(4.5.w),
-    decoration:BoxDecoration(
+    decoration: BoxDecoration(
       color: white,
       borderRadius: BorderRadius.circular(20.sp),
       boxShadow: [
         BoxShadow(
-          color:blackColor.withOpacity(0.05),
+          color: blackColor.withOpacity(0.05),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
@@ -50,12 +55,10 @@ Widget profileHeaderCard({
           decoration: BoxDecoration(
             border: Border.all(color: buttonColor, width: 1.2),
             shape: BoxShape.circle,
-            color: textFeildContainColor, // Background color tab dikhega jab image nahi hogi
+            color: textFeildContainColor,
+            // Background color tab dikhega jab image nahi hogi
             image: imageProvider != null
-                ? DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
-                  )
+                ? DecorationImage(image: imageProvider, fit: BoxFit.cover)
                 : null,
           ),
           // Agar image nahi hai, toh child mein Icon dikhao
@@ -63,7 +66,7 @@ Widget profileHeaderCard({
               ? Icon(
                   Icons.person_rounded,
                   color: buttonColor.withOpacity(0.6),
-                  size: 6.w,
+                  size: 10.w,
                 )
               : null,
         ),
@@ -93,7 +96,8 @@ Widget profileHeaderCard({
                   customText(
                     fontFamily: 'Poppins',
                     text: 'Joined: ',
-                    color: secondryColor, // Iska color thoda dark rakhein
+                    color: secondryColor,
+                    // Iska color thoda dark rakhein
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700, // Yahan Bold kar diya
                   ),
@@ -107,7 +111,7 @@ Widget profileHeaderCard({
                 ],
               ),
 
-SizedBox(height: 1.h),
+              SizedBox(height: 1.h),
               Row(
                 children: [
                   // Baki widgets...
@@ -115,24 +119,23 @@ SizedBox(height: 1.h),
                   // Agar author true hai, to ye button dikhega
                   if (author == true)
                     buttonWidget(
-                      "Pro Plan",
+                      plan,
                       buttonColor,
                       onTap: () {},
                       colors: buttonColor.withOpacity(0.15),
                       fontFamily: 'Poppins',
                       height: 2.6.h,
-                      width: 18.w,
-                      borderColor:buttonColor,
+                      width: 22.w, borderColor: buttonColor,
                       fontsize: 14.sp,
                       fontweight: FontWeight.w600,
                     ),
-                  SizedBox(width: 4.w,),
+                  SizedBox(width: 4.w),
                   if (author == true)
                     buttonWidget(
-                      "234 Autographs",
+                      "$autograph Autographs",
                       buttonColor,
                       onTap: () {},
-isShadow: true,
+                      isShadow: true,
                       colors: bottomNavColor,
                       fontFamily: 'Poppins',
                       height: 2.7.h,
@@ -141,15 +144,12 @@ isShadow: true,
                       fontsize: 14.sp,
                       fontweight: FontWeight.w500,
                     ),
-                  // Agar aapko 'else' mein kuch aur bhi dikhana hai to:
 
+                  // Agar aapko 'else' mein kuch aur bhi dikhana hai to:
                 ],
               ),
 
-              if (author== true)
-                SizedBox(
-                  height: 3.h,
-                ),
+              if (author == true) SizedBox(height: 3.h),
             ],
           ),
         ),

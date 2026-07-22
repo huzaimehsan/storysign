@@ -18,15 +18,15 @@ class AuthorHelpSupportModel {
   }
 }
 
-class FaqModel {
+class AuthorFaqModel {
   final String id;
   final String question;
   final String answer;
 
-  FaqModel({required this.id, required this.question, required this.answer});
+  AuthorFaqModel({required this.id, required this.question, required this.answer});
 
-  factory FaqModel.fromJson(Map<String, dynamic> json) {
-    return FaqModel(
+  factory AuthorFaqModel.fromJson(Map<String, dynamic> json) {
+    return AuthorFaqModel(
       id: json['_id'] ?? "", // '_id' key match karna zaroori hai
       question: json['question'] ?? "",
       answer: json['answer'] ?? "",

@@ -92,11 +92,19 @@ class RequestAutographController extends GetxController{
       EasyLoading.dismiss();
     }
   }
-
   void clearRequestBookFields() {
     bookTitleControllerRequest.clear();
     personalMessageController.clear();
+    bookPdfFile.value = null;
+    bookCoverImage.value = null;
+  }
 
+// ✅ Naya method — poori form state reset karega (author selection samet)
+  void resetRequestForm() {
+    selectedAuthorId.value = '';
+    receivedBookId.value = '';
+    bookTitleControllerRequest.clear();
+    personalMessageController.clear();
     bookPdfFile.value = null;
     bookCoverImage.value = null;
   }

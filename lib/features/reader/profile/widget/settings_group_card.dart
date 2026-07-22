@@ -46,14 +46,17 @@ Widget settingsGroupCard({EdgeInsetsGeometry? margin}) {
 
         // Item 3
         _buildRowItem("assets/png/questionmark.png", "Help and Support", () {
-          Get.toNamed("/helpandsupport");
+          Get.toNamed("/helpandsupport",
+
+            arguments: {'role': 'reader'},
+          );
         }),
       ],
     ),
   );
 }
 
-Widget settingsSignoutCard({EdgeInsetsGeometry? margin, VoidCallback? ontap}) {
+Widget settingsSignoutCard({EdgeInsetsGeometry? margin,required VoidCallback? ontap}) {
   return Container(
     width: double.infinity,
     margin: margin ?? EdgeInsets.zero,
@@ -72,7 +75,7 @@ Widget settingsSignoutCard({EdgeInsetsGeometry? margin, VoidCallback? ontap}) {
     child: Column(
       children: [
         // Item 1
-        _buildRowItem("assets/png/signout.png", "Sign Out", () {}),
+        _buildRowItem("assets/png/signout.png", "Sign Out", ontap),
       ],
     ),
   );

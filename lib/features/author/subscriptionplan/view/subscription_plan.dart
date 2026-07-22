@@ -69,7 +69,12 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               SizedBox(height: 1.h),
               Expanded(
                 child: Obx(
+
                       () {
+                        final Map<String, dynamic>? args = Get.arguments;
+                        final String? activePlanName = args?['planName'];
+
+
                     if (controller.isLoading.value) {
                       return const Center(
                         child: CircularProgressIndicator(color: buttonColor),
@@ -93,6 +98,7 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                       itemCount: controller.plans.length,
                       itemBuilder: (context, index) {
                         final plan = controller.plans[index];
+                        final isCurrentPlan = plan.name == activePlanName;
                         return SubscriptionPlanCard(
                           title: plan.name,
                           subtitle: plan.planType,
@@ -100,6 +106,9 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                           features: plan.features,
                           isMostPopular: plan.name.toLowerCase().contains('pro'),
                           onSelect: () => controller.selectPlan(plan),
+                          buttonText: isCurrentPlan ? "Current Plan " : "Select Plan",
+
+
                         );
                       },
                     );

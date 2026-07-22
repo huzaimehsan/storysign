@@ -49,37 +49,21 @@ class PendingRequest extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Image Container with Condition & Placeholder
-              Container(
-                width: 10.h,
-                height: 10.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: buttonColor.withAlpha(30),
-                ),
-                child: hasImage
-                    ? ClipOval(
-                        child: Image.network(
-                          imagePath,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(
-                            Icons.person,
-                            color: buttonColor,
-                            size: 4.h,
-                          ),
-                        ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        color: buttonColor,
-                        size: 4.h,
-                      ),
+              CircleAvatar(
+                radius: 5.h, // Sizer ke mutabiq radius (10.h diameter banega)
+                backgroundColor: buttonColor.withAlpha(30),
+                backgroundImage: hasImage ? NetworkImage(imagePath) : null,
+                child: !hasImage
+                    ? Icon(
+                  Icons.person,
+                  color: buttonColor,
+                  size: 6.h,
+                )
+                    : null,
               ),
 
               
-              SizedBox(width: 2.w),
+              SizedBox(width: 3.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -105,16 +105,16 @@ Widget sectionHeader({required String title, required VoidCallback onSeeAll}) {
         fontWeight: FontWeight.w600,
         color: whiteColor,
       ),
-      InkWell(
-        onTap: onSeeAll,
-        child: customText(
-          fontFamily: "Poppins",
-          text: "View All >",
-          color: iconColor,
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      // InkWell(
+      //   onTap: onSeeAll,
+      //   child: customText(
+      //     fontFamily: "Poppins",
+      //     text: "View All >",
+      //     color: iconColor,
+      //     fontSize: 15.sp,
+      //     fontWeight: FontWeight.w500,
+      //   ),
+      // ),
     ],
   );
 }

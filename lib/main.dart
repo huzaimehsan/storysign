@@ -41,15 +41,20 @@ void main() async {
   );
 
   String initialRoute;
+
   if (!hasSeenOnboarding) {
+
     initialRoute = '/';
-  } else {
+  }
+  // } else if (isLoggedIn) {
+  //
+  //   initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
+  // }
+    else {
+
     initialRoute = '/signin';
   }
-  // //else if (isLoggedIn) {
-  // initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
-  // }
-  // 4. Sirf EK baar runApp call karein
+
   runApp(MyApp(initialRoute : initialRoute));
 }
 class MyApp extends StatelessWidget {

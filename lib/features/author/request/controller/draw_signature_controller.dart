@@ -73,16 +73,14 @@ class DrawSignatureController extends GetxController {
       final bytes = await signatureController.toPngBytes();
       // Guard context use after async gap
       if (bytes != null && context.mounted) {
-        // Create fresh PlaceSignatureController with bytes before navigating
+        // Delete old controller if registered so it is recreated fresh by the route's GetPageRoute binding
         if (Get.isRegistered<PlaceSignatureController>()) {
           Get.delete<PlaceSignatureController>(force: true);
         }
-        final placeCtrl = Get.put(PlaceSignatureController());
-        placeCtrl.signatureBytes = bytes;
         RequestService.find.signatureBytes = bytes;
         // Use screen's context so we push through the NESTED navigator (tab 1)
         // This keeps the parent scaffold's bottom nav visible
-        Navigator.of(context).pushNamed('/placeSignature');
+        Navigator.of(context).pushNamed('/placeSignature', arguments: bytes);
       }
     } else {
       Get.snackbar(

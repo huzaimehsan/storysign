@@ -90,7 +90,7 @@ class ProfileController extends GetxController {
 
   // Model ko store karne ke liye observable variable
   // Explicitly initialize karein
-  Rxn<HelpSupportModel> supportData = Rxn<HelpSupportModel>(null);
+  Rxn<AuthorHelpSupportModel> supportData = Rxn<AuthorHelpSupportModel>(null);
 
   @override
   void onInit() {
@@ -122,7 +122,7 @@ class ProfileController extends GetxController {
 
       if (response['success'] == true) {
         // API response se data map karein
-        supportData.value = HelpSupportModel.fromJson(response);
+        supportData.value = AuthorHelpSupportModel.fromJson(response);
       } else {
         Utils.showToast(response['message'] ?? "Failed to load data", true);
       }

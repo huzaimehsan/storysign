@@ -1,3 +1,4 @@
+import 'package:storysign/features/author/request/controller/final_review_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +20,9 @@ class AddMessageController extends GetxController {
   }
 
   void saveMessage(BuildContext context) {
+    if (Get.isRegistered<FinalReviewController>()) {
+      Get.delete<FinalReviewController>(force: true);
+    }
     Navigator.of(context).pushNamed('/authorFinalReview');
   }
 

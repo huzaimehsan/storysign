@@ -1,13 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/widgets/build_profile_image.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 
-Widget buildProfileCard({required String? name}) {
+Widget buildProfileCard({
+  required String? name,
+  required String? role,
+  required String? imagePath,
+}) {
+  
+
   return Padding(
-    padding:  EdgeInsets.symmetric(horizontal: 4.w),
+    padding: EdgeInsets.symmetric(horizontal: 4.w),
     child: Container(
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
       width: double.infinity,
@@ -16,26 +24,18 @@ Widget buildProfileCard({required String? name}) {
         color: buttonColor,
       ),
       child: Column(
-
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.sp),
-                child: Image.asset(
-                  "assets/png/profile.png",
-                  height: 17.w,
-                  width: 17.w,
-                  fit: BoxFit.cover,
-                ),
+                child: buildProfileImageWidget(imagePath: imagePath),
               ),
-              SizedBox(width: 2.w),
-
+              SizedBox(width: 3.w),
               Expanded(
                 child: Column(
-
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     customText(
@@ -43,7 +43,7 @@ Widget buildProfileCard({required String? name}) {
                       fontFamily: 'Poppins',
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
-                      text: "Welcome, Reader",
+                      text: "Welcome, ${role != null && role.isNotEmpty ? role.capitalizeFirst : 'User'}",
                     ),
                     SizedBox(height: 0.8.h),
                     customText(
@@ -56,8 +56,6 @@ Widget buildProfileCard({required String? name}) {
                   ],
                 ),
               ),
-
-              // ...
             ],
           ),
         ],

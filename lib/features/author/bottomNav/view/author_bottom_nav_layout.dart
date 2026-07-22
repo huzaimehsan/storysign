@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/delivered/view/delivered_screen.dart';
-import 'package:storysign/features/author/profile/view/author_profile.dart';
+import 'package:storysign/features/author/profile/view/profile.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/home/view/home_screen.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
@@ -14,8 +14,11 @@ import 'package:storysign/features/author/request/view/place_signature.dart';
 import 'package:storysign/features/author/request/view/add_message.dart';
 import 'package:storysign/features/author/request/view/final_review.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
+import 'package:storysign/features/author/request/binding/final_review_binding.dart';
 
 import '../../../reader/library/view/reader_library.dart';
+import '../../profile/binding/profile_binding.dart';
 
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
@@ -57,11 +60,19 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
       case '/drawSignature':
         return MaterialPageRoute(builder: (_) => const DrawSignatureScreen());
       case '/placeSignature':
-        return MaterialPageRoute(builder: (_) => const PlaceSignatureScreen());
+        return GetPageRoute(
+          page: () => const PlaceSignatureScreen(),
+          binding: PlaceSignatureBinding(),
+          settings: settings,
+        );
       case '/addMessage':
         return MaterialPageRoute(builder: (_) => const AddMessageScreen());
       case '/authorFinalReview':
-        return MaterialPageRoute(builder: (_) => const AuthorFinalReviewScreen());
+        return GetPageRoute(
+          page: () => const FinalReviewScreen(),
+          binding: AuthorFinalReviewBinding(),
+          settings: settings,
+        );
       default:
         return MaterialPageRoute(builder: (_) => const AllRequest());
     }
@@ -119,13 +130,19 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
 
               ),
               // Tab 3: Notifications
-
-              // Tab 4: Profile
               Navigator(
                 key: _navigatorKeys[3],
-                onGenerateRoute: (_) =>
-                    MaterialPageRoute(builder: (_) => AuthorProfileScreen()),
+                onGenerateRoute: (RouteSettings settings) {
+                  final bool isAuthor = true;
+                  return GetPageRoute(
+                    page: () => const AuthorProfileScreen(),
+                    binding: AuthorProfileBinding(),
+                    settings: settings,
+                  );
+                },
               ),
+              // Tab 4: Profile
+
             ],
           ),
         ),

@@ -65,6 +65,7 @@ class EditProfileController extends GetxController {
           profileModel.value = ProfileModel.fromJson(Map<String, dynamic>.from(decodedBody));
           nameUpdateController.text = profileModel.value?.fullName ?? '';
           emailUpdateController.text = profileModel.value?.email ?? '';
+          clearEditProfile();
         } else {
           Utils.showToast('Invalid profile response', true);
         }
@@ -105,7 +106,7 @@ class EditProfileController extends GetxController {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         Utils.showToast('Profile updated successfully', false);
-        clearEditProfile();
+        clearImageProfile();
         if (Get.isRegistered<ProfileController>()) {
           Get.find<ProfileController>().getProfile();
         }
@@ -127,6 +128,12 @@ class EditProfileController extends GetxController {
   void clearEditProfile() {
     nameUpdateController.clear();
     emailUpdateController.clear();
+
+  }
+
+
+  void clearImageProfile(){
+
     profileImage.value = null;
     selectedImage.value = null;
   }

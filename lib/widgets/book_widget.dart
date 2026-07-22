@@ -7,23 +7,32 @@ import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
 import 'customText_widget.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
+
+import '../constants/color_constants.dart';
+import 'button_widget.dart';
+import 'customText_widget.dart';
 
 Widget recentlySignedBooks({
   required String imagePath,
   String? imageUrl,
   required String bookTitle,
-  required String authorName,
+  String authorName = '',
   required String date,
-  required VoidCallback trackRequest,
+  VoidCallback? trackRequest,
   required String status,
   EdgeInsetsGeometry? margin,
   bool? iconBadge,
   bool showArrow = true,
-
-  required bool showAuthor,
+  bool showPaidLabel = false,
+  String? signed,
+  bool showAuthor = false,
 }) {
   return Padding(
-    padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 0.6.h),
+    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.6.h),
     child: Container(
       height: 15.7.h,
       width: double.infinity,
@@ -63,9 +72,7 @@ Widget recentlySignedBooks({
                     overFlow: TextOverflow.ellipsis,
                   ),
                 ),
-
-// Konditional check: Sirf tabhi space aur text dikhayein jab showAuthor true ho
-                if (showAuthor) ...[
+                if (showAuthor && authorName.isNotEmpty) ...[
                   SizedBox(height: 0.6.h),
                   customText(
                     fontFamily: "Poppins",
@@ -75,7 +82,6 @@ Widget recentlySignedBooks({
                     fontWeight: FontWeight.w500,
                   ),
                 ],
-
                 SizedBox(height: 0.6.h),
                 customText(
                   fontFamily: "Poppins",
@@ -84,12 +90,9 @@ Widget recentlySignedBooks({
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
-
-
                 SizedBox(height: 1.h),
                 buttonWidget(
-
-                  status ,
+                  status,
                   buttonColor,
                   colors: buttonColor.withOpacity(0.2),
                   fontFamily: 'Poppins',
@@ -102,7 +105,17 @@ Widget recentlySignedBooks({
               ],
             ),
           ),
-          if (showArrow)
+
+          // Trailing area: Paid label > Arrow > kuch nahi
+          if (showPaidLabel)
+            customText(
+              fontFamily: "Poppins",
+              text: "Paid",
+              color: Colors.green,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+            )
+          else if (showArrow && signed != 'signed')
             InkWell(
               onTap: trackRequest,
               child: Image.asset(
@@ -114,7 +127,6 @@ Widget recentlySignedBooks({
             ),
         ],
       ),
-
     ),
   );
 }

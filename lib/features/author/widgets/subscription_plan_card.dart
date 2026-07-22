@@ -17,6 +17,7 @@ class SubscriptionPlanCard extends StatelessWidget {
   final String? amountLabel;
   final String? amountValue;
   final bool isCurrentPlan;
+  final String? buttonText;
 
   const SubscriptionPlanCard({
     super.key,
@@ -30,7 +31,7 @@ class SubscriptionPlanCard extends StatelessWidget {
     this.showActionButton = true,
     this.showAmountRow = false,
     this.amountLabel,
-    this.amountValue,
+    this.amountValue, this.buttonText,
   });
 
   @override
@@ -152,7 +153,7 @@ class SubscriptionPlanCard extends StatelessWidget {
             buttonWidget(
               isCurrentPlan
                   ? "Current Plan"
-                  : (source == 'profile' ? "Upgrade to Basic" : "Select Plan"),
+                  : (buttonText ?? (source == 'profile' ? "Upgrade to Basics" : "Upgrade to Basics")),
               whiteColor,
               onTap: isCurrentPlan ? null : onSelect,
               colors: buttonColor,

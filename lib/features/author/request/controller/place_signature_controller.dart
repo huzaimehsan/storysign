@@ -31,6 +31,8 @@ class PlaceSignatureController extends GetxController {
     super.onInit();
     if (Get.arguments is Uint8List) {
       signatureBytes = Get.arguments as Uint8List;
+    } else if (RequestService.find.signatureBytes != null) {
+      signatureBytes = RequestService.find.signatureBytes!;
     }
   }
 

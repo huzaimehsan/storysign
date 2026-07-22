@@ -7,17 +7,24 @@ import '../../../../constants/color_constants.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
+import '../../../author/profile/controller/help_and_support_controller.dart';
 import '../../search/widgets/header_widget.dart';
 import '../controller/help_support_controller.dart';
 import '../widget/help_support_widget.dart';
 import '../widget/library_stat_card.dart';
 
-class HelpAndSupport extends GetView<HelpSupportController> {
+class HelpAndSupport extends StatelessWidget {
   const HelpAndSupport({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 1. Arguments se role catch karein
+    final String role = Get.arguments?['role'] ?? 'reader';
 
+    // 2. Role ke mutabiq sahi controller find karein
+    final dynamic controller = role == 'author'
+        ? Get.find<AuthorHelpSupportController>()
+        : Get.find<HelpSupportController>();
 
     return Scaffold(
       body: SafeArea(
@@ -39,10 +46,13 @@ class HelpAndSupport extends GetView<HelpSupportController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Obx(() {
-                final data = controller.supportData.value;
+                // 3. Role ke mutabiq sahi support data variable uthayein
+                final data = role == 'author'
+                    ? controller.supportAuthorData.value
+                    : controller.supportData.value;
 
                 return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ab ye puri width par kaam karega
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // 1. EMAIL BUTTON
                     libraryStatCardIcon(
@@ -55,9 +65,11 @@ class HelpAndSupport extends GetView<HelpSupportController> {
                           final Uri emailUri = Uri(scheme: 'mailto', path: data.email);
                           if (await canLaunchUrl(emailUri)) {
                             await launchUrl(emailUri);
+
                           }
                         } else {
                           Utils.showToast("Email not available", true);
+                          print(role);
                         }
                       },
                     ),
@@ -117,23 +129,29 @@ class HelpAndSupport extends GetView<HelpSupportController> {
             ),
             SizedBox(height: 1.h),
             Obx(() {
-              // Loading state show karein agar data load ho raha ho
-              if (controller.isFaqsLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
+              // 4. Role ke mutabiq sahi FAQ list uthayein
+              final faqs = role == 'author'
+                  ? controller.faqAuthorList
+                  : controller.faqList;
 
               return Expanded(
-                child: SingleChildScrollView(
+                child: controller.isFaqsLoading.value
+                    ? const Center(
+                  child: CircularProgressIndicator(
+                    color: buttonColor,
+                  ),
+                )
+                    : SingleChildScrollView(
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.faqList.length, // Api wali list use karein
+                    itemCount: faqs.length,
                     itemBuilder: (context, index) {
-                      final faq = controller.faqList[index]; // FaqModel ka object
+                      final faq = faqs[index];
                       return faqItemWidget(
-                        title: faq.question,      // Model field use karein
-                        description: faq.answer,  // Model field use karein
+                        title: faq.question,
+                        description: faq.answer,
                       );
                     },
                   ),

@@ -28,12 +28,12 @@ class AuthController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   final TextEditingController signInEmailController = TextEditingController();
-  final TextEditingController signInpasswordController = TextEditingController();
-
-
+  final TextEditingController signInpasswordController =
+      TextEditingController();
 
   final TextEditingController forgotEmailController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
@@ -41,7 +41,8 @@ class AuthController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmNewPasswordController = TextEditingController();
+  final TextEditingController confirmNewPasswordController =
+      TextEditingController();
 
   final TextEditingController otpController = TextEditingController();
   final RxBool isPasswordHidden = true.obs;
@@ -94,9 +95,6 @@ class AuthController extends GetxController {
     super.onClose();
   }
 
-
-
-
   //-------------------------------------------------------------//
   Future<void> pickProfilePicture(BuildContext context) async {
     final File? file = await _mediaPickerService.pickMedia(context);
@@ -108,7 +106,8 @@ class AuthController extends GetxController {
   Future<void> saveProfileImageToLocalStorage(File imageFile) async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
-      final fileName = 'profile_image_${DateTime.now().millisecondsSinceEpoch}.png';
+      final fileName =
+          'profile_image_${DateTime.now().millisecondsSinceEpoch}.png';
       final savePath = '${appDocDir.path}/$fileName';
       final savedImage = await imageFile.copy(savePath);
       await SharedPreferencesMethod.setProfileImagePath(savedImage.path);
@@ -118,10 +117,8 @@ class AuthController extends GetxController {
     }
   }
 
-
-
- //-----------------------------------------------------------------------------------//
- //signup//
+  //-----------------------------------------------------------------------------------//
+  //signup//
   Future<void> signUp(BuildContext context, {String? role}) async {
     final String fullname = fullNameController.text.trim();
     String email = emailController.text.trim();
@@ -159,7 +156,9 @@ class AuthController extends GetxController {
         maskType: EasyLoadingMaskType.black,
       );
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.signupUser}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.signupUser}',
+      );
       final request = http.MultipartRequest('POST', uri);
 
       request.fields['fullName'] = fullname;
@@ -170,24 +169,29 @@ class AuthController extends GetxController {
       request.fields['confirmPassword'] = confirmPassword;
 
       if (role.toLowerCase() == 'author') {
-        request.fields['bio'] = bioController.text.trim(); // Yahan apna bio controller use karein
+        request.fields['bio'] = bioController.text
+            .trim(); // Yahan apna bio controller use karein
       }
 
       final File? currentProfileImage = profileImage.value;
       if (currentProfileImage != null && currentProfileImage.existsSync()) {
         final fileName = currentProfileImage.path.split('/').last;
-        request.files.add(await http.MultipartFile.fromPath(
-          'profilePicture',
-          currentProfileImage.path,
-          filename: fileName,
-          contentType: MediaType('image', 'png'),
-        ));
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'profilePicture',
+            currentProfileImage.path,
+            filename: fileName,
+            contentType: MediaType('image', 'png'),
+          ),
+        );
       }
 
       print('⏳ SIGNUP API CALLING: $uri');
       print('➡ Fields: ${request.fields}');
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 60),
+      );
       final responseString = await streamedResponse.stream.bytesToString();
       final responseMap = json.decode(responseString);
 
@@ -201,17 +205,19 @@ class AuthController extends GetxController {
           email = data['email'];
         }
 
-
         final dynamic dataValue = responseMap['data'] ?? responseMap;
-        final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic> ? dataValue : null;
-        final Map<String, dynamic>? user = responseMap['user'] is Map<String, dynamic>
+        final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic>
+            ? dataValue
+            : null;
+        final Map<String, dynamic>? user =
+            responseMap['user'] is Map<String, dynamic>
             ? responseMap['user'] as Map<String, dynamic>
             : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-            ? dataMap['user'] as Map<String, dynamic>
-            : null);
-        final String? token = responseMap['accessToken'] as String? ?? dataMap?['accessToken'] as String?;
-
-
+                  ? dataMap['user'] as Map<String, dynamic>
+                  : null);
+        final String? token =
+            responseMap['accessToken'] as String? ??
+            dataMap?['accessToken'] as String?;
 
         if (user == null || token == null) {
           Utils.showToast('Invalid server response', true);
@@ -223,19 +229,16 @@ class AuthController extends GetxController {
         await prefsInstance.setString(LocalDBKeys.USERDATA, jsonEncode(user));
 
         final prefs = SharedPreferencesMethod.storage;
-       await prefsInstance.setString(LocalDBKeys.TOKEN, token);
-      await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
+        await prefsInstance.setString(LocalDBKeys.TOKEN, token);
+        await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
 
         final String role = user['role']?.toString().toLowerCase() ?? 'reader';
 
         await prefsInstance.setString('role', role);
 
-
         final redirectRoute = role.toLowerCase() == 'author'
             ? '/plan'
             : '/bottomnav';
-
-
 
         Future.microtask(() {
           Get.offAllNamed(redirectRoute);
@@ -256,16 +259,12 @@ class AuthController extends GetxController {
     }
   }
 
-
-
-  void clearSignUpFeild(){
-
+  void clearSignUpFeild() {
     fullNameController.clear();
     emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
   }
-
 
   //---------------------------------------------------------------------------------------//
   //login//
@@ -283,26 +282,35 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(status: 'Please wait...', maskType: EasyLoadingMaskType.black);
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.loginUser}');
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.loginUser}',
+      );
       final payload = {'email': email, 'password': password};
 
       print('⏳ LOGIN REQUEST: $uri');
       print('⏳ LOGIN PAYLOAD: $payload');
 
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
-      ).timeout(const Duration(seconds: 60));
+      final response = await http
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 60));
 
       final responseMap = jsonDecode(response.body);
       print('⏳ LOGIN STATUS: ${response.statusCode}');
       print('⏳ LOGIN RESPONSE: $responseMap');
 
       final String? successMessage = responseMap['message']?.toString();
-      final String errorMessage = responseMap['message']?.toString() ?? 'Login failed';
-      final bool successResponse = response.statusCode >= 200 && response.statusCode < 300;
+      final String errorMessage =
+          responseMap['message']?.toString() ?? 'Login failed';
+      final bool successResponse =
+          response.statusCode >= 200 && response.statusCode < 300;
 
       if (!successResponse) {
         Utils.showToast(errorMessage, true);
@@ -310,13 +318,18 @@ class AuthController extends GetxController {
       }
 
       final dynamic dataValue = responseMap['data'] ?? responseMap;
-      final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic> ? dataValue : null;
-      final Map<String, dynamic>? user = responseMap['user'] is Map<String, dynamic>
+      final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic>
+          ? dataValue
+          : null;
+      final Map<String, dynamic>? user =
+          responseMap['user'] is Map<String, dynamic>
           ? responseMap['user'] as Map<String, dynamic>
           : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-          ? dataMap['user'] as Map<String, dynamic>
-          : null);
-      final String? token = responseMap['accessToken'] as String? ?? dataMap?['accessToken'] as String?;
+                ? dataMap['user'] as Map<String, dynamic>
+                : null);
+      final String? token =
+          responseMap['accessToken'] as String? ??
+          dataMap?['accessToken'] as String?;
       // final bool? isVerified = responseMap['isVerified'] as bool? ?? dataMap?['isVerified'] as bool?;
 
       // if (isVerified == false) {
@@ -333,7 +346,7 @@ class AuthController extends GetxController {
       final prefs = SharedPreferencesMethod.storage;
       await prefs.setString(LocalDBKeys.USERDETAIL, jsonEncode(user));
       await prefs.setString(LocalDBKeys.USERID, user['id'] ?? "");
-   // Yahan ensure karein ye instance wahi hai
+      // Yahan ensure karein ye instance wahi hai
       await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
 
       await prefs.setString(LocalDBKeys.TOKEN, token);
@@ -345,11 +358,10 @@ class AuthController extends GetxController {
 
       await prefs.setString('role', role);
       if (role == 'author') {
-        Get.offAllNamed('/plan');
+        Get.offAllNamed('/authorbottomnav');
       } else {
         Get.offAllNamed('/bottomnav');
       }
-
     } on TimeoutException {
       Utils.showToast('Request timed out', true);
     } on SocketException {
@@ -362,16 +374,13 @@ class AuthController extends GetxController {
     }
   }
 
-
-  void clearLoginFeilds(){
-
+  void clearLoginFeilds() {
     signInEmailController.clear();
     signInpasswordController.clear();
   }
 
-
-//---------------------------------------------------------------------------//
-//forgot Password//
+  //---------------------------------------------------------------------------//
+  //forgot Password//
   Future<void> forgotPassword() async {
     final String email = forgotEmailController.text.trim();
 
@@ -394,26 +403,33 @@ class AuthController extends GetxController {
       );
 
       // 2. API Call
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.forgotPassword}');
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
-      ).timeout(const Duration(seconds: 60));
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.forgotPassword}',
+      );
+      final response = await http
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(const Duration(seconds: 60));
 
       final responseMap = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.showToast(responseMap['message'] ?? 'Reset link sent to your email', false);
-
+        Utils.showToast(
+          responseMap['message'] ?? 'Reset link sent to your email',
+          false,
+        );
 
         Get.toNamed("/resendotp");
-      //  Get.toNamed('/sendotp', arguments: {'email': email});
-
+        //  Get.toNamed('/sendotp', arguments: {'email': email});
       } else {
-        Utils.showToast(responseMap['message'] ?? 'Failed to send reset link', true);
+        Utils.showToast(
+          responseMap['message'] ?? 'Failed to send reset link',
+          true,
+        );
       }
-
     } on TimeoutException {
       Utils.showToast('Request timed out', true);
     } on SocketException {
@@ -426,8 +442,6 @@ class AuthController extends GetxController {
     }
   }
 
-
-
   //----------------------------------------------------------------------------//
   // Verify OTP Function
   Future<void> verifyOtp(String email) async {
@@ -439,17 +453,21 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(status: 'Verifying...', maskType: EasyLoadingMaskType.black);
+      EasyLoading.show(
+        status: 'Verifying...',
+        maskType: EasyLoadingMaskType.black,
+      );
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.verifyOtp}'); // Yahan apna verify endpoint dein
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'code': otp,
-        }),
-      ).timeout(const Duration(seconds: 60));
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.verifyOtp}',
+      ); // Yahan apna verify endpoint dein
+      final response = await http
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'code': otp}),
+          )
+          .timeout(const Duration(seconds: 60));
 
       final responseMap = jsonDecode(response.body);
 
@@ -457,7 +475,6 @@ class AuthController extends GetxController {
         Utils.showToast(responseMap['message'] ?? 'OTP Verified', false);
 
         Get.toNamed('/resendotp', arguments: {'email': email, 'code': otp});
-
       } else {
         Utils.showToast(responseMap['message'] ?? 'Invalid OTP', true);
       }
@@ -468,9 +485,8 @@ class AuthController extends GetxController {
     }
   }
 
-
-//----------------------------------------------------------------------------//
-// reset password function //
+  //----------------------------------------------------------------------------//
+  // reset password function //
   Future<void> resetPassword(String email, String code) async {
     final String newPassword = newPasswordController.text.trim();
     final String confirmPassword = confirmNewPasswordController.text.trim();
@@ -486,9 +502,14 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(status: 'Resetting...', maskType: EasyLoadingMaskType.custom);
+      EasyLoading.show(
+        status: 'Resetting...',
+        maskType: EasyLoadingMaskType.custom,
+      );
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.resetPassword}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.resetPassword}',
+      );
       final response = await http.post(
         uri,
         headers: {'Content-Type': 'application/json'},
@@ -503,14 +524,14 @@ class AuthController extends GetxController {
       final responseMap = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.showToast(responseMap['message'] ?? 'Password reset successful', false);
+        Utils.showToast(
+          responseMap['message'] ?? 'Password reset successful',
+          false,
+        );
 
         Get.offAllNamed('/login');
-      clearResetPasswordFeilds();
-      }
-
-
-      else {
+        clearResetPasswordFeilds();
+      } else {
         Utils.showToast(responseMap['message'] ?? 'Reset failed', true);
       }
     } catch (e) {
@@ -520,12 +541,8 @@ class AuthController extends GetxController {
     }
   }
 
-
-  void clearResetPasswordFeilds(){
-
+  void clearResetPasswordFeilds() {
     newPasswordController.clear();
     confirmNewPasswordController.clear();
   }
-
-
 }

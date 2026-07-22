@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
@@ -84,11 +85,14 @@ class HomeScreen extends GetView<HomeController> {
                     final authorsList = controller.filteredAuthors;
                     if (authorsList.isEmpty) {
                       return SizedBox(
-                        height: 15.h,
-                        child: const Center(
-                          child: Text(
-                            "No authors found",
-                            style: TextStyle(color: Colors.grey),
+                        height: 10.h,
+                        child: Center(
+                          child:  customText(
+                            text: "No authors found",
+                            color: greyColor,
+                            fontSize: 15.sp,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       );
@@ -134,10 +138,10 @@ class HomeScreen extends GetView<HomeController> {
                   SizedBox(height: 0.5.h),
 
                   Obx(() {
-                    final books = controller.books;
+                    final books = controller.filteredBooks;
                     if (books.isEmpty) {
                       return SizedBox(
-                        height: 15.h,
+                        height: 20.h,
                         child: Center(
                           child: customText(
                             text: "No Recently Signed Books",
@@ -159,14 +163,15 @@ class HomeScreen extends GetView<HomeController> {
                         return recentlySignedBooks(
                           imageUrl: book.coverImage,
                           bookTitle: book.title,
-                          date: book.uploadDate,
+                          date: DateFormat('dd MMM, hh:mm a').format(DateTime.parse(book.uploadDate).toLocal()),
                           status: book.status,
                           trackRequest: () {
                             Get.toNamed("/signedcopy");
                           },
                           imagePath: '',
-                          showAuthor: false,
-                          authorName: '',
+                          showArrow: false,
+
+                          showAuthor: true,
                         );
                       },
                     );

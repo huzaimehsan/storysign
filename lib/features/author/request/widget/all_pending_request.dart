@@ -34,10 +34,10 @@ class AllPendingRequest extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 0.1.h),
         child: Container(
-          height: 9.8.h,
+          height: 9.5.h,
           width: 100.w,
           margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-          padding: EdgeInsets.symmetric(vertical: 5.w, horizontal: 4.w),
+          padding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 4.w),
           decoration: BoxDecoration(
             color: white,
             borderRadius: BorderRadius.circular(20.sp),
@@ -53,7 +53,7 @@ class AllPendingRequest extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 6.h,
+                height: 6.5.h,
                 width: 6.h,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -121,6 +121,9 @@ class AllPendingRequest extends StatelessWidget {
               FormattedRequestDate(
                 dateString: date,
                 fontSize: 13.sp,
+                fontFamily: 'Poppins',
+                color: secondryColor.withOpacity(0.7),
+
                 fontWeight: FontWeight.w500,
               ),
             ],

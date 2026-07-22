@@ -51,7 +51,9 @@ Widget authorSettingsGroupCard({EdgeInsetsGeometry? margin}) {
 
         // Item 3
         _buildRowItem("assets/png/questionmark.png", "Help and Support", () {
-          Get.toNamed("/helpandsupport");
+          Get.toNamed("/helpandsupport",
+            arguments: {'role': 'author'},
+          );
         }),
       ],
     ),

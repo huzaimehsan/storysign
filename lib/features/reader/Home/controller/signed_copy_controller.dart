@@ -36,6 +36,8 @@ class SignedCopyController extends GetxController {
       final uri = Uri.parse(
         '${BaseService().baseURL}${ApiEndPoints.downloadBook(autographRequestId)}',
       );
+
+      // 1. POST Request to get JSON containing the file path
       final response = await http.post(
         uri,
         headers: {
@@ -57,14 +59,19 @@ class SignedCopyController extends GetxController {
           }
 
           final String? filePath =
-              responseBody['downloadedFilePath']?.toString();
+          responseBody['downloadedFilePath']?.toString();
           if (filePath == null || filePath.isEmpty) {
             Utils.showToast('Download path is missing in response', true);
             return;
           }
 
-          final String downloadUrl =
-              Uri.parse('${BaseService().baseURL}/$filePath').toString();
+          // 💡 FIXED: Remove '/api/v1' to get the clean domain name
+          final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
+          final String downloadUrl = '$domain/$filePath';
+
+          print("Download URL: $downloadUrl"); // Debugging ke liye check karlein
+
+          // 2. GET Request to download the actual PDF file bytes
           final fileResponse = await http.get(
             Uri.parse(downloadUrl),
             headers: {'Authorization': 'Bearer $token'},
@@ -73,11 +80,16 @@ class SignedCopyController extends GetxController {
           if (fileResponse.statusCode == 200) {
             final directory = await getApplicationDocumentsDirectory();
             final file =
-                File('${directory.path}/${fileName ?? 'book'}.pdf');
+            File('${directory.path}/${fileName ?? 'book'}.pdf');
             await file.writeAsBytes(fileResponse.bodyBytes);
+
+
             Utils.showToast('Book downloaded successfully', false);
+
+            // File download hone ke baad foran open karne ke liye:
+            await OpenFile.open(file.path);
           } else {
-            Utils.showToast('Failed to download PDF file', true);
+            Utils.showToast('Failed to download PDF file: ${fileResponse.statusCode}', true);
           }
         } else {
           final directory = await getApplicationDocumentsDirectory();

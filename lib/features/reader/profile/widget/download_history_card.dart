@@ -7,7 +7,7 @@ import '../../../../widgets/customText_widget.dart';
 Widget downloadHistoryCard({
   required String imagePath,
   required String title,
-  required String author,
+
   required String date,
   EdgeInsetsGeometry? margin,
 }) {
@@ -23,6 +23,8 @@ Widget downloadHistoryCard({
         borderRadius: BorderRadius.circular(18.sp),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12.sp),
@@ -36,6 +38,7 @@ Widget downloadHistoryCard({
           SizedBox(width: 3.w),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 customText(
@@ -45,14 +48,14 @@ Widget downloadHistoryCard({
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
-                SizedBox(height: 0.4.h),
-                customText(
-                  fontFamily: 'Poppins',
-                  text: author,
-                  color: primaryColor,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+                // SizedBox(height: 0.4.h),
+                // customText(
+                //   fontFamily: 'Poppins',
+                //   text: author,
+                //   color: primaryColor,
+                //   fontSize: 14.sp,
+                //   fontWeight: FontWeight.w500,
+                // ),
                 SizedBox(height: 0.4.h),
                 customText(
                   fontFamily: 'Poppins',

@@ -22,18 +22,18 @@ class RequestAutographCard extends GetView<RequestAutographController> {
 
     final args = Get.arguments;
     String? receivedBookId;
-    String? role = args['role']; // Yahan se role get hoga
+    String? role = (args != null && args is Map) ? args['role']?.toString() : null;
 
-    // 2. AB FLAG BNAYEIN
     bool isLibraryRequest = (role == "fromLibrary");
+
     if (args != null && args is Map) {
       receivedBookId = args['bookId'];
       debugPrint("Received Book ID: $receivedBookId");
     }
 
-    // onInit mein ya build ke shuru mein
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Get.arguments != null && Get.arguments['bookId'] != null) {
+      controller.resetRequestForm();
+      if (Get.arguments != null && Get.arguments is Map && Get.arguments['bookId'] != null) {
         controller.receivedBookId.value = Get.arguments['bookId'];
       }
     });

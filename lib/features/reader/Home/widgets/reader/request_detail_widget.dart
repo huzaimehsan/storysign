@@ -49,12 +49,16 @@ Widget RequestDetailWidget({
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                customText(
-                  fontFamily: "Poppins",
-                  text: bookTitle,
-                  color: secondryColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+                Flexible(
+                  child: customText(
+                    fontFamily: "Poppins",
+                    text: bookTitle,
+                    color: secondryColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                    overFlow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (authorName != null)
                   Column(

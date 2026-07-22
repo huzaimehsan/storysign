@@ -57,7 +57,7 @@ Widget activeSubscription({
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "$date ",
+                            text: "  $date ",
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 15.sp,
