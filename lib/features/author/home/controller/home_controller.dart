@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:storysign/features/author/home/model/profile_model.dart';
+import 'package:storysign/features/author/home/model/author_profile_model.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';

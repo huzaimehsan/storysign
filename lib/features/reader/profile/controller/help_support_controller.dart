@@ -25,6 +25,7 @@ class HelpSupportController extends GetxController {
 
       if (response['success'] == true) {
         supportData.value = AuthorHelpSupportModel.fromJson(response);
+        print('sucess');
       } else {
         Utils.showToast(response['message'] ?? "Failed to load support data", true);
       }

@@ -199,35 +199,19 @@ class HomeController extends GetxController {
     try {
       isFetchHome.value = true;
       errorMessage.value = '';
-      // EasyLoading.show(status: 'Please wait...', maskType: EasyLoadingMaskType.black);
 
-      final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      final response = await BaseService().baseGetAPI(ApiEndPoints.allAuthor);
 
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
+      if (response['success'] == true) {
+        // baseGetAPI list response ko 'data' key ke andar deta hai,
+        // aur Map response ko spread karke deta hai — dono handle karo
+        final dynamic rawData = response['data'] ?? response['items'] ?? response;
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.allAuthor}',
-      );
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        final List<dynamic> items = responseBody is List
-            ? responseBody
-            : (responseBody is Map && responseBody['data'] is List
-                  ? responseBody['data'] as List
-                  : const []);
+        final List<dynamic> items = rawData is List
+            ? rawData
+            : (rawData is Map && rawData['data'] is List
+            ? rawData['data'] as List
+            : const []);
 
         welcomes.assignAll(
           items
@@ -235,17 +219,17 @@ class HomeController extends GetxController {
               .toList(),
         );
       } else {
-        final responseBody = jsonDecode(response.body);
         errorMessage.value =
-            responseBody['message']?.toString() ?? 'Failed to load home data';
-        Utils.showToast(errorMessage.value, true);
+            response['message']?.toString() ?? 'Failed to load home data';
+        // Utils.showToast already baseGetAPI ke andar call ho chuka hai error case mein,
+        // isliye yahan dobara call karne ki zarurat nahi
       }
     } catch (e) {
+      debugPrint('fetchHomeData error: $e');
       errorMessage.value = 'Something went wrong while loading data';
       Utils.showToast(errorMessage.value, true);
     } finally {
       isFetchHome.value = false;
-      EasyLoading.dismiss();
     }
   }
 
@@ -260,7 +244,6 @@ class HomeController extends GetxController {
   final RxInt currentPage = 1.obs;
   final RxInt totalPages = 1.obs;
   final int limit = 10;
-
   Future<void> fetchMyBooks({bool loadMore = false}) async {
     if (loadMore) {
       if (currentPage.value >= totalPages.value) return;
@@ -275,29 +258,14 @@ class HomeController extends GetxController {
       isBookLoading.value = true;
       errorMessage.value = '';
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit)}',
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
       );
 
-      final token = SharedPreferencesMethod.storage.getString(
-        LocalDBKeys.TOKEN,
-      );
-
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              if (token != null && token.isNotEmpty)
-                'Authorization': 'Bearer $token',
-              'Content-Type': 'application/json',
-            },
-          )
-          .timeout(const Duration(seconds: 30));
-
-      final responseMap = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        final data = MyBooksResponse.fromJson(responseMap);
+      if (response['success'] == true) {
+        // baseGetAPI Map response ko spread karta hai (...jsonData),
+        // isliye 'response' hi seedha MyBooksResponse.fromJson mein ja sakta hai
+        final data = MyBooksResponse.fromJson(response);
 
         if (loadMore) {
           books.addAll(data.items);
@@ -307,20 +275,23 @@ class HomeController extends GetxController {
 
         totalPages.value = data.totalPages;
       } else {
-        errorMessage.value = responseMap['message'] ?? 'Failed to load books';
-        Utils.showToast(errorMessage.value, true);
+        // Agar loadMore fail hua to page number wapas kar do,
+        // warna agli baar galat page se try hoga
+        if (loadMore) currentPage.value--;
+
+        errorMessage.value =
+            response['message']?.toString() ?? 'Failed to load books';
+        // baseGetAPI already toast dikha chuka hai error case mein — dobara mat dikhao
       }
-    } on TimeoutException {
-      errorMessage.value = 'Request timed out';
-      Utils.showToast(errorMessage.value, true);
     } catch (e) {
-      errorMessage.value = 'Something went wrong: $e';
+      if (loadMore) currentPage.value--;
+      debugPrint('fetchMyBooks error: $e');
+      errorMessage.value = 'Something went wrong while loading books';
       Utils.showToast(errorMessage.value, true);
     } finally {
       isBookLoading.value = false;
     }
   }
-
   Future<void> refreshBooks() async {
     await fetchMyBooks();
   }
@@ -336,32 +307,24 @@ class HomeController extends GetxController {
         return;
       }
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.profile}');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await BaseService().baseGetAPI(ApiEndPoints.profile);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        if (responseBody is Map) {
-          final profileData = responseBody['data'] is Map
-              ? responseBody['data'] as Map<String, dynamic>
-              : Map<String, dynamic>.from(responseBody);
+      if (response['success'] == true) {
+        // baseGetAPI Map response ko spread karke deta hai (...jsonData),
+        // isliye agar backend {"data": {...}} bhejta hai to us key ko check karo
+        final profileData = response['data'] is Map
+            ? Map<String, dynamic>.from(response['data'] as Map)
+            : Map<String, dynamic>.from(response);
 
-          userProfile.value = UserProfile.fromJson(profileData);
+        userProfile.value = UserProfile.fromJson(profileData);
 
-          final fullName =
-              userProfile.value?.fullName ??
-              profileData['fullName']?.toString() ??
-              profileData['name']?.toString() ??
-              '';
-          if (fullName.isNotEmpty) {
-            userName.value = fullName;
-          }
+        final fullName =
+            userProfile.value?.fullName ??
+                profileData['fullName']?.toString() ??
+                profileData['name']?.toString() ??
+                '';
+        if (fullName.isNotEmpty) {
+          userName.value = fullName;
         }
       }
     } catch (e) {

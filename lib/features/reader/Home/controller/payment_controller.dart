@@ -13,26 +13,18 @@ class PaymentController extends GetxController {
   var isPaymentLoading = false.obs;
 
   Future<void> confirmPayment(String paymentIntentId) async {
-    final token =
-        SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-    final uri = Uri.parse(
-      '${BaseService().baseURL}${ApiEndPoints.readerStripePayment}',
+    final response = await BaseService().basePostAPI(
+      ApiEndPoints.readerStripePayment,
+      {'paymentIntentId': paymentIntentId},
+      loading: false, // Stripe sheet ke baad apna spinner nahi chahiye
     );
 
-    final response = await http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({'paymentIntentId': paymentIntentId}),
-    );
+    debugPrint("Confirm Payment Response: $response");
 
-    debugPrint("Confirm Payment Response: ${response.statusCode} - ${response.body}");
-
-    // YAHAN CHANGE KIYA HAI (200 OR 201 dono success hain)
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Payment confirmation failed with status: ${response.statusCode}');
+    if (response['success'] != true) {
+      throw Exception(
+        response['message']?.toString() ?? 'Payment confirmation failed',
+      );
     }
   }
 
@@ -50,11 +42,9 @@ class PaymentController extends GetxController {
       // 2. Stripe initialization
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: clientSecret.trim(), // .trim() zaroori hai
+          paymentIntentClientSecret: clientSecret.trim(),
           merchantDisplayName: 'StorySign',
-          billingDetails: BillingDetails(
-            name: 'StorySign User',
-          ), // Kabhi kabhi ye zaroori hota hai
+          billingDetails: BillingDetails(name: 'StorySign User'),
         ),
       );
 
@@ -72,7 +62,13 @@ class PaymentController extends GetxController {
       return false;
     } catch (e) {
       debugPrint("General Payment Error: $e");
-      Utils.showToast("Payment failed", true);
+      // Note: basePostAPI (confirmPayment ke andar) already specific error
+      // toast dikha chuka hoga agar server ne error diya — isliye yahan
+      // dobara generic toast nahi laga rahe, warna do toasts aayenge.
+      // Sirf tab dikhao jab ye Stripe/logic error ho (jaise empty fields):
+      if (e.toString().contains('Invalid Payment Details')) {
+        Utils.showToast("Payment failed", true);
+      }
       return false;
     } finally {
       isPaymentLoading.value = false;
