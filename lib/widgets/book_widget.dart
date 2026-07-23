@@ -15,6 +15,7 @@ import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
 import 'customText_widget.dart';
+import 'formatted_date_widget.dart';
 
 Widget recentlySignedBooks({
   required String imagePath,
@@ -83,12 +84,14 @@ Widget recentlySignedBooks({
                   ),
                 ],
                 SizedBox(height: 0.6.h),
-                customText(
-                  fontFamily: "Poppins",
-                  text: date,
-                  color: secondryColor.withOpacity(0.7),
+
+                FormattedRequestDate(
+                  dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                  dateFormat: 'dd MMM, yyyy',
+                  color:  secondryColor.withOpacity(0.7),
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
                 SizedBox(height: 1.h),
                 buttonWidget(

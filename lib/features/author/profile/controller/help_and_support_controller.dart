@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
-import '../../../reader/profile/model/profile_model.dart';
+import '../../../reader/profile/model/profile_screen_model.dart';
 import '../model/help_support_model.dart' hide AuthorHelpSupportModel;
 import '../model/profile_model.dart';
 
@@ -11,6 +11,11 @@ class AuthorHelpSupportController extends GetxController {
   RxBool isFaqsLoading = false.obs;
   RxString searchQuery = ''.obs;
   Rxn<AuthorHelpSupportModel> supportAuthorData = Rxn<AuthorHelpSupportModel>();
+
+  // 1. Original list save karne ke liye
+  List<AuthorFaqModel> _originalFaqAuthorList = [];
+
+  // 2. Filtered list jo UI par dikhegi
   RxList<AuthorFaqModel> faqAuthorList = <AuthorFaqModel>[].obs;
 
   @override
@@ -18,6 +23,16 @@ class AuthorHelpSupportController extends GetxController {
     super.onInit();
     getAuthorHelpSupportData();
     getAuthorFaqs();
+
+    // 3. Search query change hone par filter trigger hoga
+    ever(searchQuery, (_) {
+      _filterAuthorFaqs(searchQuery.value);
+    });
+  }
+
+  Future<void> refreshHelpSupport() async {
+    await getAuthorHelpSupportData();
+    await getAuthorFaqs();
   }
 
   Future<void> getAuthorHelpSupportData() async {
@@ -44,9 +59,15 @@ class AuthorHelpSupportController extends GetxController {
 
       if (response['success'] == true) {
         List<dynamic> list = response['data'] ?? [];
-        faqAuthorList.value = list
+
+        // 4. Original list mein data store karein
+        _originalFaqAuthorList = list
             .map((item) => AuthorFaqModel.fromJson(item as Map<String, dynamic>))
             .toList();
+
+        // 5. Initial load par filter call karein
+        _filterAuthorFaqs(searchQuery.value);
+
       } else {
         Utils.showToast(response['message'] ?? "Error", true);
       }
@@ -54,6 +75,20 @@ class AuthorHelpSupportController extends GetxController {
       debugPrint("HelpSupportController getFaqs error: $e");
     } finally {
       isFaqsLoading.value = false;
+    }
+  }
+
+  // 6. Filtering logic for Author FAQs
+  void _filterAuthorFaqs(String query) {
+    if (query.isEmpty) {
+      faqAuthorList.assignAll(_originalFaqAuthorList);
+    } else {
+      faqAuthorList.assignAll(
+        _originalFaqAuthorList.where((faq) =>
+        faq.question.toLowerCase().contains(query.toLowerCase()) ||
+            faq.answer.toLowerCase().contains(query.toLowerCase())
+        ).toList(),
+      );
     }
   }
 }

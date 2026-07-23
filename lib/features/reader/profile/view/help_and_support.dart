@@ -27,125 +27,132 @@ class HelpAndSupport extends StatelessWidget {
         : Get.find<HelpSupportController>();
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            customHeader(
-              context: context,
-              title: "Help & Support",
-              onBack: () => Get.back(),
-              onIconPressed: () {},
-            ),
-            SizedBox(height: 2.h),
-            searchWidget(
-              onChanged: (val) {
-                controller.searchQuery.value = val;
-              },
-            ),
-            SizedBox(height: 1.5.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Obx(() {
-                // 3. Role ke mutabiq sahi support data variable uthayein
-                final data = role == 'author'
-                    ? controller.supportAuthorData.value
-                    : controller.supportData.value;
+      body: RefreshIndicator(
+        onRefresh: () => controller.refreshHelpSupport(),
+        child: SafeArea(
+          child: Column(
+            children: [
+              customHeader(
+                context: context,
+                title: "Help & Support",
+                onBack: () => Get.back(),
+                onIconPressed: () {},
+              ),
+              SizedBox(height: 2.h),
+              searchWidget(
+                onChanged: (val) {
+                  controller.searchQuery.value = val;
+                },
+              ),
+              SizedBox(height: 1.5.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Obx(() {
+                  // 3. Role ke mutabiq sahi support data variable uthayein
+                  final data = role == 'author'
+                      ? controller.supportAuthorData.value
+                      : controller.supportData.value;
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // 1. EMAIL BUTTON
-                    libraryStatCardIcon(
-                      title: 'Email',
-                      imagePath: "assets/png/email.png",
-                      value: '',
-                      subtitle: '',
-                      ontap: () async {
-                        if (data != null && data.email.isNotEmpty) {
-                          final Uri emailUri = Uri(scheme: 'mailto', path: data.email);
-                          if (await canLaunchUrl(emailUri)) {
-                            await launchUrl(emailUri);
-
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // 1. EMAIL BUTTON
+                      libraryStatCardIcon(
+                        title: 'Email',
+                        imagePath: "assets/png/email.png",
+                        value: '',
+                        subtitle: '',
+                        ontap: () async {
+                          if (data != null && data.email.isNotEmpty) {
+                            final Uri emailUri = Uri(scheme: 'mailto', path: data.email);
+                            if (await canLaunchUrl(emailUri)) {
+                              await launchUrl(emailUri);
+                            }
+                          } else {
+                            Utils.showToast("Email not available", true);
                           }
-                        } else {
-                          Utils.showToast("Email not available", true);
-                          print(role);
-                        }
-                      },
-                    ),
+                        },
+                      ),
 
-                    // 2. CHAT BUTTON
-                    libraryStatCardIcon(
-                      title: 'Chat',
-                      imagePath: "assets/png/chat.png",
-                      value: '',
-                      subtitle: '',
-                      ontap: () async {
-                        if (data != null && data.supportUrl.isNotEmpty) {
-                          final Uri url = Uri.parse(data.supportUrl);
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                      // 2. CHAT BUTTON
+                      libraryStatCardIcon(
+                        title: 'Chat',
+                        imagePath: "assets/png/chat.png",
+                        value: '',
+                        subtitle: '',
+                        ontap: () async {
+                          if (data != null && data.supportUrl.isNotEmpty) {
+                            final Uri url = Uri.parse(data.supportUrl);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            }
+                          } else {
+                            Get.toNamed("/contact");
                           }
-                        } else {
-                          Get.toNamed("/contact");
-                        }
-                      },
-                    ),
+                        },
+                      ),
 
-                    // 3. CALL BUTTON
-                    libraryStatCardIcon(
-                      title: 'Call',
-                      imagePath: "assets/png/call.png",
-                      value: '',
-                      subtitle: '',
-                      ontap: () async {
-                        if (data != null && data.phone.isNotEmpty) {
-                          final Uri callUri = Uri(scheme: 'tel', path: data.phone);
-                          if (await canLaunchUrl(callUri)) {
-                            await launchUrl(callUri);
+                      // 3. CALL BUTTON
+                      libraryStatCardIcon(
+                        title: 'Call',
+                        imagePath: "assets/png/call.png",
+                        value: '',
+                        subtitle: '',
+                        ontap: () async {
+                          if (data != null && data.phone.isNotEmpty) {
+                            final Uri callUri = Uri(scheme: 'tel', path: data.phone);
+                            if (await canLaunchUrl(callUri)) {
+                              await launchUrl(callUri);
+                            }
+                          } else {
+                            Utils.showToast("Phone number not available", true);
                           }
-                        } else {
-                          Utils.showToast("Phone number not available", true);
-                        }
-                      },
-                    ),
-                  ],
-                );
-              }),
-            ),
-            SizedBox(height: 1.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: customText(
-                  text: "FAQS",
-                  fontSize: 16.sp,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w600,
-                  color: whiteColor,
+                        },
+                      ),
+                    ],
+                  );
+                }),
+              ),
+              SizedBox(height: 1.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: customText(
+                    text: "FAQS",
+                    fontSize: 16.sp,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w600,
+                    color: whiteColor,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 1.h),
-            Obx(() {
-              // 4. Role ke mutabiq sahi FAQ list uthayein
-              final faqs = role == 'author'
-                  ? controller.faqAuthorList
-                  : controller.faqList;
+              SizedBox(height: 1.h),
+              Obx(() {
+                // 4. Role ke mutabiq sahi FAQ list uthayein
+                final faqs = role == 'author'
+                    ? controller.faqAuthorList
+                    : controller.faqList;
 
-              return Expanded(
-                child: controller.isFaqsLoading.value
-                    ? const Center(
-                  child: CircularProgressIndicator(
-                    color: buttonColor,
-                  ),
-                )
-                    : SingleChildScrollView(
-                  child: ListView.builder(
+                return Expanded(
+                  child: controller.isFaqsLoading.value
+                      ? const Center(
+                    child: CircularProgressIndicator(
+                      color: buttonColor,
+                    ),
+                  )
+                      : faqs.isEmpty
+                      ? Center(
+                    child: customText(
+                      text: "No FAQS",
+                      fontSize: 16.sp,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w600,
+                      color: greyColor,
+                    ),
+                  )
+                      : ListView.builder(
                     padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: faqs.length,
                     itemBuilder: (context, index) {
                       final faq = faqs[index];
@@ -155,11 +162,11 @@ class HelpAndSupport extends StatelessWidget {
                       );
                     },
                   ),
-                ),
-              );
-            }),
-            SizedBox(height: 2.h),
-          ],
+                );
+              }),
+              SizedBox(height: 2.h),
+            ],
+          ),
         ),
       ),
     );

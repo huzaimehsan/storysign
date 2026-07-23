@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/image_picker.dart';
-import '../model/profile_model.dart';
+import '../model/profile_screen_model.dart';
 
 import '../../Home/controller/home_controller.dart';
 import 'profile_controller.dart';
@@ -107,8 +108,8 @@ class EditProfileController extends GetxController {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         Utils.showToast('Profile updated successfully', false);
         clearImageProfile();
-        if (Get.isRegistered<ProfileController>()) {
-          Get.find<ProfileController>().getProfile();
+        if (Get.isRegistered<ProfileScreenController>()) {
+          Get.find<ProfileScreenController>().getProfile();
         }
         if (Get.isRegistered<HomeController>()) {
           Get.find<HomeController>().loadUserProfile();

@@ -7,7 +7,7 @@ import 'package:storysign/widgets/customText_widget.dart';
 import 'package:storysign/widgets/subscription_header_widget.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 import '../controller/place_signature_controller.dart';
 
 class PlaceSignatureScreen extends GetView<PlaceSignatureController> {

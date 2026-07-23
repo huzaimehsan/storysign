@@ -56,7 +56,7 @@ class HomeController extends GetxController {
   final TextEditingController personalMessageController =
       TextEditingController();
 
-  RxList<BookItem> trackRequest = <BookItem>[].obs;
+  RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
   Rxn<UserProfile> userProfile = Rxn<UserProfile>();
@@ -118,8 +118,8 @@ class HomeController extends GetxController {
   // filteredBooks getter POORI TARAH HATA DEIN (booksList declare hi nahi hai yahan)
 
   // filteredTrackRequest ko is se replace karein:
-  List<BookItem> get filteredTrackRequest {
-    List<BookItem> requests = List<BookItem>.from(trackRequest);
+  List<NewBookItem> get filteredTrackRequest {
+    List<NewBookItem> requests = List<NewBookItem>.from(trackRequest);
 
     // 1. Tab filter (All / In Process / Delivered)
     if (selectedTab.value == "In Process") {

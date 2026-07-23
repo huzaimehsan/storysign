@@ -69,18 +69,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                     }
 
                     final profile = controller.profileModel.value;
-                    String formattedDate = "";
-                    if (profile?.dateJoined != null &&
-                        profile!.dateJoined.isNotEmpty) {
-                      try {
-                        DateTime dateTime = DateTime.parse(profile.dateJoined);
-                        formattedDate = DateFormat(
-                          'dd MMM, yyyy',
-                        ).format(dateTime);
-                      } catch (e) {
-                        formattedDate = profile.dateJoined;
-                      }
-                    }
+
 
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -90,7 +79,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                             imagePath: profile?.profilePicture ?? "",
                             name: profile?.fullName ?? "No Name",
                             email: profile?.email ?? "No Email",
-                            joinedDate: formattedDate,
+                            joinedDate: profile?.dateJoined ?? " ",
                             author: false,
                             onEdit: () {
                               Get.toNamed(
@@ -143,24 +132,26 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                             onSeeAll: () {},
                           ),
 
-                          recentSignedBookCard(
-                            title: 'Things Fall Apart',
-                            price: '\u0024 10.00',
-                            date: '22 june, 2026',
-                            status: 'Completed',
+                          Obx(
+                             () {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                physics: const NeverScrollableScrollPhysics(), // Agar yeh kisi aur scrollable widget ke andar hai
+                                itemCount: controller.books.length, // Yahan apni list ki length ya data.length dein
+                                itemBuilder: (context, index) {
+                                  final book = controller.books[index];
+                                  return recentSignedBookCard(
+                                    title: book.title ?? " ",
+                                    price: '\u0024 10.00',
+                                    date: book.uploadDate.toString().split(' ')[0],
+                                    status: book.status,
+                                  );
+                                },
+                              );
+                            }
                           ),
-                          recentSignedBookCard(
-                            title: 'God of Small Things',
-                            price: '\u0024 10.00',
-                            date: '22 june, 2026',
-                            status: 'Completed',
-                          ),
-                          recentSignedBookCard(
-                            title: 'Pride and Prejudice',
-                            price: '\u0024 10.00',
-                            date: '22 june, 2026',
-                            status: 'Completed',
-                          ),
+
                           SizedBox(height: 1.h),
                           sectionHeader(
                             title: 'Download History',

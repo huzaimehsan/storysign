@@ -67,7 +67,7 @@ Widget RequestDetailWidget({
                       SizedBox(height: 0.2.h),
                       customText(
                         fontFamily: "Poppins",
-                        text: authorName,
+                        text: "Author : $authorName",
                         color: secondryColor.withOpacity(0.7),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,

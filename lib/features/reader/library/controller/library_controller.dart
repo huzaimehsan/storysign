@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -220,66 +221,103 @@ class ReaderController extends GetxController {
       isLibrary.value = false;
     }
   }
-
   Future<void> _fetchBooksWithStatus(String status) async {
     try {
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      if (token.isEmpty) {
-        print('DEBUG: Token is empty');
-        return;
-      }
-
-      final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
-
-      // Build query parameters - only add status if it's valid (signed or unsigned)
+      // Query parameters manually build karo, kyunki baseGetAPI seedha
+      // "$baseURL$endPoint" string leta hai, Uri object nahi
       final Map<String, String> queryParams = {
         'page': '1',
         'limit': '10',
       };
 
-      // Only add status if it's signed or unsigned (not 'all')
       if (status == 'signed' || status == 'unsigned') {
         queryParams['status'] = status;
       }
 
-      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-      print('DEBUG: API URL: $uri');
+      final queryString = Uri(queryParameters: queryParams).query;
+      final endpoint = '${ApiEndPoints.listMyBook}?$queryString';
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      debugPrint('DEBUG: API Endpoint: $endpoint');
 
-      print('DEBUG: Status Code: ${response.statusCode}');
-      print('DEBUG: Response Body: ${response.body}');
+      final response = await BaseService().baseGetAPI(endpoint);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        print('DEBUG: Decoded Response: $responseBody');
+      debugPrint('DEBUG: Response: $response');
 
-        if (responseBody['items'] != null) {
-          final BookResponseModel model = BookResponseModel.fromJson(responseBody);
-          print('DEBUG: Parsed ${model.items.length} books');
+      if (response['success'] == true) {
+        if (response['items'] != null) {
+          final BookResponseModel model = BookResponseModel.fromJson(response);
+          debugPrint('DEBUG: Parsed ${model.items.length} books');
           booksList.addAll(model.items);
-          print('DEBUG: Total books after adding: ${booksList.length}');
-        } else if (responseBody['message'] != null) {
-          Utils.showToast(responseBody['message'], false);
-        }
-      } else {
-        try {
-          final errorBody = jsonDecode(response.body);
-          final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
-          Utils.showToast(errorMsg, true);
-        } catch (_) {
-          Utils.showToast('Failed to load books: ${response.statusCode}', true);
+          debugPrint('DEBUG: Total books after adding: ${booksList.length}');
+        } else if (response['message'] != null) {
+          Utils.showToast(response['message'], false);
         }
       }
+      // baseGetAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
-      print('DEBUG: Exception: $e');
+      debugPrint('DEBUG: Exception: $e');
       Utils.showToast('Error: $e', true);
     }
   }
+  // Future<void> _fetchBooksWithStatus(String status) async {
+  //   try {
+  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+  //     if (token.isEmpty) {
+  //       print('DEBUG: Token is empty');
+  //       return;
+  //     }
+  //
+  //     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
+  //
+  //     // Build query parameters - only add status if it's valid (signed or unsigned)
+  //     final Map<String, String> queryParams = {
+  //       'page': '1',
+  //       'limit': '10',
+  //     };
+  //
+  //     // Only add status if it's signed or unsigned (not 'all')
+  //     if (status == 'signed' || status == 'unsigned') {
+  //       queryParams['status'] = status;
+  //     }
+  //
+  //     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+  //     print('DEBUG: API URL: $uri');
+  //
+  //     final response = await http.get(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+  //
+  //     print('DEBUG: Status Code: ${response.statusCode}');
+  //     print('DEBUG: Response Body: ${response.body}');
+  //
+  //     if (response.statusCode >= 200 && response.statusCode < 300) {
+  //       final responseBody = jsonDecode(response.body);
+  //       print('DEBUG: Decoded Response: $responseBody');
+  //
+  //       if (responseBody['items'] != null) {
+  //         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
+  //         print('DEBUG: Parsed ${model.items.length} books');
+  //         booksList.addAll(model.items);
+  //         print('DEBUG: Total books after adding: ${booksList.length}');
+  //       } else if (responseBody['message'] != null) {
+  //         Utils.showToast(responseBody['message'], false);
+  //       }
+  //     } else {
+  //       try {
+  //         final errorBody = jsonDecode(response.body);
+  //         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
+  //         Utils.showToast(errorMsg, true);
+  //       } catch (_) {
+  //         Utils.showToast('Failed to load books: ${response.statusCode}', true);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('DEBUG: Exception: $e');
+  //     Utils.showToast('Error: $e', true);
+  //   }
+  // }
 }

@@ -9,7 +9,7 @@ import 'package:storysign/features/author/request/model/request_detail_controlle
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../home/model/home_model.dart';

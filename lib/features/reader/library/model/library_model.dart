@@ -23,7 +23,6 @@ class BookResponseModel {
     );
   }
 }
-
 class BookItem {
   final String id;
   final String title;
@@ -33,6 +32,7 @@ class BookItem {
   final String status;
   final String uploadDate;
   final String readerId;
+  final String? autographRequestId; // 💡 Yeh field add karein
 
   BookItem({
     required this.id,
@@ -43,6 +43,7 @@ class BookItem {
     required this.status,
     required this.uploadDate,
     required this.readerId,
+    this.autographRequestId, // 💡 Constructor mein add karein
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) {
@@ -55,6 +56,7 @@ class BookItem {
       status: json['status'] ?? '',
       uploadDate: json['uploadDate'] ?? '',
       readerId: json['readerId'] ?? '',
+      autographRequestId: json['autographRequestId'], // 💡 JSON se parse karein
     );
   }
 }

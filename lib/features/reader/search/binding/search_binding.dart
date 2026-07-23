@@ -8,6 +8,6 @@ class SearchBinding implements Bindings {
   void dependencies() {
     Get.lazyPut<SearchPageController>(() => SearchPageController());
     Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<AuthorDetailController>(() => AuthorDetailController());
+    Get.lazyPut<ReaderDetailController>(() => ReaderDetailController());
   }
 }

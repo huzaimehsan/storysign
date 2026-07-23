@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 
 class PlaceSignatureController extends GetxController {
   Uint8List signatureBytes = Uint8List(0);

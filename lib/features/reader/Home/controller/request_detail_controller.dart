@@ -11,12 +11,12 @@ import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
-class AuthorDetailController extends GetxController {
+class ReaderDetailController extends GetxController {
   String? autographRequestId;
 
   RxBool isloading = false.obs;
   RxString errorMessage = ''.obs;
-  Rxn<BookItem> selectedRequest = Rxn<BookItem>();
+  Rxn<NewBookItem> selectedRequest = Rxn<NewBookItem>();
 
 
   @override
@@ -35,6 +35,7 @@ class AuthorDetailController extends GetxController {
       }
     }
   }
+
   Future<void> authorDetail(String? requestId) async {
     final normalizedId = requestId?.trim();
     if (normalizedId == null || normalizedId.isEmpty) {
@@ -44,30 +45,12 @@ class AuthorDetailController extends GetxController {
 
     try {
       isloading.value = true;
-      EasyLoading.show(status: 'Loading...'); // Loading spinner start
-
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-
-      if (token.isEmpty) {
-        throw Exception('User not logged in');
-      }
 
       final endpoint = ApiEndPoints.getAutographRequestDetails(normalizedId);
-      final uri = Uri.parse('${BaseService().baseURL}$endpoint');
+      final response = await BaseService().baseGetAPI(endpoint);
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final decodedBody = jsonDecode(response.body);
-
-        // Ensure fromResponse handles the map correctly
-        final parsedRequest = BookItem.fromResponse(decodedBody);
+      if (response['success'] == true) {
+        final parsedRequest = NewBookItem.fromResponse(response);
 
         if (parsedRequest != null) {
           selectedRequest.value = parsedRequest;
@@ -75,17 +58,72 @@ class AuthorDetailController extends GetxController {
           throw Exception('Failed to parse data');
         }
       } else {
-        throw Exception('Server Error: ${response.statusCode}');
+        throw Exception(response['message']?.toString() ?? 'Server Error');
       }
     } catch (e) {
       debugPrint('Error: $e');
       errorMessage.value = 'Something went wrong';
-      Utils.showToast(errorMessage.value, true);
+      // baseGetAPI already error case mein specific toast dikha chuka hoga —
+      // isliye yahan generic toast dobara mat lagao, warna double toast aayega.
+      // Sirf tab dikhao jab error humara apna hai (jaise parsing fail):
+      if (e.toString().contains('Failed to parse data')) {
+        Utils.showToast(errorMessage.value, true);
+      }
     } finally {
       isloading.value = false;
-      EasyLoading.dismiss(); // Loading spinner end
     }
   }
+  // Future<void> authorDetail(String? requestId) async {
+  //   final normalizedId = requestId?.trim();
+  //   if (normalizedId == null || normalizedId.isEmpty) {
+  //     errorMessage.value = 'Request id not found';
+  //     return;
+  //   }
+  //
+  //   try {
+  //     isloading.value = true;
+  //     EasyLoading.show(status: 'Loading...'); // Loading spinner start
+  //
+  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+  //
+  //     if (token.isEmpty) {
+  //       throw Exception('User not logged in');
+  //     }
+  //
+  //     final endpoint = ApiEndPoints.getAutographRequestDetails(normalizedId);
+  //     final uri = Uri.parse('${BaseService().baseURL}$endpoint');
+  //
+  //     final response = await http.get(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final decodedBody = jsonDecode(response.body);
+  //
+  //       // Ensure fromResponse handles the map correctly
+  //       final parsedRequest = BookItem.fromResponse(decodedBody);
+  //
+  //       if (parsedRequest != null) {
+  //         selectedRequest.value = parsedRequest;
+  //       } else {
+  //         throw Exception('Failed to parse data');
+  //       }
+  //     } else {
+  //       throw Exception('Server Error: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error: $e');
+  //     errorMessage.value = 'Something went wrong';
+  //     Utils.showToast(errorMessage.value, true);
+  //   } finally {
+  //     isloading.value = false;
+  //     EasyLoading.dismiss(); // Loading spinner end
+  //   }
+  // }
   //
   //
   // Future<void> processPayment({

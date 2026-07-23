@@ -5,6 +5,7 @@ import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
 Widget profileHeaderCard({
   required String imagePath,
@@ -101,12 +102,13 @@ Widget profileHeaderCard({
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700, // Yahan Bold kar diya
                   ),
-                  customText(
-                    fontFamily: 'Poppins',
-                    text: joinedDate,
-                    color: secondryColor.withOpacity(0.7),
+                  FormattedRequestDate(
+                    dateString: joinedDate, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                    dateFormat: 'dd MMM, yyyy',
+                    color:  secondryColor.withOpacity(0.7),
                     fontSize: 13.sp,
-                    fontWeight: FontWeight.w400, // Normal weight
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
                   ),
                 ],
               ),

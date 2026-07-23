@@ -14,7 +14,6 @@ import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/final_review.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
-import 'package:storysign/features/author/request/binding/request_detail_binding.dart' as author_request_detail;
 
 import 'package:storysign/features/author/subscriptionplan/binding/stripe_payment_binding.dart';
 import 'package:storysign/features/author/subscriptionplan/binding/subscription_plan_binding.dart';
@@ -51,9 +50,11 @@ import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 import 'package:storysign/features/reader/search/binding/search_binding.dart';
 
 import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
+import '../../features/author/request/binding/request_detail_binding.dart';
 import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
-import '../../features/reader/Home/binding/request_detail_binding.dart';
+
+import '../../features/reader/Home/binding/reader_request_detail_binding.dart';
 import '../../features/reader/Home/view/request_autograph.dart';
 import '../../features/reader/Home/view/select_author.dart';
 import '../../features/reader/Home/view/track_request.dart';
@@ -165,7 +166,7 @@ class AppRoutes {
     GetPage(
       name: '/request',
       page: () => RequestDetail(),
-      bindings: [RequestDetailBinding(), PaymentBinding()],
+      bindings: [ReaderRequestDetailBinding(), PaymentBinding()],
     ),
     GetPage(
       name: '/makepayment',
@@ -250,7 +251,7 @@ class AppRoutes {
     GetPage(
       name: '/requestDetail',
       page: () => RequestDetailAuthor(),
-      binding: author_request_detail.RequestDetailBinding(),
+      binding: AuthorRequestDetailBinding(),
     ),
 
     GetPage(

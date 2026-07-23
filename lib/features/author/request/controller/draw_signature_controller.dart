@@ -4,7 +4,7 @@ import 'package:signature/signature.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/author/request/controller/place_signature_controller.dart';
 
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 
 class DrawSignatureController extends GetxController {
   SignatureController signatureController = SignatureController(

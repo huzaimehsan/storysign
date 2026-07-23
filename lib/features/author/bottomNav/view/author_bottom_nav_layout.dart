@@ -19,7 +19,10 @@ import 'package:storysign/features/author/request/binding/final_review_binding.d
 
 import '../../../reader/library/view/reader_library.dart';
 import '../../profile/binding/profile_binding.dart';
-
+import '../../request/binding/add_message_binding.dart';
+import '../../request/binding/draw_signature_binding.dart';
+import '../../request/binding/ebook_preview_binding.dart';
+import '../../request/binding/request_detail_binding.dart';
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
@@ -48,17 +51,23 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   Route _buildRequestRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/requestDetail':
-        return MaterialPageRoute(builder: (_) => const RequestDetailAuthor(),
-        settings: settings,
+        return GetPageRoute(
+          page: () => const RequestDetailAuthor(),
+          binding: AuthorRequestDetailBinding(),
+          settings: settings,
         );
-
-        case '/pdfReview':
-        return MaterialPageRoute(
-          builder: (_) => const BookPreviewPage(),
+      case '/pdfReview':
+        return GetPageRoute(
+          page: () => BookPreviewPage(),
+          binding: EbookPreviewBinding(),
           settings: settings,
         );
       case '/drawSignature':
-        return MaterialPageRoute(builder: (_) => const DrawSignatureScreen());
+        return GetPageRoute(
+          page: () => DrawSignatureScreen(),
+          binding: DrawSignatureBinding(),
+          settings: settings,
+        );
       case '/placeSignature':
         return GetPageRoute(
           page: () => const PlaceSignatureScreen(),
@@ -66,7 +75,11 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
           settings: settings,
         );
       case '/addMessage':
-        return MaterialPageRoute(builder: (_) => const AddMessageScreen());
+        return GetPageRoute(
+          page: () => const AddMessageScreen(),
+          binding: AddMessageBinding(),
+          settings: settings,
+        );
       case '/authorFinalReview':
         return GetPageRoute(
           page: () => const FinalReviewScreen(),
@@ -80,15 +93,13 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
 
   // AuthorBottomNavLayout file mein ye changes karein:
 
-
-
-
-
   Route _buildDeliveredRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/requestDetail':
-        return MaterialPageRoute(builder: (_) => const RequestDetailAuthor(),settings: settings);
-
+        return MaterialPageRoute(
+          builder: (_) => const RequestDetailAuthor(),
+          settings: settings,
+        );
 
       default:
         return MaterialPageRoute(builder: (_) => const DeliveredScreen());
@@ -109,7 +120,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
       child: Scaffold(
         extendBody: true,
         body: Obx(
-          () => IndexedStack(
+              () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
               // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
@@ -126,8 +137,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               // Tab 2: Library
               Navigator(
                 key: _navigatorKeys[2],
-                onGenerateRoute:_buildDeliveredRoute,
-
+                onGenerateRoute: _buildDeliveredRoute,
               ),
               // Tab 3: Notifications
               Navigator(
@@ -141,8 +151,8 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
                   );
                 },
               ),
-              // Tab 4: Profile
 
+              // Tab 4: Profile
             ],
           ),
         ),

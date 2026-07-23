@@ -15,8 +15,8 @@ class RequestBinding implements Bindings {
     Get.lazyPut<DrawSignatureController>(() => DrawSignatureController());
     Get.lazyPut<PlaceSignatureController>(() => PlaceSignatureController());
     Get.lazyPut<AddMessageController>(() => AddMessageController());
-    Get.lazyPut<RequestDetailController>(() => RequestDetailController());
-    Get.lazyPut<FinalReviewController>(() => FinalReviewController());
+     Get.lazyPut<RequestDetailController>(() => RequestDetailController());
+     Get.lazyPut<FinalReviewController>(() => FinalReviewController());
   }
 }
 

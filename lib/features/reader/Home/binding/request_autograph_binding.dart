@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:storysign/features/reader/Home/binding/request_detail_binding.dart';
+import 'package:storysign/features/reader/Home/binding/reader_request_detail_binding.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/controller/payment_controller.dart';
 import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';

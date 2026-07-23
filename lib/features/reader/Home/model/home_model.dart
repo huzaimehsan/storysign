@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 // List parsing functions ka naam update kiya
-List<AllAuthorModel> allAuthorFromJson(String str) =>
-    List<AllAuthorModel>.from(json.decode(str).map((x) => AllAuthorModel.fromJson(x)));
+List<AllAuthorModel> allAuthorFromJson(String str) => List<AllAuthorModel>.from(
+  json.decode(str).map((x) => AllAuthorModel.fromJson(x)),
+);
 
 String allAuthorToJson(List<AllAuthorModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -54,13 +55,14 @@ class AuthorDetailModel {
     required this.dateJoined,
   });
 
-  factory AuthorDetailModel.fromJson(Map<String, dynamic> json) => AuthorDetailModel(
-    id: json["id"]?.toString() ?? "",
-    fullName: json["fullName"]?.toString() ?? "Author",
-    profilePicture: json["profilePicture"],
-    bio: json["bio"]?.toString() ?? "",
-    dateJoined: _parseDate(json["dateJoined"]),
-  );
+  factory AuthorDetailModel.fromJson(Map<String, dynamic> json) =>
+      AuthorDetailModel(
+        id: json["id"]?.toString() ?? "",
+        fullName: json["fullName"]?.toString() ?? "Author",
+        profilePicture: json["profilePicture"],
+        bio: json["bio"]?.toString() ?? "",
+        dateJoined: _parseDate(json["dateJoined"]),
+      );
 }
 
 DateTime _parseDate(dynamic value) {
@@ -83,11 +85,8 @@ DateTime _parseDate(dynamic value) {
   return DateTime.now();
 }
 
-
-
-
 class TrackRequestModel {
-  final List<BookItem> items;
+  final List<NewBookItem> items;
   final int total;
   final int page;
   final int limit;
@@ -103,14 +102,16 @@ class TrackRequestModel {
 
   factory TrackRequestModel.fromJson(Map<String, dynamic> json) {
     return TrackRequestModel(
-      items: (json['items'] as List).map((i) => BookItem.fromJson(i)).toList(),
+      items: (json['items'] as List).map((i) => NewBookItem.fromJson(i)).toList(),
       total: json['total'],
       page: json['page'],
       limit: json['limit'],
       totalPages: json['totalPages'],
     );
   }
-}class BookItem {
+}
+
+class NewBookItem {
   final String id;
   final String title;
   final String coverImage;
@@ -128,7 +129,7 @@ class TrackRequestModel {
   final Reader reader;
   final Author author;
 
-  BookItem({
+  NewBookItem({
     required this.id,
     required this.title,
     required this.coverImage,
@@ -148,7 +149,7 @@ class TrackRequestModel {
   });
 
   // --- copyWith method ---
-  BookItem copyWith({
+  NewBookItem copyWith({
     String? id,
     String? title,
     String? coverImage,
@@ -166,7 +167,7 @@ class TrackRequestModel {
     Reader? reader,
     Author? author,
   }) {
-    return BookItem(
+    return NewBookItem(
       id: id ?? this.id,
       title: title ?? this.title,
       coverImage: coverImage ?? this.coverImage,
@@ -186,48 +187,112 @@ class TrackRequestModel {
     );
   }
 
-  factory BookItem.fromJson(Map<String, dynamic> json) {
+  factory NewBookItem.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = Map<String, dynamic>.from(json);
 
-    final dynamic bookJson = _firstMap(data, ['book', 'bookData', 'bookDetails', 'ebook']);
-    final dynamic readerJson = _firstMap(data, ['reader', 'readerData', 'readerDetails']);
-    final dynamic authorJson = _firstMap(data, ['author', 'authorData', 'authorDetails', 'authorInfo']);
+    final dynamic bookJson = _firstMap(data, [
+      'book',
+      'bookData',
+      'bookDetails',
+      'ebook',
+    ]);
+    final dynamic readerJson = _firstMap(data, [
+      'reader',
+      'readerData',
+      'readerDetails',
+    ]);
+    final dynamic authorJson = _firstMap(data, [
+      'author',
+      'authorData',
+      'authorDetails',
+      'authorInfo',
+    ]);
 
-    return BookItem(
+    return NewBookItem(
       id: data['id']?.toString() ?? '',
-      title: _stringValue(data, ['bookTitle', 'title', 'name'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['title', 'name'])),
-      coverImage: _stringValue(data, ['coverImage', 'imageUrl'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['coverImage', 'imageUrl'])),
+      title: _stringValue(
+        data,
+        ['bookTitle', 'title', 'name'],
+        fallback: _stringValue(
+          bookJson is Map ? Map<String, dynamic>.from(bookJson) : {},
+          ['title', 'name'],
+        ),
+      ),
+      coverImage: _stringValue(
+        data,
+        ['coverImage', 'imageUrl'],
+        fallback: _stringValue(
+          bookJson is Map ? Map<String, dynamic>.from(bookJson) : {},
+          ['coverImage', 'imageUrl'],
+        ),
+      ),
       bookPdfUrl: _stringValue(data, ['bookPdfUrl', 'book_pdf_url', 'pdfUrl']),
       signedPdfUrl: _stringValue(data, ['signedPdfUrl', 'signed_pdf_url']),
-      personalMessage: _stringValue(data, ['personalMessage', 'message', 'note'], fallback: _stringValue(bookJson is Map ? Map<String, dynamic>.from(bookJson) : {}, ['message'])),
+      personalMessage: _stringValue(
+        data,
+        ['personalMessage', 'message', 'note'],
+        fallback: _stringValue(
+          bookJson is Map ? Map<String, dynamic>.from(bookJson) : {},
+          ['message'],
+        ),
+      ),
       status: _stringValue(data, ['status', 'requestStatus', 'state']),
-      rejectionReason: _stringValue(data, ['rejectionReason', 'rejection_reason']),
+      rejectionReason: _stringValue(data, [
+        'rejectionReason',
+        'rejection_reason',
+      ]),
       authorMessage: _stringValue(data, ['authorMessage', 'author_message']),
       uploadDate: _stringValue(data, ['requestDate', 'createdAt', 'updatedAt']),
-      feeAmount: int.tryParse(_stringValue(data, ['feeAmount', 'price', 'totalAmount'])) ?? 0,
+      feeAmount:
+          int.tryParse(
+            _stringValue(data, ['feeAmount', 'price', 'totalAmount']),
+          ) ??
+          0,
       isPaid: _boolValue(data, ['isPaid', 'is_paid', 'paid']),
-      paymentIntentId: _stringValue(data, ['paymentIntentId', 'payment_intent_id']),
+      paymentIntentId: _stringValue(data, [
+        'paymentIntentId',
+        'payment_intent_id',
+      ]),
       clientSecret: _stringValue(data, ['clientSecret', 'client_secret']),
-      reader: Reader.fromJson(Map<String, dynamic>.from(readerJson is Map ? readerJson : {})),
+      reader: Reader.fromJson(
+        Map<String, dynamic>.from(readerJson is Map ? readerJson : {}),
+      ),
       author: Author.fromJson({
-        'id': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['id']),
-        'fullName': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['fullName', 'name', 'authorName']),
-        'profilePicture': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['profilePicture', 'avatar']),
-        'bio': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['bio', 'about']),
-        'dateJoined': _stringValue(authorJson is Map ? Map<String, dynamic>.from(authorJson) : {}, ['dateJoined', 'createdAt']),
+        'id': _stringValue(
+          authorJson is Map ? Map<String, dynamic>.from(authorJson) : {},
+          ['id'],
+        ),
+        'fullName': _stringValue(
+          authorJson is Map ? Map<String, dynamic>.from(authorJson) : {},
+          ['fullName', 'name', 'authorName'],
+        ),
+        'profilePicture': _stringValue(
+          authorJson is Map ? Map<String, dynamic>.from(authorJson) : {},
+          ['profilePicture', 'avatar'],
+        ),
+        'bio': _stringValue(
+          authorJson is Map ? Map<String, dynamic>.from(authorJson) : {},
+          ['bio', 'about'],
+        ),
+        'dateJoined': _stringValue(
+          authorJson is Map ? Map<String, dynamic>.from(authorJson) : {},
+          ['dateJoined', 'createdAt'],
+        ),
       }),
     );
   }
 
-  static BookItem? fromResponse(dynamic response) {
+  static NewBookItem? fromResponse(dynamic response) {
     if (response is Map<String, dynamic>) {
       Map<String, dynamic> merged = Map<String, dynamic>.from(response);
       if (response.containsKey('request') && response['request'] is Map) {
         merged = Map<String, dynamic>.from(response['request']);
-        if (response.containsKey('clientSecret')) merged['clientSecret'] = response['clientSecret'];
-        if (response.containsKey('paymentIntentId')) merged['paymentIntentId'] = response['paymentIntentId'];
+        if (response.containsKey('clientSecret'))
+          merged['clientSecret'] = response['clientSecret'];
+        if (response.containsKey('paymentIntentId'))
+          merged['paymentIntentId'] = response['paymentIntentId'];
       }
-      return BookItem.fromJson(merged);
+      return NewBookItem.fromJson(merged);
     }
     return null;
   }
@@ -235,18 +300,27 @@ class TrackRequestModel {
 
 // Helpers
 dynamic _firstMap(Map<String, dynamic> data, List<String> keys) {
-  for (final key in keys) { if (data[key] is Map) return data[key]; }
+  for (final key in keys) {
+    if (data[key] is Map) return data[key];
+  }
   return {};
 }
 
-String _stringValue(Map<String, dynamic> data, List<String> keys, {String fallback = ''}) {
-  for (final key in keys) { if (data[key] != null) return data[key].toString(); }
+String _stringValue(
+  Map<String, dynamic> data,
+  List<String> keys, {
+  String fallback = '',
+}) {
+  for (final key in keys) {
+    if (data[key] != null) return data[key].toString();
+  }
   return fallback;
 }
 
 bool _boolValue(Map<String, dynamic> data, List<String> keys) {
   for (final key in keys) {
-    if (data[key] == true || data[key].toString().toLowerCase() == 'true') return true;
+    if (data[key] == true || data[key].toString().toLowerCase() == 'true')
+      return true;
   }
   return false;
 }
@@ -256,13 +330,26 @@ class Reader {
   final String fullName;
   final String profilePicture;
 
-  Reader({required this.id, required this.fullName, required this.profilePicture});
+  Reader({
+    required this.id,
+    required this.fullName,
+    required this.profilePicture,
+  });
 
   factory Reader.fromJson(Map<String, dynamic> json) {
     return Reader(
       id: json['id']?.toString() ?? '',
-      fullName: _stringValue(Map<String, dynamic>.from(json), ['fullName', 'name', 'full_name']),
-      profilePicture: _stringValue(Map<String, dynamic>.from(json), ['profilePicture', 'profile_picture', 'avatar', 'image']),
+      fullName: _stringValue(Map<String, dynamic>.from(json), [
+        'fullName',
+        'name',
+        'full_name',
+      ]),
+      profilePicture: _stringValue(Map<String, dynamic>.from(json), [
+        'profilePicture',
+        'profile_picture',
+        'avatar',
+        'image',
+      ]),
     );
   }
 }
@@ -274,16 +361,37 @@ class Author {
   final String bio;
   final String dateJoined;
 
-  Author({required this.id, required this.fullName, this.profilePicture, required this.bio, required this.dateJoined});
+  Author({
+    required this.id,
+    required this.fullName,
+    this.profilePicture,
+    required this.bio,
+    required this.dateJoined,
+  });
 
   factory Author.fromJson(Map<String, dynamic> json) {
     final data = Map<String, dynamic>.from(json);
     return Author(
       id: data['id']?.toString() ?? '',
-      fullName: _stringValue(data, ['fullName', 'name', 'full_name', 'authorName']),
-      profilePicture: _stringValue(data, ['profilePicture', 'profile_picture', 'avatar', 'image']),
+      fullName: _stringValue(data, [
+        'fullName',
+        'name',
+        'full_name',
+        'authorName',
+      ]),
+      profilePicture: _stringValue(data, [
+        'profilePicture',
+        'profile_picture',
+        'avatar',
+        'image',
+      ]),
       bio: _stringValue(data, ['bio', 'about']),
-      dateJoined: _stringValue(data, ['dateJoined', 'joinedAt', 'createdAt', 'created_at']),
+      dateJoined: _stringValue(data, [
+        'dateJoined',
+        'joinedAt',
+        'createdAt',
+        'created_at',
+      ]),
     );
   }
 }

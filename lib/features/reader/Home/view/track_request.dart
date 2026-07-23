@@ -263,7 +263,7 @@ class TrackRequest extends GetView<TrackRequestController> {
 
   static const List<String> _statusOptions = [
     "All",
-    "Signed",
+    "Rejected",
     "In process",
     "Delivered",
     "Unsigned",

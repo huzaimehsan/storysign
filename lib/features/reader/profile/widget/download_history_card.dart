@@ -3,6 +3,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
 Widget downloadHistoryCard({
   required String imagePath,
@@ -57,12 +58,13 @@ Widget downloadHistoryCard({
                 //   fontWeight: FontWeight.w500,
                 // ),
                 SizedBox(height: 0.4.h),
-                customText(
-                  fontFamily: 'Poppins',
-                  text: date,
-                  color: secondryColor.withOpacity(0.7),
+                FormattedRequestDate(
+                  dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                  dateFormat: 'dd MMM, yyyy',
+                  color:  secondryColor.withOpacity(0.7),
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
               ],
             ),

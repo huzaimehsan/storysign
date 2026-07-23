@@ -15,7 +15,7 @@ class TrackingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Arguments se data safe tarike se nikalna
+
     final args = Get.arguments;
     if (args == null || args['bookData'] == null) {
       return Scaffold(
@@ -23,7 +23,7 @@ class TrackingScreen extends StatelessWidget {
       );
     }
 
-    final BookItem book = args['bookData'] as BookItem;
+    final NewBookItem book = args['bookData'] as NewBookItem;
 
     return Scaffold(
       body: SafeArea(
@@ -51,17 +51,12 @@ class TrackingScreen extends StatelessWidget {
 
             // Dynamic Book Detail
             InkWell(
-              onTap: () {
-                Get.toNamed("/signedcopy", arguments: {
-                  'requestId': book.id,
-                  'coverImage': book.coverImage,
-                  'bookName': book.title,
-                  'authorName': book.author.fullName ?? 'Unknown Author', // agar model mein field ho
-                  'dateJoined': book.uploadDate,
-                  'status': book.status,
-                  'message': book.personalMessage ?? '', // agar model mein field ho
-                });
-              },
+              // onTap: () {
+              //   Get.toNamed("/signedcopy", arguments: {
+              //     'requestId': book.id,
+              //   // agar model mein field ho
+              //   });
+              // },
               child: RequestDetailWidget(
                 imagePath: book.coverImage,
                 bookTitle: book.title,

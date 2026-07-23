@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:storysign/features/reader/profile/model/recently_signed_book_model.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
-import '../model/profile_model.dart';
+import '../model/profile_screen_model.dart';
 
 class ProfileScreenController extends GetxController {
   RxBool isLoading = false.obs;
@@ -25,6 +26,7 @@ class ProfileScreenController extends GetxController {
     getProfile();
     fetchLibraryStats();
     downloadHistory();
+    fetchMyBooks();
   }
 
   Future<void> refreshRequests() async {
@@ -40,39 +42,15 @@ class ProfileScreenController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      final response = await BaseService().baseGetAPI(ApiEndPoints.profile);
 
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
-
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.profile}');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final dynamic decodedBody = jsonDecode(response.body);
-        if (decodedBody is Map) {
-          profileModel.value = ProfileModel.fromJson(
-            Map<String, dynamic>.from(decodedBody),
-          );
-        } else {
-          errorMessage.value = 'Invalid profile response';
-          Utils.showToast(errorMessage.value, true);
-        }
+      if (response['success'] == true) {
+        // baseGetAPI Map response ko spread karke deta hai (...jsonData)
+        profileModel.value = ProfileModel.fromJson(response);
       } else {
-        final responseBody = jsonDecode(response.body);
-        final message = responseBody['message']?.toString() ?? 'Failed to load profile';
-        errorMessage.value = message;
-        Utils.showToast(message, true);
+        errorMessage.value =
+            response['message']?.toString() ?? 'Failed to load profile';
+        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
       }
     } catch (e) {
       errorMessage.value = 'Something went wrong while loading profile.';
@@ -100,23 +78,15 @@ class ProfileScreenController extends GetxController {
   Future<void> downloadHistory() async {
     try {
       isbookLoading.value = true;
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.bookHistory}');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final Map<String, dynamic> decodedBody = jsonDecode(response.body);
-        final data = BookResponse.fromJson(decodedBody);
+      final response = await BaseService().baseGetAPI(ApiEndPoints.bookHistory);
+
+      if (response['success'] == true) {
+
+        final data = BookResponse.fromJson(response);
         bookList.assignAll(data.items);
-      } else {
-        Utils.showToast('Failed to load history', true);
       }
+
     } catch (e) {
       debugPrint('ProfileScreenController downloadHistory error: $e');
       Utils.showToast('Something went wrong', true);
@@ -132,5 +102,61 @@ class ProfileScreenController extends GetxController {
     pref.clear();
     Get.toNamed('/signin');
   }
+  final RxList<MyProfileBookModel> books = <MyProfileBookModel>[].obs;
+  final RxBool isBookLoading = false.obs;
 
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final int limit = 10;
+  Future<void> fetchMyBooks({bool loadMore = false}) async {
+    if (loadMore) {
+      if (currentPage.value >= totalPages.value) return;
+      currentPage.value++;
+    } else {
+      // Fresh fetch — reset to page 1 and clear list
+      currentPage.value = 1;
+      books.clear();
+    }
+
+    try {
+      isBookLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
+      );
+
+      if (response['success'] == true) {
+        // baseGetAPI Map response ko spread karta hai (...jsonData),
+        // isliye 'response' hi seedha MyBooksResponse.fromJson mein ja sakta hai
+        final data = MyBooksResponse.fromJson(response);
+
+        if (loadMore) {
+          books.addAll(data.items);
+        } else {
+          books.assignAll(data.items);
+        }
+
+        totalPages.value = data.totalPages;
+      } else {
+        // Agar loadMore fail hua to page number wapas kar do,
+        // warna agli baar galat page se try hoga
+        if (loadMore) currentPage.value--;
+
+        errorMessage.value =
+            response['message']?.toString() ?? 'Failed to load books';
+        // baseGetAPI already toast dikha chuka hai error case mein — dobara mat dikhao
+      }
+    } catch (e) {
+      if (loadMore) currentPage.value--;
+      debugPrint('fetchMyBooks error: $e');
+      errorMessage.value = 'Something went wrong while loading books';
+      Utils.showToast(errorMessage.value, true);
+    } finally {
+      isBookLoading.value = false;
+    }
+  }
+  Future<void> refreshBooks() async {
+    await fetchMyBooks();
+  }
 }

@@ -33,38 +33,23 @@ class SelectAuthorController extends GetxController {
         .where((author) => author.fullName.toLowerCase().contains(query))
         .toList();
   }
-
   Future<void> fetchHomeData() async {
     try {
       isFetchHome.value = true;
       errorMessage.value = '';
 
-      final token =
-          SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
+      final response = await BaseService().baseGetAPI(ApiEndPoints.allAuthor);
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.allAuthor}',
-      );
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      if (response['success'] == true) {
+        // baseGetAPI List response ko {"data": [...]} mein wrap karta hai,
+        // Map response ko spread (...jsonData) karke deta hai
+        final dynamic rawData = response['data'] ?? response;
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        final List<dynamic> items = responseBody is List
-            ? responseBody
-            : (responseBody is Map && responseBody['data'] is List
-                  ? responseBody['data'] as List
-                  : const []);
+        final List<dynamic> items = rawData is List
+            ? rawData
+            : (rawData is Map && rawData['data'] is List
+            ? rawData['data'] as List
+            : const []);
 
         welcomes.assignAll(
           items
@@ -72,23 +57,73 @@ class SelectAuthorController extends GetxController {
               .toList(),
         );
       } else {
-        final responseBody = jsonDecode(response.body);
         errorMessage.value =
-            responseBody['message']?.toString() ?? 'Failed to load authors';
-        Utils.showToast(errorMessage.value, true);
+            response['message']?.toString() ?? 'Failed to load authors';
+        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
       }
     } catch (e) {
+      debugPrint('fetchHomeData error: $e');
       errorMessage.value = 'Something went wrong while loading authors';
       Utils.showToast(errorMessage.value, true);
     } finally {
       isFetchHome.value = false;
-      EasyLoading.dismiss();
     }
   }
+  // Future<void> fetchHomeData() async {
+  //   try {
+  //     isFetchHome.value = true;
+  //     errorMessage.value = '';
+  //
+  //     final token =
+  //         SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+  //     if (token.isEmpty) {
+  //       errorMessage.value = 'Token not found';
+  //       Utils.showToast('Please login again', true);
+  //       return;
+  //     }
+  //
+  //     final uri = Uri.parse(
+  //       '${BaseService().baseURL}${ApiEndPoints.allAuthor}',
+  //     );
+  //     final response = await http.get(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+  //
+  //     if (response.statusCode >= 200 && response.statusCode < 300) {
+  //       final responseBody = jsonDecode(response.body);
+  //       final List<dynamic> items = responseBody is List
+  //           ? responseBody
+  //           : (responseBody is Map && responseBody['data'] is List
+  //                 ? responseBody['data'] as List
+  //                 : const []);
+  //
+  //       welcomes.assignAll(
+  //         items
+  //             .map((e) => AllAuthorModel.fromJson(e as Map<String, dynamic>))
+  //             .toList(),
+  //       );
+  //     } else {
+  //       final responseBody = jsonDecode(response.body);
+  //       errorMessage.value =
+  //           responseBody['message']?.toString() ?? 'Failed to load authors';
+  //       Utils.showToast(errorMessage.value, true);
+  //     }
+  //   } catch (e) {
+  //     errorMessage.value = 'Something went wrong while loading authors';
+  //     Utils.showToast(errorMessage.value, true);
+  //   } finally {
+  //     isFetchHome.value = false;
+  //     EasyLoading.dismiss();
+  //   }
+  // }
 
   @override
   void onClose() {
-    searchController.dispose();
+
     super.onClose();
   }
 }

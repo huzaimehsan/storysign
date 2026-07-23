@@ -17,15 +17,16 @@ class SignedCopy extends GetView<SignedCopyController> {
   @override
   Widget build(BuildContext context) {
     // Safely extract arguments
-    final Map<String, dynamic> args = Get.arguments as Map<String, dynamic>? ?? {};
+    final Map<String, dynamic> args =
+        Get.arguments as Map<String, dynamic>? ?? {};
 
-    final String requestId = args['requestId']?.toString() ?? '';
-    final String coverImage = args['coverImage']?.toString() ?? '';
+    final String requestId =
+        args['requestId']?.toString() ??
+        args['autographRequestId']?.toString() ??
+        args['bookData']?.toString() ??
+        '';
+
     final String bookName = args['bookName']?.toString() ?? 'Unknown Book';
-    final String authorName = args['authorName']?.toString() ?? 'Unknown Author';
-    final String date = args['dateJoined']?.toString() ?? '';
-    final String status = args['status']?.toString() ?? '';
-    final String message = args['message']?.toString() ?? '';
 
     return Scaffold(
       body: SafeArea(
@@ -71,24 +72,53 @@ class SignedCopy extends GetView<SignedCopyController> {
                 ),
               ),
               SizedBox(height: 1.h),
-              recentlySignedBooks(
-                imageUrl: coverImage,
-                bookTitle: bookName,
-                authorName: authorName,
-                date: DateFormat('dd MMM, hh:mm a').format(DateTime.parse(date).toLocal()),// Sahi tareeqa:
+              // 1. First Obx (Book Detail ke liye)
+              Obx(() {
+                final book = controller.selectedRequest.value;
 
-                status: status,
-                trackRequest: () {},
-                showArrow: false,
-                imagePath: '',
-                showAuthor: true,
-              ),
+                // Agar data abhi tak load nahi hua, toh loading dikhayein
+                if (book == null) {
+                  return SizedBox(
+                    height: 30.h,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
+                    ),
+                  );
+                }
+
+                return recentlySignedBooks(
+                  imageUrl: book.coverImage ?? "",
+                  bookTitle: book.title,
+                  authorName: book.author.fullName,
+                  date: book.uploadDate.isNotEmpty
+                      ? DateFormat(
+                          'dd MMM, hh:mm a',
+                        ).format(DateTime.parse(book.uploadDate).toLocal())
+                      : '',
+                  status: book.status,
+                  trackRequest: () {},
+                  showArrow: false,
+                  imagePath: '',
+                  showAuthor: true,
+                );
+              }),
+
               SizedBox(height: 1.h),
-              signedCopyMessageCard(
-                title: "Message",
-                message: message,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-              ),
+
+              // 2. Second Obx (Message Card ke liye)
+              Obx(() {
+                final book = controller.selectedRequest.value;
+
+                if (book == null) {
+                  return const SizedBox.shrink(); // Jab tak data na aaye, kuch na dikhayein
+                }
+
+                return signedCopyMessageCard(
+                  title: "Message",
+                  message: book.authorMessage ?? "",
+                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                );
+              }),
               SizedBox(height: 5.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -113,7 +143,9 @@ class SignedCopy extends GetView<SignedCopyController> {
                   "Back To Dashboard",
                   whiteColor,
                   onTap: () {
-                    Get.offAllNamed('bottomnav'); // Ya Get.offAllNamed('/home') agar dashboard par wapas jana ho
+                    Get.offAllNamed(
+                      'bottomnav',
+                    ); // Ya Get.offAllNamed('/home') agar dashboard par wapas jana ho
                   },
                   colors: greyColor,
                   fontFamily: 'Poppins',

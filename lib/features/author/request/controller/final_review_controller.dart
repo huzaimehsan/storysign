@@ -8,7 +8,7 @@ import 'package:http_parser/http_parser.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/sucess_widget.dart';

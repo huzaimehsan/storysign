@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/utils/helper_functions.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
@@ -15,7 +16,6 @@ class ChangePassword extends GetView<ChangePasswordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: Column(
           children: [
@@ -26,34 +26,61 @@ class ChangePassword extends GetView<ChangePasswordController> {
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
-        
-            Padding(padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Column(
-              children: [
-                SizedBox(height: 1.5.h),
-                emailTextFeild('Old Password', "8+ character"),
-                SizedBox(height: 1.5.h),
-                emailTextFeild('New Password', "8+ character"),
-                SizedBox(height: 1.5.h),
-                emailTextFeild('Confirm Password', "**********"),
-                SizedBox(height: 6.h),
-                buttonWidget(
-                  "Confirm",
-                  whiteColor,
-                  onTap: () {
-                    controller.submitPasswordChange(context);
-                  },
-                  colors: buttonColor,
-                  fontFamily: 'Poppins',
-                  height: 5.2.h,
-                  width: double.infinity,
-                  fontsize: 16.sp,
-                  fontweight: FontWeight.w600,
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 1.5.h),
+                    emailTextFeild(
+                      'Old Password',
+                      "8+ character",
+                      controller: controller.oldPasswordController,
+                      isPasswordHidden: controller.isPasswordHidden,
+                      validator: (value) =>
+                          HelperFunction.passwordValidate(value ?? ''),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    emailTextFeild(
+                      'New Password',
+                      "8+ character",
+                      controller: controller.newPasswordController,
+                      isPasswordHidden: controller.isPasswordHidden,
+                      validator: (value) =>
+                          HelperFunction.passwordValidate(value ?? ''),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    emailTextFeild(
+                      'Confirm Password',
+                      "**********",
+                      controller: controller.confirmPasswordController,
+                      isPasswordHidden: controller.isPasswordHidden,
+                      validator: (value) =>
+                          HelperFunction.passwordValidate(value ?? ''),
+                    ),
+                    SizedBox(height: 6.h),
+                    buttonWidget(
+                      "Confirm",
+                      whiteColor,
+                      onTap: () {
+                        if (controller.formKey.currentState?.validate() ??
+                            false) {
+                          controller.changePassword();
+                        }
+                      },
+                      colors: buttonColor,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
+                      width: double.infinity,
+                      fontsize: 16.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-            )
-        
           ],
         ),
       ),

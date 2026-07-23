@@ -282,38 +282,21 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(
-        status: 'Please wait...',
-        maskType: EasyLoadingMaskType.black,
-      );
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.loginUser}',
-      );
       final payload = {'email': email, 'password': password};
 
-      print('⏳ LOGIN REQUEST: $uri');
-      print('⏳ LOGIN PAYLOAD: $payload');
+      final responseMap = await BaseService().basePostAPI(
+        ApiEndPoints.loginUser,
+        payload,
+      );
 
-      final response = await http
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(payload),
-          )
-          .timeout(const Duration(seconds: 60));
-
-      final responseMap = jsonDecode(response.body);
-      print('⏳ LOGIN STATUS: ${response.statusCode}');
-      print('⏳ LOGIN RESPONSE: $responseMap');
+      debugPrint('⏳ LOGIN RESPONSE: $responseMap');
 
       final String? successMessage = responseMap['message']?.toString();
       final String errorMessage =
           responseMap['message']?.toString() ?? 'Login failed';
-      final bool successResponse =
-          response.statusCode >= 200 && response.statusCode < 300;
 
-      if (!successResponse) {
-        Utils.showToast(errorMessage, true);
+      if (responseMap['success'] != true) {
+        // basePostAPI already error toast dikha chuka hoga is case mein
         return;
       }
 
@@ -322,21 +305,14 @@ class AuthController extends GetxController {
           ? dataValue
           : null;
       final Map<String, dynamic>? user =
-          responseMap['user'] is Map<String, dynamic>
+      responseMap['user'] is Map<String, dynamic>
           ? responseMap['user'] as Map<String, dynamic>
           : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-                ? dataMap['user'] as Map<String, dynamic>
-                : null);
+          ? dataMap['user'] as Map<String, dynamic>
+          : null);
       final String? token =
           responseMap['accessToken'] as String? ??
-          dataMap?['accessToken'] as String?;
-      // final bool? isVerified = responseMap['isVerified'] as bool? ?? dataMap?['isVerified'] as bool?;
-
-      // if (isVerified == false) {
-      //   Utils.showToast(errorMessage, true);
-      //   Get.toNamed('verification', arguments: {'email': responseMap['email'] ?? dataMap?['email']});
-      //   return;
-      // }
+              dataMap?['accessToken'] as String?;
 
       if (user == null || token == null) {
         Utils.showToast('Invalid server response', true);
@@ -346,9 +322,7 @@ class AuthController extends GetxController {
       final prefs = SharedPreferencesMethod.storage;
       await prefs.setString(LocalDBKeys.USERDETAIL, jsonEncode(user));
       await prefs.setString(LocalDBKeys.USERID, user['id'] ?? "");
-      // Yahan ensure karein ye instance wahi hai
       await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
-
       await prefs.setString(LocalDBKeys.TOKEN, token);
       await prefs.setBool('isLoggedIn', true);
       Utils.showToast(successMessage ?? 'Login successful', false);
@@ -362,15 +336,9 @@ class AuthController extends GetxController {
       } else {
         Get.offAllNamed('/bottomnav');
       }
-    } on TimeoutException {
-      Utils.showToast('Request timed out', true);
-    } on SocketException {
-      Utils.showToast('No Internet connection', true);
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
       Utils.showToast('Something went wrong. Please try again.', true);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 
@@ -390,55 +358,31 @@ class AuthController extends GetxController {
       return;
     }
 
-    // Basic email regex validation
     if (!email.contains('@')) {
       Utils.showToast('Please enter a valid email', true);
       return;
     }
 
     try {
-      EasyLoading.show(
-        status: 'Sending reset link...',
-        maskType: EasyLoadingMaskType.black,
-      );
-
       // 2. API Call
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.forgotPassword}',
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.forgotPassword,
+        {'email': email},
       );
-      final response = await http
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'email': email}),
-          )
-          .timeout(const Duration(seconds: 60));
 
-      final responseMap = jsonDecode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response['success'] == true) {
         Utils.showToast(
-          responseMap['message'] ?? 'Reset link sent to your email',
+          response['message'] ?? 'Reset link sent to your email',
           false,
         );
 
         Get.toNamed("/resendotp");
-        //  Get.toNamed('/sendotp', arguments: {'email': email});
-      } else {
-        Utils.showToast(
-          responseMap['message'] ?? 'Failed to send reset link',
-          true,
-        );
+        // Get.toNamed('/sendotp', arguments: {'email': email});
       }
-    } on TimeoutException {
-      Utils.showToast('Request timed out', true);
-    } on SocketException {
-      Utils.showToast('No Internet connection', true);
+      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
-      print('Forgot Password Error: $e');
+      debugPrint('Forgot Password Error: $e');
       Utils.showToast('Something went wrong', true);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 
@@ -453,35 +397,20 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(
-        status: 'Verifying...',
-        maskType: EasyLoadingMaskType.black,
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.verifyOtp,
+        {'email': email, 'code': otp},
       );
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.verifyOtp}',
-      ); // Yahan apna verify endpoint dein
-      final response = await http
-          .post(
-            uri,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'email': email, 'code': otp}),
-          )
-          .timeout(const Duration(seconds: 60));
-
-      final responseMap = jsonDecode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.showToast(responseMap['message'] ?? 'OTP Verified', false);
+      if (response['success'] == true) {
+        Utils.showToast(response['message'] ?? 'OTP Verified', false);
 
         Get.toNamed('/resendotp', arguments: {'email': email, 'code': otp});
-      } else {
-        Utils.showToast(responseMap['message'] ?? 'Invalid OTP', true);
       }
+      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
+      debugPrint('verifyOtp error: $e');
       Utils.showToast('Error: $e', true);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 
@@ -502,42 +431,29 @@ class AuthController extends GetxController {
     }
 
     try {
-      EasyLoading.show(
-        status: 'Resetting...',
-        maskType: EasyLoadingMaskType.custom,
-      );
-
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.resetPassword}',
-      );
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.resetPassword,
+        {
           'email': email,
           'code': code,
           'newPassword': newPassword,
           'confirmPassword': confirmPassword,
-        }),
+        },
       );
 
-      final responseMap = jsonDecode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response['success'] == true) {
         Utils.showToast(
-          responseMap['message'] ?? 'Password reset successful',
+          response['message'] ?? 'Password reset successful',
           false,
         );
 
         Get.offAllNamed('/login');
         clearResetPasswordFeilds();
-      } else {
-        Utils.showToast(responseMap['message'] ?? 'Reset failed', true);
       }
+      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
+      debugPrint('resetPassword error: $e');
       Utils.showToast('Something went wrong', true);
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

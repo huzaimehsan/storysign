@@ -23,6 +23,15 @@ Widget authorSettingsGroupCard({EdgeInsetsGeometry? margin}) {
     child: Column(
       children: [
         // Item 1
+        _buildRowItem(Icons.password, "Change Password", () {
+
+          Get.toNamed("/newpass");
+        }),
+        Divider(
+          thickness: 0.02.h, // Responsive thickness
+          // Responsive vertical spacing
+          color: buttonColor, // Aapka grey border color
+        ),
         _buildRowItem("assets/png/upgrade.png", "Upgrade Plan", () {
           Get.toNamed(
               "/plan",
@@ -85,12 +94,14 @@ Widget authorSettingsSignoutCard({EdgeInsetsGeometry? margin, VoidCallback? onta
   );
 }
 
-Widget _buildRowItem(String iconPath, String title, VoidCallback? ontap) {
+Widget _buildRowItem(dynamic iconPath, String title, VoidCallback? ontap) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 2.w, horizontal: 6.w),
     child: Row(
       children: [
-        Image.asset(iconPath, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain),
+        iconPath is IconData
+            ? Icon(iconPath, size: 5.5.w, color: secondryColor)
+            : Image.asset(iconPath, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain),
         SizedBox(width: 4.w),
         customText(
           fontFamily: 'Poppins',

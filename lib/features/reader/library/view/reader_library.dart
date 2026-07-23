@@ -141,6 +141,8 @@ class ReaderLibrary extends GetView<ReaderController> {
                       final DateTime dateTime = DateTime.parse(book.uploadDate);
                       final formattedDate =
                           "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
+                      final bool hasRequest = book.autographRequestId != null && book.autographRequestId!.isNotEmpty;
+                      final bool isOnlyFromLibrary = book.autographRequestId == null || book.autographRequestId!.isEmpty;
 
                       return recentlySignedBooks(
                         imagePath: book.coverImage,
@@ -149,17 +151,22 @@ class ReaderLibrary extends GetView<ReaderController> {
                         authorName: "",
                         date: formattedDate,
                         status: book.status,
-                        trackRequest: () {
-                          print(book.id.toString());
+
+                        // 💡 Arrow sirf tab dikhega jab book sirf library ki hogi (request nahi bani hogi)
+                        showArrow: isOnlyFromLibrary,
+
+                        trackRequest: isOnlyFromLibrary ? () {
                           Get.toNamed(
                             "/requestautographcard",
                             arguments: {
                               'bookId': book.id.toString(),
-                              'bookTitle' : book.title.toString(),
-                              'role' :"fromLibrary",
+                              'bookTitle': book.title.toString(),
+                              'role': "fromLibrary",
                             },
                           );
-                        },
+                        } : () {}, // Agar request bani hui hai toh click par kuch na ho
+
+
                         showAuthor: false,
                       );
                     },

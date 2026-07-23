@@ -8,6 +8,7 @@ import 'package:storysign/widgets/search_widget.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../author/profile/model/help_support_model.dart';
 import '../controller/home_controller.dart';
 import '../widgets/reader/build_profile_card.dart';
 import '../widgets/reader/user_profile_card.dart';
@@ -21,9 +22,7 @@ class HomeScreen extends GetView<HomeController> {
       // Single combined loading state — sab ek saath load
       if (controller.isPageLoading.value) {
         return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(color: buttonColor),
-          ),
+          body: Center(child: CircularProgressIndicator(color: buttonColor)),
         );
       }
 
@@ -43,7 +42,8 @@ class HomeScreen extends GetView<HomeController> {
                       final name = controller.userName.value;
                       final role = controller.userRole.value;
                       return buildProfileCard(
-                        imagePath: controller.userProfile.value?.profilePicture ??
+                        imagePath:
+                            controller.userProfile.value?.profilePicture ??
                             'assets/png/profile.png',
                         name: name.isNotEmpty ? name : 'User',
                         role: role.isNotEmpty ? role : null,
@@ -51,11 +51,14 @@ class HomeScreen extends GetView<HomeController> {
                           Navigator.of(context).pushNamed('/trackrequest');
                         },
                         onAutographPressed: () {
-                          Get.toNamed("/requestautographcard", arguments: {
-                            'authorId': 'authorId',
-                            'bookId': 'bookId',
-                            'isFromHome': true,
-                          });
+                          Get.toNamed(
+                            "/requestautographcard",
+                            arguments: {
+                              'authorId': 'authorId',
+                              'bookId': 'bookId',
+                              'isFromHome': true,
+                            },
+                          );
                         },
                         onUploadBookPressed: () {
                           Get.toNamed("/uploadbook");
@@ -87,7 +90,7 @@ class HomeScreen extends GetView<HomeController> {
                       return SizedBox(
                         height: 10.h,
                         child: Center(
-                          child:  customText(
+                          child: customText(
                             text: "No authors found",
                             color: greyColor,
                             fontSize: 15.sp,
@@ -113,10 +116,13 @@ class HomeScreen extends GetView<HomeController> {
                               imagePath: author.profilePicture,
                               name: author.fullName,
                               ontap: () {
-                                Get.toNamed('/authordetail', arguments: {
-                                  'authorId': author.id,
-                                  'role': 'allAuthor',
-                                });
+                                Get.toNamed(
+                                  '/authordetail',
+                                  arguments: {
+                                    'authorId': author.id,
+                                    'role': 'allAuthor',
+                                  },
+                                );
                               },
                             ),
                           );
@@ -163,13 +169,17 @@ class HomeScreen extends GetView<HomeController> {
                         return recentlySignedBooks(
                           imageUrl: book.coverImage,
                           bookTitle: book.title,
-                          date: DateFormat('dd MMM, hh:mm a').format(DateTime.parse(book.uploadDate).toLocal()),
+                          date: book.uploadDate.toString().split(' ')[0],
                           status: book.status,
                           trackRequest: () {
-                            Get.toNamed("/signedcopy");
+                            Get.toNamed(
+                              "/signedcopy",
+                              arguments: {
+                                'autographRequestId': book.autographRequestId,
+                              },
+                            );
                           },
                           imagePath: '',
-                          showArrow: false,
 
                           showAuthor: true,
                         );

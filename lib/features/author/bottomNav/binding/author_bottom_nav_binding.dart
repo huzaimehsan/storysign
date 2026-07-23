@@ -27,6 +27,6 @@ class AuthorBottomNavBinding implements Bindings {
     Get.lazyPut<RequestDetailController>(() => RequestDetailController());
 
 
-    Get.lazyPut<ProfileScreenController>(() => ProfileScreenController());
+    // Get.lazyPut<ProfileScreenController>(() => ProfileScreenController());
   }
 }

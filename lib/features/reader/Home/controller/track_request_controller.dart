@@ -11,7 +11,7 @@ import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
 class TrackRequestController extends GetxController {
-  RxList<BookItem> trackRequest = <BookItem>[].obs;
+  RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
   RxBool trackRequestLoading = false.obs;
   RxString errorMessage = ''.obs;
   final TextEditingController searchController = TextEditingController();
@@ -30,30 +30,59 @@ class TrackRequestController extends GetxController {
     super.onInit();
     fetchTrackRequestData();
   }
-
+  //
+  // Future<void> fetchTrackRequestData() async {
+  //   try {
+  //     trackRequestLoading.value = true;
+  //     errorMessage.value = '';
+  //
+  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+  //     if (token.isEmpty) {
+  //       errorMessage.value = 'Token not found';
+  //       Utils.showToast('Please login again', true);
+  //       return;
+  //     }
+  //
+  //     final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.trackRequest}');
+  //     final response = await http.get(uri, headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     });
+  //
+  //     if (response.statusCode >= 200 && response.statusCode < 300) {
+  //       final responseBody = jsonDecode(response.body);
+  //       final Map<String, dynamic> data = responseBody is Map && responseBody['data'] is Map
+  //           ? responseBody['data']
+  //           : responseBody;
+  //
+  //       final trackRequestData = TrackRequestModel.fromJson(data);
+  //       trackRequest.assignAll(trackRequestData.items);
+  //       currentPage.value = trackRequestData.page;
+  //       totalPages.value = trackRequestData.totalPages;
+  //       totalItems.value = trackRequestData.total;
+  //     } else {
+  //       Utils.showToast('Failed to load data', true);
+  //     }
+  //   } catch (e) {
+  //     errorMessage.value = 'Something went wrong: $e';
+  //     Utils.showToast(errorMessage.value, true);
+  //   } finally {
+  //     trackRequestLoading.value = false;
+  //   }
+  // }
   Future<void> fetchTrackRequestData() async {
     try {
       trackRequestLoading.value = true;
       errorMessage.value = '';
 
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
+      final response = await BaseService().baseGetAPI(ApiEndPoints.trackRequest);
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.trackRequest}');
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      });
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        final Map<String, dynamic> data = responseBody is Map && responseBody['data'] is Map
-            ? responseBody['data']
-            : responseBody;
+      if (response['success'] == true) {
+        // baseGetAPI Map response ko spread karke deta hai (...jsonData),
+        // agar backend {"data": {...}} wrapped bhejta hai to us key ko check karo
+        final Map<String, dynamic> data = response['data'] is Map
+            ? Map<String, dynamic>.from(response['data'] as Map)
+            : response;
 
         final trackRequestData = TrackRequestModel.fromJson(data);
         trackRequest.assignAll(trackRequestData.items);
@@ -61,16 +90,18 @@ class TrackRequestController extends GetxController {
         totalPages.value = trackRequestData.totalPages;
         totalItems.value = trackRequestData.total;
       } else {
-        Utils.showToast('Failed to load data', true);
+        errorMessage.value =
+            response['message']?.toString() ?? 'Failed to load data';
+        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
       }
     } catch (e) {
+      debugPrint('fetchTrackRequestData error: $e');
       errorMessage.value = 'Something went wrong: $e';
       Utils.showToast(errorMessage.value, true);
     } finally {
       trackRequestLoading.value = false;
     }
   }
-
   DateTime _parseDate(String dateStr) {
     try {
       final parsed = DateTime.tryParse(dateStr);
@@ -79,8 +110,8 @@ class TrackRequestController extends GetxController {
     return DateTime.now();
   }
 
-  List<BookItem> get filteredTrackRequest {
-    List<BookItem> requests = List<BookItem>.from(trackRequest);
+  List<NewBookItem> get filteredTrackRequest {
+    List<NewBookItem> requests = List<NewBookItem>.from(trackRequest);
 
     if (selectedTab.value == "In Process") {
       requests = requests.where((item) {
@@ -90,7 +121,7 @@ class TrackRequestController extends GetxController {
     } else if (selectedTab.value == "Delivered" || selectedTab.value == "Signed") {
       requests = requests.where((item) {
         final st = item.status.toLowerCase().replaceAll(' ', '_');
-        return st == "delivered" || st == "signed" || st == "completed" || st == "approved";
+        return st == "delivered" || st == "rejected" || st == "completed" || st == "approved";
       }).toList();
     }
 
@@ -110,7 +141,7 @@ class TrackRequestController extends GetxController {
           return st == "in_process" || st == "in_progress" || st == "pending";
         }
         if (targetStatus == "delivered" || targetStatus == "signed") {
-          return st == "delivered" || st == "signed" || st == "completed" || st == "approved";
+          return st == "delivered" || st == "rejected" || st == "completed" || st == "approved";
         }
         return st == targetStatus;
       }).toList();

@@ -16,7 +16,7 @@ import '../../../../widgets/sucess_widget.dart'; // Aapka custom dialog
 import '../../search/widgets/header_widget.dart';
 import '../controller/payment_controller.dart';
 
-class RequestDetail extends GetView<AuthorDetailController> {
+class RequestDetail extends GetView<ReaderDetailController> {
   const RequestDetail({super.key});
 
   @override

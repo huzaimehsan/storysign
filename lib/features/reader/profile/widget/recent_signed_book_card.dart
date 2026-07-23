@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 Widget recentSignedBookCard({
   required String title,
   required String price,
@@ -54,9 +55,17 @@ Widget recentSignedBookCard({
               // Date ko normal color ka
               customText(
                 fontFamily: 'Poppins',
-                text: " - $date",
+                text: " - ",
                 color: secondryColor.withOpacity(0.7),
                 fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              FormattedRequestDate(
+                dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                dateFormat: 'dd MMM, yyyy',
+                color:  secondryColor.withOpacity(0.7),
+                fontSize: 14.sp,
+                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
               ),
               Spacer(),

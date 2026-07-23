@@ -1,43 +1,68 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/services/apiendpoints.dart';
+import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/sucess_widget.dart';
 
 class ChangePasswordController extends GetxController {
   final oldPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
+  final RxBool isPasswordHidden = true.obs;
   final confirmPasswordController = TextEditingController();
   RxBool isLoading = false.obs;
+ final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  bool validateInputs() {
-    if (oldPasswordController.text.isEmpty ||
-        newPasswordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      Utils.showToast('Please fill all fields', true);
-      return false;
-    }
 
-    if (newPasswordController.text != confirmPasswordController.text) {
-      Utils.showToast('Passwords do not match', true);
-      return false;
-    }
+  Future<void> changePassword() async {
+    final String newPassword = newPasswordController.text.trim();
+    final String confirmPassword = confirmPasswordController.text.trim();
+    final String oldPassword = oldPasswordController.text.trim();
 
-    if (newPasswordController.text.length < 8) {
+    // Validation
+    if (newPassword.length < 8) {
       Utils.showToast('Password must be at least 8 characters', true);
-      return false;
+      return;
+    }
+    if (newPassword != confirmPassword) {
+      Utils.showToast('Passwords do not match', true);
+      return;
     }
 
-    return true;
+    try {
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.changePassword,
+        {
+
+          'currentPassword': oldPassword,
+          'newPassword': newPassword,
+          'confirmPassword': confirmPassword,
+        },
+      );
+
+      if (response['success'] == true) {
+        Utils.showToast(
+          response['message'] ?? 'Password changed successful',
+          false,
+        );
+
+        Get.offAllNamed('/login');
+        clearNewPasswordFeild();
+      }
+      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
+    } catch (e) {
+      debugPrint('resetPassword error: $e');
+      Utils.showToast('Something went wrong', true);
+    }
   }
 
-  void submitPasswordChange(BuildContext context) {
-    if (!validateInputs()) return;
+  void clearNewPasswordFeild(){
+    oldPasswordController.clear();
+    newPasswordController.clear();
+    confirmPasswordController.clear();
 
-    showSuccessDialog(
-      context,
-      desc: "Your Autograph Request have been sent Successfully",
-      buttonText: "Back To Dashboard",
-      ontap: () => Get.offAllNamed('/bottomnav'),
-    );
   }
+
 }

@@ -6,7 +6,7 @@ import 'package:storysign/widgets/button_widget.dart';
 import 'package:storysign/widgets/customText_widget.dart';
 import 'package:storysign/widgets/subscription_header_widget.dart';
 
-import '../../../../services/request_service.dart';
+import '../../../../core/services/request_service.dart';
 import '../controller/place_signature_controller.dart';
 import '../controller/add_message_controller.dart';
 import '../controller/final_review_controller.dart';
