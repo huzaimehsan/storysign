@@ -118,7 +118,7 @@ Widget recentlySignedBooks({
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             )
-          else if (showArrow && signed != 'signed')
+          else if (showArrow)
             InkWell(
               onTap: trackRequest,
               child: Image.asset(

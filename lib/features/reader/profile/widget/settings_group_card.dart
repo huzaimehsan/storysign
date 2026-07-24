@@ -88,7 +88,7 @@ Widget _buildRowItem(dynamic icon, String title, VoidCallback? ontap) {
       children: [
         // Check karein ke icon String hai (asset) ya IconData
         icon is String
-            ? Image.asset(icon, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain)
+            ? Image.asset(icon, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain,color: buttonColor,)
             : Icon(icon, size: 5.8.w, color: buttonColor), // Agar IconData hai
 
         SizedBox(width: 4.w),

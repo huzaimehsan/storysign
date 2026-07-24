@@ -15,15 +15,19 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
   @override
   Widget build(BuildContext context) {
     // ModalRoute se arguments lo — same pattern jaise RequestDetailAuthor mein
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final String id = args?['autographRequestId'] ?? (Get.arguments is Map ? Get.arguments['autographRequestId'] : '') ?? '';
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+    final String id = routeArgs is Map
+        ? routeArgs['autographRequestId']?.toString() ?? ''
+        : (Get.arguments is Map ? Get.arguments['autographRequestId']?.toString() ?? '' : '');
+    final String bookPdf = routeArgs is Map
+        ? routeArgs['bookPdf']?.toString() ?? ''
+        : (Get.arguments is Map ? Get.arguments['bookPdf']?.toString() ?? '' : '');
 
-    print("📄 BookPreviewPage - ID received: $id");
+    print("📄 BookPreviewPage - ID received: $id, bookPdf: $bookPdf");
 
-    // Controller ko ID pass karo (ek baar hi call hoga)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (id.isNotEmpty) {
-        controller.initWithId(id);
+      if (id.isNotEmpty || bookPdf.isNotEmpty) {
+        controller.initWithId(id, bookPdf: bookPdf);
       }
     });
 
@@ -47,7 +51,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
               ),
             ),
             SizedBox(height: 4.h),
-        
+
             // PDF Document View container
             // PDF Document View container
             Container(
@@ -69,8 +73,11 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5.w),
                 child: Obx(() {
+                  final String currentUrl = controller.bookPdfUrl.value;
+                  final String previewUrl = bookPdf.isNotEmpty ? bookPdf : currentUrl;
+
                   // Jab tak PDF url nahi mili — koi placeholder dikhayein
-                  if (controller.bookPdfUrl.value.isEmpty) {
+                  if (previewUrl.isEmpty) {
                     return Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -92,7 +99,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                     alignment: Alignment.center,
                     children: [
                       SfPdfViewer.network(
-                        controller.bookPdfUrl.value,
+                        previewUrl,
                         controller: controller.pdfViewerController,
                         onDocumentLoaded: controller.onDocumentLoaded,
                         onPageChanged: controller.onPageChanged,
@@ -103,21 +110,14 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                         canShowScrollStatus: false,
                         canShowPaginationDialog: false,
                       ),
-                      Obx(() {
-                        if (controller.isLoading.value) {
-                          return const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(buttonColor),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
+
                     ],
                   );
                 }),
               ),
             ),
             SizedBox(height: 5.h),
-        
+
             // Zoom Controls Row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -143,9 +143,9 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                 ),
               ],
             ),
-        
+
             SizedBox(height: 2.h),
-        
+
             // Page Navigation Controls Row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -193,9 +193,9 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                 ),
               ],
             ),
-        
-        SizedBox(height: 6.h,),
-        
+
+            SizedBox(height: 6.h,),
+
             // "Sign This Page" Button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 7.w),

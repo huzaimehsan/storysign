@@ -9,6 +9,7 @@ import 'package:storysign/features/author/request/binding/draw_signature_binding
 import 'package:storysign/features/author/request/binding/ebook_preview_binding.dart';
 import 'package:storysign/features/author/request/binding/final_review_binding.dart';
 import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
+import 'package:storysign/features/author/request/binding/request_binding.dart';
 import 'package:storysign/features/author/request/view/all_request.dart';
 import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
@@ -245,7 +246,7 @@ class AppRoutes {
     GetPage(
       name: '/allRequest',
       page: () => AllRequest(),
-      binding: AuthorHomeBinding(),
+      binding: RequestBinding(),
     ),
 
     GetPage(

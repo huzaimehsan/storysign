@@ -139,7 +139,6 @@ Widget eBookDetail({
   required String? bookName,
   required String? authorName,
 }) {
-  String? imageUrl;
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 0.1.h),
     child: Container(
@@ -164,8 +163,8 @@ Widget eBookDetail({
           ClipRRect(
             borderRadius: BorderRadius.circular(12.sp),
             child: CoverImageWidget(
-              imageUrl: imageUrl,
-              assetPath: imagePath!,
+              imageUrl: imagePath,
+              assetPath: 'assets/png/book.png',
               height: 12.h,
               width: 17.w,
               fit: BoxFit.cover,

@@ -32,15 +32,23 @@ class EbookPreviewController extends GetxController {
     // ID ab View se initWithId() ke zariye milegi (ModalRoute pattern)
   }
 
-  void initWithId(String id) {
+  void initWithId(String id, {String bookPdf = ''}) {
     autographRequestId = id;
-    print('📌 EbookPreviewController - ID received: $autographRequestId');
+    print('📌 EbookPreviewController - ID received: $autographRequestId, bookPdf passed: ${bookPdf.isNotEmpty}');
+
+    if (bookPdf.isNotEmpty) {
+      bookPdfUrl.value = bookPdf;
+      isLoading.value = true;
+      return;
+    }
+
     if (autographRequestId.isNotEmpty) {
       acceptRequestAndLoadPdf();
     } else {
       Utils.showToast('Request ID missing', true);
     }
   }
+
   Future<void> acceptRequestAndLoadPdf() async {
     if (autographRequestId.isEmpty) {
       Utils.showToast('Request ID missing', true);

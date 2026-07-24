@@ -5,7 +5,7 @@ import '../constants/color_constants.dart';
 import 'customText_widget.dart';
 
 Widget buttonWidget(
-    String text,
+    dynamic text,
     Color textColor, {
       Color? colors,
       double? height,

@@ -44,7 +44,7 @@ class HomeScreen extends GetView<HomeController> {
                       return buildProfileCard(
                         imagePath:
                             controller.userProfile.value?.profilePicture ??
-                            'assets/png/profile.png',
+                            '',
                         name: name.isNotEmpty ? name : 'User',
                         role: role.isNotEmpty ? role : null,
                         onTrackPressed: () {
@@ -147,7 +147,7 @@ class HomeScreen extends GetView<HomeController> {
                     final books = controller.filteredBooks;
                     if (books.isEmpty) {
                       return SizedBox(
-                        height: 20.h,
+                        height: 34.h,
                         child: Center(
                           child: customText(
                             text: "No Recently Signed Books",
@@ -176,6 +176,7 @@ class HomeScreen extends GetView<HomeController> {
                               "/signedcopy",
                               arguments: {
                                 'autographRequestId': book.autographRequestId,
+                                'bookPdfUrl' : book.signedPdfUrl,
                               },
                             );
                           },

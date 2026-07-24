@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -12,7 +15,6 @@ import '../../../../core/services/base_services.dart';
 import '../../../../core/services/request_service.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
-import '../../home/model/home_model.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -108,6 +110,38 @@ class RequestDetailController extends GetxController {
         final responseBody = jsonDecode(response.body);
         errorMessage.value =
             responseBody['message']?.toString() ?? 'Failed to load request details';
+        if (RequestService.find.autographRequestId == autographRequestId &&
+            (RequestService.find.bookTitle.isNotEmpty ||
+                RequestService.find.readerName.isNotEmpty)) {
+          selectedRequestDetail.value = RequestDetailModel(
+            id: autographRequestId,
+            bookTitle: RequestService.find.bookTitle,
+            coverImage: RequestService.find.coverImage,
+            bookPdfUrl: RequestService.find.bookPdfUrl,
+            signedPdfUrl: null,
+            personalMessage: '',
+            status: 'accepted',
+            rejectionReason: null,
+            authorMessage: null,
+            requestDate: '',
+            feeAmount: 0,
+            isPaid: false,
+            reader: ReaderModel(
+              id: '',
+              fullName: RequestService.find.readerName,
+              profilePicture: RequestService.find.readerImagePath,
+              email: '',
+            ),
+            author: AuthorDetailModel(
+              id: '',
+              fullName: '',
+              profilePicture: null,
+              bio: '',
+              dateJoined: '',
+            ),
+            bookId: '',
+          );
+        }
         Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {

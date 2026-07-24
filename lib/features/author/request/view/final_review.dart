@@ -68,10 +68,10 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                     ReadyToSendCard(
                       readerName: reqService.readerName.isNotEmpty
                           ? reqService.readerName
-                          : 'Jane Austen',
+                          : '',
                       readerImagePath: reqService.readerImagePath.isNotEmpty
                           ? reqService.readerImagePath
-                          : 'assets/png/searchprofile.png',
+                          : '',
                       ebookTitle: reqService.bookTitle.isNotEmpty
                           ? reqService.bookTitle
                           : 'Things Fall Apart',

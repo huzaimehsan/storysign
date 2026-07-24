@@ -165,7 +165,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                         whiteColor,
                         onTap: () => Navigator.of(context).pushNamed(
                           '/pdfReview',
-                          arguments: {'autographRequestId': id},
+                          arguments: {'autographRequestId': id ,'bookPdf' : requestDetail.bookPdfUrl},
                         ),
                         colors: buttonColor,
                         fontFamily: 'Poppins',

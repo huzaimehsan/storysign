@@ -48,43 +48,61 @@ class AllRequest extends GetView<AuthorHomeController> {
 
             Obx(
                   () => Expanded(
-                child: controller.isFetchPending.value
-                    ? const Center(
-                  child: CircularProgressIndicator(color: buttonColor),
-                )
-                    : controller.filteredAutographList.isEmpty
-                    ? Center(
-                  child: customText(
-                    text: "No pending requests",
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                    color: greyColor,
-                    fontFamily: "Poppins",
-                    textAlign: TextAlign.center,
+                child: RefreshIndicator(
+                  onRefresh: controller.refreshPendingRequest,
+                  color: buttonColor,
+                  child: controller.isFetchPending.value
+                      ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: 40.h),
+                      Center(
+                        child: CircularProgressIndicator(color: buttonColor),
+                      ),
+                    ],
+                  )
+                      : controller.filteredAutographList.isEmpty
+                      ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.6, // 👈 fixed height do
+                        child: Center(
+                          child: customText(
+                            text: "No pending requests",
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                            color: greyColor,
+                            fontFamily: "Poppins",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                      : ListView.builder(
+                    padding: EdgeInsets.only(bottom: 12.h),
+                    itemCount: controller.filteredAutographList.length,
+                    itemBuilder: (context, index) {
+                      final request = controller.filteredAutographList[index];
+                      return AllPendingRequest(
+                        imagePath: request.reader.profilePicture,
+                        authorName: request.author.fullName,
+                        bookName: request.bookTitle,
+                        date: request.requestDate,
+                        ontap: () {
+                          print("NAVIGATING WITH ID: ${request.id}");
+                          Navigator.of(context).pushNamed(
+                            '/requestDetail',
+                            arguments: {
+                              'from': 'all_request',
+                              'autographRequestId': request.id,
+                            },
+                          );
+                        },
+                      );
+                    },
                   ),
-                )
-                    : ListView.builder(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  itemCount: controller.filteredAutographList.length,
-                  itemBuilder: (context, index) {
-                    final request = controller.filteredAutographList[index];
-                    return AllPendingRequest(
-                      imagePath: request.reader.profilePicture,
-                      authorName: request.author.fullName,
-                      bookName: request.bookTitle,
-                      date: request.requestDate,
-                      ontap: () {
-                        print("NAVIGATING WITH ID: ${request.id}");
-                        Navigator.of(context).pushNamed(
-                          '/requestDetail',
-                          arguments: {
-                            'from': 'all_request',
-                            'autographRequestId': request.id,
-                          },
-                        );
-                      },
-                    );
-                  },
                 ),
               ),
             ),

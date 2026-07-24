@@ -134,6 +134,20 @@ class ProfileScreen extends GetView<ProfileScreenController> {
 
                           Obx(
                              () {
+                               if (controller.books.isEmpty) {
+                                 return SizedBox(
+                                   height: 10.h,
+                                   child: Center(
+                                     child: customText(
+                                       text: "No books found",
+                                       color: greyColor,
+                                       fontSize: 15.sp,
+                                       fontFamily: "Poppins",
+                                       fontWeight: FontWeight.w500,
+                                     ),
+                                   ),
+                                 );
+                               }
                               return ListView.builder(
                                 shrinkWrap: true,
                                 padding: EdgeInsets.zero,

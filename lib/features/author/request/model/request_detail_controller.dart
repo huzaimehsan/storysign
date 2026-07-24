@@ -69,8 +69,8 @@ class RequestDetailModel {
     return RequestDetailModel(
       id: json['id'] ?? '',
       bookTitle: json['bookTitle'] ?? '',
-      coverImage: json['coverImage'] ?? '',
-      bookPdfUrl: json['bookPdfUrl'] ?? '',
+      coverImage: json['coverImage'] ?? json['cover_image'] ?? '',
+      bookPdfUrl: _extractPdfUrl(json),
       signedPdfUrl: json['signedPdfUrl'],
       personalMessage: json['personalMessage'] ?? '',
       status: json['status'] ?? 'submitted',
@@ -85,6 +85,24 @@ class RequestDetailModel {
       bookId: json['bookId'] ?? '',
     );
   }
+}
+
+String _extractPdfUrl(Map<String, dynamic> json) {
+  return json['bookPdfUrl']?.toString().isNotEmpty == true
+      ? json['bookPdfUrl'].toString()
+      : json['pdfUrl']?.toString().isNotEmpty == true
+          ? json['pdfUrl'].toString()
+          : json['bookUrl']?.toString().isNotEmpty == true
+              ? json['bookUrl'].toString()
+              : json['pdf']?.toString().isNotEmpty == true
+                  ? json['pdf'].toString()
+                  : json['url']?.toString().isNotEmpty == true
+                      ? json['url'].toString()
+                      : json['fileUrl']?.toString().isNotEmpty == true
+                          ? json['fileUrl'].toString()
+                          : json['documentUrl']?.toString().isNotEmpty == true
+                              ? json['documentUrl'].toString()
+                              : '';
 }
 
 class ReaderModel {

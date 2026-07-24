@@ -31,10 +31,45 @@ class ReadyToSendCard extends StatelessWidget {
           // ── Reader row ──
           Row(
             children: [
-              CircleAvatar(
-                radius: 6.w,
-                backgroundImage: AssetImage(readerImagePath),
-                backgroundColor: buttonColor.withAlpha(30),
+              Container(
+                height: 12.w,
+                width: 12.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: buttonColor.withAlpha(30),
+                ),
+                child: ClipOval(
+                  child: readerImagePath.trim().isEmpty
+                      ? Icon(
+                          Icons.person,
+                          color: buttonColor,
+                          size: 3.h,
+                        )
+                      : (readerImagePath.startsWith('http://') ||
+                              readerImagePath.startsWith('https://')
+                          ? Image.network(
+                              readerImagePath,
+                              fit: BoxFit.cover,
+                              width: 12.w,
+                              height: 12.w,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.person,
+                                color: buttonColor,
+                                size: 3.h,
+                              ),
+                            )
+                          : Image.asset(
+                              readerImagePath,
+                              fit: BoxFit.cover,
+                              width: 12.w,
+                              height: 12.w,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.person,
+                                color: buttonColor,
+                                size: 3.h,
+                              ),
+                            )),
+                ),
               ),
               SizedBox(width: 4.w),
               Expanded(
@@ -77,11 +112,33 @@ class ReadyToSendCard extends StatelessWidget {
                 width: 12.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2.w),
-                  image: DecorationImage(
-                    image: AssetImage(bookImagePath),
-                    fit: BoxFit.cover,
-                  ),
+                  color: Colors.grey.withOpacity(0.15),
                 ),
+                clipBehavior: Clip.hardEdge,
+                child: bookImagePath.trim().isEmpty
+                    ? Container(
+                        color: Colors.grey.withOpacity(0.2),
+                      )
+                    : (bookImagePath.startsWith('http://') ||
+                            bookImagePath.startsWith('https://')
+                        ? Image.network(
+                            bookImagePath,
+                            fit: BoxFit.cover,
+                            width: 12.w,
+                            height: 12.w,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                          )
+                        : Image.asset(
+                            bookImagePath,
+                            fit: BoxFit.cover,
+                            width: 12.w,
+                            height: 12.w,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                          )),
               ),
               SizedBox(width: 4.w),
               Expanded(

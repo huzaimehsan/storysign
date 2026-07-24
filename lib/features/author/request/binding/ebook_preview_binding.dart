@@ -9,7 +9,6 @@ import '../controller/request_detail_controller.dart';
 class EbookPreviewBinding implements Bindings {
   @override
   void dependencies() {
-
-    Get.lazyPut<EbookPreviewController>(() => EbookPreviewController());
+    Get.create<EbookPreviewController>(() => EbookPreviewController());
   }
 }

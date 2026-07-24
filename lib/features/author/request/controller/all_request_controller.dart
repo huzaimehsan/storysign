@@ -1,76 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:storysign/core/services/apiendpoints.dart';
+import 'package:storysign/core/services/base_services.dart';
+import 'package:storysign/utils/utility.dart';
 
 class AllRequestController extends GetxController {
   final TextEditingController searchController = TextEditingController();
+  final RxBool isFetchPending = false.obs;
 
-  final RxList<Map<String, String>> requests = <Map<String, String>>[
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'Jane Austen',
-      'bookName': 'The Origin of Species',
-      'date' : '22 june,2026'
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'Emily Bronte',
-      'bookName': 'Wuthering Heights',
-      'date' : '22 june,2026',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'George Orwell',
-      'bookName': '1984',
-      'date' : '22 june,2026',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'Mark Twain',
-      'bookName': 'Adventures of Tom Sawyer',
-      'date' : '22 june,2026',
-    },
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'F. Scott Fitzgerald',
-      'bookName': 'The Great Gatsby',
-      'date' : '22 june,2026'
-    },
-
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'F. Scott Fitzgerald',
-      'bookName': 'The Great Gatsby',
-      'date' : '22 june,2026'
-    },
-
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'F. Scott Fitzgerald',
-      'bookName': 'The Great Gatsby',
-      'date' : '22 june,2026'
-    },
-
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'F. Scott Fitzgerald',
-      'bookName': 'The Great Gatsby',
-      'date' : '22 june,2026'
-    },
-
-    {
-      'imagePath': 'assets/png/searchprofile.png',
-      'authorName': 'F. Scott Fitzgerald',
-      'bookName': 'The Great Gatsby',
-      'date' : '22 june,2026'
-    },
-  ].obs;
-
+  final RxList<Map<String, String>> requests = <Map<String, String>>[].obs;
   final RxList<Map<String, String>> filteredRequests = <Map<String, String>>[].obs;
 
   @override
   void onInit() {
-    filteredRequests.assignAll(requests);
     super.onInit();
+    fetchPendingRequests();
   }
 
   void filterRequests(String query) {
@@ -88,6 +32,34 @@ class AllRequestController extends GetxController {
         return authorName.contains(lowerQuery) || bookName.contains(lowerQuery);
       }).toList(),
     );
+  }
+
+  Future<void> fetchPendingRequests() async {
+    isFetchPending.value = true;
+    try {
+      final response = await BaseService().baseGetAPI(ApiEndPoints.pendingRequest);
+
+      if (response['success'] == true) {
+        final items = response['items'] as List? ?? [];
+        requests.assignAll(
+          items.map((item) {
+            final data = item as Map<String, dynamic>;
+            return {
+              'id': data['id']?.toString() ?? '',
+              'imagePath': data['reader']?['profilePicture']?.toString() ?? '',
+              'authorName': data['author']?['fullName']?.toString() ?? '',
+              'bookName': data['bookTitle']?.toString() ?? '',
+              'date': data['requestDate']?.toString() ?? '',
+            };
+          }).toList().cast<Map<String, String>>(),
+        );
+        filteredRequests.assignAll(requests);
+      }
+    } catch (e) {
+      Utils.showToast('Failed to load pending requests', true);
+    } finally {
+      isFetchPending.value = false;
+    }
   }
 
   @override
