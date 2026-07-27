@@ -37,6 +37,10 @@ class ApiEndPoints {
   static const String authorHelpSupport = "/author/help";
   static const String authorFaqs = "/author/faqs";
   static const String notifications = "/reader/notifications?page=1&limit=20";
+
+  static const String authorNotifications = "/author/notifications?page=1&limit=20";
+
+
   static const String profile = "/reader/profile";
 
   static const String authorProfile = "/author/profile";
@@ -88,6 +92,10 @@ class ApiEndPoints {
   static String listMyBooks({int page = 1, int limit = 10}) {
     return "/reader/library?page=$page&limit=$limit&status=signed";
   }
+
+
+  static const String registerReaderFcmToken = '/reader/fcm-token';
+  static const String removeReaderFcmToken = 'reader/fcm-token/remove';
 }
 
 // //Vehical

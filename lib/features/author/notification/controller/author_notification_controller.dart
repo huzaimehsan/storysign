@@ -4,19 +4,20 @@ import 'package:get/get.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
+import '../../../reader/notification/model/notification_model.dart';
 import '../../../shared/notification/notification_screen_controller.dart';
-import '../model/notification_model.dart';
+// 👈 NAYA IMPORT
 
+class AuthorNotificationController extends NotificationScreenController { // 👈 CHANGE 1: naam badla + extends badla
 
-class NotificationController extends NotificationScreenController {
-
-  @override
+  @override // 👈 CHANGE 2: @override lagaya
   var isNotificationsLoading = false.obs;
 
-  @override
-  var notificationList = <NotificationModel>[].obs;
+  @override // 👈 CHANGE 2: @override lagaya
+  var notificationList = <NotificationModel>[].obs; // 👈 CHANGE 3: model badla (AuthorNotificationModel -> NotificationModel)
 
   var unreadCount = 0.obs;
+  String role = 'author';
 
   @override
   void onInit() {
@@ -24,7 +25,7 @@ class NotificationController extends NotificationScreenController {
     getNotifications();
   }
 
-  @override
+  @override // 👈 override lagana zaroori hai kyunke interface mein ye method hai
   Future<void> refreshAlert() async {
     await Future.wait([
       getNotifications(),
@@ -37,13 +38,13 @@ class NotificationController extends NotificationScreenController {
     try {
       isNotificationsLoading.value = true;
 
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.notifications);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.authorNotifications);
 
       if (response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
 
         final allNotifications = list
-            .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
+            .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>)) // model yahan bhi badla
             .toList();
 
         notificationList.value = allNotifications.where((n) => !n.isRead).toList();
@@ -61,24 +62,18 @@ class NotificationController extends NotificationScreenController {
     }
   }
 
-  @override // 👈 lagaya
+  @override // 👈 comment se nikala aur override lagaya, kyunke interface mangta hai
   Future<void> markAllAsRead() async {
     try {
-      debugPrint('NotificationController: markAllAsRead called. Total notifications: ${notificationList.length}');
+      debugPrint('AuthorNotificationController: markAllAsRead called. Total: ${notificationList.length}');
 
       final unreadList = notificationList.where((n) => !n.isRead).toList();
-      debugPrint('NotificationController: unread count = ${unreadList.length}');
       if (unreadList.isEmpty) return;
 
       final results = await Future.wait(
         unreadList.map((notification) async {
           final endpoint = ApiEndPoints.markNotificationAsRead(notification.id);
-          debugPrint('Marking read -> $endpoint');
-          final res = await baseService.basePatchAPI(
-            endpoint,
-            body: {},
-            loading: false,
-          );
+          final res = await baseService.basePatchAPI(endpoint, body: {}, loading: false);
           return {'id': notification.id, 'success': res['success'] == true};
         }),
       );
@@ -92,7 +87,7 @@ class NotificationController extends NotificationScreenController {
 
       final failedCount = results.length - successIds.length;
       if (failedCount > 0) {
-        Utils.showToast("No Notification", true);
+        Utils.showToast("Kuch notifications read nahi ho payin", true);
       }
 
       unreadCount.value = notificationList.where((n) => !n.isRead).length;

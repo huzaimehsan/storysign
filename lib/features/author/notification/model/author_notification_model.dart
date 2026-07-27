@@ -1,4 +1,4 @@
-class NotificationModel {
+class AuthorNotificationModel {
   final String id;
   final String title;
   final String message;
@@ -8,7 +8,7 @@ class NotificationModel {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  NotificationModel({
+  AuthorNotificationModel({
     required this.id,
     required this.title,
     required this.message,
@@ -19,8 +19,8 @@ class NotificationModel {
     required this.updatedAt,
   });
 
-  factory NotificationModel.fromJson(Map<String, dynamic> json) {
-    return NotificationModel(
+  factory AuthorNotificationModel.fromJson(Map<String, dynamic> json) {
+    return AuthorNotificationModel(
       id: json['_id']?.toString() ?? '',
       title: json['title'] ?? '',
       message: json['message'] ?? '',
@@ -32,8 +32,8 @@ class NotificationModel {
     );
   }
 
-  NotificationModel copyWith({bool? isRead}) {
-    return NotificationModel(
+  AuthorNotificationModel copyWith({bool? isRead}) {
+    return AuthorNotificationModel(
       id: id,
       title: title,
       message: message,

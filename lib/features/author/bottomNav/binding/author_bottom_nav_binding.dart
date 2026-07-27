@@ -10,6 +10,8 @@ import 'package:storysign/features/author/request/controller/request_detail_cont
 import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 
 import '../../../reader/profile/controller/profile_screen_controller.dart';
+import '../../../shared/notification/notification_screen_controller.dart';
+import '../../notification/controller/author_notification_controller.dart';
 import '../controller/author_bottom_nav_controller.dart';
 
 class AuthorBottomNavBinding implements Bindings {
@@ -26,7 +28,7 @@ class AuthorBottomNavBinding implements Bindings {
     Get.lazyPut<DeliveredController>(() => DeliveredController());
     Get.lazyPut<RequestDetailController>(() => RequestDetailController());
 
-
+    Get.lazyPut<NotificationScreenController>(() => AuthorNotificationController(), tag: 'author');
     // Get.lazyPut<ProfileScreenController>(() => ProfileScreenController());
   }
 }

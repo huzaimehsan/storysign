@@ -66,7 +66,7 @@ class AllRequest extends GetView<AuthorHomeController> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.6, // 👈 fixed height do
+                        height: 40.h, //
                         child: Center(
                           child: customText(
                             text: "No pending requests",

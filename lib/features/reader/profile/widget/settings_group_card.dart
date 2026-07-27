@@ -4,7 +4,44 @@ import 'package:sizer/sizer.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../constants/color_constants.dart';
 
-Widget settingsGroupCard({EdgeInsetsGeometry? margin}) {
+class SettingsItem {
+  final dynamic iconPath;
+  final String title;
+  final VoidCallback? onTap;
+
+  const SettingsItem({
+    required this.iconPath,
+    required this.title,
+    this.onTap,
+  });
+}
+
+Widget settingsGroupCard({
+  EdgeInsetsGeometry? margin,
+  List<SettingsItem>? items,
+}) {
+  final settingsItems = items ??
+      [
+        SettingsItem(
+          iconPath: Icons.password,
+          title: 'Change Password',
+          onTap: () => Get.toNamed('/newpass'),
+        ),
+        SettingsItem(
+          iconPath: 'assets/png/security.png',
+          title: 'Privacy Policy',
+          onTap: () => Get.toNamed('/privacy'),
+        ),
+        SettingsItem(
+          iconPath: 'assets/png/questionmark.png',
+          title: 'Help and Support',
+          onTap: () => Get.toNamed(
+            '/helpandsupport',
+            arguments: {'role': 'reader'},
+          ),
+        ),
+      ];
+
   return Container(
     width: double.infinity,
     margin: margin ?? EdgeInsets.zero,
@@ -21,42 +58,29 @@ Widget settingsGroupCard({EdgeInsetsGeometry? margin}) {
       ],
     ),
     child: Column(
-      children: [
-        // Item 1
-        _buildRowItem(Icons.password, "Change Password", () {
-
-          Get.toNamed("/newpass");
-        }),
-        Divider(
-          thickness: 0.02.h, // Responsive thickness
-          // Responsive vertical spacing
-          color: buttonColor, // Aapka grey border color
-        ),
-
-        // Item 2
-        _buildRowItem("assets/png/security.png", "Privacy Policy", () {
-
-          Get.toNamed("/privacy");
-        }),
-        Divider(
-          thickness: 0.02.h, // Responsive thickness
-          // Responsive vertical spacing
-          color: buttonColor, // Aapka grey border color
-        ),
-
-        // Item 3
-        _buildRowItem("assets/png/questionmark.png", "Help and Support", () {
-          Get.toNamed("/helpandsupport",
-
-            arguments: {'role': 'reader'},
-          );
-        }),
-      ],
+      children: List.generate(settingsItems.length, (index) {
+        final item = settingsItems[index];
+        return Column(
+          children: [
+            _buildRowItem(item.iconPath, item.title, item.onTap),
+            if (index < settingsItems.length - 1)
+              Divider(
+                thickness: 0.02.h,
+                color: buttonColor,
+              ),
+          ],
+        );
+      }),
     ),
   );
 }
 
-Widget settingsSignoutCard({EdgeInsetsGeometry? margin,required VoidCallback? ontap}) {
+Widget settingsSignoutCard({
+  EdgeInsetsGeometry? margin,
+  required VoidCallback? ontap,
+  dynamic iconPath,
+  String title = 'Sign Out',
+}) {
   return Container(
     width: double.infinity,
     margin: margin ?? EdgeInsets.zero,
@@ -74,42 +98,45 @@ Widget settingsSignoutCard({EdgeInsetsGeometry? margin,required VoidCallback? on
     ),
     child: Column(
       children: [
-        // Item 1
-        _buildRowItem("assets/png/signout.png", "Sign Out", ontap),
+        _buildRowItem(iconPath ?? 'assets/png/signout.png', title, ontap),
       ],
     ),
   );
 }
-// Naya function:
+
 Widget _buildRowItem(dynamic icon, String title, VoidCallback? ontap) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 2.w, horizontal: 6.w),
-    child: Row(
-      children: [
-        // Check karein ke icon String hai (asset) ya IconData
-        icon is String
-            ? Image.asset(icon, height: 5.5.w, width: 5.5.w, fit: BoxFit.contain,color: buttonColor,)
-            : Icon(icon, size: 5.8.w, color: buttonColor), // Agar IconData hai
-
-        SizedBox(width: 4.w),
-        customText(
-          fontFamily: 'Poppins',
-          text: title,
-          color: secondryColor,
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        const Spacer(),
-        InkWell(
-          onTap: ontap,
-          child: Image.asset(
-            "assets/png/forward.png",
+    child: InkWell(
+      onTap: ontap,
+      child: Row(
+        children: [
+          icon is String
+              ? Image.asset(
+                  icon,
+                  height: 5.5.w,
+                  width: 5.5.w,
+                  fit: BoxFit.contain,
+                  color: buttonColor,
+                )
+              : Icon(icon, size: 5.8.w, color: buttonColor),
+          SizedBox(width: 4.w),
+          customText(
+            fontFamily: 'Poppins',
+            text: title,
+            color: secondryColor,
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
+          ),
+          const Spacer(),
+          Image.asset(
+            'assets/png/forward.png',
             height: 3.6.w,
             width: 3.6.w,
             fit: BoxFit.contain,
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

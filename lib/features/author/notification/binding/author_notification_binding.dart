@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
-import 'package:storysign/features/reader/notification/controller/notification_controller.dart';
+import 'package:storysign/features/author/notification/controller/author_notification_controller.dart'; // sahi wala import
 import 'package:storysign/features/shared/notification/notification_screen_controller.dart'; // apna path check karein
 
-class NotificationBinding implements Bindings {
+class AuthorNotificationBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut<NotificationScreenController>(
-          () => NotificationController(),
-      tag: 'reader',
+      () => AuthorNotificationController(),
+      tag: 'author',
     );
   }
 }

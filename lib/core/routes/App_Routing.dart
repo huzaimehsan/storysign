@@ -4,6 +4,7 @@ import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_bi
 import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/home/binding/home_binding.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
+import 'package:storysign/features/author/notification/binding/author_notification_binding.dart';
 import 'package:storysign/features/author/profile/binding/help_support_binding.dart';
 import 'package:storysign/features/author/request/binding/draw_signature_binding.dart';
 import 'package:storysign/features/author/request/binding/ebook_preview_binding.dart';
@@ -74,6 +75,7 @@ import '../../features/reader/notification/view/notification.dart';
 import '../../features/reader/profile/view/help_and_support.dart';
 import '../../features/reader/search/view/author_detail.dart';
 import '../../features/reader/search/view/request_autograph.dart';
+import '../../features/shared/notification/notification_screen.dart';
 
 class AppRoutes {
   static List<GetPage<dynamic>> routes = [
@@ -140,12 +142,12 @@ class AppRoutes {
       page: () => RequestAutograph(),
       binding: RequestAutographBinding(),
     ),
-
-    GetPage(
-      name: '/notification',
-      page: () => NotificationScreen(),
-      binding: NotificationBinding(),
-    ),
+    //
+    // GetPage(
+    //   name: '/notification',
+    //   page: () => NotificationScreen(),
+    //   bindings:[ NotificationBinding() ,AuthorNotificationBinding()],
+    // ),
 
     GetPage(
       name: '/requestautographcard',

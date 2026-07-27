@@ -4,6 +4,7 @@ import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
 import '../../library/controller/library_controller.dart';
+import '../../notification/controller/notification_controller.dart';
 import '../../profile/controller/profile_screen_controller.dart';
 import '../../search/controller/search_page_controller.dart';
 
@@ -47,11 +48,19 @@ class BottomNavController extends GetxController{
         }
       } catch (_) {}
     }
-
-
     if (index == 2) {
-      if (Get.isRegistered<ReaderController>()) {
-        Get.find<ReaderController>().fetchBooksData();
+      try {
+        if (Get.isRegistered<ReaderController>()) {
+          Get.find<ReaderController>().fetchBooksData();
+
+        }
+      } catch (_) {}
+    }
+
+
+    if (index == 3) {
+      if (Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().getNotifications();
       }
     }
 

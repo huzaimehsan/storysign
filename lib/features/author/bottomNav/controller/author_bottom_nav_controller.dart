@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:storysign/features/author/notification/binding/author_notification_binding.dart';
+import 'package:storysign/features/author/notification/controller/author_notification_controller.dart';
 
 import '../../home/controller/home_controller.dart';
 
@@ -34,9 +36,9 @@ class AuthorBottomNavController extends GetxController {
 
     // Index 3: Profile Tab
     if (index == 3) {
-      // if (Get.isRegistered<AuthorProfileController>()) {
-      //   Get.find<AuthorProfileController>().getProfile();
-      // }
+      if (Get.isRegistered<AuthorNotificationController>()) {
+        Get.find<AuthorNotificationController>().getNotifications();
+      }
     }
   }
 

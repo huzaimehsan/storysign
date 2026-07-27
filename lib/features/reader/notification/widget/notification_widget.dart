@@ -6,13 +6,14 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
 Widget customNotificationHeader({
   required VoidCallback onBack,
   required VoidCallback onIconPressed,
 }) {
   return Container(
-    padding: EdgeInsets.only( left: 4.w, right: 4.w),
+    padding: EdgeInsets.only(left: 4.w, right: 4.w),
     child: Stack(
       alignment: Alignment.center,
       children: [
@@ -48,10 +49,14 @@ Widget customNotificationHeader({
       ],
     ),
   );
-}Widget notificationTile({
+
+}
+
+Widget notificationTile({
   required String title,
   required String description,
   required String time,
+  bool isRead = false,
 }) {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -65,7 +70,9 @@ Widget customNotificationHeader({
           text: title,
           fontSize: 15.sp,
           fontWeight: FontWeight.w600,
-          color: bottomNavColor,
+          color:
+
+               bottomNavColor,
           textAlign: TextAlign.start,
           maxLines: 1,
           fontFamily: "Poppins",
@@ -89,9 +96,8 @@ Widget customNotificationHeader({
         // Time
         Align(
           alignment: Alignment.centerRight,
-          child: customText(
-            text: time,
-            letterSpacing: 0,
+          child: FormattedRequestDate(
+            dateString: time,
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             color: textFeildContainColor,
@@ -99,7 +105,6 @@ Widget customNotificationHeader({
             fontFamily: "Poppins",
           ),
         ),
-
 
 
         // Divider

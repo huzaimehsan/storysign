@@ -18,6 +18,10 @@ import 'package:storysign/features/author/request/binding/place_signature_bindin
 import 'package:storysign/features/author/request/binding/final_review_binding.dart';
 
 import '../../../reader/library/view/reader_library.dart';
+import '../../../reader/notification/binding/notification_binding.dart';
+import '../../../reader/notification/view/notification.dart';
+import '../../../shared/notification/notification_screen.dart';
+import '../../notification/binding/author_notification_binding.dart';
 import '../../profile/binding/profile_binding.dart';
 import '../../request/binding/add_message_binding.dart';
 import '../../request/binding/draw_signature_binding.dart';
@@ -28,6 +32,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -139,9 +144,24 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
                 key: _navigatorKeys[2],
                 onGenerateRoute: _buildDeliveredRoute,
               ),
+
+              Navigator(
+                  key: controller.navigatorKeys[3],
+                  onGenerateRoute: (RouteSettings settings) {
+                    return GetPageRoute(
+                      page: () => const NotificationScreen(),
+                      binding: AuthorNotificationBinding(),
+                      settings: RouteSettings(
+                        name: settings.name,
+                        arguments: {'role': 'author'},   // 👈 ye add karein
+                      ),
+                    );
+                  }
+              ),
+
               // Tab 3: Notifications
               Navigator(
-                key: _navigatorKeys[3],
+                key: _navigatorKeys[4],
                 onGenerateRoute: (RouteSettings settings) {
                   final bool isAuthor = true;
                   return GetPageRoute(
@@ -178,8 +198,8 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
                 _buildNavItem("assets/icon/home.png", 0),
                 _buildNavItem("assets/icon/request.png", 1),
                 _buildNavItem("assets/icon/deliver.png", 2),
-
-                _buildNavItem("assets/icon/profile.png", 3),
+                _buildNavItem("assets/icon/notification.png", 3),
+                _buildNavItem("assets/icon/profile.png", 4),
               ],
             ),
           ),

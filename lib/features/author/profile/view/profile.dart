@@ -143,16 +143,49 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                           SizedBox(height: 1.5.h),
 
                           // Settings group: Change Password, Privacy Policy, Help & Support
-                          authorSettingsGroupCard(),
+                          authorSettingsGroupCard(
+                            items: [
+                              AuthorSettingsItem(
+                                iconPath: Icons.lock_outline,
+                                title: 'Change Password',
+                                onTap: () => Get.toNamed('/newpass'),
+                              ),
+                              AuthorSettingsItem(
+                                iconPath: 'assets/png/upgrade.png',
+                                title: 'Upgrade Plan',
+                                onTap: () => Get.toNamed(
+                                  '/plan',
+                                  arguments: {
+                                    'source': 'profile',
+                                    'planType': 'premium',
+                                  },
+                                ),
+                              ),
+                              AuthorSettingsItem(
+                                iconPath: 'assets/png/security.png',
+                                title: 'Privacy Policy',
+                                onTap: () => Get.toNamed('/privacy'),
+                              ),
+                              AuthorSettingsItem(
+                                iconPath: 'assets/png/questionmark.png',
+                                title: 'Help and Support',
+                                onTap: () => Get.toNamed(
+                                  '/helpandsupport',
+                                  arguments: {'role': 'author'},
+                                ),
+                              ),
+                            ],
+                          ),
                           SizedBox(height: 2.h),
 
                           // Sign Out card
-                          settingsSignoutCard(
+                          authorSettingsSignoutCard(
+                            iconPath: 'assets/png/signout.png',
                             ontap: () {
                               showSuccessDialog(
                                 context,
                                 buttonText: 'Confirm',
-                                desc: "Are you sure you want to logout?",
+                                desc: 'Are you sure you want to logout?',
                                 ontap: () {
                                   controller.signOut();
                                 },
