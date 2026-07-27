@@ -7,6 +7,8 @@ import '../../../../widgets/button_widget.dart';
 
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
+import '../../home/controller/home_controller.dart';
+import '../../profile/controller/profile_controller.dart';
 import '../../widgets/subscription_plan_card.dart';
 import '../controller/subscription_plan_controller.dart';
 
@@ -30,8 +32,8 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               ),
               SizedBox(height: 2.h),
               Obx(
-                    () => Padding(
-                  padding:  EdgeInsets.only(bottom: 1.h),
+                () => Padding(
+                  padding: EdgeInsets.only(bottom: 1.h),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -69,11 +71,24 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               SizedBox(height: 1.h),
               Expanded(
                 child: Obx(
+                  () {
+                    final Map<String, dynamic>? args = Get.arguments;
+                    String? activePlanName = args?['planName'];
 
-                      () {
-                        final Map<String, dynamic>? args = Get.arguments;
-                        final String? activePlanName = args?['planName'];
-
+                    if ((activePlanName == null || activePlanName.isEmpty) &&
+                        Get.isRegistered<AuthorProfileController>()) {
+                      activePlanName = Get.find<AuthorProfileController>()
+                          .authorProfile
+                          .value
+                          ?.activePlanName;
+                    }
+                    if ((activePlanName == null || activePlanName.isEmpty) &&
+                        Get.isRegistered<AuthorHomeController>()) {
+                      activePlanName = Get.find<AuthorHomeController>()
+                          .activeSub
+                          .value
+                          ?.planName;
+                    }
 
                     if (controller.isLoading.value) {
                       return const Center(
@@ -98,17 +113,23 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                       itemCount: controller.plans.length,
                       itemBuilder: (context, index) {
                         final plan = controller.plans[index];
-                        final isCurrentPlan = plan.name == activePlanName;
+                        final isCurrentPlan = activePlanName != null &&
+                            activePlanName.isNotEmpty &&
+                            plan.name.trim().toLowerCase() ==
+                                activePlanName.trim().toLowerCase();
+
                         return SubscriptionPlanCard(
                           title: plan.name,
                           subtitle: plan.planType,
                           price: plan.price.toString(),
                           features: plan.features,
-                          isMostPopular: plan.name.toLowerCase().contains('pro'),
+                          isMostPopular:
+                              plan.name.toLowerCase().contains('pro'),
                           onSelect: () => controller.selectPlan(plan),
-                          buttonText: isCurrentPlan ? "Current Plan " : "Select Plan",
-
-
+                          isCurrentPlan: isCurrentPlan,
+                          buttonText: isCurrentPlan
+                              ? "Current Plan"
+                              : "Upgrade to Basic",
                         );
                       },
                     );
@@ -122,3 +143,4 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
     );
   }
 }
+

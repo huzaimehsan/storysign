@@ -5,7 +5,7 @@ import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
-import '../../../shared/notification/notification_screen.dart';
+import '../../../shared/notification/view/notification_screen.dart';
 import '../../Home/view/home_screen.dart';
 import '../../Home/view/track_request.dart';
 import '../../library/view/reader_library.dart';

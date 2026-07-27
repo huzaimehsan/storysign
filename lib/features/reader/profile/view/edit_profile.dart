@@ -23,13 +23,16 @@ class EditProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Arguments se role catch karein
-    final String role = Get.arguments?['role'] ?? 'reader';
+    // 1. Arguments se role catch karein (ModalRoute fallback for nested navigators)
+    final args =
+        (ModalRoute.of(context)?.settings.arguments ?? Get.arguments)
+            as Map<String, dynamic>?;
+    final String role = args?['role']?.toString() ?? 'reader';
 
-    // 2. Role ke mutabiq sahi controller find karein (Bindings pehle hi memory mein put kar chuki hongi)
+    // 2. Role ke mutabiq sahi controller find karein
     final dynamic controller = role == 'author'
-        ? Get.find<AuthorProfileController>() // Author ka controller
-        : Get.find<EditProfileController>(); // Reader ka controller
+        ? Get.find<AuthorProfileController>()
+        : Get.find<EditProfileController>();
 
     return Scaffold(
       backgroundColor: containerColor,
@@ -52,7 +55,7 @@ class EditProfile extends StatelessWidget {
                   clipBehavior: Clip.none,
                   children: [
                     Obx(
-                          () => Container(
+                      () => Container(
                         height: 30.w,
                         width: 30.w,
                         decoration: BoxDecoration(
@@ -62,32 +65,51 @@ class EditProfile extends StatelessWidget {
                         child: ClipOval(
                           child: controller.profileImage.value != null
                               ? Image.file(
-                            controller.profileImage.value!,
-                            fit: BoxFit.cover,
-                            width: 30.w,
-                            height: 30.w,
-                          )
+                                  controller.profileImage.value!,
+                                  fit: BoxFit.cover,
+                                  width: 30.w,
+                                  height: 30.w,
+                                )
                               : (role == 'author'
-                              ? (controller.profileModel.value?.profilePicture != null &&
-                              controller.profileModel.value!.profilePicture.toString().isNotEmpty)
-                              : (controller.profileModel.value?.profilePicture != null &&
-                              controller.profileModel.value!.profilePicture.toString().isNotEmpty))
+                                    ? (controller
+                                                  .profileModel
+                                                  .value
+                                                  ?.profilePicture !=
+                                              null &&
+                                          controller
+                                              .profileModel
+                                              .value!
+                                              .profilePicture
+                                              .toString()
+                                              .isNotEmpty)
+                                    : (controller
+                                                  .profileModel
+                                                  .value
+                                                  ?.profilePicture !=
+                                              null &&
+                                          controller
+                                              .profileModel
+                                              .value!
+                                              .profilePicture
+                                              .toString()
+                                              .isNotEmpty))
                               ? Image.network(
-                            controller.profileModel.value!.profilePicture.toString(),
-                            fit: BoxFit.cover,
-                            width: 30.w,
-                            height: 30.w,
-                            errorBuilder: (ctx, err, stack) => Icon(
-                              Icons.person_rounded,
-                              color: buttonColor.withOpacity(0.6),
-                              size: 12.w,
-                            ),
-                          )
+                                  controller.profileModel.value!.profilePicture
+                                      .toString(),
+                                  fit: BoxFit.cover,
+                                  width: 30.w,
+                                  height: 30.w,
+                                  errorBuilder: (ctx, err, stack) => Icon(
+                                    Icons.person_rounded,
+                                    color: buttonColor.withOpacity(0.6),
+                                    size: 12.w,
+                                  ),
+                                )
                               : Icon(
-                            Icons.person_rounded,
-                            color: buttonColor.withOpacity(0.6),
-                            size: 12.w,
-                          ),
+                                  Icons.person_rounded,
+                                  color: buttonColor.withOpacity(0.6),
+                                  size: 12.w,
+                                ),
                         ),
                       ),
                     ),
@@ -129,8 +151,9 @@ class EditProfile extends StatelessWidget {
                       emailTextFeild(
                         'Email',
                         'johnsmith@gmail.com',
-                        controller:role == 'author'
-                            ? controller.authorEmailUpdateController : controller.emailUpdateController,
+                        controller: role == 'author'
+                            ? controller.authorEmailUpdateController
+                            : controller.emailUpdateController,
                         validator: (value) =>
                             HelperFunction.emailValidate(value ?? ''),
                       ),
@@ -174,13 +197,13 @@ class EditProfile extends StatelessWidget {
                           onTap: () {
                             if (controller.formKey.currentState?.validate() ??
                                 false) {
-                              role == 'author' ?
-                              controller.updateAuthorProfileWithImage(
-                                controller.selectedImage.value,
-                              ):
-                              controller.updateProfileWithImage(
-                                controller.selectedImage.value,
-                              );
+                              role == 'author'
+                                  ? controller.updateAuthorProfileWithImage(
+                                      controller.selectedImage.value,
+                                    )
+                                  : controller.updateProfileWithImage(
+                                      controller.selectedImage.value,
+                                    );
                             }
                           },
                           colors: buttonColor,

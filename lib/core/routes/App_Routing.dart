@@ -6,6 +6,7 @@ import 'package:storysign/features/author/home/binding/home_binding.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/notification/binding/author_notification_binding.dart';
 import 'package:storysign/features/author/profile/binding/help_support_binding.dart';
+import 'package:storysign/features/author/profile/binding/profile_binding.dart';
 import 'package:storysign/features/author/request/binding/draw_signature_binding.dart';
 import 'package:storysign/features/author/request/binding/ebook_preview_binding.dart';
 import 'package:storysign/features/author/request/binding/final_review_binding.dart';
@@ -75,7 +76,7 @@ import '../../features/reader/notification/view/notification.dart';
 import '../../features/reader/profile/view/help_and_support.dart';
 import '../../features/reader/search/view/author_detail.dart';
 import '../../features/reader/search/view/request_autograph.dart';
-import '../../features/shared/notification/notification_screen.dart';
+import '../../features/shared/notification/view/notification_screen.dart';
 
 class AppRoutes {
   static List<GetPage<dynamic>> routes = [
@@ -202,7 +203,7 @@ class AppRoutes {
     GetPage(
       name: '/editprofile',
       page: () => EditProfile(),
-      binding: EditProfileBinding(),
+      bindings: [EditProfileBinding(), AuthorProfileBinding()],
     ),
 
     GetPage(

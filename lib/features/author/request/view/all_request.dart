@@ -46,28 +46,23 @@ class AllRequest extends GetView<AuthorHomeController> {
               child: sectionHeader(title: "Pending Requests", onSeeAll: () {}),
             ),
 
-            Obx(
-                  () => Expanded(
-                child: RefreshIndicator(
-                  onRefresh: controller.refreshPendingRequest,
-                  color: buttonColor,
-                  child: controller.isFetchPending.value
-                      ? ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      SizedBox(height: 40.h),
-                      Center(
-                        child: CircularProgressIndicator(color: buttonColor),
-                      ),
-                    ],
-                  )
-                      : controller.filteredAutographList.isEmpty
-                      ? ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      SizedBox(
-                        height: 40.h, //
-                        child: Center(
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: controller.refreshPendingRequest,
+                color: buttonColor,
+                child: Obx(() {
+                  if (controller.isFetchPending.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
+                    );
+                  }
+
+                  if (controller.filteredAutographList.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 40.h),
+                        Center(
                           child: customText(
                             text: "No pending requests",
                             fontSize: 15.sp,
@@ -77,10 +72,12 @@ class AllRequest extends GetView<AuthorHomeController> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                      : ListView.builder(
+                      ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount: controller.filteredAutographList.length,
                     itemBuilder: (context, index) {
@@ -102,8 +99,8 @@ class AllRequest extends GetView<AuthorHomeController> {
                         },
                       );
                     },
-                  ),
-                ),
+                  );
+                }),
               ),
             ),
           ],

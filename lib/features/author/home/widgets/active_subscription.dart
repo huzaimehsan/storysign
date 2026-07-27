@@ -94,7 +94,7 @@ Widget activeSubscription({
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                 ),
-                SizedBox(width: 5.w),
+                SizedBox(width: 1.w),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 14.sp,

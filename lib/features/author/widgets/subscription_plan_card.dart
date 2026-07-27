@@ -31,7 +31,8 @@ class SubscriptionPlanCard extends StatelessWidget {
     this.showActionButton = true,
     this.showAmountRow = false,
     this.amountLabel,
-    this.amountValue, this.buttonText,
+    this.amountValue,
+    this.buttonText,
   });
 
   @override
@@ -41,7 +42,6 @@ class SubscriptionPlanCard extends StatelessWidget {
     String source = args?['source'] ?? 'startup';
     return Container(
       margin: EdgeInsets.symmetric(vertical: 1.2.h),
-      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(20.sp),
@@ -53,118 +53,123 @@ class SubscriptionPlanCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              customText(
-                text: title,
-                fontFamily: "Poppins",
-                color: secondryColor,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-              ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
 
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: price,
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        color: buttonColor,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextSpan(
-                      text: "/m",
-                      style: TextStyle(
+            Padding(
+              padding: EdgeInsets.all(4.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      customText(
+                        text: title,
                         fontFamily: "Poppins",
                         color: secondryColor,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-
-
-
-          customText(
-            text: subtitle,
-            fontFamily: "Poppins",
-            color: primaryColor.withOpacity(0.7),
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-          ),
-
-          Divider(
-            color:buttonColor,
-            thickness: 0.8,
-          ),
-
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: features
-                .map(
-                  (feature) => Padding(
-                    padding: EdgeInsets.only(bottom: 0.8.h),
-                    child: customText(
-                      text: feature,
-                      fontFamily: "Poppins",
-                      color: primaryColor.withOpacity(0.7),
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: price,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                color: buttonColor,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "/m",
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                color: secondryColor,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                )
-                .toList(),
-          ),
-          SizedBox(height: 2.h),
-
-          if (showAmountRow)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                customText(
-                  text: amountLabel ?? 'Total Amount',
-                  fontFamily: 'Poppins',
-                  color: secondryColor,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-                customText(
-                  text: amountValue ?? price,
-                  fontFamily: 'Poppins',
-                  color: buttonColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ],
-            )
-          else if (showActionButton)
-            buttonWidget(
-              isCurrentPlan
-                  ? "Current Plan"
-                  : (buttonText ?? (source == 'profile' ? "Upgrade to Basics" : "Upgrade to Basics")),
-              whiteColor,
-              onTap: isCurrentPlan ? null : onSelect,
-              colors: buttonColor,
-              fontFamily: 'Poppins',
-              height: 4.h,
-              width: double.infinity,
-              fontsize: 14.sp,
-              fontweight: FontWeight.w600,
+                  customText(
+                    text: subtitle,
+                    fontFamily: "Poppins",
+                    color: primaryColor.withOpacity(0.7),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  Divider(
+                    color: buttonColor,
+                    thickness: 0.8,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: features
+                        .map(
+                          (feature) => Padding(
+                            padding: EdgeInsets.only(bottom: 0.8.h),
+                            child: customText(
+                              text: feature,
+                              fontFamily: "Poppins",
+                              color: primaryColor.withOpacity(0.7),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  SizedBox(height: 2.h),
+                  if (showAmountRow)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        customText(
+                          text: amountLabel ?? 'Total Amount',
+                          fontFamily: 'Poppins',
+                          color: secondryColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        customText(
+                          text: amountValue ?? price,
+                          fontFamily: 'Poppins',
+                          color: buttonColor,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    )
+                  else if (showActionButton)
+                    buttonWidget(
+                      isCurrentPlan
+                          ? "Current Plan"
+                          : (buttonText ?? "Upgrade to Basic"),
+                      whiteColor,
+                      onTap: isCurrentPlan ? null : onSelect,
+                      colors: isCurrentPlan ? buttonColor : buttonColor,
+                      fontFamily: 'Poppins',
+                      height: 4.h,
+                      width: double.infinity,
+                      fontsize: 14.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                ],
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+

@@ -158,6 +158,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                                   arguments: {
                                     'source': 'profile',
                                     'planType': 'premium',
+                                    'planName': profile.activePlanName ?? '',
                                   },
                                 ),
                               ),

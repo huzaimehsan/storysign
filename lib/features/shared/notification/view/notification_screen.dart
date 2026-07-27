@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../constants/color_constants.dart';
-import '../../../widgets/customText_widget.dart';
-import '../../../widgets/formatted_date_widget.dart';
+import '../../../../constants/color_constants.dart';
+import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/formatted_date_widget.dart';
 
-import '../../reader/notification/widget/notification_widget.dart';
-import 'notification_screen_controller.dart';
+import '../../../reader/notification/widget/notification_widget.dart';
+import '../notification_screen_controller.dart';
 
 
 class NotificationScreen extends StatelessWidget {

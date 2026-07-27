@@ -16,7 +16,7 @@ Widget emailTextFeild(
   int? maxLength,
   int? maxLines,
   bool? showSuffix,
-String? Function(String?)? validator,
+  String? Function(String?)? validator,
   bool? isPaymentScreen = false,
 }) {
   return Column(
@@ -81,9 +81,7 @@ String? Function(String?)? validator,
                       isPasswordHidden.toggle();
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        right: 4.w,
-                      ),
+                      padding: EdgeInsets.only(right: 4.w),
                       child: Obx(
                         () => Icon(
                           isPasswordHidden.value
@@ -112,23 +110,17 @@ String? Function(String?)? validator,
                   ),
                   errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24.sp),
-                    borderSide: BorderSide(
-                      color: Colors.red,
-                      width: 0.15.h,
-                    ),
+                    borderSide: BorderSide(color: Colors.red, width: 0.15.h),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24.sp),
-                    borderSide: BorderSide(
-                      color: Colors.red,
-                      width: 0.2.h,
-                    ),
+                    borderSide: BorderSide(color: Colors.red, width: 0.2.h),
                   ),
                 ),
               );
             })
           : TextFormField(
-        validator: validator,
+              validator: validator,
               controller: controller,
               maxLength: maxLength,
               maxLines: maxLines,
@@ -196,7 +188,7 @@ String? Function(String?)? validator,
 
 Widget customTextField(
   String title,
-    int? maxLength,
+  int? maxLength,
   String hinttext, {
   String? path,
   bool? isPass = false,
@@ -291,7 +283,9 @@ Widget customTextField(
                         child: Padding(
                           padding: EdgeInsets.only(right: 4.w),
                           child: Icon(
-                            isObscure.value ? Icons.visibility_off : Icons.visibility,
+                            isObscure.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: borderGreyColor,
                             size: 24,
                           ),

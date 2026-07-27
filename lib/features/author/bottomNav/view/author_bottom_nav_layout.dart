@@ -20,7 +20,7 @@ import 'package:storysign/features/author/request/binding/final_review_binding.d
 import '../../../reader/library/view/reader_library.dart';
 import '../../../reader/notification/binding/notification_binding.dart';
 import '../../../reader/notification/view/notification.dart';
-import '../../../shared/notification/notification_screen.dart';
+import '../../../shared/notification/view/notification_screen.dart';
 import '../../notification/binding/author_notification_binding.dart';
 import '../../profile/binding/profile_binding.dart';
 import '../../request/binding/add_message_binding.dart';

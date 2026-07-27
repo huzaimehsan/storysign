@@ -14,10 +14,11 @@ import '../../../../utils/utility.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../../../../widgets/image_picker.dart';
-class AuthorProfileController extends GetxController{
+
+class AuthorProfileController extends GetxController {
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
-  Rxn<AuthorProfileModel> authorProfile =Rxn<AuthorProfileModel>();
+  Rxn<AuthorProfileModel> authorProfile = Rxn<AuthorProfileModel>();
   final authorNameUpdateController = TextEditingController();
   final authorEmailUpdateController = TextEditingController();
   final authorBioUpdateController = TextEditingController();
@@ -28,9 +29,10 @@ class AuthorProfileController extends GetxController{
 
   // Compatibility fields/getters for EditProfile view
   TextEditingController get nameUpdateController => authorNameUpdateController;
-  TextEditingController get emailUpdateController => authorEmailUpdateController;
+  TextEditingController get emailUpdateController =>
+      authorEmailUpdateController;
   TextEditingController get bioUpdateController => authorBioUpdateController;
-  
+
   Rxn<File> get profileImage => authorProfileImage;
   Rxn<File> get selectedImage => authorSelectedImage;
   Rxn<AuthorProfileModel> get profileModel => authorProfile;
@@ -48,9 +50,11 @@ class AuthorProfileController extends GetxController{
     super.onInit();
     getProfile();
   }
+
   Future<void> refreshProfileRequests() async {
-getProfile();
+    getProfile();
   }
+
   Future<void> getProfile() async {
     try {
       isLoading.value = true;
@@ -65,7 +69,9 @@ getProfile();
         return;
       }
 
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.authorProfile}');
+      final uri = Uri.parse(
+        '${BaseService().baseURL}${ApiEndPoints.authorProfile}',
+      );
       final response = await http.get(
         uri,
         headers: {
@@ -90,7 +96,8 @@ getProfile();
         }
       } else {
         final responseBody = jsonDecode(response.body);
-        final message = responseBody['message']?.toString() ?? 'Failed to load profile';
+        final message =
+            responseBody['message']?.toString() ?? 'Failed to load profile';
         errorMessage.value = message;
         Utils.showToast(message, true);
       }
@@ -103,9 +110,7 @@ getProfile();
     }
   }
 
-
-  void signOut(){
-
+  void signOut() {
     final pref = SharedPreferencesMethod.storage;
     print(LocalDBKeys.TOKEN);
     pref.clear();
@@ -121,7 +126,9 @@ getProfile();
         Uri.parse('${BaseService().baseURL}${ApiEndPoints.authorProfile}'),
       );
 
-      var token = await SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+      var token = await SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
       request.headers.addAll({'Authorization': 'Bearer $token'});
 
       request.fields['fullName'] = authorNameUpdateController.text.trim();
@@ -167,10 +174,8 @@ getProfile();
     authorBioUpdateController.clear();
   }
 
-
-  void clearImageProfile(){
+  void clearImageProfile() {
     authorProfileImage.value = null;
     authorSelectedImage.value = null;
   }
-
 }

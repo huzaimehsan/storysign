@@ -63,7 +63,9 @@ class EditProfileController extends GetxController {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final dynamic decodedBody = jsonDecode(response.body);
         if (decodedBody is Map) {
-          profileModel.value = ProfileModel.fromJson(Map<String, dynamic>.from(decodedBody));
+          profileModel.value = ProfileModel.fromJson(
+            Map<String, dynamic>.from(decodedBody),
+          );
           nameUpdateController.text = profileModel.value?.fullName ?? '';
           emailUpdateController.text = profileModel.value?.email ?? '';
           clearEditProfile();
@@ -90,7 +92,9 @@ class EditProfileController extends GetxController {
         Uri.parse('${BaseService().baseURL}${ApiEndPoints.editProfile}'),
       );
 
-      var token = await SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+      var token = await SharedPreferencesMethod.storage.getString(
+        LocalDBKeys.TOKEN,
+      );
       request.headers.addAll({'Authorization': 'Bearer $token'});
 
       request.fields['fullName'] = nameUpdateController.text.trim();
@@ -129,12 +133,9 @@ class EditProfileController extends GetxController {
   void clearEditProfile() {
     nameUpdateController.clear();
     emailUpdateController.clear();
-
   }
 
-
-  void clearImageProfile(){
-
+  void clearImageProfile() {
     profileImage.value = null;
     selectedImage.value = null;
   }
