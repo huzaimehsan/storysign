@@ -266,7 +266,7 @@ class TrackRequest extends GetView<TrackRequestController> {
     "Rejected",
     "In process",
     "Delivered",
-    "Unsigned",
+
   ];
 
   PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {

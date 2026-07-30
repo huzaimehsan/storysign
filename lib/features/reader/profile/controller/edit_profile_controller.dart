@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
@@ -87,6 +88,11 @@ class EditProfileController extends GetxController {
     isLoading.value = true;
 
     try {
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
+
       var request = http.MultipartRequest(
         'PATCH',
         Uri.parse('${BaseService().baseURL}${ApiEndPoints.editProfile}'),

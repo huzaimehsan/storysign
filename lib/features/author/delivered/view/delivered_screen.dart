@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -42,43 +43,66 @@ class DeliveredScreen extends GetView<DeliveredController> {
             SizedBox(height: 2.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: sectionHeader(title: "Delivered Requests", onSeeAll: () {}),
+              child: sectionHeader(
+                title: "Delivered Requests",
+                onSeeAll: () {},
+              ),
             ),
+            Expanded(
+              child: RefreshIndicator(
 
-            Obx(
-                  () => Expanded(
-                child: controller.filteredRequests.isEmpty
-                    ? Center(
-                  child: customText(
-                    text: "No pending requests",
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                    color: whiteColor,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-                    : ListView.builder(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  itemCount: controller.filteredRequests.length,
-                  itemBuilder: (context, index) {
-                    final request = controller.filteredRequests[index];
-                    return AllPendingRequest(
-                      imagePath: request['imagePath'] ?? '',
-                      authorName: request['authorName'] ?? '',
-                      bookName: request['bookName'] ?? '',
-                      date: request['date'] ?? '',
-                      ontap: () {
-                        Navigator.of(context).pushNamed(
-                          '/requestDetail',
-                          arguments: {
-                            'from': 'all_delivered',
-                            'autographRequestId': request['id'] ?? '',
-                          },
-                        );
-                      },
+                color: buttonColor,
+                onRefresh: () => controller.fetchDeliveryRequests(),
+                child: Obx(() {
+                  if (controller.isFetchPending.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
                     );
-                  },
-                ),
+                  }
+
+                  if (controller.filteredRequests.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 40.h),
+                        Center(
+                          child: customText(
+                            text: "No delivered requests", // Updated text for delivered items
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: greyColor,
+                            fontFamily: "Poppins",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.only(bottom: 12.h),
+                    itemCount: controller.filteredRequests.length,
+                    itemBuilder: (context, index) {
+                      final request = controller.filteredRequests[index];
+                      return AllPendingRequest(
+                        imagePath: request.reader!.profilePicture ?? "",
+
+                        authorName: request.author?.fullName ?? 'Unknown Author',
+                        bookName: request.bookTitle,
+                        date: request.requestDate,
+                        ontap: () {
+                          Navigator.of(context).pushNamed(
+                            '/requestDetail',
+                            arguments: {
+                              'from': 'all_delivered',
+                              'autographRequestId': request.id,
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                }),
               ),
             ),
           ],

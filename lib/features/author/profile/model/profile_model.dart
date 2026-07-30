@@ -19,7 +19,6 @@ class AuthorProfileModel {
     this.isSubscribed,
   });
 
-  // JSON se Model banane ke liye (fromJson)
   factory AuthorProfileModel.fromJson(Map<String, dynamic> json) {
     return AuthorProfileModel(
       profilePicture: json['profilePicture'],
@@ -33,7 +32,7 @@ class AuthorProfileModel {
     );
   }
 
-  // Model ko wapas JSON mein convert karne ke liye (toJson)
+
   Map<String, dynamic> toJson() {
     return {
       'profilePicture': profilePicture,

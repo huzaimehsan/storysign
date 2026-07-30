@@ -54,7 +54,7 @@ class ChangePassword extends GetView<ChangePasswordController> {
                     SizedBox(height: 1.5.h),
                     emailTextFeild(
                       'Confirm Password',
-                      "**********",
+                      "••••••••",
                       controller: controller.confirmPasswordController,
                       isPasswordHidden: controller.isPasswordHidden,
                       validator: (value) =>

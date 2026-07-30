@@ -51,7 +51,7 @@ class BottomNavController extends GetxController{
     if (index == 2) {
       try {
         if (Get.isRegistered<ReaderController>()) {
-          Get.find<ReaderController>().fetchBooksData();
+          Get.find<ReaderController>().fetchBooksData(status: 'all');
 
         }
       } catch (_) {}
@@ -83,5 +83,16 @@ class BottomNavController extends GetxController{
     if (nav != null && nav.canPop()) {
       nav.pop();
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Ensure notification controller is registered early so tab switches can trigger fetches
+    try {
+      if (!Get.isRegistered<NotificationController>(tag: 'reader')) {
+        Get.lazyPut<NotificationController>(() => NotificationController(), tag: 'reader');
+      }
+    } catch (_) {}
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-// List parsing functions ka naam update kiya
 List<AllAuthorModel> allAuthorFromJson(String str) => List<AllAuthorModel>.from(
   json.decode(str).map((x) => AllAuthorModel.fromJson(x)),
 );
@@ -102,7 +101,9 @@ class TrackRequestModel {
 
   factory TrackRequestModel.fromJson(Map<String, dynamic> json) {
     return TrackRequestModel(
-      items: (json['items'] as List).map((i) => NewBookItem.fromJson(i)).toList(),
+      items: (json['items'] as List)
+          .map((i) => NewBookItem.fromJson(i))
+          .toList(),
       total: json['total'],
       page: json['page'],
       limit: json['limit'],
@@ -128,6 +129,8 @@ class NewBookItem {
   final String clientSecret;
   final Reader reader;
   final Author author;
+  final String autographRequestId;
+  final String bookId;
 
   NewBookItem({
     required this.id,
@@ -146,6 +149,8 @@ class NewBookItem {
     required this.clientSecret,
     required this.reader,
     required this.author,
+    required this.autographRequestId,
+    required this.bookId,
   });
 
   // --- copyWith method ---
@@ -166,6 +171,8 @@ class NewBookItem {
     String? clientSecret,
     Reader? reader,
     Author? author,
+    String? autographRequestId,
+    String? bookId,
   }) {
     return NewBookItem(
       id: id ?? this.id,
@@ -184,6 +191,8 @@ class NewBookItem {
       clientSecret: clientSecret ?? this.clientSecret,
       reader: reader ?? this.reader,
       author: author ?? this.author,
+      autographRequestId: autographRequestId ?? this.autographRequestId,
+      bookId: bookId ?? this.bookId,
     );
   }
 
@@ -254,6 +263,15 @@ class NewBookItem {
         'payment_intent_id',
       ]),
       clientSecret: _stringValue(data, ['clientSecret', 'client_secret']),
+      autographRequestId: _stringValue(data, ['autographRequestId', 'autograph_request_id']),
+      bookId: _stringValue(
+        data,
+        ['bookId', 'book_id'],
+        fallback: _stringValue(
+          bookJson is Map ? Map<String, dynamic>.from(bookJson) : {},
+          ['id'],
+        ),
+      ),
       reader: Reader.fromJson(
         Map<String, dynamic>.from(readerJson is Map ? readerJson : {}),
       ),

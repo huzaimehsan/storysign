@@ -23,7 +23,7 @@ Widget settingsGroupCard({
   final settingsItems = items ??
       [
         SettingsItem(
-          iconPath: Icons.password,
+          iconPath: Icons.lock,
           title: 'Change Password',
           onTap: () => Get.toNamed('/newpass'),
         ),

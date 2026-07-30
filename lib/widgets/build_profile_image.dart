@@ -4,11 +4,12 @@ import '../../../../constants/color_constants.dart';
 
 Widget buildProfileImageWidget({required String? imagePath}) {
   final path = imagePath?.trim() ?? '';
+  final double size = 17.w;
 
   if (path.isEmpty) {
     return Container(
-      height: 17.w,
-      width: 17.w,
+      height: size,
+      width: size,
       color: Colors.white12,
       child: Center(
         child: Icon(
@@ -35,7 +36,7 @@ Widget buildProfileImageWidget({required String? imagePath}) {
             child: CircularProgressIndicator(
               value: loadingProgress.expectedTotalBytes != null
                   ? loadingProgress.cumulativeBytesLoaded /
-                  (loadingProgress.expectedTotalBytes ?? 1)
+                      (loadingProgress.expectedTotalBytes ?? 1)
                   : null,
               color: whiteColor,
             ),
@@ -61,14 +62,14 @@ Widget buildProfileImageWidget({required String? imagePath}) {
 
   return Image.asset(
     path,
-    height: 17.w,
-    width: 17.w,
+    height: size,
+    width: size,
     fit: BoxFit.cover,
     errorBuilder: (context, error, stackTrace) {
       return Image.asset(
         'assets/png/profile.png',
-        height: 17.w,
-        width: 17.w,
+        height: size,
+        width: size,
         fit: BoxFit.cover,
       );
     },

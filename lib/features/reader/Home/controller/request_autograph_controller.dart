@@ -1,5 +1,3 @@
-
-
 import 'package:get/get.dart';
 
 import 'package:get/get.dart';
@@ -21,18 +19,19 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
-class RequestAutographController extends GetxController{
+
+class RequestAutographController extends GetxController {
   var receivedBookId = ''.obs; //
   final TextEditingController bookTitleController = TextEditingController();
   final TextEditingController bookTitleControllerRequest =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController personalMessageController =
-  TextEditingController();
+      TextEditingController();
   RxString selectedAuthorId = "".obs;
   RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
-// Controller mein
+  // Controller mein
   // Return type ko String? se Map<String, dynamic>? mein badla hai
   // Future<Map<String, dynamic>?> requestAutograph(
   //     BuildContext context,
@@ -93,10 +92,10 @@ class RequestAutographController extends GetxController{
   //   }
   // }
   Future<Map<String, dynamic>?> requestAutograph(
-      BuildContext context,
-      String authorId, {
-        String? bookId,
-      }) async {
+    BuildContext context,
+    String authorId, {
+    String? bookId,
+  }) async {
     bool isLibrary = bookId != null && bookId.isNotEmpty;
 
     // ... (Validation logic wahi rahega) ...
@@ -105,39 +104,42 @@ class RequestAutographController extends GetxController{
       Map<String, dynamic> response;
 
       if (isLibrary) {
-        // Koi file nahi — normal JSON POST, basePostAPI use karo
-        response = await BaseService().basePostAPI(
-          ApiEndPoints.requestAutoGraphHome,
-          {
-            'authorId': authorId,
-            'personalMessage': personalMessageController.text.trim(),
-            'bookId': bookId!,
-          },
-        );
+        response = await BaseService()
+            .basePostAPI(ApiEndPoints.requestAutoGraphHome, {
+              'authorId': authorId,
+              'personalMessage': personalMessageController.text.trim(),
+              'bookId': bookId!,
+            });
       } else {
-        // File upload zaroori hai — basePostAPI is case mein use nahi ho sakta
-        // (kyunki wo sirf JSON body bhejta hai, multipart nahi),
-        // isliye yahan manual multipart request rakhna zaroori hai
         final uri = Uri.parse(
           '${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}',
         );
         final request = http.MultipartRequest('POST', uri);
 
-        final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN);
+        final token = SharedPreferencesMethod.storage.getString(
+          LocalDBKeys.TOKEN,
+        );
         request.headers['Authorization'] = 'Bearer $token';
 
         request.fields['authorId'] = authorId;
-        request.fields['personalMessage'] = personalMessageController.text.trim();
+        request.fields['personalMessage'] = personalMessageController.text
+            .trim();
         request.fields['bookTitle'] = bookTitleControllerRequest.text.trim();
 
         request.files.add(
           await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path),
         );
         request.files.add(
-          await http.MultipartFile.fromPath('coverImage', bookCoverImage.value!.path),
+          await http.MultipartFile.fromPath(
+            'coverImage',
+            bookCoverImage.value!.path,
+          ),
         );
 
-        EasyLoading.show(status: 'Sending...', maskType: EasyLoadingMaskType.black);
+        EasyLoading.show(
+          status: 'Sending...',
+          maskType: EasyLoadingMaskType.black,
+        );
 
         final streamedResponse = await request.send();
         final responseString = await streamedResponse.stream.bytesToString();
@@ -147,7 +149,8 @@ class RequestAutographController extends GetxController{
 
         debugPrint("API Response: $responseMap");
 
-        if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
+        if (streamedResponse.statusCode == 200 ||
+            streamedResponse.statusCode == 201) {
           response = {"success": true, ...responseMap};
         } else {
           Utils.showToast(responseMap['message'] ?? 'Request failed', true);
@@ -169,7 +172,6 @@ class RequestAutographController extends GetxController{
         };
       }
 
-      // basePostAPI already toast dikha chuka hoga error case mein
       return null;
     } catch (e) {
       debugPrint('requestAutograph error: $e');
@@ -177,6 +179,7 @@ class RequestAutographController extends GetxController{
       return null;
     }
   }
+
   void clearRequestBookFields() {
     bookTitleControllerRequest.clear();
     personalMessageController.clear();
@@ -184,7 +187,6 @@ class RequestAutographController extends GetxController{
     bookCoverImage.value = null;
   }
 
-// ✅ Naya method — poori form state reset karega (author selection samet)
   void resetRequestForm() {
     selectedAuthorId.value = '';
     receivedBookId.value = '';
@@ -194,16 +196,11 @@ class RequestAutographController extends GetxController{
     bookCoverImage.value = null;
   }
 
-
-
   @override
   void onClose() {
-
     bookTitleController.dispose();
     bookTitleControllerRequest.dispose();
     personalMessageController.dispose();
     super.onClose();
-
-
   }
 }

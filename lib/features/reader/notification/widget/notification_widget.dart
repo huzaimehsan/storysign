@@ -20,7 +20,7 @@ Widget customNotificationHeader({
 
         customText(
           text: "Notifications",
-          fontSize: 17.sp,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           color: whiteColor,
           textAlign: TextAlign.center,

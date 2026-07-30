@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:sizer/sizer.dart';
-// import 'package:storysign/features/reader/Home/controller/request_detail_controller.dart';
+// import 'package:storysign/features/reader/Home/controller/request_detail_model.dart';
 // import 'package:storysign/features/reader/Home/widgets/reader/request_detail_widget.dart';
 // import 'package:storysign/features/reader/Home/widgets/reader/custom_text_field_with_limit.dart';
 // import 'package:storysign/features/reader/Home/widgets/reader/fee_field_with_price.dart';

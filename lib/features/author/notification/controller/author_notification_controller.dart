@@ -5,16 +5,15 @@ import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
 import '../../../reader/notification/model/notification_model.dart';
-import '../../../shared/notification/notification_screen_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 // ðŸ‘ˆ NAYA IMPORT
 
-class AuthorNotificationController extends NotificationScreenController { // ðŸ‘ˆ CHANGE 1: naam badla + extends badla
-
-  @override // ðŸ‘ˆ CHANGE 2: @override lagaya
+class AuthorNotificationController extends NotificationScreenController {
+  @override
   var isNotificationsLoading = false.obs;
 
-  @override // ðŸ‘ˆ CHANGE 2: @override lagaya
-  var notificationList = <NotificationModel>[].obs; // ðŸ‘ˆ CHANGE 3: model badla (AuthorNotificationModel -> NotificationModel)
+  @override
+  var notificationList = <NotificationModel>[].obs;
 
   var unreadCount = 0.obs;
   String role = 'author';
@@ -25,11 +24,9 @@ class AuthorNotificationController extends NotificationScreenController { // ðŸ‘
     getNotifications();
   }
 
-  @override // ðŸ‘ˆ override lagana zaroori hai kyunke interface mein ye method hai
+  @override
   Future<void> refreshAlert() async {
-    await Future.wait([
-      getNotifications(),
-    ]);
+    await Future.wait([getNotifications()]);
   }
 
   final BaseService baseService = BaseService();
@@ -38,16 +35,24 @@ class AuthorNotificationController extends NotificationScreenController { // ðŸ‘
     try {
       isNotificationsLoading.value = true;
 
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.authorNotifications);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(
+        ApiEndPoints.authorNotifications,
+        loading: false,
+      );
 
       if (response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
 
         final allNotifications = list
-            .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>)) // model yahan bhi badla
+            .map(
+              (item) =>
+                  NotificationModel.fromJson(item as Map<String, dynamic>),
+            )
             .toList();
 
-        notificationList.value = allNotifications.where((n) => !n.isRead).toList();
+        notificationList.value = allNotifications
+            .where((n) => !n.isRead)
+            .toList();
         unreadCount.value = notificationList.length;
 
         debugPrint("Notifications loaded: ${notificationList.length}");
@@ -62,18 +67,24 @@ class AuthorNotificationController extends NotificationScreenController { // ðŸ‘
     }
   }
 
-  @override // ðŸ‘ˆ comment se nikala aur override lagaya, kyunke interface mangta hai
+  @override
   Future<void> markAllAsRead() async {
     try {
-      debugPrint('AuthorNotificationController: markAllAsRead called. Total: ${notificationList.length}');
+      debugPrint(
+        'AuthorNotificationController: markAllAsRead called. Total: ${notificationList.length}',
+      );
 
       final unreadList = notificationList.where((n) => !n.isRead).toList();
       if (unreadList.isEmpty) return;
 
       final results = await Future.wait(
         unreadList.map((notification) async {
-          final endpoint = ApiEndPoints.markNotificationAsRead(notification.id);
-          final res = await baseService.basePatchAPI(endpoint, body: {}, loading: false);
+          final endpoint = ApiEndPoints.authorReadAllNotifications;
+          final res = await baseService.basePatchAPI(
+            endpoint,
+            body: {},
+            loading: false,
+          );
           return {'id': notification.id, 'success': res['success'] == true};
         }),
       );
@@ -87,7 +98,7 @@ class AuthorNotificationController extends NotificationScreenController { // ðŸ‘
 
       final failedCount = results.length - successIds.length;
       if (failedCount > 0) {
-        Utils.showToast("Kuch notifications read nahi ho payin", true);
+        Utils.showToast("Nothing Happen", true);
       }
 
       unreadCount.value = notificationList.where((n) => !n.isRead).length;

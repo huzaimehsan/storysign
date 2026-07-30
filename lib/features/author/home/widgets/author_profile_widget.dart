@@ -12,8 +12,6 @@ Widget buildProfileCard({
   required String? role,
   required String? imagePath,
 }) {
-  
-
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: 4.w),
     child: Container(
@@ -43,7 +41,8 @@ Widget buildProfileCard({
                       fontFamily: 'Poppins',
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
-                      text: "Welcome, ${role != null && role.isNotEmpty ? role.capitalizeFirst : 'User'}",
+                      text:
+                          "Welcome, ${role != null && role.isNotEmpty ? role.capitalizeFirst : 'User'}",
                     ),
                     SizedBox(height: 0.8.h),
                     customText(

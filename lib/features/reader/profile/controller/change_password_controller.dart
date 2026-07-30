@@ -51,7 +51,7 @@ class ChangePasswordController extends GetxController {
         Get.offAllNamed('/login');
         clearNewPasswordFeild();
       }
-      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
+
     } catch (e) {
       debugPrint('resetPassword error: $e');
       Utils.showToast('Something went wrong', true);

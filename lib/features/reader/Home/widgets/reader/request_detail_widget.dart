@@ -75,7 +75,6 @@ Widget RequestDetailWidget({
                       SizedBox(height: 1.h),
                       if (showSubmittedBadge == true)
                         buttonWidget(
-
                           status,
                           buttonColor,
                           colors: buttonColor.withOpacity(0.2),
@@ -87,29 +86,27 @@ Widget RequestDetailWidget({
                           fontweight: FontWeight.w600,
                         ),
                     ],
-
-
                   ),
               ],
             ),
           ),
-          // Submitted Badge
 
+          // Submitted Badge
         ],
       ),
     ),
   );
-
-
-
 }
 
-
 Widget _buildCoverImage(String imagePath, String? imageUrl) {
-  final String path = imageUrl?.trim().isNotEmpty == true ? imageUrl!.trim() : imagePath.trim();
+  final String path = imageUrl?.trim().isNotEmpty == true
+      ? imageUrl!.trim()
+      : imagePath.trim();
   final uri = Uri.tryParse(path);
-  final isNetwork = uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
-  final String resolvedPath = isNetwork && uri.host == 'localhost' && Platform.isAndroid
+  final isNetwork =
+      uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+  final String resolvedPath =
+      isNetwork && uri.host == 'localhost' && Platform.isAndroid
       ? path.replaceFirst('localhost', '10.0.2.2')
       : path;
 
@@ -138,8 +135,13 @@ Widget _buildCoverImage(String imagePath, String? imageUrl) {
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
         final fallbackUri = Uri.tryParse(imagePath);
-        final fallbackIsNetwork = fallbackUri != null && (fallbackUri.scheme == 'http' || fallbackUri.scheme == 'https');
-        if (imagePath.trim().isEmpty || imagePath == 'null' || fallbackIsNetwork || imagePath.startsWith('/')) {
+        final fallbackIsNetwork =
+            fallbackUri != null &&
+            (fallbackUri.scheme == 'http' || fallbackUri.scheme == 'https');
+        if (imagePath.trim().isEmpty ||
+            imagePath == 'null' ||
+            fallbackIsNetwork ||
+            imagePath.startsWith('/')) {
           return placeholder();
         }
         return Image.asset(

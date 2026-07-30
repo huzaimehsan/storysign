@@ -7,6 +7,7 @@ import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
 import 'customText_widget.dart';
+import 'formatted_date_widget.dart';
 
 
 class AuthorInfoCard extends StatelessWidget {
@@ -23,15 +24,11 @@ class AuthorInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDate;
-
+    String dateStr = '';
     if (date is DateTime) {
-      formattedDate = 'Joined ${DateFormat('dd MMM yyyy').format(date as DateTime)}';
-    } else if (date is String && (date as String).trim().isNotEmpty) {
-      final text = (date as String).trim();
-      formattedDate = text.startsWith('Joined') ? text : 'Joined $text';
-    } else {
-      formattedDate = 'Joined recently';
+      dateStr = (date as DateTime).toIso8601String();
+    } else if (date != null && date.toString().trim().isNotEmpty) {
+      dateStr = date.toString().replaceFirst('Joined', '').trim();
     }
 
     final String path = imagePath?.toString() ?? "";
@@ -50,10 +47,9 @@ class AuthorInfoCard extends StatelessWidget {
       }
     }
     return Container(
-      height: 9.5.h,
       width: 100.w,
       margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-      padding: EdgeInsets.all(4.5.w),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(20.sp),
@@ -66,31 +62,52 @@ class AuthorInfoCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 7.h,
-            width: 7.h,
+            height: 14.w,
+            width: 14.w,
             decoration: BoxDecoration(
-              border: Border.all(color: buttonColor, width: 1.2),
               shape: BoxShape.circle,
-
-              color: isPlaceholder ? Colors.grey.withOpacity(0.2) : null,
-              image: !isPlaceholder
-                  ? DecorationImage(image: imageProvider!, fit: BoxFit.cover)
+              color: isPlaceholder
+                  ? Colors.grey.withOpacity(0.2)
+                  : buttonColor.withOpacity(0.05),
+              border: isPlaceholder
+                  ? Border.all(color: buttonColor, width: 1.2)
                   : null,
             ),
-
-            child: isPlaceholder
-                ? Center(
-              child: Icon(Icons.person_rounded, color: buttonColor.withOpacity(0.6), size: 9.w),
-            )
-                : null,
+            child: ClipOval(
+              child: isPlaceholder
+                  ? Center(
+                      child: Icon(
+                        Icons.person_rounded,
+                        color: buttonColor.withOpacity(0.6),
+                        size: 9.w,
+                      ),
+                    )
+                  : Image(
+                      image: imageProvider!,
+                      fit: BoxFit.cover,
+                      width: 14.w,
+                      height: 14.w,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Icon(
+                          Icons.person_rounded,
+                          color: buttonColor.withOpacity(0.6),
+                          size: 9.w,
+                        ),
+                      ),
+                    ),
+            ),
           ),
+
           SizedBox(width: 4.w),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 customText(
                   fontFamily: "Poppins",
@@ -100,12 +117,31 @@ class AuthorInfoCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
                 SizedBox(height: 0.3.h),
-                customText(
-                  fontFamily: "Poppins",
-                  text: formattedDate,
-                  color: secondryColor.withOpacity(0.7),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+                Row(
+                  children: [
+                    customText(
+                      fontFamily: "Poppins",
+                      text: "Joined ",
+                      color: secondryColor.withOpacity(0.7),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    dateStr.isNotEmpty
+                        ? FormattedRequestDate(
+                            dateString: dateStr,
+                            dateFormat: 'dd MMM yyyy',
+                            color: secondryColor.withOpacity(0.7),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                          )
+                        : customText(
+                            fontFamily: "Poppins",
+                            text: "recently",
+                            color: secondryColor.withOpacity(0.7),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                  ],
                 ),
               ],
             ),

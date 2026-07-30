@@ -12,10 +12,10 @@ class AuthorHelpSupportController extends GetxController {
   RxString searchQuery = ''.obs;
   Rxn<AuthorHelpSupportModel> supportAuthorData = Rxn<AuthorHelpSupportModel>();
 
-  // 1. Original list save karne ke liye
+
   List<AuthorFaqModel> _originalFaqAuthorList = [];
 
-  // 2. Filtered list jo UI par dikhegi
+
   RxList<AuthorFaqModel> faqAuthorList = <AuthorFaqModel>[].obs;
 
   @override
@@ -24,7 +24,7 @@ class AuthorHelpSupportController extends GetxController {
     getAuthorHelpSupportData();
     getAuthorFaqs();
 
-    // 3. Search query change hone par filter trigger hoga
+
     ever(searchQuery, (_) {
       _filterAuthorFaqs(searchQuery.value);
     });

@@ -34,6 +34,7 @@ class ProfileScreenController extends GetxController {
       getProfile(),
       fetchLibraryStats(),
       downloadHistory(),
+      fetchMyBooks(),
     ]);
   }
 
@@ -42,15 +43,18 @@ class ProfileScreenController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.profile);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.profile,
+        loading: false,
+        showErrorToast: false,
+      );
 
       if (response['success'] == true) {
-        // baseGetAPI Map response ko spread karke deta hai (...jsonData)
+
         profileModel.value = ProfileModel.fromJson(response);
       } else {
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load profile';
-        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
       }
     } catch (e) {
       errorMessage.value = 'Something went wrong while loading profile.';
@@ -64,7 +68,11 @@ class ProfileScreenController extends GetxController {
   Future<void> fetchLibraryStats() async {
     try {
       isStatsLoading.value = true;
-      final response = await BaseService().baseGetAPI(ApiEndPoints.libraryStats);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.libraryStats,
+        loading: false,
+        showErrorToast: false,
+      );
       if (response != null) {
         libraryStats.value = LibraryStatsModel.fromJson(response);
       }
@@ -79,7 +87,11 @@ class ProfileScreenController extends GetxController {
     try {
       isbookLoading.value = true;
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.bookHistory);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.bookHistory,
+        loading: false,
+        showErrorToast: false,
+      );
 
       if (response['success'] == true) {
 
@@ -89,7 +101,6 @@ class ProfileScreenController extends GetxController {
 
     } catch (e) {
       debugPrint('ProfileScreenController downloadHistory error: $e');
-      Utils.showToast('Something went wrong', true);
     } finally {
       isbookLoading.value = false;
     }
@@ -100,7 +111,7 @@ class ProfileScreenController extends GetxController {
     final pref = SharedPreferencesMethod.storage;
     print(LocalDBKeys.TOKEN);
     pref.clear();
-    Get.toNamed('/signin');
+    Get.offAllNamed('/signin');
   }
   final RxList<MyProfileBookModel> books = <MyProfileBookModel>[].obs;
   final RxBool isBookLoading = false.obs;
@@ -124,11 +135,12 @@ class ProfileScreenController extends GetxController {
 
       final response = await BaseService().baseGetAPI(
         ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
+        loading: false,
+        showErrorToast: false,
       );
 
       if (response['success'] == true) {
-        // baseGetAPI Map response ko spread karta hai (...jsonData),
-        // isliye 'response' hi seedha MyBooksResponse.fromJson mein ja sakta hai
+
         final data = MyBooksResponse.fromJson(response);
 
         if (loadMore) {
@@ -139,13 +151,12 @@ class ProfileScreenController extends GetxController {
 
         totalPages.value = data.totalPages;
       } else {
-        // Agar loadMore fail hua to page number wapas kar do,
-        // warna agli baar galat page se try hoga
+
         if (loadMore) currentPage.value--;
 
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load books';
-        // baseGetAPI already toast dikha chuka hai error case mein — dobara mat dikhao
+
       }
     } catch (e) {
       if (loadMore) currentPage.value--;

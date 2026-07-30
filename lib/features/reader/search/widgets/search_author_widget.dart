@@ -109,12 +109,11 @@ class SearchAuthorCard extends StatelessWidget {
           children: [
             Container(
               height: 10.h,
-              width: 10.h,
+              width: 9.8.h,
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: buttonColor,
-                  width: 1.2,
-                ),
+                border: (path.isEmpty || path == "null")
+                    ? Border.all(color: buttonColor, width: 1.2)
+                    : null,
                 shape: BoxShape.circle,
               ),
               child: ClipOval(

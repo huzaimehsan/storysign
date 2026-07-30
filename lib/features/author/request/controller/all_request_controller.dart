@@ -37,7 +37,7 @@ class AllRequestController extends GetxController {
   Future<void> fetchPendingRequests() async {
     isFetchPending.value = true;
     try {
-      final response = await BaseService().baseGetAPI(ApiEndPoints.pendingRequest);
+      final response = await BaseService().baseGetAPI(ApiEndPoints.pendingRequest());
 
       if (response['success'] == true) {
         final items = response['items'] as List? ?? [];

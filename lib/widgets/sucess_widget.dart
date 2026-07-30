@@ -70,7 +70,7 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
                   colors: buttonColor,
                   fontFamily: 'Poppins',
                   height: 4.h,
-                  width: 35.w,
+                  width: 39.w,
                   fontsize: 15.sp,
                   fontweight: FontWeight.w600,
                 ),

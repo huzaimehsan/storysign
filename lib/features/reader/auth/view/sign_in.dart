@@ -52,7 +52,7 @@ class SignIn extends GetView<AuthController> {
                     SizedBox(height: 2.5.h),
 
                     Form(
-                      key: authController.formKey,
+                      key: authController.signInFormKey,
                       child: Column(
                         children: [
                           emailTextFeild(
@@ -93,7 +93,7 @@ class SignIn extends GetView<AuthController> {
                       "Sign In",
                       whiteColor,
                       onTap: () {
-                        if (authController.formKey.currentState?.validate() ?? false) {
+                        if (authController.signInFormKey.currentState?.validate() ?? false) {
                           authController.login();
                         }
                       },

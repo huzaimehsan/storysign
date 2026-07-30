@@ -78,7 +78,7 @@ class MediaPickerService {
                     _pickerItem(
                       icon: Icons.camera_alt_rounded,
                       title: "Camera",
-                      color: containerColor,
+                      color: containerColor.withOpacity(0.6),
                       onTap: () {
                         _pickImage(ImageSource.camera).then((file) {
                           Navigator.pop(context, file);
@@ -90,7 +90,7 @@ class MediaPickerService {
                     _pickerItem(
                       icon: Icons.photo_rounded,
                       title: "Gallery",
-                      color: containerColor,
+                      color: containerColor.withOpacity(0.6),
                       onTap: () {
                         _pickImage(ImageSource.gallery).then((file) {
                           Navigator.pop(context, file);
@@ -102,7 +102,7 @@ class MediaPickerService {
                     _pickerItem(
                       icon: Icons.description_rounded,
                       title: "Files",
-                      color: const Color(0xffF59E0B),
+                      color: containerColor.withOpacity(0.6),
                       onTap: () {
                         _pickDocument().then((file) {
                           Navigator.pop(context, file);

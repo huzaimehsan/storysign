@@ -15,6 +15,7 @@ class ApiEndPoints {
 
   static const String uploadBook = '/reader/books/upload';
   static const String listMyBook = '/reader/library';
+  static const String refreshToken = '/auth/refresh';
 
   static const String requestAutoGraphHome = '/reader/autograph-requests';
 
@@ -47,6 +48,7 @@ class ApiEndPoints {
   static const String editProfile = "/reader/profile";
   static const String libraryStats = "/reader/profile/stats";
   static const String bookHistory = "/reader/download-history?page=1&limit=10";
+  static const String authorReadAllNotifications = "/author/notifications/read-all";
 
   static String markNotificationAsRead(String notificationId) {
     return '/reader/notifications/$notificationId/read';
@@ -70,8 +72,12 @@ class ApiEndPoints {
   static const String readerVerifyPayment = "/payments/verify-success";
   static const String currentSubscription = "/author/subscription/current";
 
-  static const String pendingRequest =
-      "/author/requests/pending?page=1&limit=10";
+ static String pendingRequest({int page = 1, int limit = 10}) =>
+    "/author/requests/pending?page=$page&limit=$limit";
+
+   
+static String deliveryRequest({int page = 1, int limit = 10}) =>
+    "/author/requests/delivered?page=$page&limit=$limit";
 
   static String autographRequestDetails(String autographRequestId) {
     return "/author/requests/$autographRequestId";

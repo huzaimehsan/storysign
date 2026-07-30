@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
+import '../../../../widgets/cover_image_widget.dart';
 
 Widget downloadHistoryCard({
   required String imagePath,
@@ -13,7 +14,7 @@ Widget downloadHistoryCard({
   EdgeInsetsGeometry? margin,
 }) {
   return Padding(
-    padding:  EdgeInsets.symmetric(vertical: 1.h),
+    padding: EdgeInsets.symmetric(vertical: 1.h),
     child: Container(
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,
@@ -29,8 +30,9 @@ Widget downloadHistoryCard({
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12.sp),
-            child: Image.asset(
-              imagePath,
+            child: CoverImageWidget(
+              assetPath: '',
+              imageUrl: imagePath,
               height: 16.w,
               width: 16.w,
               fit: BoxFit.cover,
@@ -59,16 +61,17 @@ Widget downloadHistoryCard({
                 // ),
                 SizedBox(height: 0.4.h),
                 FormattedRequestDate(
-                  dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                  dateString:
+                      date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
                   dateFormat: 'dd MMM, yyyy',
-                  color:  secondryColor.withOpacity(0.7),
+                  color: secondryColor.withOpacity(0.7),
                   fontSize: 14.sp,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     ),

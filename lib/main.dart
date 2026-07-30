@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 
- // Yahan apni routes wali file import karein
+// Yahan apni routes wali file import karein
 import 'constants/color_constants.dart';
 import 'constants/local_db_key.dart';
 import 'core/bindings/init_binding.dart';
@@ -27,7 +27,7 @@ void main() async {
   Get.put<SharedPreferences>(prefs);
 
   bool hasSeenOnboarding = prefs.getBool(LocalDBKeys.SPLASH) ?? false;
- bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+  bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
   String? role = prefs.getString('role');
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -50,7 +50,7 @@ void main() async {
   //
   //   initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
   // }
-    else {
+  else {
 
     initialRoute = '/signin';
   }

@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:storysign/features/author/request/model/request_detail_controller.dart';
+import 'package:storysign/features/author/request/model/request_detail_model.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';

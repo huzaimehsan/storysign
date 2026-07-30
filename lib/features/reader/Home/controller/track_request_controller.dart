@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import '../../../../constants/local_db_key.dart';
+
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
+
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
@@ -30,6 +28,7 @@ class TrackRequestController extends GetxController {
     super.onInit();
     fetchTrackRequestData();
   }
+
   //
   // Future<void> fetchTrackRequestData() async {
   //   try {
@@ -75,11 +74,11 @@ class TrackRequestController extends GetxController {
       trackRequestLoading.value = true;
       errorMessage.value = '';
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.trackRequest);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.trackRequest,
+      );
 
       if (response['success'] == true) {
-        // baseGetAPI Map response ko spread karke deta hai (...jsonData),
-        // agar backend {"data": {...}} wrapped bhejta hai to us key ko check karo
         final Map<String, dynamic> data = response['data'] is Map
             ? Map<String, dynamic>.from(response['data'] as Map)
             : response;
@@ -92,7 +91,6 @@ class TrackRequestController extends GetxController {
       } else {
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load data';
-        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
       }
     } catch (e) {
       debugPrint('fetchTrackRequestData error: $e');
@@ -102,6 +100,7 @@ class TrackRequestController extends GetxController {
       trackRequestLoading.value = false;
     }
   }
+
   DateTime _parseDate(String dateStr) {
     try {
       final parsed = DateTime.tryParse(dateStr);
@@ -118,30 +117,43 @@ class TrackRequestController extends GetxController {
         final st = item.status.toLowerCase().replaceAll(' ', '_');
         return st == "in_process" || st == "in_progress" || st == "pending";
       }).toList();
-    } else if (selectedTab.value == "Delivered" || selectedTab.value == "Signed") {
+    } else if (selectedTab.value == "Delivered" ||
+        selectedTab.value == "Signed") {
       requests = requests.where((item) {
         final st = item.status.toLowerCase().replaceAll(' ', '_');
-        return st == "delivered" || st == "rejected" || st == "completed" || st == "approved";
+        return st == "delivered" ||
+            st == "rejected" ||
+            st == "completed" ||
+            st == "approved";
       }).toList();
     }
 
     if (searchQuery.value.trim().isNotEmpty) {
       final query = searchQuery.value.toLowerCase().trim();
-      requests = requests.where((item) =>
-          item.title.toLowerCase().contains(query) ||
-          item.author.fullName.toLowerCase().contains(query)
-      ).toList();
+      requests = requests
+          .where(
+            (item) =>
+                item.title.toLowerCase().contains(query) ||
+                item.author.fullName.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     if (filterStatus.value != "All") {
-      final targetStatus = filterStatus.value.toLowerCase().replaceAll(' ', '_');
+      final targetStatus = filterStatus.value.toLowerCase().replaceAll(
+        ' ',
+        '_',
+      );
       requests = requests.where((item) {
         final st = item.status.toLowerCase().replaceAll(' ', '_');
         if (targetStatus == "in_process") {
           return st == "in_process" || st == "in_progress" || st == "pending";
         }
         if (targetStatus == "delivered" || targetStatus == "signed") {
-          return st == "delivered" || st == "rejected" || st == "completed" || st == "approved";
+          return st == "delivered" ||
+              st == "rejected" ||
+              st == "completed" ||
+              st == "approved";
         }
         return st == targetStatus;
       }).toList();
@@ -152,9 +164,13 @@ class TrackRequestController extends GetxController {
     } else if (sortBy.value == "Title Z-A") {
       requests.sort((a, b) => b.title.compareTo(a.title));
     } else if (sortBy.value == "Date Newest") {
-      requests.sort((a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)));
+      requests.sort(
+        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+      );
     } else if (sortBy.value == "Date Oldest") {
-      requests.sort((a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)));
+      requests.sort(
+        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+      );
     }
 
     return requests;
@@ -169,5 +185,4 @@ class TrackRequestController extends GetxController {
   Future<void> refreshRequests() async {
     await fetchTrackRequestData();
   }
-
 }

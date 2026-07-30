@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
-import 'package:storysign/widgets/formatted_date_widget.dart';
+
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/sucess_widget.dart';
-import '../../../reader/profile/controller/profile_screen_controller.dart';
+
 import '../../../reader/profile/widget/profile_header_card.dart';
-import '../../../reader/profile/widget/settings_group_card.dart';
+
 import '../../../reader/search/widgets/header_widget.dart';
 import '../controller/profile_controller.dart';
 import '../widget/biography_card.dart';
@@ -127,7 +126,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                           SizedBox(height: 1.5.h),
 
                           authorBiographyCard(bio: profile.bio ?? ''),
-                          SizedBox(height: 3.h),
+                          SizedBox(height: 2.h),
 
                           // ── Settings section ──
                           Align(

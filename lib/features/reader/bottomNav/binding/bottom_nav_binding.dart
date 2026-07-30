@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
 
-import '../../../shared/notification/notification_screen_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 import '../../Home/controller/home_controller.dart';
 import '../../Home/controller/track_request_controller.dart';
 import '../../library/controller/library_controller.dart';
@@ -15,14 +15,13 @@ class BottomNavBinding implements Bindings {
   void dependencies() {
     Get.lazyPut<BottomNavController>(()=> BottomNavController());
 
-    Get.lazyPut<HomeController>(()=> HomeController());
-    Get.lazyPut<TrackRequestController>(()=> TrackRequestController());
+    Get.lazyPut<HomeController>(()=> HomeController(), fenix: true);
 
-    Get.lazyPut<ReaderController>(()=> ReaderController());
+    Get.lazyPut<ReaderController>(()=> ReaderController(), fenix: true);
 
-    Get.lazyPut<SearchPageController>(()=> SearchPageController());
-    Get.lazyPut<ProfileScreenController>(()=> ProfileScreenController());
-    Get.lazyPut<NotificationScreenController>(() => NotificationController(), tag: 'reader');
+    Get.lazyPut<SearchPageController>(()=> SearchPageController(), fenix: true);
+    Get.lazyPut<ProfileScreenController>(()=> ProfileScreenController(), fenix: true);
+    Get.lazyPut<NotificationScreenController>(() => NotificationController(), tag: 'reader', fenix: true);
   }
 }
 

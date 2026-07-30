@@ -70,7 +70,6 @@ class ProfileScreen extends GetView<ProfileScreenController> {
 
                     final profile = controller.profileModel.value;
 
-
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Column(
@@ -86,7 +85,9 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                 '/editprofile',
                                 arguments: {'role': 'reader'},
                               );
-                            }, plan: '', autograph: '',
+                            },
+                            plan: '',
+                            autograph: '',
                           ),
 
                           SizedBox(height: 2.h),
@@ -109,7 +110,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                 libraryStatCard(
                                   title: 'Total Books',
                                   value:
-                                      stats?.totalUploadedBooks?.toString() ??
+                                  stats?.totalUploadedBooks?.toString() ??
                                       "0",
                                   subtitle: '',
                                 ),
@@ -126,88 +127,65 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                               ],
                             );
                           }),
-                          SizedBox(height: 1.h),
-                          sectionHeader(
-                            title: 'Recently Signed Books',
-                            onSeeAll: () {},
-                          ),
+                          Obx(() {
+                            if (controller.books.isEmpty) return const SizedBox.shrink();
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 1.h),
+                                sectionHeader(
+                                  title: 'Recently Signed Books',
+                                  onSeeAll: () {},
+                                ),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: controller.books.length,
+                                  itemBuilder: (context, index) {
+                                    final book = controller.books[index];
+                                    return recentSignedBookCard(
+                                      title: book.title ?? " ",
+                                      price: '\u0024 ${book.feeAmount ?? ""}',
+                                      date: book.uploadDate.toString().split(' ')[0],
+                                      status: book.status,
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
 
-                          Obx(
-                             () {
-                               if (controller.books.isEmpty) {
-                                 return SizedBox(
-                                   height: 10.h,
-                                   child: Center(
-                                     child: customText(
-                                       text: "No books found",
-                                       color: greyColor,
-                                       fontSize: 15.sp,
-                                       fontFamily: "Poppins",
-                                       fontWeight: FontWeight.w500,
-                                     ),
-                                   ),
-                                 );
-                               }
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(), // Agar yeh kisi aur scrollable widget ke andar hai
-                                itemCount: controller.books.length, // Yahan apni list ki length ya data.length dein
-                                itemBuilder: (context, index) {
-                                  final book = controller.books[index];
-                                  return recentSignedBookCard(
-                                    title: book.title ?? " ",
-                                    price: '\u0024 10.00',
-                                    date: book.uploadDate.toString().split(' ')[0],
-                                    status: book.status,
-                                  );
-                                },
-                              );
-                            }
-                          ),
-
-                          SizedBox(height: 1.h),
-                          sectionHeader(
-                            title: 'Download History',
-                            onSeeAll: () {},
-                          ),
                           Obx(() {
                             if (controller.isbookLoading.value) {
                               return const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(color: buttonColor),
                               );
                             }
-                            if (controller.bookList.isEmpty) {
-                              return SizedBox(
-                                height: 10.h,
-                                child: Center(
-                                  child: customText(
-                                    text: "No books found",
-                                    color: greyColor,
-                                    fontSize: 15.sp,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                            if (controller.bookList.isEmpty) return const SizedBox.shrink();
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 1.h),
+                                sectionHeader(
+                                  title: 'Download History',
+                                  onSeeAll: () {},
                                 ),
-                              );
-                            }
-
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: controller.bookList.length,
-                              // Ab list use hogi
-                              itemBuilder: (context, index) {
-                                final book = controller.bookList[index];
-
-                                return downloadHistoryCard(
-                                  imagePath: 'assets/png/book.png',
-                                  title: book.bookTitle,
-                                  // Agar API mein author field nahi hai to hardcoded
-                                  date: book.createdAt.toString().split(' ')[0],
-                                );
-                              },
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: controller.bookList.length,
+                                  itemBuilder: (context, index) {
+                                    final book = controller.bookList[index];
+                                    return downloadHistoryCard(
+                                      imagePath: book.coverImage ?? "",
+                                      title: book.bookTitle,
+                                      date: book.createdAt.toString().split(' ')[0],
+                                    );
+                                  },
+                                ),
+                              ],
                             );
                           }),
                           SizedBox(height: 1.h),

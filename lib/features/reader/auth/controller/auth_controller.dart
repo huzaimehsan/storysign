@@ -39,6 +39,7 @@ class AuthController extends GetxController {
   final TextEditingController bioController = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
 
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController =
@@ -120,12 +121,12 @@ class AuthController extends GetxController {
   //-----------------------------------------------------------------------------------//
   //signup//
   Future<void> signUp(BuildContext context, {String? role}) async {
-    final String fullname = fullNameController.text.trim();
+    final String fullName = fullNameController.text.trim();
     String email = emailController.text.trim();
     final String password = passwordController.text.trim();
     final String confirmPassword = confirmPasswordController.text.trim();
 
-    if (fullname.isEmpty) {
+    if (fullName.isEmpty) {
       Utils.showToast('Full name is required', true);
       return;
     }
@@ -161,7 +162,7 @@ class AuthController extends GetxController {
       );
       final request = http.MultipartRequest('POST', uri);
 
-      request.fields['fullName'] = fullname;
+      request.fields['fullName'] = fullName;
       request.fields['email'] = email;
 
       request.fields['role'] = role!;
@@ -305,14 +306,14 @@ class AuthController extends GetxController {
           ? dataValue
           : null;
       final Map<String, dynamic>? user =
-      responseMap['user'] is Map<String, dynamic>
+          responseMap['user'] is Map<String, dynamic>
           ? responseMap['user'] as Map<String, dynamic>
           : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-          ? dataMap['user'] as Map<String, dynamic>
-          : null);
+                ? dataMap['user'] as Map<String, dynamic>
+                : null);
       final String? token =
           responseMap['accessToken'] as String? ??
-              dataMap?['accessToken'] as String?;
+          dataMap?['accessToken'] as String?;
 
       if (user == null || token == null) {
         Utils.showToast('Invalid server response', true);
@@ -397,10 +398,10 @@ class AuthController extends GetxController {
     }
 
     try {
-      final response = await BaseService().basePostAPI(
-        ApiEndPoints.verifyOtp,
-        {'email': email, 'code': otp},
-      );
+      final response = await BaseService().basePostAPI(ApiEndPoints.verifyOtp, {
+        'email': email,
+        'code': otp,
+      });
 
       if (response['success'] == true) {
         Utils.showToast(response['message'] ?? 'OTP Verified', false);
@@ -431,15 +432,13 @@ class AuthController extends GetxController {
     }
 
     try {
-      final response = await BaseService().basePostAPI(
-        ApiEndPoints.resetPassword,
-        {
-          'email': email,
-          'code': code,
-          'newPassword': newPassword,
-          'confirmPassword': confirmPassword,
-        },
-      );
+      final response = await BaseService()
+          .basePostAPI(ApiEndPoints.resetPassword, {
+            'email': email,
+            'code': code,
+            'newPassword': newPassword,
+            'confirmPassword': confirmPassword,
+          });
 
       if (response['success'] == true) {
         Utils.showToast(
@@ -450,7 +449,6 @@ class AuthController extends GetxController {
         Get.offAllNamed('/login');
         clearResetPasswordFeilds();
       }
-      // basePostAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
       debugPrint('resetPassword error: $e');
       Utils.showToast('Something went wrong', true);

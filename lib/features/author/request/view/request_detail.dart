@@ -63,8 +63,9 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     child: customText(
                       text: "No request details found",
                       fontSize: 14.sp,
+                    fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
-                      color: whiteColor,
+                      color: greyColor,
                     ),
                   ),
                 ),

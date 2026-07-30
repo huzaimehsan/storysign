@@ -32,7 +32,7 @@ Widget recentSignedBookCard({
       ),
       child: Column(
 
-        crossAxisAlignment: CrossAxisAlignment.start, // Button ko vertically center karne ke liye
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           customText(
             fontFamily: 'Poppins',
@@ -61,7 +61,7 @@ Widget recentSignedBookCard({
                 fontWeight: FontWeight.w600,
               ),
               FormattedRequestDate(
-                dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                dateString: date,
                 dateFormat: 'dd MMM, yyyy',
                 color:  secondryColor.withOpacity(0.7),
                 fontSize: 14.sp,

@@ -119,7 +119,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                     );
                   }
 
-                  final List<BookItem> books = controller.filteredBooks;
+                  final List<BookItem> books = controller.filteredBooksRx.value;
                   if (books.isEmpty) {
                     return Center(
                       child: customText(
@@ -146,11 +146,11 @@ class ReaderLibrary extends GetView<ReaderController> {
                         imagePath: book.coverImage,
                         signed: book.status,
                         bookTitle: book.title,
-                        authorName: "",
+                        authorName: book.author?.fullName ?? "",
                         date: formattedDate,
                         status: book.status,
 
-                        // 💡 Arrow sirf tab dikhega jab book sirf library ki hogi (request nahi bani hogi)
+
                         showArrow: isOnlyFromLibrary,
 
                         trackRequest: isOnlyFromLibrary ? () {
@@ -162,9 +162,9 @@ class ReaderLibrary extends GetView<ReaderController> {
                               'role': "fromLibrary",
                             },
                           );
-                        } : () {}, // Agar request bani hui hai toh click par kuch na ho
+                        } : () {},
 
-                        showAuthor: false,
+                        showAuthor: true,
                       );
                     },
                   );

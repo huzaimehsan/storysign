@@ -47,7 +47,7 @@ class ReaderDetailController extends GetxController {
       isloading.value = true;
 
       final endpoint = ApiEndPoints.getAutographRequestDetails(normalizedId);
-      final response = await BaseService().baseGetAPI(endpoint);
+      final response = await BaseService().baseGetAPI(endpoint, loading: false);
 
       if (response['success'] == true) {
         final parsedRequest = NewBookItem.fromResponse(response);

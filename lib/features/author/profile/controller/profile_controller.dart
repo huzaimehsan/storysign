@@ -51,8 +51,15 @@ class AuthorProfileController extends GetxController {
     getProfile();
   }
 
+  Future<void> refreshRequests() async {
+    await Future.wait([
+      getProfile(),
+
+    ]);
+  }
+
   Future<void> refreshProfileRequests() async {
-    getProfile();
+    await getProfile();
   }
 
   Future<void> getProfile() async {
@@ -114,7 +121,7 @@ class AuthorProfileController extends GetxController {
     final pref = SharedPreferencesMethod.storage;
     print(LocalDBKeys.TOKEN);
     pref.clear();
-    Get.toNamed('/signin');
+    Get.offAllNamed('/signin');
   }
 
   Future<void> updateAuthorProfileWithImage(File? imageFile) async {

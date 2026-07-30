@@ -4,11 +4,11 @@ import 'package:storysign/features/author/notification/controller/author_notific
 import 'package:storysign/features/author/delivered/controller/delivered_controller.dart';
 import 'package:storysign/features/author/profile/controller/profile_controller.dart';
 
-import '../../../shared/notification/notification_screen_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 
 import '../../home/controller/home_controller.dart';
 
-// Apne baki controllers ke path yahan import karein
+
 // import '../../author/search/controller/search_controller.dart';
 // import '../../author/profile/controller/profile_controller.dart';
 
@@ -56,8 +56,7 @@ class AuthorBottomNavController extends GetxController {
     if (index == 2) {
       try {
         if (Get.isRegistered<DeliveredController>()) {
-          // DeliveredController uses static data for now,
-          // add fetch call here when API is integrated
+       Get.find<DeliveredController>().fetchDeliveryRequests();
         }
       } catch (e) {
         debugPrint("Error refreshing Delivered tab: $e");
@@ -90,16 +89,29 @@ class AuthorBottomNavController extends GetxController {
     }
   }
 
-  /// Current tab mein push karne ke liye
+
   void pushInTab(int tabIndex, String routeName, {Object? arguments}) {
     navigatorKeys[tabIndex].currentState?.pushNamed(routeName, arguments: arguments);
   }
 
-  /// Current tab mein pop karne ke liye
+
   void popCurrentTab() {
     final nav = navigatorKeys[currentIndex.value].currentState;
     if (nav != null && nav.canPop()) {
       nav.pop();
     }
   }
-}
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Pre-register author notification controller so tab switches can call getNotifications()
+    try {
+      if (!Get.isRegistered<NotificationScreenController>(tag: 'author')) {
+        Get.lazyPut<NotificationScreenController>(() => AuthorNotificationController(), tag: 'author');
+      }
+    } catch (e) {
+      debugPrint('Error registering author notification controller: $e');
+    }
+  }
+}

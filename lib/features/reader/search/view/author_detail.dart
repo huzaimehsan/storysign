@@ -63,7 +63,7 @@ class AuthorDetail extends GetView<SearchPageController> {
                 if (controller.isDetailLoading.value)
                   SizedBox(
                     height: 40.h,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator(color: buttonColor,)),
                   )
 
                 else ...[

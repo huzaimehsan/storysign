@@ -77,7 +77,6 @@ class LibraryStatsModel {
     );
   }
 }
-
 class BookResponse {
   List<BookItem> items;
   int total;
@@ -94,14 +93,16 @@ class BookResponse {
   });
 
   factory BookResponse.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['items'] ?? json['data'];
+    final itemsList = rawItems is List ? rawItems : [];
     return BookResponse(
       items: List<BookItem>.from(
-        json['items'].map((x) => BookItem.fromJson(x)),
+        itemsList.map((x) => BookItem.fromJson(x)),
       ),
-      total: json['total'],
-      page: json['page'],
-      limit: json['limit'],
-      totalPages: json['totalPages'],
+      total: json['total'] ?? 0,
+      page: json['page'] ?? 1,
+      limit: json['limit'] ?? 10,
+      totalPages: json['totalPages'] ?? 1,
     );
   }
 }
@@ -110,9 +111,11 @@ class BookItem {
   String id;
   String readerId;
   String bookId;
-  String? autographRequestId; // null ho sakta hai
+  String? autographRequestId;
   String bookTitle;
+  String? coverImage;       // Added
   String downloadedFilePath;
+  String? downloadUrl;      // Added
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -122,21 +125,30 @@ class BookItem {
     required this.bookId,
     this.autographRequestId,
     required this.bookTitle,
+    this.coverImage,
     required this.downloadedFilePath,
+    this.downloadUrl,
     required this.createdAt,
     required this.updatedAt,
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) {
     return BookItem(
-      id: json['_id'],
-      readerId: json['readerId'],
-      bookId: json['bookId'],
-      autographRequestId: json['autographRequestId'],
-      bookTitle: json['bookTitle'],
-      downloadedFilePath: json['downloadedFilePath'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      // Handles both 'id' and '_id' from different backends safely
+      id: (json['id'] ?? json['_id'])?.toString() ?? '',
+      readerId: json['readerId']?.toString() ?? '',
+      bookId: json['bookId']?.toString() ?? '',
+      autographRequestId: json['autographRequestId']?.toString(),
+      bookTitle: json['bookTitle']?.toString() ?? '',
+      coverImage: json['coverImage']?.toString(),
+      downloadedFilePath: json['downloadedFilePath']?.toString() ?? '',
+      downloadUrl: json['downloadUrl']?.toString(),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'].toString()) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 }

@@ -1,18 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/home/model/author_profile_model.dart';
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
-import '../../../../utils/utility.dart';
 import '../model/active_subscription_model.dart';
 import '../model/home_model.dart';
-import 'package:http/http.dart' as http;
 class AuthorHomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   var authorStats = Rxn<SubscriptionStats>();
@@ -66,7 +60,7 @@ class AuthorHomeController extends GetxController {
 
 
   Future<void> refreshPendingRequest() async {
-    // Apni wahi API call yahan dobara call karein jo data fetch karti hai
+
 
     fetchAutographRequests();
   }
@@ -87,9 +81,12 @@ class AuthorHomeController extends GetxController {
     try {
       isStatsLoading.value = true;
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.authorStats);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.authorStats,
+        loading: false,
+        showErrorToast: false,
+      );
 
-      // Agar response direct data object hai:
       if (response != null) {
         authorStats.value = SubscriptionStats.fromJson(response);
       }
@@ -106,57 +103,34 @@ class AuthorHomeController extends GetxController {
       isFetchPending.value = true;
       errorMessage.value = '';
 
-      final prefs = SharedPreferencesMethod.storage;
-      final String token = prefs.getString(LocalDBKeys.TOKEN) ?? '';// ya getString use karein
-
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
-
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.pendingRequest}',
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.pendingRequest(),
+        loading: false,
+        showErrorToast: false,
       );
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-
-        // FIX: Paginated response parse karein (jisme items ki list hoti hai)
-        final paginatedData = PaginatedAutographResponse.fromJson(responseBody);
-
-        // FIX: Sahi list variable par assignAll use karein
+      if (response['success'] == true) {
+        final paginatedData = PaginatedAutographResponse.fromJson(response);
         autographList.assignAll(paginatedData.items);
-        // Fetch ke baad filtered list bhi update karo
         _applyFilter();
-
       } else {
-        final responseBody = jsonDecode(response.body);
-        errorMessage.value =
-            responseBody['message']?.toString() ?? 'Failed to load data';
-        Utils.showToast(errorMessage.value, true);
+        errorMessage.value = response['message']?.toString() ?? 'Failed to load data';
       }
     } catch (e) {
       debugPrint('Error: $e');
       errorMessage.value = 'Something went wrong while loading data';
-      Utils.showToast(errorMessage.value, true);
     } finally {
       isFetchPending.value = false;
-      EasyLoading.dismiss();
     }
   }
 
   Future<void> fetchSubscriptionPlan() async {
     try {
-      final response = await BaseService().baseGetAPI(ApiEndPoints.currentSubscription);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.currentSubscription,
+        loading: false,
+        showErrorToast: false,
+      );
       if (response != null) {
         activeSub.value = activeSubscription.fromJson(response);
       }
@@ -169,44 +143,22 @@ class AuthorHomeController extends GetxController {
   Future<void> loadAuthorProfile() async {
     try {
       isUserDataLoading.value = true;
-      final prefs = SharedPreferencesMethod.storage;
-      userRole.value = prefs.getString('role') ?? '';
+      userRole.value = SharedPreferencesMethod.storage.getString('role') ?? '';
 
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
-      if (token.isEmpty) {
-        return;
-      }
-
-      final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.authorProfile}');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.authorProfile,
+        loading: false,
+        showErrorToast: false,
       );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-        if (responseBody is Map) {
-          final profileData = responseBody['data'] is Map
-              ? responseBody['data'] as Map<String, dynamic>
-              : Map<String, dynamic>.from(responseBody);
-
-          userAuthorProfile.value = AuthorUserProfile.fromJson(profileData);
-
-          final fullName =
-              userAuthorProfile.value?.fullName ??
-                  profileData['fullName']?.toString() ??
-                  profileData['name']?.toString() ??
-                  '';
-          if (fullName.isNotEmpty) {
-            userAuthorProfile.value = fullName as AuthorUserProfile?;
-          }
-        }
+      if (response['success'] == true) {
+        final profileData = response['data'] is Map
+            ? response['data'] as Map<String, dynamic>
+            : Map<String, dynamic>.from(response);
+        userAuthorProfile.value = AuthorUserProfile.fromJson(profileData);
       }
     } catch (e) {
-      debugPrint('HomeController loadUserProfile error: $e');
+      debugPrint('loadAuthorProfile error: $e');
     } finally {
       isUserDataLoading.value = false;
     }

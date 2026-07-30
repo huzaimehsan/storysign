@@ -1,18 +1,20 @@
 import 'dart:async';
-import 'dart:io';
+
 import 'dart:convert';
 
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../../constants/local_db_key.dart';
 import '../../utils/shared_prefrences_methods.dart';
 import '../../utils/utility.dart';
+import 'interceptor_service.dart';
 
 class BaseService {
-  late String baseURL = "https://mockup.testdevlink.com/story-sign-backend/api/v1";
+  late String baseURL =
+      "https://mockup.testdevlink.com/story-sign-backend/api/v1";
   // late String baseURL = "http://192.168.83.183:8000/love-on-life";
   late String endPoint;
   late String Url = '$baseURL$endPoint';
@@ -20,10 +22,16 @@ class BaseService {
   late String baseS3URL = "";
   final prefs = SharedPreferencesMethod.storage;
 
+  // 👇 All HTTP calls now go through ApiInterceptor for auto token refresh
+  final http.Client _client = ApiInterceptor();
+
   String? token = '';
   String? stripeToken;
 
-  String _parseMessage(dynamic message, {String defaultMessage = "Something went wrong"}) {
+  String _parseMessage(
+      dynamic message, {
+        String defaultMessage = "Something went wrong",
+      }) {
     if (message is List) {
       return message.join(', ');
     }
@@ -35,14 +43,12 @@ class BaseService {
     return result;
   }
 
-
   Future<Map<String, dynamic>> basePostAPI(
       String endPoint,
       dynamic body, {
         bool loading = true,
         bool? isStripe,
       }) async {
-
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -50,22 +56,20 @@ class BaseService {
       );
     }
 
-    var bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-
     // if (!await checkInternetConnection()) {
     //   EasyLoading.dismiss();
     //   return {'success': false, 'message': 'Check Internet Connection'};
     // }
 
     try {
-      final response = await http.post(
+      // Token injection & 401 refresh handled by ApiInterceptor
+      final response = await _client
+          .post(
         Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $bearerToken',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 60));
+      )
+          .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();
 
@@ -81,7 +85,7 @@ class BaseService {
           return {
             "success": true,
             "data": jsonData, // List ko 'data' key mein dal diya
-            "statusCode": response.statusCode
+            "statusCode": response.statusCode,
           };
         }
 
@@ -89,7 +93,7 @@ class BaseService {
         return {
           "success": true,
           ...jsonData,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -102,7 +106,7 @@ class BaseService {
         return {
           "success": false,
           "message": jsonData["message"] ?? "Something went wrong",
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -119,21 +123,19 @@ class BaseService {
     }
   }
 
-
   Future<Map<String, dynamic>> baseGetAPI(
       String endPoint, {
         bool loading = true,
         bool? isStripe,
+        bool showErrorToast = true,
       }) async {
     if (loading) {
       // NOTE: Original code had EasyLoading commented out here. Keeping it that way.
-      // EasyLoading.show(
-      //   status: 'Please wait...',
-      //   maskType: EasyLoadingMaskType.black,
-      // );
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
     }
-
-    var bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
 
     if (!await checkInternetConnection()) {
       EasyLoading.dismiss();
@@ -142,13 +144,10 @@ class BaseService {
     }
 
     try {
-      final response = await http
+      final response = await _client
           .get(
         Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $bearerToken',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
       )
           .timeout(const Duration(seconds: 60));
 
@@ -165,28 +164,32 @@ class BaseService {
           return {
             "success": true,
             "data": jsonData,
-            "statusCode": response.statusCode
+            "statusCode": response.statusCode,
           };
         }
         // Agar JSON Map hai
         return {
           "success": true,
           ...jsonData,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
       // ---------- ERROR ----------
       if (response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
-        Utils.showToast(_parseMessage(jsonData["message"]), true);
+        if (showErrorToast) {
+          Utils.showToast(_parseMessage(jsonData["message"]), true);
+        }
         return {
           "success": false,
           "message": jsonData["message"] ?? "Something went wrong",
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
-      Utils.showToast("Something went wrong", true);
+      if (showErrorToast) {
+        Utils.showToast("Something went wrong", true);
+      }
       return {"success": false, "message": "Something went wrong"};
     } on TimeoutException {
       EasyLoading.dismiss();
@@ -212,8 +215,6 @@ class BaseService {
       );
     }
 
-    var bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-
     if (!await checkInternetConnection()) {
       EasyLoading.dismiss();
       Utils.showToast("Check Internet Connection", true);
@@ -221,13 +222,10 @@ class BaseService {
     }
 
     try {
-      final response = await http
+      final response = await _client
           .put(
         Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $bearerToken',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: json.encode(body),
       )
           .timeout(const Duration(seconds: 60));
@@ -245,7 +243,7 @@ class BaseService {
         return {
           "success": true,
           ...jsonData,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -256,7 +254,7 @@ class BaseService {
         return {
           "success": false,
           "message": jsonData["message"] ?? "Something went wrong",
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -286,8 +284,6 @@ class BaseService {
       );
     }
 
-    var bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-
     if (!await checkInternetConnection()) {
       EasyLoading.dismiss();
       Utils.showToast("Check Internet Connection", true);
@@ -295,13 +291,10 @@ class BaseService {
     }
 
     try {
-      final response = await http
+      final response = await _client
           .patch(
         Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $bearerToken',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: json.encode(body),
       )
           .timeout(const Duration(seconds: 60));
@@ -319,7 +312,7 @@ class BaseService {
         return {
           "success": true,
           ...jsonData,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -330,7 +323,7 @@ class BaseService {
         return {
           "success": false,
           "message": jsonData["message"] ?? "Something went wrong",
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
@@ -360,8 +353,6 @@ class BaseService {
       );
     }
 
-    var bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-
     if (!await checkInternetConnection()) {
       EasyLoading.dismiss();
       Utils.showToast("Check Internet Connection", true);
@@ -369,13 +360,10 @@ class BaseService {
     }
 
     try {
-      final response = await http
+      final response = await _client
           .delete(
         Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $bearerToken',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
       )
           .timeout(const Duration(seconds: 60));
 
@@ -393,32 +381,44 @@ class BaseService {
           return {
             "success": true,
             "message": "Deleted successfully",
-            "statusCode": response.statusCode
+            "statusCode": response.statusCode,
           };
         }
 
         var jsonData = json.decode(response.body);
-        Utils.showToast(_parseMessage(jsonData["message"], defaultMessage: "Deleted successfully"), false);
+        Utils.showToast(
+          _parseMessage(
+            jsonData["message"],
+            defaultMessage: "Deleted successfully",
+          ),
+          false,
+        );
         return {
           "success": true,
           ...jsonData,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
       // ---------- ERROR ----------
       if (response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
-        Utils.showToast(_parseMessage(jsonData["message"], defaultMessage: "Deletion failed"), true);
+        Utils.showToast(
+          _parseMessage(jsonData["message"], defaultMessage: "Deletion failed"),
+          true,
+        );
         return {
           "success": false,
           "message": jsonData["message"] ?? "Deletion failed",
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       }
 
       Utils.showToast("Something went wrong during deletion", true);
-      return {"success": false, "message": "Something went wrong during deletion"};
+      return {
+        "success": false,
+        "message": "Something went wrong during deletion",
+      };
     } on TimeoutException {
       EasyLoading.dismiss();
       Utils.showToast("Request timed out", true);

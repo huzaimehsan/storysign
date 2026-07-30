@@ -18,7 +18,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Full page loader jab pehli baar data aa raha ho
+
       if (controller.isFetchPending.value && controller.autographList.isEmpty) {
         return const Scaffold(
           body: Center(
@@ -158,7 +158,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
 
                     if (list.isEmpty) {
                       return SizedBox(
-                        height: 25.h, // Yahan apni marzi ki height de dein taake vertically center ho jaye
+                        height: 25.h,
                         child: Center(
                           child: customText(
                             text: controller.searchQuery.value.isNotEmpty

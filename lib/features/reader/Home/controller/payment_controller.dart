@@ -16,7 +16,7 @@ class PaymentController extends GetxController {
     final response = await BaseService().basePostAPI(
       ApiEndPoints.readerStripePayment,
       {'paymentIntentId': paymentIntentId},
-      loading: false, // Stripe sheet ke baad apna spinner nahi chahiye
+      loading: false,
     );
 
     debugPrint("Confirm Payment Response: $response");

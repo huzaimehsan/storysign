@@ -30,21 +30,13 @@ class HomeController extends GetxController {
 
   Future<void> _loadAllData() async {
     isPageLoading.value = true;
-    await Future.wait([
-      fetchHomeData(),
-      fetchMyBooks(),
-      loadUserProfile(),
-    ]);
+    await Future.wait([fetchHomeData(), fetchMyBooks(), loadUserProfile()]);
     isPageLoading.value = false;
   }
 
   Future<void> refreshHomeRequests() async {
     isPageLoading.value = true;
-    await Future.wait([
-      fetchHomeData(),
-      fetchMyBooks(),
-      loadUserProfile(),
-    ]);
+    await Future.wait([fetchHomeData(), fetchMyBooks(), loadUserProfile()]);
     isPageLoading.value = false;
   }
 
@@ -69,7 +61,6 @@ class HomeController extends GetxController {
   RxString userRole = ''.obs;
   RxBool isUserDataLoading = false.obs;
 
-
   RxString searchQuery = "".obs;
   RxList<AllAuthorModel> welcomes = <AllAuthorModel>[].obs;
   Rxn<AuthorDetailModel> authorDetailData = Rxn<AuthorDetailModel>();
@@ -90,7 +81,7 @@ class HomeController extends GetxController {
         .toList();
   }
 
-  List<MyBookModel> get filteredBooks {
+  List<SignedBookModel> get filteredBooks {
     if (searchQuery.value.trim().isEmpty) {
       return books;
     }
@@ -200,18 +191,21 @@ class HomeController extends GetxController {
       isFetchHome.value = true;
       errorMessage.value = '';
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.allAuthor);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.allAuthor,
+        loading: false,
+        showErrorToast: false,
+      );
 
       if (response['success'] == true) {
-        // baseGetAPI list response ko 'data' key ke andar deta hai,
-        // aur Map response ko spread karke deta hai — dono handle karo
-        final dynamic rawData = response['data'] ?? response['items'] ?? response;
+        final dynamic rawData =
+            response['data'] ?? response['items'] ?? response;
 
         final List<dynamic> items = rawData is List
             ? rawData
             : (rawData is Map && rawData['data'] is List
-            ? rawData['data'] as List
-            : const []);
+                  ? rawData['data'] as List
+                  : const []);
 
         welcomes.assignAll(
           items
@@ -221,8 +215,6 @@ class HomeController extends GetxController {
       } else {
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load home data';
-        // Utils.showToast already baseGetAPI ke andar call ho chuka hai error case mein,
-        // isliye yahan dobara call karne ki zarurat nahi
       }
     } catch (e) {
       debugPrint('fetchHomeData error: $e');
@@ -238,18 +230,18 @@ class HomeController extends GetxController {
   // authorDetail — moved to AuthorDetailController
   // downloadBook — moved to SignedCopyController
 
-  final RxList<MyBookModel> books = <MyBookModel>[].obs;
+  final RxList<SignedBookModel> books = <SignedBookModel>[].obs;
   final RxBool isBookLoading = false.obs;
 
   final RxInt currentPage = 1.obs;
   final RxInt totalPages = 1.obs;
   final int limit = 10;
+
   Future<void> fetchMyBooks({bool loadMore = false}) async {
     if (loadMore) {
       if (currentPage.value >= totalPages.value) return;
       currentPage.value++;
     } else {
-      // Fresh fetch — reset to page 1 and clear list
       currentPage.value = 1;
       books.clear();
     }
@@ -260,11 +252,11 @@ class HomeController extends GetxController {
 
       final response = await BaseService().baseGetAPI(
         ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
+        loading: false,
+        showErrorToast: false,
       );
 
       if (response['success'] == true) {
-        // baseGetAPI Map response ko spread karta hai (...jsonData),
-        // isliye 'response' hi seedha MyBooksResponse.fromJson mein ja sakta hai
         final data = MyBooksResponse.fromJson(response);
 
         if (loadMore) {
@@ -275,13 +267,10 @@ class HomeController extends GetxController {
 
         totalPages.value = data.totalPages;
       } else {
-        // Agar loadMore fail hua to page number wapas kar do,
-        // warna agli baar galat page se try hoga
         if (loadMore) currentPage.value--;
 
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load books';
-        // baseGetAPI already toast dikha chuka hai error case mein — dobara mat dikhao
       }
     } catch (e) {
       if (loadMore) currentPage.value--;
@@ -292,6 +281,7 @@ class HomeController extends GetxController {
       isBookLoading.value = false;
     }
   }
+
   Future<void> refreshBooks() async {
     await fetchMyBooks();
   }
@@ -307,7 +297,11 @@ class HomeController extends GetxController {
         return;
       }
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.profile);
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.profile,
+        loading: false,
+        showErrorToast: false,
+      );
 
       if (response['success'] == true) {
         // baseGetAPI Map response ko spread karke deta hai (...jsonData),
@@ -320,9 +314,9 @@ class HomeController extends GetxController {
 
         final fullName =
             userProfile.value?.fullName ??
-                profileData['fullName']?.toString() ??
-                profileData['name']?.toString() ??
-                '';
+            profileData['fullName']?.toString() ??
+            profileData['name']?.toString() ??
+            '';
         if (fullName.isNotEmpty) {
           userName.value = fullName;
         }

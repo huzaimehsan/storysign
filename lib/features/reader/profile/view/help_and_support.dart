@@ -18,11 +18,10 @@ class HelpAndSupport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Arguments se role catch karein (ModalRoute fallback for nested navigators)
+
     final args = (ModalRoute.of(context)?.settings.arguments ?? Get.arguments) as Map<String, dynamic>?;
     final String role = args?['role']?.toString() ?? 'reader';
 
-    // 2. Role ke mutabiq sahi controller find karein
     final dynamic controller = role == 'author'
         ? Get.find<AuthorHelpSupportController>()
         : Get.find<HelpSupportController>();
@@ -130,7 +129,7 @@ class HelpAndSupport extends StatelessWidget {
               ),
               SizedBox(height: 1.h),
               Obx(() {
-                // 4. Role ke mutabiq sahi FAQ list uthayein
+
                 final faqs = role == 'author'
                     ? controller.faqAuthorList
                     : controller.faqList;

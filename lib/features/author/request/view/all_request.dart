@@ -66,7 +66,7 @@ class AllRequest extends GetView<AuthorHomeController> {
                           child: customText(
                             text: "No pending requests",
                             fontSize: 15.sp,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: greyColor,
                             fontFamily: "Poppins",
                             textAlign: TextAlign.center,

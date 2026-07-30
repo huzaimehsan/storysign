@@ -62,28 +62,33 @@ class ContactUs extends GetView<ContactUsController> {
                         'Message',
                         "Write your message here.",
                         controller: controller.messageController,
-                        validator: (value) => HelperFunction.messageValidate(value ?? ""),
+                        validator: (value) =>
+                            HelperFunction.messageValidate(value ?? ""),
                         // Ye add karein
                         maxLines: 5,
                       ),
 
                       SizedBox(height: 6.h),
                       Obx(
-                            () => buttonWidget(
-                          controller.isLoading.value ? "Sending..." : "Send Message",
+                        () => buttonWidget(
+                          controller.isLoading.value
+                              ? "Sending..."
+                              : "Send Message",
                           whiteColor,
                           onTap: controller.isLoading.value
                               ? () {} // Loading hai toh kuch na karein
                               : () {
-                            // Yahan check karein agar form validate ho raha hai
-                            if (controller.formKey.currentState?.validate() ?? false) {
-                              controller.sendContactForm();
-                            }
-                          },
+                                  // Yahan check karein agar form validate ho raha hai
+                                  if (controller.formKey.currentState
+                                          ?.validate() ??
+                                      false) {
+                                    controller.sendContactForm();
+                                  }
+                                },
                           colors: buttonColor,
                           height: 5.2.h,
                           width: double.infinity,
-                              fontsize: 16.sp,
+                          fontsize: 16.sp,
                           fontFamily: 'Poppins',
                         ),
                       ),

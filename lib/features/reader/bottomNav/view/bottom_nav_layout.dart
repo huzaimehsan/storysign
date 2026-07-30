@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
 
 import '../../../shared/notification/view/notification_screen.dart';
@@ -21,8 +23,11 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
   Route _buildHomeRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/trackrequest':
-        return MaterialPageRoute(builder: (_) => const TrackRequest());
-
+        return GetPageRoute(
+          page: () => const TrackRequest(),
+          binding: TrackRequestBinding(),
+          settings: settings,
+        );
 
       default:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
@@ -34,11 +39,10 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
       case '/authordetail':
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) =>
-              AuthorDetail(
-                authorId: args?['authorId']?.toString() ?? '',
-                role: args?['role']?.toString() ?? '',
-              ),
+          builder: (_) => AuthorDetail(
+            authorId: args?['authorId']?.toString() ?? '',
+            role: args?['role']?.toString() ?? '',
+          ),
         );
       default:
         return MaterialPageRoute(builder: (_) => const SearchScreen());
@@ -50,9 +54,9 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        final currentNavigator =
-            controller.navigatorKeys[controller.currentIndex.value]
-                .currentState;
+        final currentNavigator = controller
+            .navigatorKeys[controller.currentIndex.value]
+            .currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
         }
@@ -60,59 +64,50 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
       child: Scaffold(
         extendBody: true,
         body: Obx(
-              () =>
-              IndexedStack(
-                index: controller.currentIndex.value,
-                children: [
-                  // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
-                  Navigator(
-                    key: controller.navigatorKeys[0],
-                    onGenerateRoute: _buildHomeRoute,
-                  ),
-                  // Tab 1: Search
-                  Navigator(
-                    key: controller.navigatorKeys[1],
-                    onGenerateRoute: _buildSeacrhRoute,
-                  ),
-                  // Tab 2: Library
-                  Navigator(
-                    key: controller.navigatorKeys[2],
-                    onGenerateRoute: (_) =>
-                        MaterialPageRoute(
-                            builder: (_) => ReaderLibrary()
-                        ),
-                  ),
-                  // Tab 3: Notifications
-                  Navigator(
-                      key: controller.navigatorKeys[3],
-                      onGenerateRoute: (RouteSettings settings) {
-                        return GetPageRoute(
-                          page: () => const NotificationScreen(),
-                          binding: NotificationBinding(),
-                          settings: RouteSettings(
-                            name: settings.name,
-                            arguments: {'role': 'reader'},   // 👈 ye add karein
-                          ),
-                        );
-                      }
-                  ),
-                    // Tab 4: Profile
-                    Navigator(
-                    key: controller.navigatorKeys[4],
-                    onGenerateRoute: (_) =>
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                ProfileScreen()),
-                  ),
-                ],
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: [
+              // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
+              Navigator(
+                key: controller.navigatorKeys[0],
+                onGenerateRoute: _buildHomeRoute,
               ),
+              // Tab 1: Search
+              Navigator(
+                key: controller.navigatorKeys[1],
+                onGenerateRoute: _buildSeacrhRoute,
+              ),
+              // Tab 2: Library
+              Navigator(
+                key: controller.navigatorKeys[2],
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => ReaderLibrary()),
+              ),
+              // Tab 3: Notifications
+              Navigator(
+                key: controller.navigatorKeys[3],
+                onGenerateRoute: (RouteSettings settings) {
+                  return GetPageRoute(
+                    page: () => const NotificationScreen(),
+                    binding: NotificationBinding(),
+                    settings: RouteSettings(
+                      name: settings.name,
+                      arguments: {'role': 'reader'}, // 👈 ye add karein
+                    ),
+                  );
+                },
+              ),
+              // Tab 4: Profile
+              Navigator(
+                key: controller.navigatorKeys[4],
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: Container(
-          margin: EdgeInsets.only(
-            left: 4.w,
-            right: 4.w,
-            bottom: 2.h,
-          ),
+          margin: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 2.h),
           height: 8.5.h,
           decoration: BoxDecoration(
             color: bottomNavColor,

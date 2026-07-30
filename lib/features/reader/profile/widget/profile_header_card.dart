@@ -54,15 +54,16 @@ Widget profileHeaderCard({
           height: 7.5.h,
           width: 7.5.h,
           decoration: BoxDecoration(
-            border: Border.all(color: buttonColor, width: 1.2),
             shape: BoxShape.circle,
             color: textFeildContainColor,
-            // Background color tab dikhega jab image nahi hogi
+            border: imageProvider == null
+                ? Border.all(color: buttonColor, width: 1.2)
+                : null,
             image: imageProvider != null
                 ? DecorationImage(image: imageProvider, fit: BoxFit.cover)
                 : null,
           ),
-          // Agar image nahi hai, toh child mein Icon dikhao
+
           child: imageProvider == null
               ? Icon(
                   Icons.person_rounded,
@@ -98,14 +99,14 @@ Widget profileHeaderCard({
                     fontFamily: 'Poppins',
                     text: 'Joined: ',
                     color: secondryColor,
-                    // Iska color thoda dark rakhein
+
                     fontSize: 13.sp,
-                    fontWeight: FontWeight.w700, // Yahan Bold kar diya
+                    fontWeight: FontWeight.w700,
                   ),
                   FormattedRequestDate(
-                    dateString: joinedDate, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
+                    dateString: joinedDate,
                     dateFormat: 'dd MMM, yyyy',
-                    color:  secondryColor.withOpacity(0.7),
+                    color: secondryColor.withOpacity(0.7),
                     fontSize: 13.sp,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
@@ -116,9 +117,6 @@ Widget profileHeaderCard({
               SizedBox(height: 1.h),
               Row(
                 children: [
-                  // Baki widgets...
-
-                  // Agar author true hai, to ye button dikhega
                   if (author == true)
                     buttonWidget(
                       plan,
@@ -127,7 +125,8 @@ Widget profileHeaderCard({
                       colors: buttonColor.withOpacity(0.15),
                       fontFamily: 'Poppins',
                       height: 2.6.h,
-                      width: 22.w, borderColor: buttonColor,
+                      width: 22.w,
+                      borderColor: buttonColor,
                       fontsize: 14.sp,
                       fontweight: FontWeight.w600,
                     ),
@@ -146,8 +145,6 @@ Widget profileHeaderCard({
                       fontsize: 14.sp,
                       fontweight: FontWeight.w500,
                     ),
-
-                  // Agar aapko 'else' mein kuch aur bhi dikhana hai to:
                 ],
               ),
 

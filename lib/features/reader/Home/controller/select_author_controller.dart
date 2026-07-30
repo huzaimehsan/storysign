@@ -33,6 +33,7 @@ class SelectAuthorController extends GetxController {
         .where((author) => author.fullName.toLowerCase().contains(query))
         .toList();
   }
+
   Future<void> fetchHomeData() async {
     try {
       isFetchHome.value = true;
@@ -41,15 +42,14 @@ class SelectAuthorController extends GetxController {
       final response = await BaseService().baseGetAPI(ApiEndPoints.allAuthor);
 
       if (response['success'] == true) {
-        // baseGetAPI List response ko {"data": [...]} mein wrap karta hai,
-        // Map response ko spread (...jsonData) karke deta hai
+     
         final dynamic rawData = response['data'] ?? response;
 
         final List<dynamic> items = rawData is List
             ? rawData
             : (rawData is Map && rawData['data'] is List
-            ? rawData['data'] as List
-            : const []);
+                  ? rawData['data'] as List
+                  : const []);
 
         welcomes.assignAll(
           items
@@ -59,7 +59,7 @@ class SelectAuthorController extends GetxController {
       } else {
         errorMessage.value =
             response['message']?.toString() ?? 'Failed to load authors';
-        // baseGetAPI already toast dikha chuka hai — dobara mat lagao
+        Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {
       debugPrint('fetchHomeData error: $e');
@@ -123,7 +123,6 @@ class SelectAuthorController extends GetxController {
 
   @override
   void onClose() {
-
     super.onClose();
   }
 }

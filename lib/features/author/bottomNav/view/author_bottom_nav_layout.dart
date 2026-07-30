@@ -101,8 +101,9 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   Route _buildDeliveredRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/requestDetail':
-        return MaterialPageRoute(
-          builder: (_) => const RequestDetailAuthor(),
+        return GetPageRoute(
+          page: () => const RequestDetailAuthor(),
+          binding: AuthorRequestDetailBinding(),
           settings: settings,
         );
 
@@ -128,7 +129,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
-              // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
+
               Navigator(
                 key: _navigatorKeys[0],
                 onGenerateRoute: (_) =>
@@ -159,14 +160,11 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
                   }
               ),
 
-              // Tab 3: Notifications
               Navigator(
                 key: _navigatorKeys[4],
                 onGenerateRoute: (RouteSettings settings) {
-                  final bool isAuthor = true;
-                  return GetPageRoute(
-                    page: () => const AuthorProfileScreen(),
-                    binding: AuthorProfileBinding(),
+                  return MaterialPageRoute(
+                    builder: (_) => const AuthorProfileScreen(),
                     settings: settings,
                   );
                 },

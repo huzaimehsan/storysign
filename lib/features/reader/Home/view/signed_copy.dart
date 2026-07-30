@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/signed_copy_controller.dart';
-import 'package:storysign/widgets/formatted_date_widget.dart';
+
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
@@ -20,10 +20,15 @@ class SignedCopy extends GetView<SignedCopyController> {
     final Map<String, dynamic> args =
         Get.arguments as Map<String, dynamic>? ?? {};
 
+    final String bookId =
+        args['bookId']?.toString() ??
+        args['bookIdValue']?.toString() ??
+        args['bookData']?.toString() ??
+        '';
+
     final String requestId =
         args['requestId']?.toString() ??
         args['autographRequestId']?.toString() ??
-        args['bookData']?.toString() ??
         '';
 
     final String bookName = args['bookName']?.toString() ?? 'Unknown Book';
@@ -87,7 +92,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                 }
 
                 return recentlySignedBooks(
-                  imageUrl: book.coverImage ?? "",
+                  imageUrl: book.coverImage,
                   bookTitle: book.title,
                   authorName: book.author.fullName,
                   date: book.uploadDate.isNotEmpty
@@ -105,12 +110,12 @@ class SignedCopy extends GetView<SignedCopyController> {
 
               SizedBox(height: 1.h),
 
-              // 2. Second Obx (Message Card ke liye)
+        
               Obx(() {
                 final book = controller.selectedRequest.value;
 
                 if (book == null) {
-                  return const SizedBox.shrink(); // Jab tak data na aaye, kuch na dikhayein
+                  return const SizedBox.shrink(); 
                 }
 
                 return signedCopyMessageCard(
@@ -126,7 +131,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                   "Download Book",
                   whiteColor,
                   onTap: () {
-                    controller.downloadBook(requestId, bookName);
+                    controller.downloadBook(bookId, bookName);
                   },
                   colors: buttonColor,
                   fontFamily: 'Poppins',
@@ -145,7 +150,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                   onTap: () {
                     Get.offAllNamed(
                       'bottomnav',
-                    ); // Ya Get.offAllNamed('/home') agar dashboard par wapas jana ho
+                    ); 
                   },
                   colors: greyColor,
                   fontFamily: 'Poppins',

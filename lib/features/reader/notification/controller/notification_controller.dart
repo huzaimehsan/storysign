@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
-import '../../../shared/notification/notification_screen_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 import '../model/notification_model.dart';
 
 
@@ -37,7 +37,11 @@ class NotificationController extends NotificationScreenController {
     try {
       isNotificationsLoading.value = true;
 
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.notifications);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(
+        ApiEndPoints.notifications,
+        loading: false,
+        showErrorToast: false,
+      );
 
       if (response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
@@ -55,7 +59,6 @@ class NotificationController extends NotificationScreenController {
       }
     } catch (e) {
       debugPrint("Error fetching notifications: $e");
-      Utils.showToast("Something went wrong", true);
     } finally {
       isNotificationsLoading.value = false;
     }

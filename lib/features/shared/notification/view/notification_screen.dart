@@ -7,7 +7,7 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
 
 import '../../../reader/notification/widget/notification_widget.dart';
-import '../notification_screen_controller.dart';
+import '../controller/notification_screen_controller.dart';
 
 
 class NotificationScreen extends StatelessWidget {
@@ -40,6 +40,16 @@ class NotificationScreen extends StatelessWidget {
                   final notificationController = controller.notificationList;
 
                   if (controller.isNotificationsLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: buttonColor),
+                    );
+                  }
+
+                  if (notificationController.isEmpty) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      controller.refreshAlert();
+                    });
+
                     return const Center(
                       child: CircularProgressIndicator(color: buttonColor),
                     );

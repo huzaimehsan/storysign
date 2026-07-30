@@ -36,7 +36,7 @@ Widget authorBiographyTextField({
 }) {
   return Container(
     width: double.infinity,
-    // TextField ka wrapper container
+
     decoration: BoxDecoration(
       color: white,
       borderRadius: BorderRadius.circular(20.sp),
@@ -50,7 +50,7 @@ Widget authorBiographyTextField({
     ),
     child: TextField(
       controller: controller,
-      maxLines: null, // Multi-line input ke liye
+      maxLines: null,
       keyboardType: TextInputType.multiline,
       style: TextStyle(
         fontSize: 13.6.sp,
@@ -60,8 +60,8 @@ Widget authorBiographyTextField({
         height: 1.6,
       ),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(4.w), // Padding wahi rakhi jo aapke container mein thi
-        border: InputBorder.none, // Default border hatane ke liye
+        contentPadding: EdgeInsets.all(4.w),
+        border: InputBorder.none,
         hintText: "Enter biography...",
         hintStyle: TextStyle(color: greyColor),
       ),

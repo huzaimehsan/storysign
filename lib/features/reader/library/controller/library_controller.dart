@@ -1,7 +1,7 @@
-import 'dart:convert';
+
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,8 +15,10 @@ import '../model/library_model.dart';
 class ReaderController extends GetxController {
   RxString selectedTab = "All".obs;
   RxString searchQuery = "".obs;
-  RxString sortBy = "None".obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
-  RxString filterStatus = "All".obs; // "All", "Signed", "In process", "Delivered", "Unsigned"
+  RxString sortBy = "None"
+      .obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
+  RxString filterStatus =
+      "All".obs; // "All", "Signed", "In process", "Delivered", "Unsigned"
 
   RxBool isLibrary = false.obs;
 
@@ -51,7 +53,10 @@ class ReaderController extends GetxController {
     if (selectedTab.value == "Signed") {
       books = books.where((book) {
         final status = book.status.toLowerCase().replaceAll(' ', '_');
-        return status == "signed" || status == "completed" || status == "approved" || status == "delivered";
+        return status == "signed" ||
+            status == "completed" ||
+            status == "approved" ||
+            status == "delivered";
       }).toList();
     } else if (selectedTab.value == "Unsigned") {
       books = books.where((book) {
@@ -66,7 +71,10 @@ class ReaderController extends GetxController {
       books = books.where((book) {
         final status = book.status.toLowerCase().replaceAll(' ', '_');
         if (target == "signed") {
-          return status == "signed" || status == "completed" || status == "approved" || status == "delivered";
+          return status == "signed" ||
+              status == "completed" ||
+              status == "approved" ||
+              status == "delivered";
         } else if (target == "unsigned") {
           return status == "unsigned" || status == "pending";
         }
@@ -88,9 +96,13 @@ class ReaderController extends GetxController {
     } else if (sortBy.value == "Title Z-A") {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sortBy.value == "Date Newest") {
-      books.sort((a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)));
+      books.sort(
+            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+      );
     } else if (sortBy.value == "Date Oldest") {
-      books.sort((a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)));
+      books.sort(
+            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+      );
     }
 
     return books;
@@ -99,19 +111,39 @@ class ReaderController extends GetxController {
   List<BookItem> get filteredBooks {
     // Explicitly access all observables so Obx() tracks them
     final allBooks = booksList.toList();
+    final tab = selectedTab.value;
     final query = searchQuery.value;
     final status = filterStatus.value;
     final sort = sortBy.value;
 
     List<BookItem> books = List<BookItem>.from(allBooks);
 
-    // 1. Filter by filterStatus dropdown (search ke bahar)
+    // 1. Filter by Tab (All / Signed / Unsigned)
+    if (tab == "Signed") {
+      books = books.where((book) {
+        final st = book.status.toLowerCase().replaceAll(' ', '_');
+        return st == "signed" ||
+            st == "completed" ||
+            st == "approved" ||
+            st == "delivered";
+      }).toList();
+    } else if (tab == "Unsigned") {
+      books = books.where((book) {
+        final st = book.status.toLowerCase().replaceAll(' ', '_');
+        return st == "unsigned" || st == "pending";
+      }).toList();
+    }
+
+    // 2. Filter by filterStatus dropdown
     if (status != "All") {
       final target = status.toLowerCase();
       books = books.where((book) {
         final st = book.status.toLowerCase().replaceAll(' ', '_');
         if (target == "signed") {
-          return st == "signed" || st == "completed" || st == "approved" || st == "delivered";
+          return st == "signed" ||
+              st == "completed" ||
+              st == "approved" ||
+              st == "delivered";
         } else if (target == "unsigned") {
           return st == "unsigned" || st == "pending";
         }
@@ -119,26 +151,31 @@ class ReaderController extends GetxController {
       }).toList();
     }
 
-    // 2. Filter by search query
+    // 3. Filter by search query
     if (query.trim().isNotEmpty) {
       final q = query.toLowerCase().trim();
-      books = books.where((book) => book.title.toLowerCase().contains(q)).toList();
+      books = books
+          .where((book) => book.title.toLowerCase().contains(q))
+          .toList();
     }
 
-    // 3. Sort books
+    // 4. Sort books
     if (sort == "Title A-Z") {
       books.sort((a, b) => a.title.compareTo(b.title));
     } else if (sort == "Title Z-A") {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sort == "Date Newest") {
-      books.sort((a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)));
+      books.sort(
+            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+      );
     } else if (sort == "Date Oldest") {
-      books.sort((a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)));
+      books.sort(
+            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+      );
     }
 
     return books;
   }
-
 
   void selectTab(String tab) {
     selectedTab.value = tab;
@@ -164,18 +201,29 @@ class ReaderController extends GetxController {
         final year = int.tryParse(parts[2]) ?? 2026;
 
         final months = {
-          'january': 1, 'jan': 1,
-          'february': 2, 'feb': 2,
-          'march': 3, 'mar': 3,
-          'april': 4, 'apr': 4,
+          'january': 1,
+          'jan': 1,
+          'february': 2,
+          'feb': 2,
+          'march': 3,
+          'mar': 3,
+          'april': 4,
+          'apr': 4,
           'may': 5,
-          'june': 6, 'jun': 6,
-          'july': 7, 'jul': 7,
-          'august': 8, 'aug': 8,
-          'september': 9, 'sep': 9,
-          'october': 10, 'oct': 10,
-          'november': 11, 'nov': 11,
-          'december': 12, 'dec': 12,
+          'june': 6,
+          'jun': 6,
+          'july': 7,
+          'jul': 7,
+          'august': 8,
+          'aug': 8,
+          'september': 9,
+          'sep': 9,
+          'october': 10,
+          'oct': 10,
+          'november': 11,
+          'nov': 11,
+          'december': 12,
+          'dec': 12,
         };
         final month = months[monthStr] ?? 1;
         return DateTime(year, month, day);
@@ -183,7 +231,6 @@ class ReaderController extends GetxController {
     } catch (_) {}
     return DateTime.now();
   }
-
 
   Future<void> refreshRequests() async {
     final tab = selectedTab.value;
@@ -196,13 +243,14 @@ class ReaderController extends GetxController {
     }
   }
 
-  // 'status' parameter add karein (default 'signed' rakhein)
-  Future<void> fetchBooksData({String status = 'signed'}) async {
+  // 'status' parameter add karein (default 'all' rakhein)
+  Future<void> fetchBooksData({String status = 'all'}) async {
     try {
       isLibrary.value = true;
       booksList.clear(); // Clear previous data
 
-      final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+      final token =
+          SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
       if (token.isEmpty) {
         Utils.showToast('Please login again', true);
         return;
@@ -221,14 +269,12 @@ class ReaderController extends GetxController {
       isLibrary.value = false;
     }
   }
+
   Future<void> _fetchBooksWithStatus(String status) async {
     try {
       // Query parameters manually build karo, kyunki baseGetAPI seedha
       // "$baseURL$endPoint" string leta hai, Uri object nahi
-      final Map<String, String> queryParams = {
-        'page': '1',
-        'limit': '10',
-      };
+      final Map<String, String> queryParams = {'page': '1', 'limit': '10'};
 
       if (status == 'signed' || status == 'unsigned') {
         queryParams['status'] = status;
@@ -239,7 +285,7 @@ class ReaderController extends GetxController {
 
       debugPrint('DEBUG: API Endpoint: $endpoint');
 
-      final response = await BaseService().baseGetAPI(endpoint);
+      final response = await BaseService().baseGetAPI(endpoint,loading: false);
 
       debugPrint('DEBUG: Response: $response');
 
@@ -259,65 +305,66 @@ class ReaderController extends GetxController {
       Utils.showToast('Error: $e', true);
     }
   }
-  // Future<void> _fetchBooksWithStatus(String status) async {
-  //   try {
-  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-  //     if (token.isEmpty) {
-  //       print('DEBUG: Token is empty');
-  //       return;
-  //     }
-  //
-  //     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
-  //
-  //     // Build query parameters - only add status if it's valid (signed or unsigned)
-  //     final Map<String, String> queryParams = {
-  //       'page': '1',
-  //       'limit': '10',
-  //     };
-  //
-  //     // Only add status if it's signed or unsigned (not 'all')
-  //     if (status == 'signed' || status == 'unsigned') {
-  //       queryParams['status'] = status;
-  //     }
-  //
-  //     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-  //     print('DEBUG: API URL: $uri');
-  //
-  //     final response = await http.get(
-  //       uri,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //     );
-  //
-  //     print('DEBUG: Status Code: ${response.statusCode}');
-  //     print('DEBUG: Response Body: ${response.body}');
-  //
-  //     if (response.statusCode >= 200 && response.statusCode < 300) {
-  //       final responseBody = jsonDecode(response.body);
-  //       print('DEBUG: Decoded Response: $responseBody');
-  //
-  //       if (responseBody['items'] != null) {
-  //         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
-  //         print('DEBUG: Parsed ${model.items.length} books');
-  //         booksList.addAll(model.items);
-  //         print('DEBUG: Total books after adding: ${booksList.length}');
-  //       } else if (responseBody['message'] != null) {
-  //         Utils.showToast(responseBody['message'], false);
-  //       }
-  //     } else {
-  //       try {
-  //         final errorBody = jsonDecode(response.body);
-  //         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
-  //         Utils.showToast(errorMsg, true);
-  //       } catch (_) {
-  //         Utils.showToast('Failed to load books: ${response.statusCode}', true);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('DEBUG: Exception: $e');
-  //     Utils.showToast('Error: $e', true);
-  //   }
-  // }
+
+// Future<void> _fetchBooksWithStatus(String status) async {
+//   try {
+//     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+//     if (token.isEmpty) {
+//       print('DEBUG: Token is empty');
+//       return;
+//     }
+//
+//     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
+//
+//     // Build query parameters - only add status if it's valid (signed or unsigned)
+//     final Map<String, String> queryParams = {
+//       'page': '1',
+//       'limit': '10',
+//     };
+//
+//     // Only add status if it's signed or unsigned (not 'all')
+//     if (status == 'signed' || status == 'unsigned') {
+//       queryParams['status'] = status;
+//     }
+//
+//     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+//     print('DEBUG: API URL: $uri');
+//
+//     final response = await http.get(
+//       uri,
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer $token',
+//       },
+//     );
+//
+//     print('DEBUG: Status Code: ${response.statusCode}');
+//     print('DEBUG: Response Body: ${response.body}');
+//
+//     if (response.statusCode >= 200 && response.statusCode < 300) {
+//       final responseBody = jsonDecode(response.body);
+//       print('DEBUG: Decoded Response: $responseBody');
+//
+//       if (responseBody['items'] != null) {
+//         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
+//         print('DEBUG: Parsed ${model.items.length} books');
+//         booksList.addAll(model.items);
+//         print('DEBUG: Total books after adding: ${booksList.length}');
+//       } else if (responseBody['message'] != null) {
+//         Utils.showToast(responseBody['message'], false);
+//       }
+//     } else {
+//       try {
+//         final errorBody = jsonDecode(response.body);
+//         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
+//         Utils.showToast(errorMsg, true);
+//       } catch (_) {
+//         Utils.showToast('Failed to load books: ${response.statusCode}', true);
+//       }
+//     }
+//   } catch (e) {
+//     print('DEBUG: Exception: $e');
+//     Utils.showToast('Error: $e', true);
+//   }
+// }
 }

@@ -178,11 +178,11 @@ class AppRoutes {
       binding: PaymentBinding(),
     ),
 
-    GetPage(
-      name: '/finalreview',
-      page: () => FinalReview(),
-      binding: PaymentBinding(),
-    ),
+    // GetPage(
+    //   name: '/finalreview',
+    //   page: () => FinalReview(),
+    //   binding: PaymentBinding(),
+    // ),
 
     GetPage(
       name: '/tracking',

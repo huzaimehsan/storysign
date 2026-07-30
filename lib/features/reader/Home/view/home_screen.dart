@@ -19,7 +19,7 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Single combined loading state — sab ek saath load
+
       if (controller.isPageLoading.value) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator(color: buttonColor)),
@@ -27,6 +27,7 @@ class HomeScreen extends GetView<HomeController> {
       }
 
       return RefreshIndicator(
+        color: buttonColor,
         onRefresh: () => controller.refreshHomeRequests(),
         child: Scaffold(
           body: SingleChildScrollView(
@@ -171,18 +172,21 @@ class HomeScreen extends GetView<HomeController> {
                           bookTitle: book.title,
                           date: book.uploadDate.toString().split(' ')[0],
                           status: book.status,
+                          authorName: book.authorName,
                           trackRequest: () {
                             Get.toNamed(
                               "/signedcopy",
                               arguments: {
                                 'autographRequestId': book.autographRequestId,
-                                'bookPdfUrl' : book.signedPdfUrl,
+                                'bookId': book.bookId,
+                                'bookPdfUrl': book.signedPdfUrl,
                               },
                             );
                           },
                           imagePath: '',
 
-                          showAuthor: true,
+                          showAuthor:true
+                          ,
                         );
                       },
                     );

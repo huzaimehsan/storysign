@@ -7,10 +7,10 @@ import 'package:storysign/features/author/request/controller/place_signature_con
 import 'package:storysign/features/author/request/controller/add_message_controller.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/request/controller/request_detail_controller.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import 'package:storysign/features/author/profile/controller/profile_controller.dart';
 
 import '../../../reader/profile/controller/profile_screen_controller.dart';
-import '../../../shared/notification/notification_screen_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 import '../../notification/controller/author_notification_controller.dart';
 import '../controller/author_bottom_nav_controller.dart';
 
@@ -18,17 +18,11 @@ class AuthorBottomNavBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AuthorBottomNavController>(() => AuthorBottomNavController());
-    Get.lazyPut<AuthorHomeController>(() => AuthorHomeController());
-    Get.lazyPut<AllRequestController>(() => AllRequestController());
-    Get.lazyPut<EbookPreviewController>(() => EbookPreviewController());
+    Get.lazyPut<AuthorHomeController>(() => AuthorHomeController(), fenix: true);
+    Get.lazyPut<AllRequestController>(() => AllRequestController(), fenix: true);
+    Get.lazyPut<DeliveredController>(() => DeliveredController(), fenix: true);
 
-    Get.lazyPut<DrawSignatureController>(() => DrawSignatureController());
-    Get.lazyPut<PlaceSignatureController>(() => PlaceSignatureController());
-    Get.lazyPut<AddMessageController>(() => AddMessageController());
-    Get.lazyPut<DeliveredController>(() => DeliveredController());
-    Get.lazyPut<RequestDetailController>(() => RequestDetailController());
-
-    Get.lazyPut<NotificationScreenController>(() => AuthorNotificationController(), tag: 'author');
-    // Get.lazyPut<ProfileScreenController>(() => ProfileScreenController());
+    Get.lazyPut<NotificationScreenController>(() => AuthorNotificationController(), tag: 'author', fenix: true);
+    Get.lazyPut<AuthorProfileController>(() => AuthorProfileController(), fenix: true);
   }
 }
