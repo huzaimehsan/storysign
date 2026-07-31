@@ -38,7 +38,7 @@ class AuthorHelpSupportController extends GetxController {
   Future<void> getAuthorHelpSupportData() async {
     try {
       final BaseService baseService = BaseService();
-      final response = await baseService.baseGetAPI(ApiEndPoints.authorHelpSupport);
+      final response = await baseService.baseGetAPI(ApiEndPoints.authorHelpSupport,loading: false);
 
       if (response['success'] == true) {
         supportAuthorData.value = AuthorHelpSupportModel.fromJson(response);
@@ -55,7 +55,7 @@ class AuthorHelpSupportController extends GetxController {
     try {
       isFaqsLoading.value = true;
       final BaseService baseService = BaseService();
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.authorFaqs);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.authorFaqs,loading: false);
 
       if (response['success'] == true) {
         List<dynamic> list = response['data'] ?? [];

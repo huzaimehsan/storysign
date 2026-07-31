@@ -36,7 +36,7 @@ class HelpSupportController extends GetxController {
   Future<void> getHelpSupportData() async {
     try {
       final BaseService baseService = BaseService();
-      final response = await baseService.baseGetAPI(ApiEndPoints.helpSupport);
+      final response = await baseService.baseGetAPI(ApiEndPoints.helpSupport,loading: false);
 
       if (response['success'] == true) {
         supportData.value = AuthorHelpSupportModel.fromJson(response);
@@ -53,7 +53,7 @@ class HelpSupportController extends GetxController {
     try {
       isFaqsLoading.value = true;
       final BaseService baseService = BaseService();
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.faqs);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.faqs,loading: false);
 
       if (response['success'] == true) {
         List<dynamic> list = response['data'] ?? [];

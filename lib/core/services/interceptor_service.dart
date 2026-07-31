@@ -28,13 +28,23 @@ class ApiInterceptor extends http.BaseClient {
       print('🔁 Refresh result: $refreshed');
       if (refreshed) {
         final retryRequest = _cloneRequest(request);
-        final retryResponse = await _sendWithAuth(retryRequest, isStreamed: true);
-        return http.StreamedResponse(
-          Stream.value(retryResponse.bodyBytes),
-          retryResponse.statusCode,
-          headers: retryResponse.headers,
-          request: retryRequest,
-        );
+        try {
+          final retryResponse = await _sendWithAuth(retryRequest, isStreamed: true);
+          return http.StreamedResponse(
+            Stream.value(retryResponse.bodyBytes),
+            retryResponse.statusCode,
+            headers: retryResponse.headers,
+            request: retryRequest,
+          );
+        } catch (e) {
+          // If retry fails, return original 401 response instead of crashing
+          return http.StreamedResponse(
+            Stream.value(response.bodyBytes),
+            response.statusCode,
+            headers: response.headers,
+            request: request,
+          );
+        }
       } else {
         Utils.showToast("Session expired, please login again", true);
       }
@@ -54,7 +64,10 @@ class ApiInterceptor extends http.BaseClient {
 
   Future<http.Response> _sendWithAuth(http.BaseRequest request, {bool isStreamed = false}) async {
     final bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-    request.headers['Content-Type'] = 'application/json; charset=UTF-8';
+    
+    if (request is! http.MultipartRequest) {
+      request.headers['Content-Type'] = 'application/json; charset=UTF-8';
+    }
   
     if (bearerToken != null && bearerToken.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $bearerToken';
@@ -147,6 +160,14 @@ class ApiInterceptor extends http.BaseClient {
       final cloned = http.Request(original.method, original.url)
         ..headers.addAll(original.headers)
         ..body = original.body;
+      return cloned;
+    } else if (original is http.MultipartRequest) {
+      final cloned = http.MultipartRequest(original.method, original.url)
+        ..headers.addAll(original.headers)
+        ..fields.addAll(original.fields);
+      for (final file in original.files) {
+        cloned.files.add(file);
+      }
       return cloned;
     }
     // extend here if you use MultipartRequest etc.

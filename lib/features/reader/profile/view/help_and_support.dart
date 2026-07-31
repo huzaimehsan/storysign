@@ -29,6 +29,7 @@ class HelpAndSupport extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
+        color: buttonColor,
         onRefresh: () => controller.refreshHelpSupport(),
         child: SafeArea(
           child: Column(
@@ -69,8 +70,10 @@ class HelpAndSupport extends StatelessWidget {
                               scheme: 'mailto',
                               path: data.email,
                             );
-                            if (await canLaunchUrl(emailUri)) {
+                            try {
                               await launchUrl(emailUri);
+                            } catch (e) {
+                              Utils.showToast("Could not open email app", true);
                             }
                           } else {
                             Utils.showToast("Email not available", true);
@@ -78,26 +81,57 @@ class HelpAndSupport extends StatelessWidget {
                         },
                       ),
 
-                      // 2. CHAT BUTTON
+                      // 2. CALL BUTTON
+
+                      // 3. CHAT BUTTON
                       libraryStatCardIcon(
                         title: 'Chat',
                         imagePath: "assets/png/chat.png",
                         value: '',
                         subtitle: '',
                         ontap: () async {
+                          print(role);
                           if (data != null && data.supportUrl.isNotEmpty) {
                             final Uri url = Uri.parse(data.supportUrl);
-                            if (await canLaunchUrl(url)) {
+                            try {
                               await launchUrl(
                                 url,
                                 mode: LaunchMode.externalApplication,
                               );
+                            } catch (e) {
+                              Utils.showToast("Could not open chat link", true);
                             }
                           } else {
                             Get.toNamed("/contact", arguments: {'role': role});
                           }
                         },
                       ),
+                      libraryStatCardIcon(
+                        title: 'Call',
+                        imagePath: "assets/png/call.png",
+                        value: '',
+                        subtitle: '',
+                        ontap: () async {
+                          print(role);
+                          if (data != null && data.phone.isNotEmpty) {
+                            final Uri phoneUri = Uri(
+                              scheme: 'tel',
+                              path: data.phone,
+                            );
+                            try {
+                              await launchUrl(
+                                phoneUri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } catch (e) {
+                              Utils.showToast("Could not open phone dialer", true);
+                            }
+                          } else {
+                            Utils.showToast("Phone number not available", true);
+                          }
+                        },
+                      ),
+
                     ],
                   );
                 }),

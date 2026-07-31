@@ -16,6 +16,16 @@ class ContactUsController extends GetxController {
   RxBool isLoading = false.obs;
   String role = 'reader';
 
+  @override
+  void onInit() {
+    super.onInit();
+    // Retrieve role from navigation arguments if available
+    if (Get.arguments != null && Get.arguments is Map) {
+      role = Get.arguments['role'] ?? 'reader';
+    }
+    print('🚀 HITTING ENDPOINT: $contactUsEndpoint');
+  }
+
   String get contactUsEndpoint =>
       role == 'author' ? ApiEndPoints.authorContactUs : ApiEndPoints.contactUs;
 
@@ -34,6 +44,8 @@ class ContactUsController extends GetxController {
         'subject': subjectController.text.trim(),
         'message': messageController.text.trim(),
       };
+
+
 
       final response = await baseService.basePostAPI(
         contactUsEndpoint,
