@@ -56,10 +56,10 @@ class BaseService {
       );
     }
 
-    // if (!await checkInternetConnection()) {
-    //   EasyLoading.dismiss();
-    //   return {'success': false, 'message': 'Check Internet Connection'};
-    // }
+    if (!await checkInternetConnection()) {
+      EasyLoading.dismiss();
+      return {'success': false, 'message': 'Check Internet Connection'};
+    }
 
     try {
       // Token injection & 401 refresh handled by ApiInterceptor

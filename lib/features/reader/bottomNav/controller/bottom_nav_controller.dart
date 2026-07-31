@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
 import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+import '../../../shared/notification/controller/notification_screen_controller.dart';
 import '../../library/controller/library_controller.dart';
 import '../../notification/controller/notification_controller.dart';
 import '../../profile/controller/profile_screen_controller.dart';
@@ -59,11 +60,17 @@ class BottomNavController extends GetxController{
 
 
     if (index == 3) {
-      if (Get.isRegistered<NotificationController>()) {
-        Get.find<NotificationController>().getNotifications();
+      try {
+        if (Get.isRegistered<NotificationScreenController>(tag: 'reader')) {
+          final ctrl = Get.find<NotificationScreenController>(tag: 'reader');
+          if (ctrl is NotificationController) {
+            ctrl.getNotifications();
+          }
+        }
+      } catch (e) {
+        debugPrint("Error refreshing Notification tab: $e");
       }
     }
-
 
     if (index == 4) {
       if (Get.isRegistered<ProfileScreenController>()) {
@@ -94,5 +101,6 @@ class BottomNavController extends GetxController{
         Get.lazyPut<NotificationController>(() => NotificationController(), tag: 'reader');
       }
     } catch (_) {}
+
   }
 }

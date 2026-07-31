@@ -18,8 +18,9 @@ class HelpAndSupport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final args = (ModalRoute.of(context)?.settings.arguments ?? Get.arguments) as Map<String, dynamic>?;
+    final args =
+        (ModalRoute.of(context)?.settings.arguments ?? Get.arguments)
+            as Map<String, dynamic>?;
     final String role = args?['role']?.toString() ?? 'reader';
 
     final dynamic controller = role == 'author'
@@ -64,7 +65,10 @@ class HelpAndSupport extends StatelessWidget {
                         subtitle: '',
                         ontap: () async {
                           if (data != null && data.email.isNotEmpty) {
-                            final Uri emailUri = Uri(scheme: 'mailto', path: data.email);
+                            final Uri emailUri = Uri(
+                              scheme: 'mailto',
+                              path: data.email,
+                            );
                             if (await canLaunchUrl(emailUri)) {
                               await launchUrl(emailUri);
                             }
@@ -84,28 +88,13 @@ class HelpAndSupport extends StatelessWidget {
                           if (data != null && data.supportUrl.isNotEmpty) {
                             final Uri url = Uri.parse(data.supportUrl);
                             if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
                             }
                           } else {
-                            Get.toNamed("/contact");
-                          }
-                        },
-                      ),
-
-                      // 3. CALL BUTTON
-                      libraryStatCardIcon(
-                        title: 'Call',
-                        imagePath: "assets/png/call.png",
-                        value: '',
-                        subtitle: '',
-                        ontap: () async {
-                          if (data != null && data.phone.isNotEmpty) {
-                            final Uri callUri = Uri(scheme: 'tel', path: data.phone);
-                            if (await canLaunchUrl(callUri)) {
-                              await launchUrl(callUri);
-                            }
-                          } else {
-                            Utils.showToast("Phone number not available", true);
+                            Get.toNamed("/contact", arguments: {'role': role});
                           }
                         },
                       ),
@@ -129,7 +118,6 @@ class HelpAndSupport extends StatelessWidget {
               ),
               SizedBox(height: 1.h),
               Obx(() {
-
                 final faqs = role == 'author'
                     ? controller.faqAuthorList
                     : controller.faqList;
@@ -137,31 +125,29 @@ class HelpAndSupport extends StatelessWidget {
                 return Expanded(
                   child: controller.isFaqsLoading.value
                       ? const Center(
-                    child: CircularProgressIndicator(
-                      color: buttonColor,
-                    ),
-                  )
+                          child: CircularProgressIndicator(color: buttonColor),
+                        )
                       : faqs.isEmpty
                       ? Center(
-                    child: customText(
-                      text: "No FAQS",
-                      fontSize: 16.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600,
-                      color: greyColor,
-                    ),
-                  )
+                          child: customText(
+                            text: "No FAQS",
+                            fontSize: 16.sp,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w600,
+                            color: greyColor,
+                          ),
+                        )
                       : ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: faqs.length,
-                    itemBuilder: (context, index) {
-                      final faq = faqs[index];
-                      return faqItemWidget(
-                        title: faq.question,
-                        description: faq.answer,
-                      );
-                    },
-                  ),
+                          padding: EdgeInsets.zero,
+                          itemCount: faqs.length,
+                          itemBuilder: (context, index) {
+                            final faq = faqs[index];
+                            return faqItemWidget(
+                              title: faq.question,
+                              description: faq.answer,
+                            );
+                          },
+                        ),
                 );
               }),
               SizedBox(height: 2.h),

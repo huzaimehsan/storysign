@@ -14,6 +14,10 @@ class ContactUsController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   RxBool isLoading = false.obs;
+  String role = 'reader';
+
+  String get contactUsEndpoint =>
+      role == 'author' ? ApiEndPoints.authorContactUs : ApiEndPoints.contactUs;
 
   Future<void> sendContactForm() async {
     if (nameController.text.isEmpty || emailController.text.isEmpty) {
@@ -32,7 +36,7 @@ class ContactUsController extends GetxController {
       };
 
       final response = await baseService.basePostAPI(
-        ApiEndPoints.contactUs,
+        contactUsEndpoint,
         body,
       );
 

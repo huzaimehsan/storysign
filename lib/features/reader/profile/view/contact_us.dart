@@ -13,10 +13,15 @@ import '../../search/widgets/header_widget.dart';
 class ContactUs extends GetView<ContactUsController> {
   @override
   Widget build(BuildContext context) {
+    final args =
+        (ModalRoute.of(context)?.settings.arguments ?? Get.arguments)
+            as Map<String, dynamic>?;
+    final String role = args?['role']?.toString() ?? 'reader';
+    controller.role = role;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          // Scroll view add karein taake keyboard se error na aaye
           child: Column(
             children: [
               customHeader(
@@ -64,7 +69,7 @@ class ContactUs extends GetView<ContactUsController> {
                         controller: controller.messageController,
                         validator: (value) =>
                             HelperFunction.messageValidate(value ?? ""),
-                        // Ye add karein
+
                         maxLines: 5,
                       ),
 
@@ -76,9 +81,8 @@ class ContactUs extends GetView<ContactUsController> {
                               : "Send Message",
                           whiteColor,
                           onTap: controller.isLoading.value
-                              ? () {} // Loading hai toh kuch na karein
+                              ? () {}
                               : () {
-                                  // Yahan check karein agar form validate ho raha hai
                                   if (controller.formKey.currentState
                                           ?.validate() ??
                                       false) {

@@ -40,7 +40,7 @@ class AllRequest extends GetView<AuthorHomeController> {
               controller: controller.searchController,
               onChanged: controller.filterRequests,
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: sectionHeader(title: "Pending Requests", onSeeAll: () {}),

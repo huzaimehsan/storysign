@@ -59,6 +59,7 @@ Widget downloadHistoryCard({
                 //   fontSize: 14.sp,
                 //   fontWeight: FontWeight.w500,
                 // ),
+
                 SizedBox(height: 0.4.h),
                 FormattedRequestDate(
                   dateString:

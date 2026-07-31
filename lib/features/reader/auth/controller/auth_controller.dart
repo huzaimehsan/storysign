@@ -29,11 +29,11 @@ class AuthController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController signInEmailController = TextEditingController();
   final TextEditingController signInpasswordController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController forgotEmailController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
@@ -43,7 +43,7 @@ class AuthController extends GetxController {
 
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController otpController = TextEditingController();
   final RxBool isPasswordHidden = true.obs;
@@ -211,14 +211,14 @@ class AuthController extends GetxController {
             ? dataValue
             : null;
         final Map<String, dynamic>? user =
-            responseMap['user'] is Map<String, dynamic>
+        responseMap['user'] is Map<String, dynamic>
             ? responseMap['user'] as Map<String, dynamic>
             : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-                  ? dataMap['user'] as Map<String, dynamic>
-                  : null);
+            ? dataMap['user'] as Map<String, dynamic>
+            : null);
         final String? token =
             responseMap['accessToken'] as String? ??
-            dataMap?['accessToken'] as String?;
+                dataMap?['accessToken'] as String?;
 
         if (user == null || token == null) {
           Utils.showToast('Invalid server response', true);
@@ -232,7 +232,10 @@ class AuthController extends GetxController {
         final prefs = SharedPreferencesMethod.storage;
         await prefsInstance.setString(LocalDBKeys.TOKEN, token);
         await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
+        final String? refreshToken = responseMap['refreshToken'] as String? ??
+            dataMap?['refreshToken'] as String?;
 
+        await prefs.setString(LocalDBKeys.REFRESH_TOKEN, refreshToken ?? "");
         final String role = user['role']?.toString().toLowerCase() ?? 'reader';
 
         await prefsInstance.setString('role', role);
@@ -306,14 +309,14 @@ class AuthController extends GetxController {
           ? dataValue
           : null;
       final Map<String, dynamic>? user =
-          responseMap['user'] is Map<String, dynamic>
+      responseMap['user'] is Map<String, dynamic>
           ? responseMap['user'] as Map<String, dynamic>
           : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-                ? dataMap['user'] as Map<String, dynamic>
-                : null);
+          ? dataMap['user'] as Map<String, dynamic>
+          : null);
       final String? token =
           responseMap['accessToken'] as String? ??
-          dataMap?['accessToken'] as String?;
+              dataMap?['accessToken'] as String?;
 
       if (user == null || token == null) {
         Utils.showToast('Invalid server response', true);
@@ -325,6 +328,10 @@ class AuthController extends GetxController {
       await prefs.setString(LocalDBKeys.USERID, user['id'] ?? "");
       await prefs.setString(LocalDBKeys.USERFULLNAME, user['fullName'] ?? "");
       await prefs.setString(LocalDBKeys.TOKEN, token);
+      final String? refreshToken = responseMap['refreshToken'] as String? ??
+          dataMap?['refreshToken'] as String?;
+
+      await prefs.setString(LocalDBKeys.REFRESH_TOKEN, refreshToken ?? "");
       await prefs.setBool('isLoggedIn', true);
       Utils.showToast(successMessage ?? 'Login successful', false);
 
@@ -434,11 +441,11 @@ class AuthController extends GetxController {
     try {
       final response = await BaseService()
           .basePostAPI(ApiEndPoints.resetPassword, {
-            'email': email,
-            'code': code,
-            'newPassword': newPassword,
-            'confirmPassword': confirmPassword,
-          });
+        'email': email,
+        'code': code,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      });
 
       if (response['success'] == true) {
         Utils.showToast(

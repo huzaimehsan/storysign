@@ -29,12 +29,16 @@ class AuthorProfileController extends GetxController {
 
   // Compatibility fields/getters for EditProfile view
   TextEditingController get nameUpdateController => authorNameUpdateController;
+
   TextEditingController get emailUpdateController =>
       authorEmailUpdateController;
+
   TextEditingController get bioUpdateController => authorBioUpdateController;
 
   Rxn<File> get profileImage => authorProfileImage;
+
   Rxn<File> get selectedImage => authorSelectedImage;
+
   Rxn<AuthorProfileModel> get profileModel => authorProfile;
 
   Future<void> pickImage(BuildContext context) async {
@@ -52,10 +56,7 @@ class AuthorProfileController extends GetxController {
   }
 
   Future<void> refreshRequests() async {
-    await Future.wait([
-      getProfile(),
-
-    ]);
+    await Future.wait([getProfile()]);
   }
 
   Future<void> refreshProfileRequests() async {

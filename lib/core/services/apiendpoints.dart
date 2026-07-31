@@ -30,6 +30,7 @@ class ApiEndPoints {
       "/reader/autograph-requests/confirm-payment";
 
   static const String contactUs = "/reader/contact";
+  static const String authorContactUs = "/author/contact";
   static const String changePassword = "/auth/change-password";
 
   static const String faqs = "/reader/faqs";

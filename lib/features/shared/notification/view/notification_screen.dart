@@ -46,16 +46,8 @@ class NotificationScreen extends StatelessWidget {
                   }
 
                   if (notificationController.isEmpty) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      controller.refreshAlert();
-                    });
-
-                    return const Center(
-                      child: CircularProgressIndicator(color: buttonColor),
-                    );
-                  }
-
-                  if (notificationController.isEmpty) {
+                    // When not loading and the list is empty, show a "No Notification found" message.
+                    // Avoid scheduling a refresh every build (which caused the loader to loop).
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [

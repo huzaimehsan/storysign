@@ -75,6 +75,7 @@ class TrackRequestController extends GetxController {
       errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
+        loading: false,
         ApiEndPoints.trackRequest,
       );
 

@@ -43,24 +43,20 @@ void main() async {
   String initialRoute;
 
   if (!hasSeenOnboarding) {
-
     initialRoute = '/';
   }
-  // } else if (isLoggedIn) {
-  //
-  //   initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
-  // }
+  else if (isLoggedIn) {
+    initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
+  }
   else {
-
     initialRoute = '/signin';
   }
 
   runApp(MyApp(initialRoute : initialRoute));
 }
 class MyApp extends StatelessWidget {
-  final String initialRoute; // Ye variable add karein
+  final String initialRoute;
 
-  // Constructor update karein
   const MyApp({super.key, required this.initialRoute, });
 
   @override
