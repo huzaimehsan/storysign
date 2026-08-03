@@ -134,195 +134,79 @@ class SignedCopyController extends GetxController {
       final uri = Uri.parse(
         '${BaseService().baseURL}${ApiEndPoints.downloadBook(resolvedBookId)}',
       );
+      final Map<String, dynamic> requestBody = {
+        'autographRequestId': resolvedAutographRequestId,
+      };
 
-      // 1. POST request to get JSON containing the file URL/path
       debugPrint('Download POST URI: $uri');
-      debugPrint('Download POST bookId: $resolvedBookId');
-      final requestBody = {'autographRequestId': resolvedAutographRequestId};
-      debugPrint('Download POST body: ${jsonEncode(requestBody)}');
+      debugPrint('Download POST requestBody: ${jsonEncode(requestBody)}');
 
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(requestBody),
+      final postResponse = await BaseService().basePostAPI(
+        ApiEndPoints.downloadBook(resolvedBookId),
+        requestBody,
+        loading: false,
       );
 
-      debugPrint('Download POST status: ${response.statusCode}');
-      debugPrint('Download POST headers: ${response.headers}');
-      debugPrint('Download POST response body: ${response.body}');
+      debugPrint('Download POST response: $postResponse');
 
-      if (response.statusCode == 401) {
-        Utils.showToast('Session expired. Please login again.', true);
-        try {
-          await SharedPreferencesMethod.storage.clear();
-        } catch (_) {}
-        Get.offAllNamed('/signin');
+      if (postResponse['success'] == true) {
+        final responseBody = postResponse;
+        String? downloadUrl = responseBody['downloadUrl']?.toString();
+
+        if (downloadUrl == null || downloadUrl.isEmpty) {
+          final String? filePath = responseBody['downloadedFilePath']?.toString();
+          if (filePath == null || filePath.isEmpty) {
+            Utils.showToast('Download path is missing in response', true);
+            return;
+          }
+
+          final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
+          downloadUrl = filePath.startsWith('http')
+              ? filePath
+              : (filePath.startsWith('/') ? '$domain$filePath' : '$domain/$filePath');
+        }
+
+        await _downloadFileFromUrl(downloadUrl, fileName, token);
         return;
       }
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final contentType =
-            response.headers['content-type']?.toLowerCase() ?? '';
+      final fallbackResponse = await BaseService().basePostAPI(
+        ApiEndPoints.downloadBook(resolvedBookId),
+        requestBody,
+        loading: false,
+      );
 
-        if ((response.body ?? '').trim().isEmpty) {
-          debugPrint('Empty response body for download POST to $uri — trying GET fallback');
+      debugPrint('Fallback Download POST response: $fallbackResponse');
 
-       
-          try {
-            final getResp = await http.get(
-              uri,
-              headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-            );
-            debugPrint('GET fallback status: ${getResp.statusCode}');
-            debugPrint('GET fallback headers: ${getResp.headers}');
-            debugPrint('GET fallback body: ${getResp.body}');
-
-            if ((getResp.body ?? '').trim().isEmpty) {
-              Utils.showToast('Server returned empty response for download', true);
-              return;
-            }
-
-            final fallbackBody = _tryDecodeJson(getResp.body);
-            if (fallbackBody is Map<String, dynamic>) {
-         
-              String? downloadUrl = fallbackBody['downloadUrl']?.toString();
-              if (downloadUrl == null || downloadUrl.isEmpty) {
-                final String? filePath = fallbackBody['downloadedFilePath']?.toString();
-                if (filePath == null || filePath.isEmpty) {
-                  Utils.showToast('Download path is missing in response', true);
-                  return;
-                }
-
-                final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
-                if (filePath.startsWith('http')) {
-                  downloadUrl = filePath;
-                } else if (filePath.startsWith('/')) {
-                  downloadUrl = '$domain$filePath';
-                } else {
-                  downloadUrl = '$domain/$filePath';
-                }
-              }
-
-              debugPrint('Fallback Download URL: $downloadUrl');
-
-              final fileResponse = await http.get(
-                Uri.parse(downloadUrl),
-                headers: {'Authorization': 'Bearer $token'},
-              );
-
-              debugPrint('Fallback File response status: ${fileResponse.statusCode}');
-              debugPrint('Fallback File response content-type: ${fileResponse.headers['content-type']}');
-
-              if (fileResponse.statusCode >= 200 && fileResponse.statusCode < 300) {
-                final directory = await getApplicationDocumentsDirectory();
-                final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-                await file.writeAsBytes(fileResponse.bodyBytes);
-                Utils.showToast('Book downloaded successfully', false);
-                await OpenFile.open(file.path);
-                return;
-              } else {
-                Utils.showToast('Failed to download PDF file: ${fileResponse.statusCode}', true);
-                return;
-              }
-            } else {
-              Utils.showToast('Server returned invalid JSON on fallback', true);
-              return;
-            }
-          } catch (e) {
-            debugPrint('GET fallback error: $e');
-            Utils.showToast('Unexpected error during download', true);
-            return;
-          }
+      if (fallbackResponse['success'] != true) {
+        if (fallbackResponse['statusCode'] == 401) {
+          Utils.showToast('Session expired. Please login again.', true);
+          Get.offAllNamed('/signin');
+          return;
         }
 
-        if (contentType.contains('application/json')) {
-          final responseBody = _tryDecodeJson(response.body);
-          if (responseBody is! Map<String, dynamic>) {
-            Utils.showToast('Server returned invalid JSON response', true);
-            return;
-          }
-
-          // Prefer the ready-made absolute downloadUrl from the API
-          String? downloadUrl = responseBody['downloadUrl']?.toString();
-
-          // Fallback: reconstruct from downloadedFilePath if downloadUrl is missing
-          if (downloadUrl == null || downloadUrl.isEmpty) {
-            final String? filePath =
-            responseBody['downloadedFilePath']?.toString();
-            if (filePath == null || filePath.isEmpty) {
-              Utils.showToast('Download path is missing in response', true);
-              return;
-            }
-
-            // If the API returned a relative path, build an absolute URL.
-            // Avoid duplicating 'story-sign-backend' segment if baseURL already contains it.
-            final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
-            if (filePath.startsWith('http')) {
-              downloadUrl = filePath;
-            } else if (filePath.startsWith('/')) {
-              downloadUrl = '$domain$filePath';
-            } else {
-              downloadUrl = '$domain/$filePath';
-            }
-          }
-
-          debugPrint('Download URL: $downloadUrl');
-
-          final fileResponse = await http.get(
-            Uri.parse(downloadUrl),
-            headers: {'Authorization': 'Bearer $token'},
-          );
-
-          debugPrint('File response status: ${fileResponse.statusCode}');
-          debugPrint(
-            'File response content-type: ${fileResponse.headers['content-type']}',
-          );
-
-          if (fileResponse.statusCode >= 200 && fileResponse.statusCode < 300) {
-            final fileContentType =
-                fileResponse.headers['content-type']?.toLowerCase() ?? '';
-
-            // Guard against silently saving an HTML error page as a .pdf
-            if (fileContentType.isNotEmpty &&
-                !fileContentType.contains('pdf') &&
-                !fileContentType.contains('octet-stream')) {
-              debugPrint('Unexpected file response body: ${fileResponse.body}');
-
-              Utils.showToast(
-                'Unexpected file type received: $fileContentType',
-                true,
-              );
-              return;
-            }
-
-            final directory = await getApplicationDocumentsDirectory();
-            final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-            await file.writeAsBytes(fileResponse.bodyBytes);
-
-            Utils.showToast('Book downloaded successfully', false);
-            await OpenFile.open(file.path);
-          } else {
-            Utils.showToast(
-              'Failed to download PDF file: ${fileResponse.statusCode}',
-              true,
-            );
-            debugPrint('File GET failed body: ${fileResponse.body}');
-          }
-        } else {
-          // Direct binary response from the POST itself
-          final directory = await getApplicationDocumentsDirectory();
-          final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-          await file.writeAsBytes(response.bodyBytes);
-          Utils.showToast('Book downloaded successfully', false);
-          await OpenFile.open(file.path);
-        }
-      } else {
-        Utils.showToast('Error: ${response.statusCode}', true);
+        Utils.showToast(fallbackResponse['message']?.toString() ?? 'Book download failed', true);
+        return;
       }
+
+      final responseBody = fallbackResponse;
+      String? downloadUrl = responseBody['downloadUrl']?.toString();
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        final String? filePath = responseBody['downloadedFilePath']?.toString();
+        if (filePath == null || filePath.isEmpty) {
+          Utils.showToast('Download path is missing in response', true);
+          return;
+        }
+
+        final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
+        downloadUrl = filePath.startsWith('http')
+            ? filePath
+            : (filePath.startsWith('/') ? '$domain$filePath' : '$domain/$filePath');
+      }
+
+      debugPrint('Download URL: $downloadUrl');
+      await _downloadFileFromUrl(downloadUrl, fileName, token);
+      return;
     } catch (e) {
       Utils.showToast('Error: $e', true);
     } finally {

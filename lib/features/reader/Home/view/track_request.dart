@@ -101,6 +101,8 @@ class TrackRequest extends GetView<TrackRequestController> {
 
             Expanded(
               child: RefreshIndicator(
+                backgroundColor :containerColor,
+                color: white,
                 onRefresh: () => controller.refreshRequests(),
                 child: Obx(() {
                   if (controller.trackRequestLoading.value) {
@@ -149,15 +151,15 @@ class TrackRequest extends GetView<TrackRequestController> {
                         authorName: book.author.fullName,
                         date: formattedDate,
                        trackRequest: () {
-                         // 1. Debug print lagayein
+
                          print("DEBUG: Sending book title: ${book.title}");
 
-                         // 2. Yahan check karein ke 'book' null to nahi
+
                          if (book != null) {
-                           Get.toNamed("/tracking", arguments: {'bookData': book});
+                           Get.toNamed("/tracking", arguments: {'autographRequestId': book.id});
                          }
                          else {
-                           print("DEBUG: ERROR - Book object is null!");
+
                          }
                        },
 

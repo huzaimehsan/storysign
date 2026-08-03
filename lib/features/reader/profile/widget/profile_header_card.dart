@@ -5,6 +5,7 @@ import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
+import '../../../../widgets/cover_image_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
 
 Widget profileHeaderCard({
@@ -18,19 +19,7 @@ Widget profileHeaderCard({
   required bool? author,
   VoidCallback? onEdit,
 }) {
-  ImageProvider? imageProvider;
   final String path = imagePath.trim();
-  if (path.isNotEmpty && path != "null") {
-    if (path.startsWith('http')) {
-      imageProvider = NetworkImage(path);
-    } else if (path.startsWith('/') ||
-        path.contains(':\\') ||
-        path.contains(':/')) {
-      imageProvider = FileImage(File(path));
-    } else {
-      imageProvider = AssetImage(path);
-    }
-  }
 
   return Container(
     width: double.infinity,
@@ -50,27 +39,20 @@ Widget profileHeaderCard({
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          height: 7.5.h,
-          width: 7.5.h,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: textFeildContainColor,
-            border: imageProvider == null
-                ? Border.all(color: buttonColor, width: 1.2)
-                : null,
-            image: imageProvider != null
-                ? DecorationImage(image: imageProvider, fit: BoxFit.cover)
-                : null,
+   
+        ClipOval(
+          child: SizedBox(
+            height: 16.w,
+            width: 16.w,
+            child: CoverImageWidget(
+              assetPath: path,
+              imageUrl: path.startsWith('http') ? path : null,
+              height: 16.w,
+              width: 16.w,
+              fit: BoxFit.cover,
+              fallbackIcon: Icons.person_rounded,
+            ),
           ),
-
-          child: imageProvider == null
-              ? Icon(
-                  Icons.person_rounded,
-                  color: buttonColor.withOpacity(0.6),
-                  size: 10.w,
-                )
-              : null,
         ),
         SizedBox(width: 4.w),
         Expanded(
@@ -104,7 +86,7 @@ Widget profileHeaderCard({
                     fontWeight: FontWeight.w700,
                   ),
                   FormattedRequestDate(
-                    dateString: joinedDate,
+                    dateString: joinedDate.isNotEmpty ? joinedDate : 'Unknown',
                     dateFormat: 'dd MMM, yyyy',
                     color: secondryColor.withOpacity(0.7),
                     fontSize: 13.sp,

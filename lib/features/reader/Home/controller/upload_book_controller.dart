@@ -49,13 +49,6 @@ class UploadBookController extends GetxController {
       );
       final request = http.MultipartRequest('POST', uri);
 
-      final token = SharedPreferencesMethod.storage.getString(
-        LocalDBKeys.TOKEN,
-      );
-      if (token != null && token.isNotEmpty) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-
       request.fields['title'] = title;
 
       // PDF file
@@ -76,14 +69,13 @@ class UploadBookController extends GetxController {
         ),
       );
 
-      final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 60),
+      final responseMap = await BaseService().baseMultipartPostAPI(
+        ApiEndPoints.uploadBook,
+        request: request,
+        loading: false,
       );
-      final responseString = await streamedResponse.stream.bytesToString();
-      final responseMap = json.decode(responseString);
 
-      if (streamedResponse.statusCode >= 200 &&
-          streamedResponse.statusCode < 300) {
+      if (responseMap['success'] == true) {
         Utils.showToast(
           responseMap['message'] ?? 'Book uploaded successfully',
           false,

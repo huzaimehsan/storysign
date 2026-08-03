@@ -31,8 +31,8 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
         body: SafeArea(
           bottom: false,
           child: RefreshIndicator(
-            color: buttonColor,
-            onRefresh: () => controller.refreshHomeRequests(),
+                   backgroundColor :containerColor,
+        color: white,onRefresh: () => controller.refreshHomeRequests(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(

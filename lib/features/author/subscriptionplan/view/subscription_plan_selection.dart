@@ -84,7 +84,7 @@ class SubscriptionPlanSelectionScreen
                                         final success = await paymentController
                                             .processPayment(selectedPlan.id);
                                         if (success) {
-                                          Get.toNamed('/authorbottomnav');
+                                          Get.offAllNamed('/authorbottomnav');
                                         }
                                       },
                                 fontFamily: 'Poppins',

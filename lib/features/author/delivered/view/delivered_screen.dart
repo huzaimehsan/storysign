@@ -50,8 +50,8 @@ class DeliveredScreen extends GetView<DeliveredController> {
             ),
             Expanded(
               child: RefreshIndicator(
-
-                color: buttonColor,
+       backgroundColor :containerColor,
+        color: white,
                 onRefresh: () => controller.fetchDeliveryRequests(),
                 child: Obx(() {
                   if (controller.isFetchPending.value) {
@@ -86,10 +86,9 @@ class DeliveredScreen extends GetView<DeliveredController> {
                       final request = controller.filteredRequests[index];
                       return AllPendingRequest(
                         imagePath: request.reader!.profilePicture ?? "",
-
-                        authorName: request.author?.fullName ?? 'Unknown Author',
-                        bookName: request.bookTitle,
-                        date: request.requestDate,
+                        authorName: request.reader!.fullName ?? 'Unknown Author',
+                        bookName: request.bookTitle ?? 'Unknown Book',
+                        date: request.requestDate?.toString() ?? 'Unknown',
                         ontap: () {
                           Navigator.of(context).pushNamed(
                             '/requestDetail',

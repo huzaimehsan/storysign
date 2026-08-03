@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
-import 'package:storysign/features/author/request/controller/all_request_controller.dart';
+
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -49,7 +49,8 @@ class AllRequest extends GetView<AuthorHomeController> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: controller.refreshPendingRequest,
-                color: buttonColor,
+                     backgroundColor :containerColor,
+        color: white,
                 child: Obx(() {
                   if (controller.isFetchPending.value) {
                     return const Center(
@@ -84,7 +85,7 @@ class AllRequest extends GetView<AuthorHomeController> {
                       final request = controller.filteredAutographList[index];
                       return AllPendingRequest(
                         imagePath: request.reader.profilePicture,
-                        authorName: request.author.fullName,
+                        authorName: request.reader.fullName,
                         bookName: request.bookTitle,
                         date: request.requestDate,
                         ontap: () {

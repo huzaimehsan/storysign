@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 
@@ -37,7 +36,8 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
 
             Expanded(
               child: RefreshIndicator(
-                color: buttonColor,
+                      backgroundColor :containerColor,
+        color: white,
                 onRefresh:() => controller.refreshProfileRequests(),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -78,20 +78,6 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                         );
                       }
 
-                      String formattedDate = "";
-                      if (profile.dateJoined != null &&
-                          profile.dateJoined.toString().isNotEmpty) {
-                        try {
-                          formattedDate = DateFormat('dd MMM, hh:mm a').format(
-                            DateTime.parse(
-                              profile.dateJoined.toString(),
-                            ).toLocal(),
-                          );
-                        } catch (e) {
-                          formattedDate = profile.dateJoined.toString();
-                        }
-                      }
-
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -100,7 +86,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                             imagePath: profile.profilePicture?.toString() ?? "",
                             name: profile.fullName?.toString() ?? "No Name",
                             email: profile.email?.toString() ?? "No Email",
-                            joinedDate: formattedDate,
+                            joinedDate: profile.dateJoined?.toString() ?? 'Unknown',
                             onEdit: () {
                               Get.toNamed(
                                 '/editprofile',

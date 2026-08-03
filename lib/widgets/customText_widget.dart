@@ -20,6 +20,10 @@ Widget customText({
   double? height,
 
 }) {
+  final effectiveDecoration = txtDecoration == null || txtDecoration == TextDecoration.none
+      ? null
+      : txtDecoration;
+
   return Text(
     text ?? '',
     textAlign: textAlign,
@@ -33,7 +37,7 @@ Widget customText({
       fontSize: fontSize ?? 15.sp,
       fontWeight: fontWeight, // Ensure the weight is respected
       fontStyle: fontStyle,
-      decoration: txtDecoration,
+      decoration: effectiveDecoration,
       decorationColor: decorationColor,
       decorationThickness: 1.0,
       letterSpacing: letterSpacing ?? - 0.5,

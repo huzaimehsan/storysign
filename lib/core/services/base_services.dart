@@ -340,6 +340,156 @@ class BaseService {
     }
   }
 
+  Future<Map<String, dynamic>> baseMultipartPostAPI(
+      String endPoint, {
+        required http.MultipartRequest request,
+        bool loading = true,
+        bool? isStripe,
+      }) async {
+    if (loading) {
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
+    }
+
+    if (!await checkInternetConnection()) {
+      EasyLoading.dismiss();
+      Utils.showToast("Check Internet Connection", true);
+      return {'success': false, 'message': 'Check Internet Connection'};
+    }
+
+    try {
+      final token = await prefs.getString(LocalDBKeys.TOKEN);
+      if (token != null && token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final streamedResponse = await _client.send(request).timeout(const Duration(seconds: 60));
+      final response = await http.Response.fromStream(streamedResponse);
+
+      EasyLoading.dismiss();
+
+      print("MULTIPART POST URL: $baseURL$endPoint");
+      print("Status: ${response.statusCode}");
+      print("Response: ${response.body}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final dynamic jsonData = json.decode(response.body);
+        if (jsonData is Map<String, dynamic>) {
+          return {
+            'success': true,
+            ...jsonData,
+            'statusCode': response.statusCode,
+          };
+        }
+        return {'success': true, 'data': jsonData, 'statusCode': response.statusCode};
+      }
+
+      if (response.body.isNotEmpty) {
+        try {
+          final jsonData = json.decode(response.body);
+          final message = jsonData is Map ? jsonData['message'] : null;
+          Utils.showToast(_parseMessage(message), true);
+          return {
+            'success': false,
+            'message': message ?? 'Something went wrong',
+            'statusCode': response.statusCode,
+          };
+        } catch (_) {
+          Utils.showToast('Something went wrong', true);
+          return {'success': false, 'message': 'Something went wrong', 'statusCode': response.statusCode};
+        }
+      }
+
+      Utils.showToast('Something went wrong', true);
+      return {'success': false, 'message': 'Something went wrong'};
+    } on TimeoutException {
+      EasyLoading.dismiss();
+      Utils.showToast('Request timed out', true);
+      return {'success': false, 'message': 'Request timed out'};
+    } catch (e) {
+      EasyLoading.dismiss();
+      Utils.showToast('Unexpected error', true);
+      return {'success': false, 'message': 'Unexpected error'};
+    }
+  }
+
+  Future<Map<String, dynamic>> baseMultipartPatchAPI(
+      String endPoint, {
+        required http.MultipartRequest request,
+        bool loading = true,
+        bool? isStripe,
+      }) async {
+    if (loading) {
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
+    }
+
+    if (!await checkInternetConnection()) {
+      EasyLoading.dismiss();
+      Utils.showToast("Check Internet Connection", true);
+      return {'success': false, 'message': 'Check Internet Connection'};
+    }
+
+    try {
+      final token = await prefs.getString(LocalDBKeys.TOKEN);
+      if (token != null && token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final streamedResponse = await _client.send(request).timeout(const Duration(seconds: 60));
+      final response = await http.Response.fromStream(streamedResponse);
+
+      EasyLoading.dismiss();
+
+      print("MULTIPART PATCH URL: $baseURL$endPoint");
+      print("Status: ${response.statusCode}");
+      print("Response: ${response.body}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final dynamic jsonData = json.decode(response.body);
+        if (jsonData is Map<String, dynamic>) {
+          return {
+            'success': true,
+            ...jsonData,
+            'statusCode': response.statusCode,
+          };
+        }
+        return {'success': true, 'data': jsonData, 'statusCode': response.statusCode};
+      }
+
+      if (response.body.isNotEmpty) {
+        try {
+          final jsonData = json.decode(response.body);
+          final message = jsonData is Map ? jsonData['message'] : null;
+          Utils.showToast(_parseMessage(message), true);
+          return {
+            'success': false,
+            'message': message ?? 'Something went wrong',
+            'statusCode': response.statusCode,
+          };
+        } catch (_) {
+          Utils.showToast('Something went wrong', true);
+          return {'success': false, 'message': 'Something went wrong', 'statusCode': response.statusCode};
+        }
+      }
+
+      Utils.showToast('Something went wrong', true);
+      return {'success': false, 'message': 'Something went wrong'};
+    } on TimeoutException {
+      EasyLoading.dismiss();
+      Utils.showToast('Request timed out', true);
+      return {'success': false, 'message': 'Request timed out'};
+    } catch (e) {
+      EasyLoading.dismiss();
+      Utils.showToast('Unexpected error', true);
+      return {'success': false, 'message': 'Unexpected error'};
+    }
+  }
+
   // 💡 NEW FUNCTION: baseDeleteAPI
   Future<Map<String, dynamic>> baseDeleteAPI(
       String endPoint, {

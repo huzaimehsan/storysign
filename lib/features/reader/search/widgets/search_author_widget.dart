@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
+import '../../../../widgets/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
 
@@ -25,66 +26,14 @@ class SearchAuthorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String path = imagePath?.toString() ?? "";
-    Widget imageWidget;
-
-    if (path.isEmpty || path == "null") {
-      imageWidget = Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: Center(
-          child: Icon(
-            Icons.person_rounded,
-            color: buttonColor.withOpacity(0.6),
-            size: 6.h,
-          ),
-        ),
-      );
-    } else if (path.startsWith('http')) {
-      imageWidget = Image.network(
-        path,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: Colors.grey.withOpacity(0.2),
-          child: Center(
-            child: Icon(
-              Icons.person_rounded,
-              color: buttonColor.withOpacity(0.6),
-              size: 6.h,
-            ),
-          ),
-        ),
-      );
-    } else if (path.startsWith('/') || path.startsWith('file://')) {
-      final cleanPath = path.startsWith('file://') ? path.substring(7) : path;
-      imageWidget = Image.file(
-        File(cleanPath),
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: Colors.grey.withOpacity(0.2),
-          child: Center(
-            child: Icon(
-              Icons.person_rounded,
-              color: buttonColor.withOpacity(0.6),
-              size: 6.h,
-            ),
-          ),
-        ),
-      );
-    } else {
-      imageWidget = Image.asset(
-        path,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: Colors.grey.withOpacity(0.2),
-          child: Center(
-            child: Icon(
-              Icons.person_rounded,
-              color: buttonColor.withOpacity(0.6),
-              size: 6.h,
-            ),
-          ),
-        ),
-      );
-    }
+    final imageWidget = CoverImageWidget(
+      assetPath: path,
+      imageUrl: path.startsWith('http') ? path : null,
+      height: 10.h,
+      width: 9.8.h,
+      fit: BoxFit.cover,
+      fallbackIcon: Icons.person_rounded,
+    );
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),

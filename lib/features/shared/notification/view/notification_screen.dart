@@ -34,7 +34,9 @@ class NotificationScreen extends StatelessWidget {
             SizedBox(height: 1.h),
             Expanded(
               child: RefreshIndicator(
-                color: buttonColor,
+                      backgroundColor :containerColor,
+       
+                color: white,
                 onRefresh: () => controller.refreshAlert(),
                 child: Obx(() {
                   final notificationController = controller.notificationList;

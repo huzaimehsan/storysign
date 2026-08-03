@@ -60,37 +60,16 @@ class AllPendingRequest extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: buttonColor.withOpacity(0.1),
                 ),
-                child: hasImage
-                    ? ClipOval(
-                        child: isNetworkImage
-                            ? Image.network(
-                                imagePath,
-                                height: double.infinity,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  Icons.person,
-                                  color: buttonColor,
-                                  size: 3.h,
-                                ),
-                              )
-                            : Image.asset(
-                                imagePath,
-                                height: double.infinity,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  Icons.person,
-                                  color: buttonColor,
-                                  size: 3.h,
-                                ),
-                              ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        color: buttonColor,
-                        size: 3.h,
-                      ),
+                child: ClipOval(
+                  child: CoverImageWidget(
+                    assetPath: imagePath,
+                    imageUrl: isNetworkImage ? imagePath : null,
+                    height: 6.5.h,
+                    width: 6.h,
+                    fit: BoxFit.cover,
+                    fallbackIcon: Icons.person,
+                  ),
+                ),
               ),
               SizedBox(width: 4.w),
               Expanded(
@@ -120,10 +99,10 @@ class AllPendingRequest extends StatelessWidget {
 
               FormattedRequestDate(
                 dateString: date,
+                dateFormat: 'dd MMM, yyyy',
                 fontSize: 13.sp,
                 fontFamily: 'Poppins',
                 color: secondryColor.withOpacity(0.7),
-
                 fontWeight: FontWeight.w500,
               ),
             ],

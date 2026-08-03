@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/widgets/cover_image_widget.dart';
 
 /// Widget 1: "Ready to Send" card — reader avatar + name, book cover + title
 class ReadyToSendCard extends StatelessWidget {
@@ -39,36 +40,16 @@ class ReadyToSendCard extends StatelessWidget {
                   color: buttonColor.withAlpha(30),
                 ),
                 child: ClipOval(
-                  child: readerImagePath.trim().isEmpty
-                      ? Icon(
-                          Icons.person,
-                          color: buttonColor,
-                          size: 3.h,
-                        )
-                      : (readerImagePath.startsWith('http://') ||
-                              readerImagePath.startsWith('https://')
-                          ? Image.network(
-                              readerImagePath,
-                              fit: BoxFit.cover,
-                              width: 12.w,
-                              height: 12.w,
-                              errorBuilder: (_, __, ___) => Icon(
-                                Icons.person,
-                                color: buttonColor,
-                                size: 3.h,
-                              ),
-                            )
-                          : Image.asset(
-                              readerImagePath,
-                              fit: BoxFit.cover,
-                              width: 12.w,
-                              height: 12.w,
-                              errorBuilder: (_, __, ___) => Icon(
-                                Icons.person,
-                                color: buttonColor,
-                                size: 3.h,
-                              ),
-                            )),
+                  child: CoverImageWidget(
+                    assetPath: readerImagePath,
+                    imageUrl: readerImagePath.startsWith('http://') || readerImagePath.startsWith('https://')
+                        ? readerImagePath
+                        : null,
+                    fit: BoxFit.cover,
+                    width: 12.w,
+                    height: 12.w,
+                    fallbackIcon: Icons.person,
+                  ),
                 ),
               ),
               SizedBox(width: 4.w),

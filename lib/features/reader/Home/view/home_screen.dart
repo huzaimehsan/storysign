@@ -22,12 +22,15 @@ class HomeScreen extends GetView<HomeController> {
 
       if (controller.isPageLoading.value) {
         return const Scaffold(
-          body: Center(child: CircularProgressIndicator(color: buttonColor)),
+          body: Center(child: CircularProgressIndicator(
+
+              color: buttonColor)),
         );
       }
 
       return RefreshIndicator(
-        color: buttonColor,
+        backgroundColor :containerColor,
+        color: white,
         onRefresh: () => controller.refreshHomeRequests(),
         child: Scaffold(
           body: SingleChildScrollView(
@@ -72,9 +75,7 @@ class HomeScreen extends GetView<HomeController> {
                   // Search Bar
                   searchWidget(
                     controller: controller.searchController,
-                    onChanged: (val) {
-                      controller.searchQuery.value = val;
-                    },
+                    onChanged: controller.onSearchChanged,
                   ),
                   SizedBox(height: 2.h),
 

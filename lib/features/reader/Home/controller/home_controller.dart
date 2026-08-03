@@ -18,6 +18,7 @@ import '../model/recently_signed_book_model.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
+  Timer? _searchDebounce;
 
   final RxBool isPageLoading = true.obs;
 
@@ -79,6 +80,14 @@ class HomeController extends GetxController {
     return welcomes
         .where((author) => author.fullName.toLowerCase().contains(query))
         .toList();
+  }
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      fetchHomeData();
+    });
   }
 
   List<SignedBookModel> get filteredBooks {
@@ -191,8 +200,10 @@ class HomeController extends GetxController {
       isFetchHome.value = true;
       errorMessage.value = '';
 
+      final query = searchQuery.value.trim();
+      final String endpoint = '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
       final response = await BaseService().baseGetAPI(
-        ApiEndPoints.allAuthor,
+        endpoint,
         loading: false,
         showErrorToast: false,
       );
@@ -284,6 +295,13 @@ class HomeController extends GetxController {
 
   Future<void> refreshBooks() async {
     await fetchMyBooks();
+  }
+
+  @override
+  void onClose() {
+    _searchDebounce?.cancel();
+    searchController.dispose();
+    super.onClose();
   }
 
   Future<void> loadUserProfile() async {

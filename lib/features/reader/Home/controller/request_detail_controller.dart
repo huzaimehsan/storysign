@@ -25,7 +25,7 @@ class ReaderDetailController extends GetxController {
 
     var args = Get.arguments;
     if (args != null && args is Map) {
-      // Check karein autographRequestId, agar na mile to bookId utha lein
+
       autographRequestId = args['autographRequestId'] ?? args['bookId'];
 
       debugPrint('Controller onInit: ID received -> $autographRequestId');
@@ -63,9 +63,6 @@ class ReaderDetailController extends GetxController {
     } catch (e) {
       debugPrint('Error: $e');
       errorMessage.value = 'Something went wrong';
-      // baseGetAPI already error case mein specific toast dikha chuka hoga —
-      // isliye yahan generic toast dobara mat lagao, warna double toast aayega.
-      // Sirf tab dikhao jab error humara apna hai (jaise parsing fail):
       if (e.toString().contains('Failed to parse data')) {
         Utils.showToast(errorMessage.value, true);
       }

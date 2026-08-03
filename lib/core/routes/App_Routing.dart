@@ -36,6 +36,7 @@ import 'package:storysign/features/reader/Home/view/request_detail.dart';
 import 'package:storysign/features/reader/Home/view/signed_copy.dart';
 import 'package:storysign/features/reader/Home/view/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/upload_book.dart';
+import 'package:storysign/features/reader/library/binding/library_detail_binding.dart';
 import 'package:storysign/features/reader/library/binding/reader_library_binding.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
 import 'package:storysign/features/reader/profile/binding/change_password_binding.dart';
@@ -58,6 +59,7 @@ import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
 
 import '../../features/reader/Home/binding/reader_request_detail_binding.dart';
+import '../../features/reader/Home/binding/tracking_binding.dart';
 import '../../features/reader/Home/view/request_autograph.dart';
 import '../../features/reader/Home/view/select_author.dart';
 import '../../features/reader/Home/view/track_request.dart';
@@ -72,6 +74,7 @@ import '../../features/reader/auth/view/splash_screen.dart';
 import '../../features/reader/bottomNav/binding/bottom_nav_binding.dart';
 import '../../features/reader/bottomNav/view/bottom_nav_layout.dart';
 import '../../features/reader/library/view/reader_library.dart';
+import '../../features/reader/library/view/reader_library_detail.dart';
 import '../../features/reader/notification/view/notification.dart';
 import '../../features/reader/profile/view/help_and_support.dart';
 import '../../features/reader/search/view/author_detail.dart';
@@ -143,6 +146,11 @@ class AppRoutes {
       page: () => RequestAutograph(),
       binding: RequestAutographBinding(),
     ),
+    GetPage(
+      name: '/readerlibrarydetail',
+      page: () => const ReaderLibraryDetailScreen(),
+      binding: ReaderLibraryDetailBinding(),
+    ),
     //
     // GetPage(
     //   name: '/notification',
@@ -187,7 +195,7 @@ class AppRoutes {
     GetPage(
       name: '/tracking',
       page: () => TrackingScreen(),
-      binding: TrackRequestBinding(),
+      binding: TrackingBinding(),
     ),
 
     GetPage(

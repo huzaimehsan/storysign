@@ -6,15 +6,9 @@ import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
+import 'cover_image_widget.dart';
 import 'customText_widget.dart';
-import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
-import '../constants/color_constants.dart';
-import 'button_widget.dart';
-import 'customText_widget.dart';
 import 'formatted_date_widget.dart';
 
 Widget recentlySignedBooks({
@@ -55,7 +49,12 @@ Widget recentlySignedBooks({
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(3.w),
-            child: _buildCoverImage(imagePath, imageUrl),
+            child: CoverImageWidget(
+              assetPath: imagePath,
+              imageUrl: imageUrl,
+              height: 12.h,
+              width: 25.w,
+            ),
           ),
           SizedBox(width: 4.w),
           Expanded(
@@ -132,71 +131,6 @@ Widget recentlySignedBooks({
       ),
     ),
   );
-}
-
-Widget _buildCoverImage(String imagePath, String? imageUrl) {
-  final String path = imageUrl?.trim().isNotEmpty == true ? imageUrl!.trim() : imagePath.trim();
-  final uri = Uri.tryParse(path);
-  final isNetwork = uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
-  final String resolvedPath = isNetwork && uri.host == 'localhost' && Platform.isAndroid
-      ? path.replaceFirst('localhost', '10.0.2.2')
-      : path;
-
-  Widget placeholder() {
-    return Container(
-      height: 12.h,
-      width: 25.w,
-      color: Colors.grey.withOpacity(0.2),
-      child: Center(
-        child: Icon(
-          Icons.book_rounded,
-          color: buttonColor.withOpacity(0.6),
-          size: 12.w,
-        ),
-      ),
-    );
-  }
-
-  if (path.isEmpty || path == 'null') {
-    return placeholder();
-  } else if (isNetwork) {
-    return Image.network(
-      resolvedPath,
-      height: 12.h,
-      width: 25.w,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        final fallbackUri = Uri.tryParse(imagePath);
-        final fallbackIsNetwork = fallbackUri != null && (fallbackUri.scheme == 'http' || fallbackUri.scheme == 'https');
-        if (imagePath.trim().isEmpty || imagePath == 'null' || fallbackIsNetwork || imagePath.startsWith('/')) {
-          return placeholder();
-        }
-        return Image.asset(
-          imagePath,
-          height: 12.h,
-          width: 25.w,
-          fit: BoxFit.cover,
-          errorBuilder: (context, err, stack) => placeholder(),
-        );
-      },
-    );
-  } else if (path.startsWith('/')) {
-    return Image.file(
-      File(path),
-      height: 12.h,
-      width: 25.w,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => placeholder(),
-    );
-  } else {
-    return Image.asset(
-      path,
-      height: 12.h,
-      width: 25.w,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => placeholder(),
-    );
-  }
 }
 
 Widget signedCopyMessageCard({

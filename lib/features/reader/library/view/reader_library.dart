@@ -23,7 +23,8 @@ class ReaderLibrary extends GetView<ReaderController> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => controller.refreshRequests(),
-
+        backgroundColor :containerColor,
+        color: white,
         child: SafeArea(
           bottom: false,
           child: Column(
@@ -141,7 +142,11 @@ class ReaderLibrary extends GetView<ReaderController> {
                       final DateTime dateTime = DateTime.parse(book.uploadDate);
                       final formattedDate =
                           "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
-                      final bool isOnlyFromLibrary = book.autographRequestId == null || book.autographRequestId!.isEmpty;
+                      final bool isOnlyFromLibrary =
+                          book.autographRequestId == null ||
+                          book.autographRequestId!.isEmpty;
+                     // final bool shouldOpenDetail = book.isPaid;
+
                       return recentlySignedBooks(
                         imagePath: book.coverImage,
                         signed: book.status,
@@ -149,20 +154,16 @@ class ReaderLibrary extends GetView<ReaderController> {
                         authorName: book.author?.fullName ?? "",
                         date: formattedDate,
                         status: book.status,
-
-
-                        showArrow: isOnlyFromLibrary,
-
-                        trackRequest: isOnlyFromLibrary ? () {
-                          Get.toNamed(
-                            "/requestautographcard",
-                            arguments: {
-                              'bookId': book.id.toString(),
-                              'bookTitle': book.title.toString(),
-                              'role': "fromLibrary",
-                            },
-                          );
-                        } : () {},
+                        showArrow: true,
+                        trackRequest:
+                            () {
+                                Get.toNamed(
+                                  "/readerlibrarydetail",
+                                  arguments: {
+                                    'bookId': book.id.toString(),
+                                  },
+                                );
+                              },
 
                         showAuthor: true,
                       );

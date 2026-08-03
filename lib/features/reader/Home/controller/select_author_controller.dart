@@ -1,19 +1,18 @@
-import 'dart:convert';
+
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
 class SelectAuthorController extends GetxController {
   final TextEditingController searchController = TextEditingController();
+  Timer? _searchDebounce;
 
   RxString searchQuery = ''.obs;
   RxList<AllAuthorModel> welcomes = <AllAuthorModel>[].obs;
@@ -24,6 +23,14 @@ class SelectAuthorController extends GetxController {
   void onInit() {
     super.onInit();
     fetchHomeData();
+  }
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      fetchHomeData();
+    });
   }
 
   List<AllAuthorModel> get filteredAuthors {
@@ -39,7 +46,9 @@ class SelectAuthorController extends GetxController {
       isFetchHome.value = true;
       errorMessage.value = '';
 
-      final response = await BaseService().baseGetAPI(ApiEndPoints.allAuthor);
+      final query = searchQuery.value.trim();
+      final String endpoint = '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
+      final response = await BaseService().baseGetAPI(endpoint, loading: false);
 
       if (response['success'] == true) {
      
@@ -123,6 +132,8 @@ class SelectAuthorController extends GetxController {
 
   @override
   void onClose() {
+    _searchDebounce?.cancel();
+    searchController.dispose();
     super.onClose();
   }
 }

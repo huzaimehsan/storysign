@@ -31,6 +31,7 @@ class BookItem {
   final String? autographRequestId;
   final bool fromLibrary;
   final num feeAmount;
+  final bool isPaid; // ✅ New field added from your JSON
   final String? authorName;
   final AuthorModel? author;
 
@@ -47,6 +48,7 @@ class BookItem {
     this.autographRequestId,
     required this.fromLibrary,
     required this.feeAmount,
+    required this.isPaid,
     this.authorName,
     this.author,
   });
@@ -65,8 +67,12 @@ class BookItem {
       autographRequestId: json['autographRequestId'],
       fromLibrary: json['fromLibrary'] ?? false,
       feeAmount: json['feeAmount'] ?? 0,
-        authorName: json['authorName'] ?? (json['author'] != null && json['author'] is Map ? (json['author']['fullName'] as String?) : null),
-        author: json['author'] != null
+      isPaid: json['isPaid'] ?? false, // ✅ Handled here safely
+      authorName: json['authorName'] ?? 
+          (json['author'] != null && json['author'] is Map 
+              ? (json['author']['fullName'] as String?) 
+              : null),
+      author: json['author'] != null
           ? AuthorModel.fromJson(json['author'] as Map<String, dynamic>)
           : null,
     );

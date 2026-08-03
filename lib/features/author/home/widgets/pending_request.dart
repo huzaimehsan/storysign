@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
+import '../../../../widgets/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
 
@@ -60,23 +61,14 @@ class PendingRequest extends StatelessWidget {
                       : Border.all(color: buttonColor.withOpacity(0.3), width: 1.5),
                 ),
                 child: ClipOval(
-                  child: hasImage
-                      ? Image.network(
-                          imagePath,
-                          fit: BoxFit.cover,
-                          width: 10.h,
-                          height: 10.h,
-                          errorBuilder: (_, __, ___) => Icon(
-                            Icons.person,
-                            color: buttonColor,
-                            size: 5.h,
-                          ),
-                        )
-                      : Icon(
-                          Icons.person,
-                          color: buttonColor,
-                          size: 5.h,
-                        ),
+                  child: CoverImageWidget(
+                    assetPath: imagePath,
+                    imageUrl: imagePath.startsWith('http') ? imagePath : null,
+                    height: 10.h,
+                    width: 10.h,
+                    fit: BoxFit.cover,
+                    fallbackIcon: Icons.person,
+                  ),
                 ),
               ),
 

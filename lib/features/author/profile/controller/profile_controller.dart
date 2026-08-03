@@ -68,46 +68,26 @@ class AuthorProfileController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = SharedPreferencesMethod.storage;
-      final token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
-
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
-
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.authorProfile}',
-      );
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.authorProfile,
+        loading: false,
       );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final dynamic decodedBody = jsonDecode(response.body);
-        if (decodedBody is Map) {
-          authorProfile.value = AuthorProfileModel.fromJson(
-            Map<String, dynamic>.from(decodedBody),
-          );
-          authorNameUpdateController.text = authorProfile.value?.fullName ?? '';
-          authorEmailUpdateController.text = authorProfile.value?.email ?? '';
-          authorBioUpdateController.text = authorProfile.value?.bio ?? '';
-          clearEditProfile();
-        } else {
-          errorMessage.value = 'Invalid profile response';
-          Utils.showToast(errorMessage.value, true);
-        }
+      if (response['success'] == true) {
+        // response itself is the profile map (spread in baseGetAPI),
+        // plus 'success' and 'statusCode' keys mixed in.
+        final data = Map<String, dynamic>.from(response)
+          ..remove('success')
+          ..remove('statusCode');
+
+        authorProfile.value = AuthorProfileModel.fromJson(data);
+        authorNameUpdateController.text = authorProfile.value?.fullName ?? '';
+        authorEmailUpdateController.text = authorProfile.value?.email ?? '';
+        authorBioUpdateController.text = authorProfile.value?.bio ?? '';
+        clearEditProfile();
       } else {
-        final responseBody = jsonDecode(response.body);
-        final message =
-            responseBody['message']?.toString() ?? 'Failed to load profile';
-        errorMessage.value = message;
-        Utils.showToast(message, true);
+        // baseGetAPI already shows a toast on failure, so just store the message.
+        errorMessage.value = response['message'] ?? 'Failed to load profile';
       }
     } catch (e) {
       errorMessage.value = 'Something went wrong while loading profile.';
@@ -129,15 +109,10 @@ class AuthorProfileController extends GetxController {
     isLoading.value = true;
 
     try {
-      var request = http.MultipartRequest(
+      final request = http.MultipartRequest(
         'PATCH',
         Uri.parse('${BaseService().baseURL}${ApiEndPoints.authorProfile}'),
       );
-
-      var token = await SharedPreferencesMethod.storage.getString(
-        LocalDBKeys.TOKEN,
-      );
-      request.headers.addAll({'Authorization': 'Bearer $token'});
 
       request.fields['fullName'] = authorNameUpdateController.text.trim();
       request.fields['email'] = authorEmailUpdateController.text.trim();
@@ -149,10 +124,12 @@ class AuthorProfileController extends GetxController {
         );
       }
 
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
+      final response = await BaseService().baseMultipartPatchAPI(
+        ApiEndPoints.authorProfile,
+        request: request,
+      );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response['success'] == true) {
         Utils.showToast('Profile updated successfully', false);
 
         if (Get.isRegistered<AuthorProfileController>()) {
@@ -166,7 +143,7 @@ class AuthorProfileController extends GetxController {
         clearEditProfile();
         Get.back();
       } else {
-        Utils.showToast('Update failed: ${response.statusCode}', true);
+        Utils.showToast(response['message'] ?? 'Update failed', true);
       }
     } catch (e) {
       debugPrint('EditProfileController updateProfileWithImage error: $e');

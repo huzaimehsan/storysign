@@ -134,10 +134,11 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                   : "Select Author",
                               whiteColor,
                               fontFamily: 'Poppins',
+
                               height: 5.2.h,
                               width: double.infinity,
                               fontsize: 16.sp,
-                              fontweight: FontWeight.w600,
+                              fontweight: FontWeight.w500,
                               onTap: () async {
                                 final result = await Get.toNamed(
                                   "/selectauthor",
@@ -160,23 +161,23 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                               "Request Autograph",
                               whiteColor,
                               onTap: () async {
-                                // 1. Request Submit (Sirf Request create karein)
+
                                 final Map<String, dynamic>? result = await controller.requestAutograph(
                                   context,
                                   controller.selectedAuthorId.value,
                                   bookId: isLibraryRequest ? receivedBookId : null,
                                 );
 
-                                // 2. Data check (Check karein ke request create ho gayi)
+
                                 if (result != null && result['requestId'] != null) {
 
-                                  // 3. Payment logic yahan se hata kar, data ko /request screen par bhej dein
+
                                   Get.offNamed(
                                     '/request',
                                     arguments: {
                                       'autographRequestId': result['requestId'],
-                                      'clientSecret': result['clientSecret'],      // <--- Yahan se bhej rahe hain
-                                      'paymentIntentId': result['paymentIntentId'], // <--- Yahan se bhej rahe hain
+                                      'clientSecret': result['clientSecret'],
+                                      'paymentIntentId': result['paymentIntentId'],
                                       'bookId': isLibraryRequest ? receivedBookId : null,
                                       'role': isLibraryRequest ? 'fromLibrary' : 'fromHome',
                                     },

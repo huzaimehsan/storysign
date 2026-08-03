@@ -26,7 +26,9 @@ class ProfileScreen extends GetView<ProfileScreenController> {
     return Scaffold(
       backgroundColor: containerColor,
       body: RefreshIndicator(
-        color: buttonColor,
+        backgroundColor :containerColor,
+        color: white,
+
         onRefresh: () => controller.refreshRequests(),
         child: SafeArea(
           bottom: false,

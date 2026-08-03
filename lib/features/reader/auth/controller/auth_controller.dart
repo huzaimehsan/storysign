@@ -157,21 +157,17 @@ class AuthController extends GetxController {
         maskType: EasyLoadingMaskType.black,
       );
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.signupUser}',
-      );
-      final request = http.MultipartRequest('POST', uri);
+      final uri = ApiEndPoints.signupUser;
+      final request = http.MultipartRequest('POST', Uri.parse('${BaseService().baseURL}$uri'));
 
       request.fields['fullName'] = fullName;
       request.fields['email'] = email;
-
       request.fields['role'] = role!;
       request.fields['password'] = password;
       request.fields['confirmPassword'] = confirmPassword;
 
       if (role.toLowerCase() == 'author') {
-        request.fields['bio'] = bioController.text
-            .trim(); // Yahan apna bio controller use karein
+        request.fields['bio'] = bioController.text.trim();
       }
 
       final File? currentProfileImage = profileImage.value;
@@ -187,38 +183,31 @@ class AuthController extends GetxController {
         );
       }
 
-      print('⏳ SIGNUP API CALLING: $uri');
+      print('⏳ SIGNUP API CALLING: ${BaseService().baseURL}$uri');
       print('➡ Fields: ${request.fields}');
 
-      final streamedResponse = await request.send().timeout(
-        const Duration(seconds: 60),
+      final responseMap = await BaseService().baseMultipartPostAPI(
+        uri,
+        request: request,
+        loading: false,
       );
-      final responseString = await streamedResponse.stream.bytesToString();
-      final responseMap = json.decode(responseString);
 
       print('✅ RESPONSE: $responseMap');
 
-      if (streamedResponse.statusCode == 201) {
+      if (responseMap['success'] == true) {
         Utils.showToast(responseMap['message'] ?? 'Signup successful', false);
         clearSignUpFeild();
-        final data = responseMap['user'];
-        if (data != null && data['email'] != null) {
-          email = data['email'];
-        }
 
         final dynamic dataValue = responseMap['data'] ?? responseMap;
-        final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic>
-            ? dataValue
-            : null;
+        final Map<String, dynamic>? dataMap = dataValue is Map<String, dynamic> ? dataValue : null;
         final Map<String, dynamic>? user =
-        responseMap['user'] is Map<String, dynamic>
-            ? responseMap['user'] as Map<String, dynamic>
-            : (dataMap != null && dataMap['user'] is Map<String, dynamic>
-            ? dataMap['user'] as Map<String, dynamic>
-            : null);
+            responseMap['user'] is Map<String, dynamic>
+                ? responseMap['user'] as Map<String, dynamic>
+                : (dataMap != null && dataMap['user'] is Map<String, dynamic>
+                    ? dataMap['user'] as Map<String, dynamic>
+                    : null);
         final String? token =
-            responseMap['accessToken'] as String? ??
-                dataMap?['accessToken'] as String?;
+            responseMap['accessToken'] as String? ?? dataMap?['accessToken'] as String?;
 
         if (user == null || token == null) {
           Utils.showToast('Invalid server response', true);
@@ -226,7 +215,6 @@ class AuthController extends GetxController {
         }
 
         final prefsInstance = await SharedPreferences.getInstance();
-
         await prefsInstance.setString(LocalDBKeys.USERDATA, jsonEncode(user));
 
         final prefs = SharedPreferencesMethod.storage;
@@ -237,13 +225,9 @@ class AuthController extends GetxController {
 
         await prefs.setString(LocalDBKeys.REFRESH_TOKEN, refreshToken ?? "");
         final String role = user['role']?.toString().toLowerCase() ?? 'reader';
-
         await prefsInstance.setString('role', role);
 
-        final redirectRoute = role.toLowerCase() == 'author'
-            ? '/plan'
-            : '/bottomnav';
-
+        final redirectRoute = role == 'author' ? '/plan' : '/bottomnav';
         Future.microtask(() {
           Get.offAllNamed(redirectRoute);
         });

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 
@@ -9,6 +10,7 @@ class CoverImageWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final BoxFit fit;
+  final IconData fallbackIcon;
 
   const CoverImageWidget({
     super.key,
@@ -17,6 +19,7 @@ class CoverImageWidget extends StatelessWidget {
     this.height,
     this.width,
     this.fit = BoxFit.cover,
+    this.fallbackIcon = Icons.book_rounded,
   });
 
   @override
@@ -35,7 +38,7 @@ class CoverImageWidget extends StatelessWidget {
         color: Colors.grey.withOpacity(0.2),
         child: Center(
           child: Icon(
-            Icons.book_rounded,
+            fallbackIcon,
             color: buttonColor.withOpacity(0.6),
             size: (width ?? 25.w) * 0.6,
           ),
@@ -45,6 +48,14 @@ class CoverImageWidget extends StatelessWidget {
 
     if (path.isEmpty || path == 'null') {
       return placeholder();
+    } else if (path.toLowerCase().endsWith('.svg')) {
+      return SvgPicture.asset(
+        path,
+        height: height ?? 12.h,
+        width: width ?? 25.w,
+        fit: fit == BoxFit.cover ? BoxFit.contain : fit,
+        placeholderBuilder: (_) => placeholder(),
+      );
     } else if (isNetwork) {
       return Image.network(
         resolvedPath,
@@ -54,7 +65,7 @@ class CoverImageWidget extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) {
           final fallbackUri = Uri.tryParse(assetPath);
           final fallbackIsNetwork = fallbackUri != null && (fallbackUri.scheme == 'http' || fallbackUri.scheme == 'https');
-          if (assetPath.trim().isEmpty || assetPath == 'null' || fallbackIsNetwork || assetPath.startsWith('/')) {
+          if (assetPath.trim().isEmpty || assetPath == 'null' || fallbackIsNetwork || assetPath.startsWith('/') || assetPath.startsWith('file://')) {
             return placeholder();
           }
           return Image.asset(
@@ -66,9 +77,10 @@ class CoverImageWidget extends StatelessWidget {
           );
         },
       );
-    } else if (path.startsWith('/')) {
+    } else if (path.startsWith('/') || path.startsWith('file://')) {
+      final filePath = path.startsWith('file://') ? path.substring(7) : path;
       return Image.file(
-        File(path),
+        File(filePath),
         height: height ?? 12.h,
         width: width ?? 25.w,
         fit: fit,

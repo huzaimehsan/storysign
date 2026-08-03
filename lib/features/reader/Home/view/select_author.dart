@@ -7,14 +7,11 @@ import 'package:storysign/features/reader/Home/controller/select_author_controll
 import 'package:storysign/features/reader/Home/widgets/reader/widget_select_author.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../model/home_model.dart';
 
-import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/search_widget.dart';
-import '../../../../widgets/author_detail_widget.dart';
-import '../../search/widgets/file_upload_widget.dart';
+
 import '../../search/widgets/header_widget.dart';
-import '../../search/widgets/search_author_widget.dart';
+
 
 class SelectAuthor extends GetView<SelectAuthorController> {
   const SelectAuthor({super.key});
@@ -36,7 +33,7 @@ class SelectAuthor extends GetView<SelectAuthorController> {
             SizedBox(height: 2.h),
             searchWidget(
               controller: controller.searchController,
-              onChanged: (value) => controller.searchQuery.value = value,
+              onChanged: controller.onSearchChanged,
               hintText: 'Search authors',
             ),
 

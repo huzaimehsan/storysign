@@ -18,6 +18,8 @@ class SearchScreen extends GetView<SearchPageController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
+        backgroundColor :containerColor,
+        color: white,
         onRefresh: () => controller.refreshSearchRequests(),
         child: SafeArea(
           bottom: false,
