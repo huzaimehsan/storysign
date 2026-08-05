@@ -10,9 +10,7 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../search/widgets/header_widget.dart';
-import '../../search/widgets/search_author_widget.dart';
-import '../controller/home_controller.dart';
-import '../widgets/reader/user_profile_card.dart';
+
 
 class TrackRequest extends GetView<TrackRequestController> {
   const TrackRequest({super.key});
@@ -61,7 +59,7 @@ class TrackRequest extends GetView<TrackRequestController> {
                           child: buttonWidget(
                             tab,
                             isSelected ? whiteColor : buttonColor,
-                            onTap: () => controller.selectedTab(tab),
+                            onTap: () => controller.selectedTab.value = tab,
                             colors: isSelected
                                 ? buttonColor
                                 : const Color(0xFFF5E6D3),

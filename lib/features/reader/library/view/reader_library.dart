@@ -9,7 +9,7 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 
-import '../../Home/widgets/reader/user_profile_card.dart';
+
 import '../../search/widgets/header_widget.dart';
 import '../controller/library_controller.dart';
 import '../model/library_model.dart';
@@ -142,11 +142,6 @@ class ReaderLibrary extends GetView<ReaderController> {
                       final DateTime dateTime = DateTime.parse(book.uploadDate);
                       final formattedDate =
                           "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
-                      final bool isOnlyFromLibrary =
-                          book.autographRequestId == null ||
-                          book.autographRequestId!.isEmpty;
-                     // final bool shouldOpenDetail = book.isPaid;
-
                       return recentlySignedBooks(
                         imagePath: book.coverImage,
                         signed: book.status,
@@ -155,16 +150,21 @@ class ReaderLibrary extends GetView<ReaderController> {
                         date: formattedDate,
                         status: book.status,
                         showArrow: true,
-                        trackRequest:
-                            () {
-                                Get.toNamed(
-                                  "/readerlibrarydetail",
-                                  arguments: {
-                                    'bookId': book.id.toString(),
-                                  },
-                                );
-                              },
-
+                        trackRequest: () {
+                          Get.toNamed(
+                            "/requestautographcard",
+                            arguments: {
+                              'role': 'fromLibrary',
+                              'bookId': book.id.toString(),
+                              'bookTitle': book.title,
+                              'coverImage': book.coverImage,
+                              'authorName': book.author?.fullName ?? "",
+                              'status': book.status,
+                              'feeAmount': book.feeAmount,
+                              'isPaid': book.isPaid,
+                            },
+                          );
+                        },
                         showAuthor: true,
                       );
                     },

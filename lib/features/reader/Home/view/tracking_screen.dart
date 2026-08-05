@@ -17,6 +17,12 @@ class TrackingScreen extends GetView<TrackingController> {
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
+          if (controller.isloading.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: buttonColor),
+            );
+          }
+
           final tracking = controller.trackingModel.value;
           final statusLabel = humanizeStatus(tracking?.status);
           final isPaidState =
@@ -61,9 +67,14 @@ class TrackingScreen extends GetView<TrackingController> {
               ),
               SizedBox(height: 1.h),
               if (tracking == null)
-                SizedBox(
-                  height: 14.h,
-                    child: Center(child: CircularProgressIndicator(color: buttonColor)))
+                Center(
+                  child: customText(
+                    text: 'No tracking details available',
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: whiteColor,
+                  ),
+                )
               else
                 RequestDetailWidget(
                   imagePath: tracking.coverImage,

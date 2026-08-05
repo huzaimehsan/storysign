@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
+
 
 import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
+import '../controller/auth_controller.dart';
 
 
 class SignIn extends GetView<AuthController> {

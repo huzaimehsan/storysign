@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import 'package:storysign/features/reader/profile/controller/edit_profile_controller.dart';
+import 'package:storysign/features/shared/editProfile/controller/edit_profile_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
@@ -13,7 +13,7 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/image_picker.dart';
 import '../../../author/profile/controller/profile_controller.dart';
-import '../../search/widgets/header_widget.dart';
+import '../../../reader/search/widgets/header_widget.dart';
 
 class EditProfile extends StatelessWidget {
   const EditProfile({super.key});
@@ -153,7 +153,7 @@ class EditProfile extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 11.h),
+              SizedBox(height: 10.h),
 
               // Save Changes Button — Obx reads isLoading observable
            Padding(
@@ -183,6 +183,7 @@ class EditProfile extends StatelessWidget {
 
 
            ) ,
+
             ],
           ),
         ),

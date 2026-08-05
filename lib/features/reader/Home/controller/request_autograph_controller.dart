@@ -28,6 +28,7 @@ class RequestAutographController extends GetxController {
   final TextEditingController personalMessageController =
       TextEditingController();
   RxString selectedAuthorId = "".obs;
+  RxString selectedAuthorName = "".obs;
   RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
@@ -189,6 +190,7 @@ class RequestAutographController extends GetxController {
 
   void resetRequestForm() {
     selectedAuthorId.value = '';
+    selectedAuthorName.value = '';
     receivedBookId.value = '';
     bookTitleControllerRequest.clear();
     personalMessageController.clear();

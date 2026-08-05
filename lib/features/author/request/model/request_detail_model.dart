@@ -66,23 +66,35 @@ class RequestDetailModel {
   });
 
   factory RequestDetailModel.fromJson(Map<String, dynamic> json) {
+    // Helper: safely extract a String? — returns null if value is not a primitive
+    String? safeString(dynamic value) {
+      if (value == null) return null;
+      if (value is Map || value is List) return null; // e.g. signaturePlacement as coords object
+      return value.toString();
+    }
+
     return RequestDetailModel(
-      id: json['id'] ?? '',
-      bookTitle: json['bookTitle'] ?? '',
-      coverImage: json['coverImage'] ?? json['cover_image'] ?? '',
+      id: json['id']?.toString() ?? '',
+      bookTitle: json['bookTitle']?.toString() ?? '',
+      coverImage: (json['coverImage'] ?? json['cover_image'])?.toString() ?? '',
       bookPdfUrl: _extractPdfUrl(json),
-      signedPdfUrl: json['signedPdfUrl'],
-      personalMessage: json['personalMessage'] ?? '',
-      status: json['status'] ?? 'submitted',
-      rejectionReason: json['rejectionReason'],
-      authorMessage: json['authorMessage'],
-      requestDate: json['requestDate'] ?? '',
-      feeAmount: json['feeAmount'] ?? 0,
+      signedPdfUrl: safeString(json['signedPdfUrl']),
+      personalMessage: json['personalMessage']?.toString() ?? '',
+      status: json['status']?.toString() ?? 'submitted',
+      rejectionReason: safeString(json['rejectionReason']),
+      authorMessage: safeString(json['authorMessage']),
+      requestDate: json['requestDate']?.toString() ?? '',
+      feeAmount: json['feeAmount'] != null ? (json['feeAmount'] as num) : 0,
       isPaid: json['isPaid'] ?? false,
-      reader: ReaderModel.fromJson(json['reader'] ?? {}),
-      author: AuthorDetailModel.fromJson(json['author'] ?? {}),
-      signaturePlacement: json['signaturePlacement'],
-      bookId: json['bookId'] ?? '',
+      reader: ReaderModel.fromJson(
+        json['reader'] is Map<String, dynamic> ? json['reader'] : {},
+      ),
+      author: AuthorDetailModel.fromJson(
+        json['author'] is Map<String, dynamic> ? json['author'] : {},
+      ),
+      // signaturePlacement may come as a Map (coordinates) or String — treat non-String as null
+      signaturePlacement: safeString(json['signaturePlacement']),
+      bookId: json['bookId']?.toString() ?? '',
     );
   }
 }

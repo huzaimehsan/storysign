@@ -61,9 +61,9 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                         child: Center(
                           child: customText(
                             text: controller.errorMessage.value,
-                            color: whiteColor,
+                            color: greyColor,
                             fontSize: 15.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily: "Poppins",
                             fontWeight: FontWeight.w500,
                           ),
                         ),

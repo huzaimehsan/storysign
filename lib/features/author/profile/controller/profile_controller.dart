@@ -98,10 +98,14 @@ class AuthorProfileController extends GetxController {
     }
   }
 
-  void signOut() {
+  void signOut() async {
     final pref = SharedPreferencesMethod.storage;
     print(LocalDBKeys.TOKEN);
-    pref.clear();
+    bool hasSeenSplash = pref.getBool(LocalDBKeys.SPLASH) ?? false;
+    await pref.clear();
+    if (hasSeenSplash) {
+      await pref.setBool(LocalDBKeys.SPLASH, true);
+    }
     Get.offAllNamed('/signin');
   }
 

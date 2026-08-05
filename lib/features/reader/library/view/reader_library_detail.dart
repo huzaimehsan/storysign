@@ -113,9 +113,9 @@ class ReaderLibraryDetailScreen extends GetView<ReaderLibraryDetailController> {
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: !detail.isPaid
                       ? buttonWidget(
-                    'Request Autograph',
+                    'Make Request',
                     whiteColor,
-                    onTap: () => Get.toNamed('/requestautographcard', arguments: {
+                    onTap: () => Get.offAllNamed('/requestautographcard', arguments: {
                       'bookId': detail.id,
                       'bookTitle': detail.title,
                       'role': 'fromLibrary',

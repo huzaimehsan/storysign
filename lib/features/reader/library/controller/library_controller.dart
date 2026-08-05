@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
@@ -97,11 +95,11 @@ class ReaderController extends GetxController {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sortBy.value == "Date Newest") {
       books.sort(
-            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
       );
     } else if (sortBy.value == "Date Oldest") {
       books.sort(
-            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
       );
     }
 
@@ -166,11 +164,11 @@ class ReaderController extends GetxController {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sort == "Date Newest") {
       books.sort(
-            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
       );
     } else if (sort == "Date Oldest") {
       books.sort(
-            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
       );
     }
 
@@ -272,9 +270,7 @@ class ReaderController extends GetxController {
 
   Future<void> _fetchBooksWithStatus(String status) async {
     try {
-      // Query parameters manually build karo, kyunki baseGetAPI seedha
-      // "$baseURL$endPoint" string leta hai, Uri object nahi
-      final Map<String, String> queryParams = {'page': '1', 'limit': '10'};
+       final Map<String, String> queryParams = {'page': '1', 'limit': '10'};
 
       if (status == 'signed' || status == 'unsigned') {
         queryParams['status'] = status;
@@ -285,7 +281,7 @@ class ReaderController extends GetxController {
 
       debugPrint('DEBUG: API Endpoint: $endpoint');
 
-      final response = await BaseService().baseGetAPI(endpoint,loading: false);
+      final response = await BaseService().baseGetAPI(endpoint, loading: false);
 
       debugPrint('DEBUG: Response: $response');
 
@@ -306,65 +302,65 @@ class ReaderController extends GetxController {
     }
   }
 
-// Future<void> _fetchBooksWithStatus(String status) async {
-//   try {
-//     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-//     if (token.isEmpty) {
-//       print('DEBUG: Token is empty');
-//       return;
-//     }
-//
-//     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
-//
-//     // Build query parameters - only add status if it's valid (signed or unsigned)
-//     final Map<String, String> queryParams = {
-//       'page': '1',
-//       'limit': '10',
-//     };
-//
-//     // Only add status if it's signed or unsigned (not 'all')
-//     if (status == 'signed' || status == 'unsigned') {
-//       queryParams['status'] = status;
-//     }
-//
-//     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-//     print('DEBUG: API URL: $uri');
-//
-//     final response = await http.get(
-//       uri,
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer $token',
-//       },
-//     );
-//
-//     print('DEBUG: Status Code: ${response.statusCode}');
-//     print('DEBUG: Response Body: ${response.body}');
-//
-//     if (response.statusCode >= 200 && response.statusCode < 300) {
-//       final responseBody = jsonDecode(response.body);
-//       print('DEBUG: Decoded Response: $responseBody');
-//
-//       if (responseBody['items'] != null) {
-//         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
-//         print('DEBUG: Parsed ${model.items.length} books');
-//         booksList.addAll(model.items);
-//         print('DEBUG: Total books after adding: ${booksList.length}');
-//       } else if (responseBody['message'] != null) {
-//         Utils.showToast(responseBody['message'], false);
-//       }
-//     } else {
-//       try {
-//         final errorBody = jsonDecode(response.body);
-//         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
-//         Utils.showToast(errorMsg, true);
-//       } catch (_) {
-//         Utils.showToast('Failed to load books: ${response.statusCode}', true);
-//       }
-//     }
-//   } catch (e) {
-//     print('DEBUG: Exception: $e');
-//     Utils.showToast('Error: $e', true);
-//   }
-// }
+  // Future<void> _fetchBooksWithStatus(String status) async {
+  //   try {
+  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+  //     if (token.isEmpty) {
+  //       print('DEBUG: Token is empty');
+  //       return;
+  //     }
+  //
+  //     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
+  //
+  //     // Build query parameters - only add status if it's valid (signed or unsigned)
+  //     final Map<String, String> queryParams = {
+  //       'page': '1',
+  //       'limit': '10',
+  //     };
+  //
+  //     // Only add status if it's signed or unsigned (not 'all')
+  //     if (status == 'signed' || status == 'unsigned') {
+  //       queryParams['status'] = status;
+  //     }
+  //
+  //     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+  //     print('DEBUG: API URL: $uri');
+  //
+  //     final response = await http.get(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+  //
+  //     print('DEBUG: Status Code: ${response.statusCode}');
+  //     print('DEBUG: Response Body: ${response.body}');
+  //
+  //     if (response.statusCode >= 200 && response.statusCode < 300) {
+  //       final responseBody = jsonDecode(response.body);
+  //       print('DEBUG: Decoded Response: $responseBody');
+  //
+  //       if (responseBody['items'] != null) {
+  //         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
+  //         print('DEBUG: Parsed ${model.items.length} books');
+  //         booksList.addAll(model.items);
+  //         print('DEBUG: Total books after adding: ${booksList.length}');
+  //       } else if (responseBody['message'] != null) {
+  //         Utils.showToast(responseBody['message'], false);
+  //       }
+  //     } else {
+  //       try {
+  //         final errorBody = jsonDecode(response.body);
+  //         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
+  //         Utils.showToast(errorMsg, true);
+  //       } catch (_) {
+  //         Utils.showToast('Failed to load books: ${response.statusCode}', true);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('DEBUG: Exception: $e');
+  //     Utils.showToast('Error: $e', true);
+  //   }
+  // }
 }

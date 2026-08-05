@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/author/subscriptionplan/controller/stripe_payment_controller.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../constants/local_db_key.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
@@ -81,6 +83,17 @@ class SubscriptionPlanSelectionScreen
                                 onTap: isLoading
                                     ? () {}
                                     : () async {
+                                        // final prefs =
+                                        //     await SharedPreferences.getInstance();
+                                        // await prefs.setBool(
+                                        //   LocalDBKeys.IS_SUBSCRIBED,
+                                        //   true,
+                                        // );
+                                        // await prefs.setBool(
+                                        //   'isSubscribed',
+                                        //   true,
+                                        // );
+                                        // print(LocalDBKeys.IS_SUBSCRIBED);
                                         final success = await paymentController
                                             .processPayment(selectedPlan.id);
                                         if (success) {

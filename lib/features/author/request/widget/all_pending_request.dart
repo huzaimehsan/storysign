@@ -103,7 +103,7 @@ class AllPendingRequest extends StatelessWidget {
                 fontSize: 13.sp,
                 fontFamily: 'Poppins',
                 color: secondryColor.withOpacity(0.7),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
               ),
             ],
           ),
@@ -121,7 +121,7 @@ Widget eBookDetail({
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 0.1.h),
     child: Container(
-      height: 9.7.h,
+      height: 9.h,
       width: 100.w,
       margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
       padding: EdgeInsets.symmetric(vertical: 3.6.w, horizontal: 4.w),
@@ -144,13 +144,13 @@ Widget eBookDetail({
             child: CoverImageWidget(
               imageUrl: imagePath,
               assetPath: 'assets/png/book.png',
-              height: 12.h,
-              width: 17.w,
+              height: 6.h,
+              width: 13.w,
               fit: BoxFit.cover,
             ),
 
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: 5.w),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +166,7 @@ Widget eBookDetail({
                 SizedBox(height: 0.4.h),
                 customText(
                   fontFamily: "Poppins",
-                  text: authorName,
+                  text:"Reader : $authorName" ,
                   color: primaryColor.withOpacity(0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,

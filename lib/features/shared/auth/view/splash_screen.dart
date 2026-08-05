@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-import 'package:storysign/features/reader/auth/controller/splash_controller.dart';
+
 import 'package:storysign/widgets/customText_widget.dart';
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../widgets/background_image.dart';
 import '../../../../widgets/button_widget.dart';
+import '../controller/splash_controller.dart';
 
 
 class SplashScreen extends GetView<SplashController> {

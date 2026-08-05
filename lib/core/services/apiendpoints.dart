@@ -19,8 +19,7 @@ class ApiEndPoints {
 
   static const String requestAutoGraphHome = '/reader/autograph-requests';
 
-  static const String trackRequest =
-      '/reader/autograph-requests?page=1&limit=10';
+  static const String trackRequest = '/reader/autograph-requests';
 
   static String getAutographRequestDetails(String id) {
     return '/reader/autograph-requests/$id';

@@ -10,11 +10,21 @@ import '../../../../widgets/sucess_widget.dart';
 class ChangePasswordController extends GetxController {
   final oldPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
-  final RxBool isPasswordHidden = true.obs;
+  final RxBool isOldPasswordHidden = true.obs;
+  final RxBool isNewPasswordHidden = true.obs;
+  final RxBool isConfirmPasswordHidden = true.obs;
+
+
   final confirmPasswordController = TextEditingController();
   RxBool isLoading = false.obs;
  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  @override
+  void onInit() {
+    super.onInit();
+    // Retrieve role from navigation arguments if available
 
+    print( ApiEndPoints.changePassword);
+  }
 
   Future<void> changePassword() async {
     final String newPassword = newPasswordController.text.trim();
@@ -47,8 +57,8 @@ class ChangePasswordController extends GetxController {
           response['message'] ?? 'Password changed successful',
           false,
         );
-
-        Get.offAllNamed('/login');
+Get.back();
+       // Get.offAllNamed('/login');
         clearNewPasswordFeild();
       }
 

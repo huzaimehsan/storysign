@@ -11,7 +11,8 @@ import 'package:sizer/sizer.dart';
 // Yahan apni routes wali file import karein
 import 'constants/color_constants.dart';
 import 'constants/local_db_key.dart';
-import 'core/bindings/init_binding.dart';
+import 'utils/shared_prefrences_methods.dart';
+
 import 'core/routes/App_Routing.dart';
 
 void main() async {
@@ -24,10 +25,11 @@ void main() async {
   await Stripe.instance.applySettings();
 
   final prefs = await SharedPreferences.getInstance();
+  prefs.reload();
   Get.put<SharedPreferences>(prefs);
 
-  bool hasSeenOnboarding = prefs.getBool(LocalDBKeys.SPLASH) ?? false;
-  bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+  bool hasSeenOnboarding = SharedPreferencesMethod.getBool(key: LocalDBKeys.SPLASH);
+  bool isLoggedIn = SharedPreferencesMethod.getBool(key: 'isLoggedIn');
   String? role = prefs.getString('role');
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -41,16 +43,23 @@ void main() async {
   );
 
   String initialRoute;
+  final bool isSubscribed = SharedPreferencesMethod.getBool(key: LocalDBKeys.IS_SUBSCRIBED);
+  debugPrint('App Startup raw IS_SUBSCRIBED=${prefs.getBool(LocalDBKeys.IS_SUBSCRIBED)}');
 
   if (!hasSeenOnboarding) {
     initialRoute = '/';
-  }
-  else if (isLoggedIn) {
-    initialRoute = (role == 'author') ? '/authorbottomnav' : '/bottomnav';
-  }
-  else {
+  } else if (isLoggedIn) {
+    if (role == 'author') {
+      initialRoute = isSubscribed ? '/authorbottomnav' : '/plan';
+      debugPrint('App Startup - hasSeenOnboarding=$hasSeenOnboarding isLoggedIn=$isLoggedIn role=$role isSubscribed=$isSubscribed (storedKeys=${prefs.getKeys().toList()})');
+
+    } else {
+      initialRoute = '/bottomnav';
+    }
+  } else {
     initialRoute = '/signin';
   }
+
 
   runApp(MyApp(initialRoute : initialRoute));
 }

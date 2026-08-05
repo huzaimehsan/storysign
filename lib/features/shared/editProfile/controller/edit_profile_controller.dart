@@ -11,9 +11,9 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/image_picker.dart';
-import '../model/profile_screen_model.dart';
+import '../../../reader/profile/model/profile_screen_model.dart';
 
-import '../../Home/controller/home_controller.dart';
+import '../../../reader/Home/controller/home_controller.dart';
 
 
 class EditProfileController extends GetxController {

@@ -151,7 +151,7 @@ Widget signedCopyMessageCard({
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Agar title null nahi hai, tabhi text show karo
+
           if (title != null && title.isNotEmpty) ...[
             customText(
               fontFamily: "Poppins",
@@ -166,9 +166,9 @@ Widget signedCopyMessageCard({
           customText(
             fontFamily: "Poppins",
             text: message,
-            color: secondryColor,
+            color: secondryColor.withOpacity(0.75),
             fontSize: 14.sp,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w400,
             textAlign: TextAlign.start,
           ),
         ],

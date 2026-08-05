@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:storysign/features/author/bottomNav/binding/author_bottom_nav_binding.dart';
-import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
-import 'package:storysign/features/author/home/binding/home_binding.dart';
-import 'package:storysign/features/author/home/controller/home_controller.dart';
-import 'package:storysign/features/author/notification/binding/author_notification_binding.dart';
 import 'package:storysign/features/author/profile/binding/help_support_binding.dart';
 import 'package:storysign/features/author/profile/binding/profile_binding.dart';
 import 'package:storysign/features/author/request/binding/draw_signature_binding.dart';
@@ -29,25 +25,28 @@ import 'package:storysign/features/reader/Home/binding/payment_binding.dart';
 import 'package:storysign/features/reader/Home/binding/select_author_binding.dart';
 import 'package:storysign/features/reader/Home/binding/signed_copy_binding.dart';
 import 'package:storysign/features/reader/Home/binding/upload_book_binding.dart';
-import 'package:storysign/features/reader/Home/controller/home_controller.dart';
-import 'package:storysign/features/reader/Home/view/final_review.dart';
+
+import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
+
 import 'package:storysign/features/reader/Home/view/make_payment.dart';
 import 'package:storysign/features/reader/Home/view/request_detail.dart';
 import 'package:storysign/features/reader/Home/view/signed_copy.dart';
 import 'package:storysign/features/reader/Home/view/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/upload_book.dart';
+import 'package:storysign/features/reader/library/controller/library_detail_controller.dart';
 import 'package:storysign/features/reader/library/binding/library_detail_binding.dart';
 import 'package:storysign/features/reader/library/binding/reader_library_binding.dart';
+import 'package:storysign/features/reader/library/controller/library_detail_controller.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
-import 'package:storysign/features/reader/profile/binding/change_password_binding.dart';
-import 'package:storysign/features/reader/profile/binding/contact_us_binding.dart';
-import 'package:storysign/features/reader/profile/binding/edit_profile_binding.dart';
+import 'package:storysign/features/shared/changePassword/binding/change_password_binding.dart';
+import 'package:storysign/features/shared/contactUs/binding/contact_us_binding.dart';
+import 'package:storysign/features/shared/editProfile/binding/edit_profile_binding.dart';
 import 'package:storysign/features/reader/profile/binding/help_support_binding.dart';
 import 'package:storysign/features/reader/profile/binding/privacy_policy_binding.dart';
 import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
-import 'package:storysign/features/reader/profile/view/change_password.dart';
-import 'package:storysign/features/reader/profile/view/contact_us.dart';
-import 'package:storysign/features/reader/profile/view/edit_profile.dart';
+import 'package:storysign/features/shared/changePassword/view/change_password.dart';
+import 'package:storysign/features/shared/contactUs/view/contact_us.dart';
+import 'package:storysign/features/shared/editProfile/view/edit_profile.dart';
 import 'package:storysign/features/reader/profile/view/help_and_support.dart';
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
@@ -63,23 +62,23 @@ import '../../features/reader/Home/binding/tracking_binding.dart';
 import '../../features/reader/Home/view/request_autograph.dart';
 import '../../features/reader/Home/view/select_author.dart';
 import '../../features/reader/Home/view/track_request.dart';
-import '../../features/reader/auth/binding/auth_binding.dart';
-import '../../features/reader/auth/view/choose_role.dart';
-import '../../features/reader/auth/view/forgot_password/resend_otp.dart';
-import '../../features/reader/auth/view/forgot_password/reset_password.dart';
-import '../../features/reader/auth/view/forgot_password/send_otp.dart';
-import '../../features/reader/auth/view/sign_in.dart';
-import '../../features/reader/auth/view/sign_up.dart';
-import '../../features/reader/auth/view/splash_screen.dart';
+
 import '../../features/reader/bottomNav/binding/bottom_nav_binding.dart';
 import '../../features/reader/bottomNav/view/bottom_nav_layout.dart';
 import '../../features/reader/library/view/reader_library.dart';
 import '../../features/reader/library/view/reader_library_detail.dart';
-import '../../features/reader/notification/view/notification.dart';
-import '../../features/reader/profile/view/help_and_support.dart';
+
 import '../../features/reader/search/view/author_detail.dart';
 import '../../features/reader/search/view/request_autograph.dart';
-import '../../features/shared/notification/view/notification_screen.dart';
+import '../../features/shared/auth/binding/auth_binding.dart';
+import '../../features/shared/auth/view/choose_role.dart';
+import '../../features/shared/auth/view/forgot_password/resend_otp.dart';
+import '../../features/shared/auth/view/forgot_password/reset_password.dart';
+import '../../features/shared/auth/view/forgot_password/send_otp.dart';
+import '../../features/shared/auth/view/sign_in.dart';
+import '../../features/shared/auth/view/sign_up.dart';
+import '../../features/shared/auth/view/splash_screen.dart';
+
 
 class AppRoutes {
   static List<GetPage<dynamic>> routes = [
@@ -161,7 +160,10 @@ class AppRoutes {
     GetPage(
       name: '/requestautographcard',
       page: () => RequestAutographCard(),
-      binding: RequestAutographBinding(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<RequestAutographController>(() => RequestAutographController());
+        Get.lazyPut<ReaderLibraryDetailController>(() => ReaderLibraryDetailController());
+      }),
     ),
 
     GetPage(

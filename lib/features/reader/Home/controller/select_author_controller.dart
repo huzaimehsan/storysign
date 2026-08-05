@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -25,6 +23,12 @@ class SelectAuthorController extends GetxController {
     fetchHomeData();
   }
 
+  Future<void> loadAllData() async {
+    isFetchHome.value = true;
+    await Future.wait([fetchHomeData()]);
+    isFetchHome.value = false;
+  }
+
   void onSearchChanged(String value) {
     searchQuery.value = value;
     _searchDebounce?.cancel();
@@ -47,11 +51,11 @@ class SelectAuthorController extends GetxController {
       errorMessage.value = '';
 
       final query = searchQuery.value.trim();
-      final String endpoint = '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
+      final String endpoint =
+          '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
       final response = await BaseService().baseGetAPI(endpoint, loading: false);
 
       if (response['success'] == true) {
-     
         final dynamic rawData = response['data'] ?? response;
 
         final List<dynamic> items = rawData is List
@@ -78,6 +82,7 @@ class SelectAuthorController extends GetxController {
       isFetchHome.value = false;
     }
   }
+
   // Future<void> fetchHomeData() async {
   //   try {
   //     isFetchHome.value = true;

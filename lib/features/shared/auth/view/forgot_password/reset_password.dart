@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/auth/controller/auth_controller.dart';
+
 import 'package:storysign/widgets/background_image.dart';
 
 import '../../../../../utils/helper_functions.dart';
 import '../../../../../widgets/custom_reset_container.dart';
 import '../../../../../widgets/custom_text_feild.dart';
+import '../../controller/auth_controller.dart';
 
 class ResetPassword extends GetView<AuthController> {
   const ResetPassword({super.key});

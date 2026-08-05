@@ -7,14 +7,29 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/request/model/request_detail_model.dart';
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../core/services/request_service.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 
-import 'package:http/http.dart' as http;
+Map<String, String> normalizeRequestDetailArgs(Object? args) {
+  final normalized = <String, String>{
+    'from': '',
+    'autographRequestId': '',
+  };
+
+  if (args is Map) {
+    final fromValue = args['from'] ?? args['source'] ?? '';
+    final idValue = args['autographRequestId'] ?? args['id'] ?? args['requestId'] ?? '';
+
+    normalized['from'] = fromValue?.toString().trim() ?? '';
+    normalized['autographRequestId'] = idValue?.toString().trim() ?? '';
+  } else if (args is String) {
+    normalized['autographRequestId'] = args.trim();
+  }
+
+  return normalized;
+}
 
 class RequestDetailController extends GetxController {
 
@@ -25,8 +40,17 @@ class RequestDetailController extends GetxController {
 
   // Use this method from your screen's didChangeDependencies to receive values safely
   void initData(String from, String id) {
-    sourceScreen.value = from;
-    autographRequestId = id;
+    final cleanedFrom = from.trim();
+    final cleanedId = id.trim();
+
+    if (sourceScreen.value == cleanedFrom &&
+        autographRequestId == cleanedId &&
+        selectedRequestDetail.value != null) {
+      return;
+    }
+
+    sourceScreen.value = cleanedFrom;
+    autographRequestId = cleanedId;
 
     print("SOURCE SCREEN IS: ${sourceScreen.value}");
     print("AUTOGRAPH REQUEST ID: $autographRequestId");
@@ -34,6 +58,7 @@ class RequestDetailController extends GetxController {
     if (autographRequestId.isNotEmpty) {
       fetchAutographRequestDetails(autographRequestId);
     } else {
+      selectedRequestDetail.value = null;
       print("ERROR: autographRequestId is empty!");
       errorMessage.value = 'Request ID not found';
       Utils.showToast(errorMessage.value, true);
@@ -52,38 +77,20 @@ class RequestDetailController extends GetxController {
       isFetchDetailLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = SharedPreferencesMethod.storage;
-      final String token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
+      print("[Controller] Fetching details for ID: $autographRequestId");
+      print("[Controller] URL will be: /author/requests/$autographRequestId");
 
-      if (token.isEmpty) {
-        errorMessage.value = 'Token not found';
-        Utils.showToast('Please login again', true);
-        return;
-      }
-
-      // Dynamic endpoint function use karte hue URL banayein
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.autographRequestDetails(autographRequestId)}',
+      final response = await BaseService().baseGetAPI(
+        ApiEndPoints.autographRequestDetails(autographRequestId),
+        loading: false,
+        showErrorToast: false,
       );
 
-      print("API URL: $uri");
-      print("API TOKEN: $token");
+      print("API Response: $response");
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      if (response['success'] == true) {
+        final responseBody = response;
 
-      print("API Response Status: ${response.statusCode}");
-      print("API Response Body: ${response.body}");
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final responseBody = jsonDecode(response.body);
-
-        // Agar API direct single object bhej rahi hai ya 'data' key ke andar bhej rahi hai
         final itemJson = responseBody is Map && responseBody.containsKey('data')
             ? responseBody['data']
             : responseBody;
@@ -105,7 +112,7 @@ class RequestDetailController extends GetxController {
         print("Successfully loaded request detail");
 
       } else {
-        final responseBody = jsonDecode(response.body);
+        final responseBody = response;
         errorMessage.value =
             responseBody['message']?.toString() ?? 'Failed to load request details';
         if (RequestService.find.autographRequestId == autographRequestId &&
@@ -142,8 +149,9 @@ class RequestDetailController extends GetxController {
         }
         Utils.showToast(errorMessage.value, true);
       }
-    } catch (e) {
-      debugPrint('Error: $e');
+    } catch (e, stackTrace) {
+      debugPrint('[RequestDetail] CATCH ERROR: $e');
+      debugPrint('[RequestDetail] STACK TRACE: $stackTrace');
       errorMessage.value = 'Something went wrong while loading details';
       Utils.showToast(errorMessage.value, true);
     } finally {
@@ -164,40 +172,25 @@ class RequestDetailController extends GetxController {
         maskType: EasyLoadingMaskType.black,
       );
 
-      final prefs = SharedPreferencesMethod.storage;
-      final String token = prefs.getString(LocalDBKeys.TOKEN) ?? '';
-
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.rejectAutographRequest(autographRequestId)}',
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.rejectAutographRequest(autographRequestId),
+        {
+          'rejectionReason': reason ?? 'I am not accepting this genre at the moment.',
+        },
+        loading: false,
       );
 
-      print("REJECT API URL: $uri");
+      print("REJECT Response: $response");
 
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'rejectionReason': reason ?? 'I am not accepting this genre at the moment.',
-        }),
-      ).timeout(const Duration(seconds: 30));
-
-      print("REJECT Status: ${response.statusCode}");
-      print("REJECT Body: ${response.body}");
-
-      final responseBody = jsonDecode(response.body);
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        Utils.showToast(responseBody['message'] ?? 'Request declined successfully', false);
+      if (response['success'] == true) {
+        Utils.showToast(response['message'] ?? 'Request declined successfully', false);
         if (Navigator.of(context).canPop()) {
           Navigator.of(context).pop();
         } else {
           Get.back();
         }
       } else {
-        Utils.showToast(responseBody['message'] ?? 'Failed to decline request', true);
+        Utils.showToast(response['message'] ?? 'Failed to decline request', true);
       }
     } on TimeoutException {
       Utils.showToast('Request timed out', true);

@@ -16,17 +16,25 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get arguments from ModalRoute when using Navigator.pushNamed()
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final String from = args?['from'] ?? '';
-    final String id = args?['autographRequestId'] ?? '';
+    // Read arguments — works with both MaterialPageRoute and GetPageRoute
+    final modalArgs = ModalRoute.of(context)?.settings.arguments;
+    final getArgs = Get.arguments;
+    final rawArgs = (modalArgs != null) ? modalArgs : getArgs;
+    final args = rawArgs is Map<String, dynamic>
+        ? rawArgs
+        : (rawArgs is Map ? Map<String, dynamic>.from(rawArgs) : null);
 
-    print("RECEIVED ARGS - From: $from, ID: $id");
+    final String from = args?['from']?.toString() ?? '';
+    final String id = args?['autographRequestId']?.toString() ?? '';
 
-    // Initialize controller with data
-    controller.initData(from, id);
+    // Defer initData to AFTER build — calling it directly in build() triggers
+    // Obx state changes mid-frame, causing "setState() called during build" error.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initData(from, id);
+    });
 
     final bool isFromDelivered = from == 'all_delivered';
+
 
     return Scaffold(
       body: SafeArea(
@@ -63,7 +71,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     child: customText(
                       text: "No request details found",
                       fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
                       color: greyColor,
                     ),
@@ -99,13 +107,14 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                       letterSpacing: 0.0,
                       text: "Reader",
                       fontSize: 16.sp,
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
                       color: whiteColor,
                       textAlign: TextAlign.start,
                     ),
                   ],
                 ),
-              ),
+              ),    SizedBox(height: 0.5.h),
 
               AllPendingRequest(
                 imagePath: requestDetail.reader.profilePicture,
@@ -121,6 +130,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                 child: customText(
                   text: "Ebook Detail",
                   fontSize: 16.sp,
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                   color: whiteColor,
                   textAlign: TextAlign.start,
@@ -131,7 +141,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               eBookDetail(
                 imagePath: requestDetail.coverImage,
                 bookName: requestDetail.bookTitle,
-                authorName: requestDetail.author.fullName,
+                authorName: requestDetail.reader.fullName,
               ),
 
               SizedBox(height: 2.h),
@@ -143,6 +153,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                   letterSpacing: 0.0,
                   text: "Personal Message",
                   fontSize: 16.sp,
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                   color: whiteColor,
                   textAlign: TextAlign.start,

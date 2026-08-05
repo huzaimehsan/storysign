@@ -58,9 +58,7 @@ class HomeScreen extends GetView<HomeController> {
                           Get.toNamed(
                             "/requestautographcard",
                             arguments: {
-                              'authorId': 'authorId',
-                              'bookId': 'bookId',
-                              'isFromHome': true,
+                              'role': 'fromHome',
                             },
                           );
                         },

@@ -26,6 +26,7 @@ class TrackRequestController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    ever(selectedTab, (_) => fetchTrackRequestData());
     fetchTrackRequestData();
   }
 
@@ -74,9 +75,20 @@ class TrackRequestController extends GetxController {
       trackRequestLoading.value = true;
       errorMessage.value = '';
 
+      final statusFilter = selectedTab.value == 'All'
+          ? null
+          : selectedTab.value == 'In Process'
+              ? 'in_progress'
+              : 'delivered';
+
+      final endpoint = statusFilter != null
+          ? '${ApiEndPoints.trackRequest}?page=${currentPage.value}&limit=10&status=${Uri.encodeQueryComponent(statusFilter)}'
+          : '${ApiEndPoints.trackRequest}?page=${currentPage.value}&limit=10';
+
       final response = await BaseService().baseGetAPI(
+        endpoint,
         loading: false,
-        ApiEndPoints.trackRequest,
+        showErrorToast: false,
       );
 
       if (response['success'] == true) {
@@ -90,8 +102,8 @@ class TrackRequestController extends GetxController {
         totalPages.value = trackRequestData.totalPages;
         totalItems.value = trackRequestData.total;
       } else {
-        errorMessage.value =
-            response['message']?.toString() ?? 'Failed to load data';
+        errorMessage.value = response['message']?.toString() ?? 'Failed to load tracking data';
+        Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {
       debugPrint('fetchTrackRequestData error: $e');
@@ -102,81 +114,6 @@ class TrackRequestController extends GetxController {
     }
   }
 
-  DateTime _parseDate(String dateStr) {
-    try {
-      final parsed = DateTime.tryParse(dateStr);
-      if (parsed != null) return parsed;
-    } catch (_) {}
-    return DateTime.now();
-  }
-
-  List<NewBookItem> get filteredTrackRequest {
-    List<NewBookItem> requests = List<NewBookItem>.from(trackRequest);
-
-    if (selectedTab.value == "In Process") {
-      requests = requests.where((item) {
-        final st = item.status.toLowerCase().replaceAll(' ', '_');
-        return st == "in_process" || st == "in_progress" || st == "pending";
-      }).toList();
-    } else if (selectedTab.value == "Delivered" ||
-        selectedTab.value == "Signed") {
-      requests = requests.where((item) {
-        final st = item.status.toLowerCase().replaceAll(' ', '_');
-        return st == "delivered" ||
-            st == "rejected" ||
-            st == "completed" ||
-            st == "approved";
-      }).toList();
-    }
-
-    if (searchQuery.value.trim().isNotEmpty) {
-      final query = searchQuery.value.toLowerCase().trim();
-      requests = requests
-          .where(
-            (item) =>
-                item.title.toLowerCase().contains(query) ||
-                item.author.fullName.toLowerCase().contains(query),
-          )
-          .toList();
-    }
-
-    if (filterStatus.value != "All") {
-      final targetStatus = filterStatus.value.toLowerCase().replaceAll(
-        ' ',
-        '_',
-      );
-      requests = requests.where((item) {
-        final st = item.status.toLowerCase().replaceAll(' ', '_');
-        if (targetStatus == "in_process") {
-          return st == "in_process" || st == "in_progress" || st == "pending";
-        }
-        if (targetStatus == "delivered" || targetStatus == "signed") {
-          return st == "delivered" ||
-              st == "rejected" ||
-              st == "completed" ||
-              st == "approved";
-        }
-        return st == targetStatus;
-      }).toList();
-    }
-
-    if (sortBy.value == "Title A-Z") {
-      requests.sort((a, b) => a.title.compareTo(b.title));
-    } else if (sortBy.value == "Title Z-A") {
-      requests.sort((a, b) => b.title.compareTo(a.title));
-    } else if (sortBy.value == "Date Newest") {
-      requests.sort(
-        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
-      );
-    } else if (sortBy.value == "Date Oldest") {
-      requests.sort(
-        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
-      );
-    }
-
-    return requests;
-  }
-
   void resetFilter() {
     selectedTab.value = "All";
     sortBy.value = "None";
@@ -185,5 +122,31 @@ class TrackRequestController extends GetxController {
 
   Future<void> refreshRequests() async {
     await fetchTrackRequestData();
+  }
+
+  List<NewBookItem> get filteredTrackRequest {
+    final tab = selectedTab.value.toLowerCase();
+    final query = searchQuery.value.toLowerCase().trim();
+
+    final filteredByTab = trackRequest.where((book) {
+      final status = book.status.toLowerCase();
+      if (tab == 'in process') {
+        return status == 'in_process' || status == 'in process';
+      }
+      if (tab == 'delivered') {
+        return status == 'delivered';
+      }
+      return true;
+    }).toList();
+
+    if (query.isEmpty) {
+      return filteredByTab;
+    }
+
+    return filteredByTab.where((book) {
+      final title = book.title.toLowerCase();
+      final author = book.author.fullName.toLowerCase();
+      return title.contains(query) || author.contains(query);
+    }).toList();
   }
 }

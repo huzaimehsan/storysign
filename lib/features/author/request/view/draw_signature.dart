@@ -92,71 +92,97 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
             SizedBox(height: 3.h),
 
             // Signature Canvas Container
-            Container(
-              height: 45.h,
-              width: 90.w,
-              decoration: BoxDecoration(
-                color: white, // warm cream background
-                borderRadius: BorderRadius.circular(5.w),
-                border: Border.all(color: whiteColor.withAlpha(64), width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(89),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 8),
-                  )
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.w),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Obx(() {
-                      // Trigger rebuild when mode changes (which reconstructs the controller)
-                      final _ = controller.signatureMode.value;
-                      return Signature(
-                        controller: controller.signatureController,
-                        height: 45.h,
-                        width: 90.w,
-                        backgroundColor: Colors.transparent,
-                      );
-                    }),
-                    Obx(() {
-                      if (controller.isSignatureEmpty.value) {
-                        return IgnorePointer(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.gesture_rounded,
-                                color: buttonColor.withAlpha(128),
-                                size: 8.w,
-                              ),
-                              SizedBox(height: 1.5.h),
-                              customText(
-                                text: 'Draw the Signature Here Use pencil or mouse',
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w400,
-                                color: secondryColor.withAlpha(128),
-                                fontFamily: 'Poppins',
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
+            Obx(
+                  () => Container(
+                height: 45.h,
+                width: 90.w,
+                decoration: BoxDecoration(
+                  color: white, // warm cream background
+                  borderRadius: BorderRadius.circular(5.w),
+                  border: Border.all(color: whiteColor.withAlpha(64), width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(89),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 8),
+                    )
                   ],
+                ),
+                // ✅ RepaintBoundary ab yahan hai — sirf transparent content capture hoga,
+                // white bg/border/shadow bahar reh jayenge aur export me nahi aayenge.
+                child: RepaintBoundary(
+                  key: controller.canvasKey,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.w),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (controller.signatureMode.value == 'pencil')
+                          Signature(
+                            controller: controller.signatureController,
+                            height: 45.h,
+                            width: 90.w,
+                            backgroundColor: Colors.transparent,
+                          )
+                        else
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTapDown: (details) {
+                              final localPosition = details.localPosition;
+                              controller.placeFingerprint(localPosition);
+                            },
+                            child: Container(
+                              height: 45.h,
+                              width: 90.w,
+                              color: Colors.transparent,
+                            ),
+                          ),
+                        if (controller.signatureMode.value == 'finger' &&
+                            !controller.isFingerprintPlaced.value)
+                          IgnorePointer(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.fingerprint,
+                                  color: buttonColor.withAlpha(128),
+                                  size: 8.w,
+                                ),
+                                SizedBox(height: 1.5.h),
+                                customText(
+                                  text: 'Tap here to place your fingerprint',
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: secondryColor.withAlpha(128),
+                                  fontFamily: 'Poppins',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (controller.signatureMode.value == 'finger' &&
+                            controller.fingerprintPosition.value != null)
+                          Positioned(
+                            left: controller.fingerprintPosition.value!.dx - 14.w / 2,
+                            top: controller.fingerprintPosition.value!.dy - 14.w / 2,
+                            child: Image.asset(
+                              'assets/png/fingerprint_stamp.png',
+                              height: 14.w,
+                              width: 14.w,
+                              color: buttonColor.withOpacity(0.9),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
 
             SizedBox(height: 10.h),
 
-            // Undo, Redo, Clear circular action buttons
+            // Undo, Redo, Clear/Fingerprint action buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -172,7 +198,13 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                 SizedBox(width: 6.w),
                 _buildCircleAction(
                   icon: Icons.delete_outline_rounded,
-                  onTap: controller.clear,
+                  onTap: () {
+                    if (controller.signatureMode.value == 'finger') {
+                      controller.resetFingerprint();
+                    } else {
+                      controller.clear();
+                    }
+                  },
                 ),
               ],
             ),
@@ -186,7 +218,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                 "Confirm Signature",
                 whiteColor,
                 colors: buttonColor,
-                onTap: () => controller.confirmSignature(context),
+                onTap: () => controller.confirmSignature(context, controller.canvasKey),
                 fontFamily: 'Poppins',
                 height: 5.5.h,
                 width: double.infinity,

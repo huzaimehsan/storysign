@@ -49,8 +49,8 @@ class AllRequest extends GetView<AuthorHomeController> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: controller.refreshPendingRequest,
-                     backgroundColor :containerColor,
-        color: white,
+                backgroundColor :containerColor,
+                color: white,
                 child: Obx(() {
                   if (controller.isFetchPending.value) {
                     return const Center(

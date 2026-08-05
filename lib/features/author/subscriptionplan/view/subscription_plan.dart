@@ -15,10 +15,13 @@ import '../controller/subscription_plan_controller.dart';
 class SubscriptionPlan extends GetView<SubscriptionPlanController> {
   const SubscriptionPlan({super.key});
 
+
   @override
   Widget build(BuildContext context) {
-
+    final args = Get.arguments as Map<String,dynamic>?;
+    final fromSignUp = args?['from'] == 'signUp';
     return Scaffold(
+
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -108,30 +111,47 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                       );
                     }
 
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: controller.plans.length,
-                      itemBuilder: (context, index) {
-                        final plan = controller.plans[index];
-                        final isCurrentPlan = activePlanName != null &&
-                            activePlanName.isNotEmpty &&
-                            plan.name.trim().toLowerCase() ==
-                                activePlanName.trim().toLowerCase();
+                    return RefreshIndicator(
+                      backgroundColor :containerColor,
+                      color: white,
+                      onRefresh: () => controller.fetchSubscriptionPlans(
+                        controller.isYearly.value ? 'yearly' : 'monthly'
+                      ),
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: controller.plans.length,
+                        itemBuilder: (context, index) {
+                          final plan = controller.plans[index];
+                          final isCurrentPlan = activePlanName != null &&
+                              activePlanName.isNotEmpty &&
+                              plan.name.trim().toLowerCase() ==
+                                  activePlanName.trim().toLowerCase();
 
-                        return SubscriptionPlanCard(
-                          title: plan.name,
-                          subtitle: plan.planType,
-                          price: plan.price.toString(),
-                          features: plan.features,
-                          isMostPopular:
-                              plan.name.toLowerCase().contains('pro'),
-                          onSelect: () => controller.selectPlan(plan),
-                          isCurrentPlan: isCurrentPlan,
-                          buttonText: isCurrentPlan
-                              ? "Current Plan"
-                              : "Upgrade to Basic",
-                        );
-                      },
+                          String getButtonText(){
+                            if (isCurrentPlan) {
+                              return 'Current Plan';
+                            }
+                            else if (activePlanName == null || activePlanName!.isEmpty || fromSignUp){
+                              return 'Select Plan';
+                            }
+                            else {
+                              return 'Upgrade to ${plan.name}';
+                            }
+                          }
+
+                          return SubscriptionPlanCard(
+                            title: plan.name,
+                            subtitle: plan.planType,
+                            price: plan.price.toString(),
+                            features: plan.features,
+                            isMostPopular:
+                                plan.name.toLowerCase().contains('pro'),
+                            onSelect: () => controller.selectPlan(plan),
+                            isCurrentPlan: isCurrentPlan,
+                            buttonText: getButtonText(),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),

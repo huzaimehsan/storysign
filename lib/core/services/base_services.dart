@@ -340,6 +340,29 @@ class BaseService {
     }
   }
 
+  Future<http.MultipartRequest> buildMultipartRequest(
+      String endPoint, {
+        String method = 'POST',
+        bool? isStripe,
+        Map<String, String>? headers,
+      }) async {
+    final request = http.MultipartRequest(
+      method,
+      Uri.parse(isStripe == true ? baseURLStripe : '$baseURL$endPoint'),
+    );
+
+    final token = await prefs.getString(LocalDBKeys.TOKEN);
+    if (token != null && token.isNotEmpty) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    if (headers != null) {
+      request.headers.addAll(headers);
+    }
+
+    return request;
+  }
+
   Future<Map<String, dynamic>> baseMultipartPostAPI(
       String endPoint, {
         required http.MultipartRequest request,

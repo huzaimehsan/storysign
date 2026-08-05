@@ -71,7 +71,7 @@ class DeliveryItemModel {
 
   factory DeliveryItemModel.fromJson(Map<String, dynamic> json) {
     return DeliveryItemModel(
-      id: json['id']?.toString() ?? '',
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
       bookTitle: json['bookTitle']?.toString() ?? '',
       coverImage: json['coverImage']?.toString() ?? '',
       bookPdfUrl: json['bookPdfUrl']?.toString() ?? '',

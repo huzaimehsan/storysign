@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -50,8 +49,8 @@ class DeliveredScreen extends GetView<DeliveredController> {
             ),
             Expanded(
               child: RefreshIndicator(
-       backgroundColor :containerColor,
-        color: white,
+                backgroundColor: containerColor,
+                color: white,
                 onRefresh: () => controller.fetchDeliveryRequests(),
                 child: Obx(() {
                   if (controller.isFetchPending.value) {
@@ -67,7 +66,8 @@ class DeliveredScreen extends GetView<DeliveredController> {
                         SizedBox(height: 40.h),
                         Center(
                           child: customText(
-                            text: "No delivered requests", // Updated text for delivered items
+                            text: "No delivered requests",
+                            // Updated text for delivered items
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: greyColor,
@@ -86,7 +86,8 @@ class DeliveredScreen extends GetView<DeliveredController> {
                       final request = controller.filteredRequests[index];
                       return AllPendingRequest(
                         imagePath: request.reader!.profilePicture ?? "",
-                        authorName: request.reader!.fullName ?? 'Unknown Author',
+                        authorName:
+                            request.reader!.fullName ?? 'Unknown Author',
                         bookName: request.bookTitle ?? 'Unknown Book',
                         date: request.requestDate?.toString() ?? 'Unknown',
                         ontap: () {
@@ -97,6 +98,12 @@ class DeliveredScreen extends GetView<DeliveredController> {
                               'autographRequestId': request.id,
                             },
                           );
+                          // Get.(
+                          //   '/requestDetail',
+                          //   arguments: {
+                          //
+                          //   },
+                          // );
                         },
                       );
                     },

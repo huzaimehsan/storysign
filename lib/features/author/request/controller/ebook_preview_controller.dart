@@ -19,7 +19,7 @@ class EbookPreviewController extends GetxController {
   final RxInt pageCount = 0.obs;
   final RxDouble zoomLevel = 1.0.obs;
   final RxBool isLoading = true.obs;
-
+  final BaseService baseService = BaseService();
   final RxBool isFetching = true.obs;
   final RxString bookPdfUrl = ''.obs;
   final RxString errorMessage = ''.obs;
@@ -58,85 +58,67 @@ class EbookPreviewController extends GetxController {
   }
 
   Future<void> acceptRequestAndLoadPdf({bool skipPdfUpdate = false}) async {
-    if (autographRequestId.isEmpty) {
-      Utils.showToast('Request ID missing', true);
-      return;
-    }
+    // if (autographRequestId.isEmpty) {
+    //   Utils.showToast('Request ID missing', true);
+    //   return;
+    // }
 
     try {
-      EasyLoading.show(
-        status: 'Loading PDF...',
-        maskType: EasyLoadingMaskType.black,
+      final response = await baseService.basePostAPI(
+        ApiEndPoints.acceptAutographRequest(autographRequestId),
+        {}, // agar body chahiye to yahan pass karo
+        loading: true,
       );
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.acceptAutographRequest(autographRequestId)}',
-      );
+      print('✅ ACCEPT RESPONSE: $response');
+      print('✅ ALL KEYS IN RESPONSE: ${response.keys.toList()}');
 
-      final token = SharedPreferencesMethod.storage.getString(
-        LocalDBKeys.TOKEN,
-      );
-
-      final response = await http
-          .post(
-        uri,
-        headers: {
-          if (token != null && token.isNotEmpty)
-            'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      )
-          .timeout(const Duration(seconds: 30));
-
-      final responseMap = json.decode(response.body);
-
-      print('✅ ACCEPT RESPONSE STATUS: ${response.statusCode}');
-      print('✅ ACCEPT FULL RESPONSE: $responseMap');
-      print('✅ ALL KEYS IN RESPONSE: ${responseMap.keys.toList()}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response['success'] == true) {
         if (skipPdfUpdate) {
           return;
         }
-        // ✅ Multiple possible keys check karo
-        final pdfUrl =
-            responseMap['bookUrl'] ??
-                responseMap['pdfUrl'] ??
-                responseMap['bookPdfUrl'] ??
-                responseMap['pdf'] ??
-                responseMap['url'] ??
-                responseMap['fileUrl'] ??
-                responseMap['documentUrl'];
+
+        // Multiple possible keys check
+        final pdfUrl = response['bookUrl'] ??
+            response['pdfUrl'] ??
+            response['bookPdfUrl'] ??
+            response['pdf'] ??
+            response['url'] ??
+            response['fileUrl'] ??
+            response['documentUrl'];
 
         print('📄 PDF URL found: $pdfUrl');
 
         if (pdfUrl == null || pdfUrl.toString().isEmpty) {
-          // We might not need to show toast if skipPdfUpdate is true, but it's handled above.
           Utils.showToast('PDF url not found in response', true);
-          print('❌ Available keys: ${responseMap.keys.toList()}');
-          print('❌ Full response: $responseMap');
+          print('❌ Available keys: ${response.keys.toList()}');
+          print('❌ Full response: $response');
           return;
         }
 
         bookPdfUrl.value = pdfUrl.toString();
         isLoading.value = true;
       } else {
-        if (skipPdfUpdate && (responseMap['message'] == 'Request not found' || response.statusCode == 404 || response.statusCode == 400)) {
-           print('Silently ignored accept failure: ${responseMap['message']}');
-        } else {
-           Utils.showToast(responseMap['message'] ?? 'Request failed', true);
+        final message = response['message'];
+        final statusCode = response['statusCode'];
+
+        if (skipPdfUpdate &&
+            (message == 'Request not found' ||
+                statusCode == 404 ||
+                statusCode == 400)) {
+          // baseService already error toast dikha chuka hoga (error path me),
+          // agar skipPdfUpdate hai to bas silently ignore/log karo
+          print('Silently ignored accept failure: $message');
         }
+        // else: baseService.basePostAPI ne already error toast show kar diya hai,
+        // isliye yahan dobara toast nahi maar rahe (duplicate avoid karne ke liye)
       }
-    } on TimeoutException {
-      Utils.showToast('Request timed out', true);
     } catch (e) {
       if (!skipPdfUpdate) {
-         Utils.showToast('Something went wrong: $e', true);
+        Utils.showToast('Something went wrong: $e', true);
       } else {
-         print('Silently ignored accept failure: $e');
+        print('Silently ignored accept failure: $e');
       }
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

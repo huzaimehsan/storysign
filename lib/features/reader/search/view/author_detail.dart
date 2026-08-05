@@ -16,17 +16,15 @@ class AuthorDetail extends GetView<SearchPageController> {
   final String authorId;
   final String role;
 
-  const AuthorDetail({
-    super.key,
-    required this.authorId,
-    required this.role,
-  });
+  const AuthorDetail({super.key, required this.authorId, required this.role});
 
   @override
   Widget build(BuildContext context) {
     if (authorId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        debugPrint('AuthorDetail opened for id: $authorId; cached: ${controller.authorDetailData.value?.id}');
+        debugPrint(
+          'AuthorDetail opened for id: $authorId; cached: ${controller.authorDetailData.value?.id}',
+        );
         final currentId = controller.authorDetailData.value?.id;
         if (currentId != authorId) {
           controller.authorDetail(authorId);
@@ -36,71 +34,76 @@ class AuthorDetail extends GetView<SearchPageController> {
 
     return Scaffold(
       body: SafeArea(
-        child: Obx(
-          () {
-            final author = controller.authorDetailData.value;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                customHeader(
-                  context: context,
-                  title: "Author Detail",
-                  onBack: () {
-                    final nav = Get.find<BottomNavController>()
-                        .navigatorKeys[Get.find<BottomNavController>().currentIndex.value]
-                        .currentState;
-                    if (nav != null && nav.canPop()) {
-                      nav.pop(); // nested tab navigator (search screen)
-                    } else {
-                      Get.back(); // global GetX navigator (home screen)
-                    }
-                  },
-                  onIconPressed: () {},
+        child: Obx(() {
+          final author = controller.authorDetailData.value;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              customHeader(
+                context: context,
+                title: "Author Detail",
+                onBack: () {
+                  final nav = Get.find<BottomNavController>()
+                      .navigatorKeys[Get.find<BottomNavController>()
+                          .currentIndex
+                          .value]
+                      .currentState;
+                  if (nav != null && nav.canPop()) {
+                    nav.pop(); // nested tab navigator (search screen)
+                  } else {
+                    Get.back(); // global GetX navigator (home screen)
+                  }
+                },
+                onIconPressed: () {},
+              ),
+
+              SizedBox(height: 1.h),
+
+              if (controller.isDetailLoading.value)
+                SizedBox(
+                  height: 40.h,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: buttonColor),
+                  ),
+                )
+              else ...[
+                AuthorInfoCard(
+                  imagePath: author?.profilePicture,
+                  bookTitle: author?.fullName ?? 'Author',
+                  date: author?.dateJoined,
                 ),
 
                 SizedBox(height: 1.h),
 
-                if (controller.isDetailLoading.value)
-                  SizedBox(
-                    height: 40.h,
-                    child: const Center(child: CircularProgressIndicator(color: buttonColor,)),
-                  )
+                AuthorBiographyCard(
+                  description: author?.bio ?? 'No biography available.',
+                ),
+                SizedBox(height: 10.h),
 
-                else ...[
-                  AuthorInfoCard(
-                    imagePath: author?.profilePicture,
-                    bookTitle: author?.fullName ?? 'Author',
-                    date: author?.dateJoined,
-                  ),
 
-                  SizedBox(height: 1.h),
-
-                  AuthorBiographyCard(
-                      description: author?.bio ?? 'No biography available.'),
-                  SizedBox(height: 10.h),
-
-                  // role 'allAuthor' na ho, tabhi button dikhe
-                  role != 'allAuthor'
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.w),
-                          child: buttonWidget(
-                            "Request Autograph",
-                            whiteColor,
-                            onTap: () => Get.toNamed('/requestautograph',arguments:{'authorId': authorId, }),
-                            colors: buttonColor,
-                            fontFamily: 'Poppins',
-                            height: 5.2.h,
-                            width: double.infinity,
-                            fontsize: 16.sp,
-                            fontweight: FontWeight.w600,
+                role != 'allAuthor'
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: buttonWidget(
+                          "Request Autograph",
+                          whiteColor,
+                          onTap: () => Get.toNamed(
+                            '/requestautograph',
+                            arguments: {'authorId': authorId},
                           ),
-                        )
-                      : const SizedBox.shrink(),
-                ],
+                          colors: buttonColor,
+                          fontFamily: 'Poppins',
+                          height: 5.2.h,
+                          width: double.infinity,
+                          fontsize: 16.sp,
+                          fontweight: FontWeight.w600,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ],
-            );
-          },
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

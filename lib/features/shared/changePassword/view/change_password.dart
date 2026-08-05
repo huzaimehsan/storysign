@@ -7,7 +7,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/sucess_widget.dart';
-import '../../search/widgets/header_widget.dart';
+import '../../../reader/search/widgets/header_widget.dart';
 import '../controller/change_password_controller.dart';
 
 class ChangePassword extends GetView<ChangePasswordController> {
@@ -37,8 +37,9 @@ class ChangePassword extends GetView<ChangePasswordController> {
                     emailTextFeild(
                       'Old Password',
                       "8+ character",
+                      ispassword: true,
                       controller: controller.oldPasswordController,
-                      isPasswordHidden: controller.isPasswordHidden,
+                      isPasswordHidden: controller.isOldPasswordHidden,
                       validator: (value) =>
                           HelperFunction.passwordValidate(value ?? ''),
                     ),
@@ -47,7 +48,8 @@ class ChangePassword extends GetView<ChangePasswordController> {
                       'New Password',
                       "8+ character",
                       controller: controller.newPasswordController,
-                      isPasswordHidden: controller.isPasswordHidden,
+                      isPasswordHidden: controller.isNewPasswordHidden,
+                      ispassword: true,
                       validator: (value) =>
                           HelperFunction.passwordValidate(value ?? ''),
                     ),
@@ -55,8 +57,9 @@ class ChangePassword extends GetView<ChangePasswordController> {
                     emailTextFeild(
                       'Confirm Password',
                       "••••••••",
+                      ispassword: true,
                       controller: controller.confirmPasswordController,
-                      isPasswordHidden: controller.isPasswordHidden,
+                      isPasswordHidden: controller.isConfirmPasswordHidden,
                       validator: (value) =>
                           HelperFunction.passwordValidate(value ?? ''),
                     ),

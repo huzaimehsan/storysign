@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/profile/controller/contact_us_controller.dart';
+import 'package:storysign/features/shared/contactUs/controller/contact_us_controller.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/sucess_widget.dart';
-import '../../search/widgets/header_widget.dart';
+import '../../../reader/search/widgets/header_widget.dart';
 
 class ContactUs extends GetView<ContactUsController> {
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/home/widgets/author_profile_widget.dart';
 import 'package:storysign/features/author/home/widgets/pending_request.dart';
 
@@ -18,12 +19,9 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-
       if (controller.isFetchPending.value && controller.autographList.isEmpty) {
         return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(color: buttonColor),
-          ),
+          body: Center(child: CircularProgressIndicator(color: buttonColor)),
         );
       }
 
@@ -31,8 +29,9 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
         body: SafeArea(
           bottom: false,
           child: RefreshIndicator(
-                   backgroundColor :containerColor,
-        color: white,onRefresh: () => controller.refreshHomeRequests(),
+            backgroundColor: containerColor,
+            color: white,
+            onRefresh: () => controller.refreshHomeRequests(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -126,8 +125,10 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                     }
                     return activeSubscription(
                       ontap: () {
-
-                        Get.toNamed('/plan',arguments: {'planName' : active.planName});
+                        Get.toNamed(
+                          '/plan',
+                          arguments: {'planName': active.planName},
+                        );
                       },
                       title: 'Active Subscription',
                       price: active.planName,
@@ -175,7 +176,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                     }
 
                     return ListView.builder(
-                      shrinkWrap: true, // <-- Yeh add karna zaroori hai
+                      shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.only(bottom: 12.h),
                       itemCount: list.length,
@@ -186,12 +187,9 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                           authorName: request.reader.fullName,
                           date: request.requestDate,
                           authorDetail: () {
-                            Navigator.of(context).pushNamed(
-                              '/requestDetail',
-                              arguments: {
-                                'from': 'home',
-                                'autographRequestId': request.id,
-                              },
+
+                            Get.find<AuthorBottomNavController>().changeIndex(
+                              1,
                             );
                           },
                           bookName: request.bookTitle,

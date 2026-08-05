@@ -97,9 +97,13 @@ class PendingRequest extends StatelessWidget {
                     SizedBox(height: 0.5.h),
                     FormattedRequestDate(
                       dateString: date,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400,
+                      dateFormat: 'dd MMM, yyyy',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                      color: secondryColor.withOpacity(0.7),
+
                     ),
+
                     SizedBox(height: 0.6.h),
                   ],
                 ),

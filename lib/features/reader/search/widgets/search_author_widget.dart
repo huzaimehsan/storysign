@@ -61,7 +61,7 @@ class SearchAuthorCard extends StatelessWidget {
               width: 9.8.h,
               decoration: BoxDecoration(
                 border: (path.isEmpty || path == "null")
-                    ? Border.all(color: buttonColor, width: 1.2)
+                    ? Border.all(color: Color(0xFFACACAC), width: 1.2)
                     : null,
                 shape: BoxShape.circle,
               ),

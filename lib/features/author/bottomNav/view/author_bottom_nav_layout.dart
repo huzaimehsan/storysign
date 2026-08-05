@@ -31,13 +31,7 @@ import '../../request/binding/request_detail_binding.dart';
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
 
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
+
 
   // // Tab 0 (Home) ka initial route tree
   // Route _buildHomeRoute(RouteSettings settings) {
@@ -118,7 +112,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         final currentNavigator =
-            _navigatorKeys[controller.currentIndex.value].currentState;
+            controller.navigatorKeys[controller.currentIndex.value].currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
         }
@@ -131,18 +125,18 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
             children: [
 
               Navigator(
-                key: _navigatorKeys[0],
+                key: controller.navigatorKeys[0],
                 onGenerateRoute: (_) =>
                     MaterialPageRoute(builder: (_) => AuthorHomeScreen()),
               ),
               // Tab 1: Search
               Navigator(
-                key: _navigatorKeys[1],
+                key: controller.navigatorKeys[1],
                 onGenerateRoute: _buildRequestRoute,
               ),
               // Tab 2: Library
               Navigator(
-                key: _navigatorKeys[2],
+                key: controller.navigatorKeys[2],
                 onGenerateRoute: _buildDeliveredRoute,
               ),
 
@@ -161,7 +155,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               ),
 
               Navigator(
-                key: _navigatorKeys[4],
+                key: controller.navigatorKeys[4],
                 onGenerateRoute: (RouteSettings settings) {
                   return MaterialPageRoute(
                     builder: (_) => const AuthorProfileScreen(),

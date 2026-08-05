@@ -201,7 +201,8 @@ class HomeController extends GetxController {
       errorMessage.value = '';
 
       final query = searchQuery.value.trim();
-      final String endpoint = '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
+      final String endpoint =
+          '${ApiEndPoints.allAuthor}${Uri.encodeQueryComponent(query)}';
       final response = await BaseService().baseGetAPI(
         endpoint,
         loading: false,

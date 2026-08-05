@@ -1,7 +1,7 @@
 class LocalDBKeys {
   static const String TOKEN = "TOKEN";
   static const String FCMTOKEN = "FCMTOKEN";
-  static const String FIRSTTIMEOPENAPP = "FIRSTTIMEOPENAPP";
+ 
   static const String USERTYPE = "USERTYPE";
   static const String JOINDATE = "JOINDATE";
   static const String KHANTAR = "KHANTAR";
@@ -14,14 +14,13 @@ class LocalDBKeys {
   static const String PHONENUMBER = "PHONENUMBER";
   static const String STATE = "STATE";
   static const String DEVICETOKEN = "DEVICETOKEN";
-  static const String DEVICESERIAL = "DEVICESERIAL";
-  static const String ISMEMEBER = "ISMEMEBER";
-  static const String ISMEMEBERAPPROVED = "ISMEMEBERAPPROVED";
-  static const String REMEMBERME = "REMEMBERME";
+  static const String SUBSCRITPIONPLAN = "SUBSCRITPIONPLAN";
 
 
-  static const String USERDATA = "USERDATA";
 
 
-  static const String SELECTEDLANGUAGE = "SELECTEDLANGUAGE";
+
+
+
+
 }

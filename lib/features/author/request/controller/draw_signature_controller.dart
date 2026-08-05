@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:signature/signature.dart';
 import 'package:storysign/constants/color_constants.dart';
@@ -16,6 +20,9 @@ class DrawSignatureController extends GetxController {
   // Mode can be 'pencil' or 'finger'
   final RxString signatureMode = 'pencil'.obs;
   final RxBool isSignatureEmpty = true.obs;
+  final Rxn<Offset> fingerprintPosition = Rxn<Offset>();
+  final RxBool isFingerprintPlaced = false.obs;
+  final GlobalKey canvasKey = GlobalKey();
 
   @override
   void onInit() {
@@ -67,7 +74,55 @@ class DrawSignatureController extends GetxController {
     signatureController.clear();
   }
 
-  void confirmSignature(BuildContext context) async {
+  void placeFingerprint(Offset position) {
+    fingerprintPosition.value = position;
+    isFingerprintPlaced.value = true;
+  }
+
+  void resetFingerprint() {
+    fingerprintPosition.value = null;
+    isFingerprintPlaced.value = false;
+  }
+
+  Future<void> confirmSignature(BuildContext context, GlobalKey repaintKey) async {
+    if (signatureMode.value == 'finger') {
+      if (!isFingerprintPlaced.value) {
+        Get.snackbar(
+          'Fingerprint Required',
+          'Please place your fingerprint first.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      final boundary = repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) {
+        Get.snackbar(
+          'Export Error',
+          'Unable to capture fingerprint canvas.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData?.buffer.asUint8List();
+
+      if (bytes != null && context.mounted) {
+        if (Get.isRegistered<PlaceSignatureController>()) {
+          Get.delete<PlaceSignatureController>(force: true);
+        }
+        RequestService.find.signatureBytes = bytes;
+        Navigator.of(context).pushNamed('/placeSignature', arguments: bytes);
+      }
+      return;
+    }
+
     if (signatureController.isNotEmpty) {
       final bytes = await signatureController.toPngBytes();
 

@@ -11,6 +11,7 @@ class ReaderLibraryBookDetailModel {
   final num feeAmount;
   final String authorName;
   final String? authorProfilePicture;
+  final String personalMessage;
 
   ReaderLibraryBookDetailModel({
     required this.id,
@@ -25,11 +26,15 @@ class ReaderLibraryBookDetailModel {
     required this.feeAmount,
     required this.authorName,
     this.authorProfilePicture,
+    required this.personalMessage,
   });
 
   factory ReaderLibraryBookDetailModel.fromJson(Map<String, dynamic> json) {
     final author = json['author'];
-    final authorName = (author is Map<String, dynamic> ? author['fullName'] : null) ?? json['authorName'] ?? '';
+    final authorName =
+        (author is Map<String, dynamic> ? author['fullName'] : null) ??
+        json['authorName'] ??
+        '';
 
     return ReaderLibraryBookDetailModel(
       id: json['id']?.toString() ?? '',
@@ -43,7 +48,9 @@ class ReaderLibraryBookDetailModel {
       isPaid: json['isPaid'] == true,
       feeAmount: json['feeAmount'] ?? 0,
       authorName: authorName.toString(),
-      authorProfilePicture: (author is Map ? author['profilePicture'] : null)?.toString(),
+      authorProfilePicture: (author is Map ? author['profilePicture'] : null)
+          ?.toString(),
+      personalMessage: json['personalMessage']?.toString() ?? '',
     );
   }
 }

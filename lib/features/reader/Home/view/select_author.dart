@@ -63,24 +63,33 @@ class SelectAuthor extends GetView<SelectAuthorController> {
 
               final authorsList = controller.filteredAuthors;
               return Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: authorsList.length,
-                  itemBuilder: (context, index) {
-                    final author = authorsList[index];
-                    const active = true;
-                    return WidgetSelectAuthor(
-                      imagePath: author.profilePicture?.toString() ?? "",
-                      bookTitle: author.fullName,
-                      date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
-                      isActive: active,
-                      ontap: () {
-                        if (active) {
-                          Get.back(result: author.id);
-                        }
-                      },
-                    );
-                  },
+                child: RefreshIndicator(
+                  onRefresh: () =>
+                    controller.loadAllData(),
+                  backgroundColor :containerColor,
+                  color: white,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: authorsList.length,
+                    itemBuilder: (context, index) {
+                      final author = authorsList[index];
+                      const active = true;
+                      return WidgetSelectAuthor(
+                        imagePath: author.profilePicture?.toString() ?? "",
+                        bookTitle: author.fullName,
+                        date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
+                        isActive: active,
+                        ontap: () {
+                          if (active) {
+                            Get.back(result: {
+                              'id': author.id,
+                              'name': author.fullName,
+                            });
+                          }
+                        },
+                      );
+                    },
+                  ),
                 ),
               );
             }),
