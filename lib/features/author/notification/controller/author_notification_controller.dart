@@ -11,7 +11,8 @@ import '../../../shared/notification/controller/notification_screen_controller.d
 class AuthorNotificationController extends NotificationScreenController {
   @override
   var isNotificationsLoading = false.obs;
-
+RxInt currentPage=0.obs;
+  RxInt totalPages=0.obs;
   @override
   var notificationList = <NotificationModel>[].obs;
 
@@ -31,12 +32,12 @@ class AuthorNotificationController extends NotificationScreenController {
 
   final BaseService baseService = BaseService();
 
-  Future<void> getNotifications() async {
+  Future<void> getNotifications({int page = 1, int limit = 20}) async {
     try {
       isNotificationsLoading.value = true;
 
       final Map<String, dynamic> response = await baseService.baseGetAPI(
-        ApiEndPoints.authorNotifications,
+        ApiEndPoints.authorNotificationsList(page: page ,limit: limit),
         loading: false,
       );
 
@@ -44,16 +45,14 @@ class AuthorNotificationController extends NotificationScreenController {
         List<dynamic> list = response['items'] ?? [];
 
         final allNotifications = list
-            .map(
-              (item) =>
-                  NotificationModel.fromJson(item as Map<String, dynamic>),
-            )
+            .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
             .toList();
 
-        notificationList.value = allNotifications
-            .where((n) => !n.isRead)
-            .toList();
+        notificationList.value = allNotifications.where((n) => !n.isRead).toList();
         unreadCount.value = notificationList.length;
+
+        currentPage.value = response['page'] ?? 1;         // ✅ optional
+        totalPages.value = response['totalPages'] ?? 1;    // ✅ optional
 
         debugPrint("Notifications loaded: ${notificationList.length}");
       } else {
@@ -66,7 +65,6 @@ class AuthorNotificationController extends NotificationScreenController {
       isNotificationsLoading.value = false;
     }
   }
-
   @override
   Future<void> markAllAsRead() async {
     try {

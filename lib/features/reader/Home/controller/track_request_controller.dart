@@ -22,64 +22,48 @@ class TrackRequestController extends GetxController {
   RxString sortBy = "None".obs;
   RxString filterStatus = "All".obs;
   RxString searchQuery = "".obs;
+  RxBool isLoadingMore = false.obs;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
-    ever(selectedTab, (_) => fetchTrackRequestData());
+    scrollController.addListener(_onScroll);
+    ever(selectedTab, (_) {
+      currentPage.value = 1;
+      fetchTrackRequestData();
+    });
+    ever(filterStatus, (_) {
+      currentPage.value = 1;
+      fetchTrackRequestData();
+    });
     fetchTrackRequestData();
   }
 
-  //
-  // Future<void> fetchTrackRequestData() async {
-  //   try {
-  //     trackRequestLoading.value = true;
-  //     errorMessage.value = '';
-  //
-  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-  //     if (token.isEmpty) {
-  //       errorMessage.value = 'Token not found';
-  //       Utils.showToast('Please login again', true);
-  //       return;
-  //     }
-  //
-  //     final uri = Uri.parse('${BaseService().baseURL}${ApiEndPoints.trackRequest}');
-  //     final response = await http.get(uri, headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer $token',
-  //     });
-  //
-  //     if (response.statusCode >= 200 && response.statusCode < 300) {
-  //       final responseBody = jsonDecode(response.body);
-  //       final Map<String, dynamic> data = responseBody is Map && responseBody['data'] is Map
-  //           ? responseBody['data']
-  //           : responseBody;
-  //
-  //       final trackRequestData = TrackRequestModel.fromJson(data);
-  //       trackRequest.assignAll(trackRequestData.items);
-  //       currentPage.value = trackRequestData.page;
-  //       totalPages.value = trackRequestData.totalPages;
-  //       totalItems.value = trackRequestData.total;
-  //     } else {
-  //       Utils.showToast('Failed to load data', true);
-  //     }
-  //   } catch (e) {
-  //     errorMessage.value = 'Something went wrong: $e';
-  //     Utils.showToast(errorMessage.value, true);
-  //   } finally {
-  //     trackRequestLoading.value = false;
-  //   }
-  // }
-  Future<void> fetchTrackRequestData() async {
+  Future<void> fetchTrackRequestData({bool loadMore = false}) async {
     try {
-      trackRequestLoading.value = true;
-      errorMessage.value = '';
+      if (loadMore) {
+        isLoadingMore.value = true;
+      } else {
+        trackRequestLoading.value = true;
+        errorMessage.value = '';
+      }
 
-      final statusFilter = selectedTab.value == 'All'
+      final activeStatus = filterStatus.value != 'All'
+          ? filterStatus.value
+          : selectedTab.value;
+
+      final statusFilter = activeStatus.toLowerCase() == 'all'
           ? null
-          : selectedTab.value == 'In Process'
-              ? 'in_progress'
-              : 'delivered';
+          : activeStatus.toLowerCase() == 'submitted'
+              ? 'submitted'
+              : activeStatus.toLowerCase() == 'in process'
+                  ? 'in_progress'
+                  : activeStatus.toLowerCase() == 'delivered'
+                      ? 'delivered'
+                      : activeStatus.toLowerCase() == 'rejected'
+                          ? 'rejected'
+                          : null;
 
       final endpoint = statusFilter != null
           ? '${ApiEndPoints.trackRequest}?page=${currentPage.value}&limit=10&status=${Uri.encodeQueryComponent(statusFilter)}'
@@ -97,7 +81,11 @@ class TrackRequestController extends GetxController {
             : response;
 
         final trackRequestData = TrackRequestModel.fromJson(data);
-        trackRequest.assignAll(trackRequestData.items);
+        if (loadMore) {
+          trackRequest.addAll(trackRequestData.items);
+        } else {
+          trackRequest.assignAll(trackRequestData.items);
+        }
         currentPage.value = trackRequestData.page;
         totalPages.value = trackRequestData.totalPages;
         totalItems.value = trackRequestData.total;
@@ -110,7 +98,11 @@ class TrackRequestController extends GetxController {
       errorMessage.value = 'Something went wrong: $e';
       Utils.showToast(errorMessage.value, true);
     } finally {
-      trackRequestLoading.value = false;
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        trackRequestLoading.value = false;
+      }
     }
   }
 
@@ -121,7 +113,25 @@ class TrackRequestController extends GetxController {
   }
 
   Future<void> refreshRequests() async {
+    currentPage.value = 1;
     await fetchTrackRequestData();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 120 &&
+        !isLoadingMore.value &&
+        !trackRequestLoading.value &&
+        currentPage.value < totalPages.value) {
+      currentPage.value++;
+      fetchTrackRequestData(loadMore: true);
+    }
+  }
+
+  @override
+  void onClose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.onClose();
   }
 
   List<NewBookItem> get filteredTrackRequest {
@@ -130,8 +140,11 @@ class TrackRequestController extends GetxController {
 
     final filteredByTab = trackRequest.where((book) {
       final status = book.status.toLowerCase();
+      if (tab == 'submitted') {
+        return status == 'submitted';
+      }
       if (tab == 'in process') {
-        return status == 'in_process' || status == 'in process';
+        return status == 'in_progress' || status == 'in process';
       }
       if (tab == 'delivered') {
         return status == 'delivered';

@@ -37,7 +37,7 @@ class SubscriptionPlanController extends GetxController {
 
       final response = await BaseService().baseGetAPI(
         endpoint,
-        loading: false, // Optional: if you want the controller to handle loading
+        loading: false,
       );
 
       if (response['success'] == true) {

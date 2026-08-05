@@ -65,10 +65,10 @@ class RequestDetailController extends GetxController {
     }
   }
 
-  // Getter mein .value lagayein
+
   bool get isFromDelivered => sourceScreen.value == 'all_delivered';
 
-  // Single Autograph Request Details fetch karne ke liye Rxn variable
+
   Rxn<RequestDetailModel> selectedRequestDetail = Rxn<RequestDetailModel>();
   var isFetchDetailLoading = false.obs;
 

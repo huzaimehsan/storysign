@@ -325,7 +325,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                     controller.selectedAuthorName.value = '';
                                     Get.back();
                                   },
-                                  colors: buttonColor,
+                                  colors: btnColor,
                                   height: 5.2.h,
                                   fontFamily: 'Poppins',
                                   width: double.infinity,

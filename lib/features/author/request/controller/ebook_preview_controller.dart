@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 
 class EbookPreviewController extends GetxController {
@@ -20,16 +15,9 @@ class EbookPreviewController extends GetxController {
   final RxDouble zoomLevel = 1.0.obs;
   final RxBool isLoading = true.obs;
   final BaseService baseService = BaseService();
-  final RxBool isFetching = true.obs;
   final RxString bookPdfUrl = ''.obs;
-  final RxString errorMessage = ''.obs;
   late String autographRequestId;
   bool _isInitialized = false;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void initWithId(String id, {String bookPdf = ''}) {
     if (_isInitialized) return;
@@ -66,8 +54,9 @@ class EbookPreviewController extends GetxController {
     try {
       final response = await baseService.basePostAPI(
         ApiEndPoints.acceptAutographRequest(autographRequestId),
-        {}, // agar body chahiye to yahan pass karo
+        {},
         loading: true,
+        showErrorToast: !skipPdfUpdate,
       );
 
       print('✅ ACCEPT RESPONSE: $response');

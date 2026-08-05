@@ -134,9 +134,19 @@ class ReaderLibrary extends GetView<ReaderController> {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: books.length,
+                    itemCount:
+                        books.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == books.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: CircularProgressIndicator(color: buttonColor),
+                          ),
+                        );
+                      }
                       final book = books[index];
 
                       final DateTime dateTime = DateTime.parse(book.uploadDate);

@@ -69,7 +69,7 @@ class NotificationScreen extends StatelessWidget {
 
                   return ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(bottom: 20.h),
+                    padding: EdgeInsets.only(bottom: 12.h),
                     itemCount: notificationController.length,
                     itemBuilder: (context, index) {
                       final data = notificationController[index];

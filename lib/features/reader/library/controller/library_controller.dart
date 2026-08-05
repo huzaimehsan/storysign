@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
@@ -20,6 +22,12 @@ class ReaderController extends GetxController {
 
   RxBool isLibrary = false.obs;
 
+  RxInt currentPage = 1.obs;
+  RxInt totalPages = 1.obs;
+  RxInt totalItems = 0.obs;
+  RxBool isLoadingMore = false.obs;
+  final ScrollController scrollController = ScrollController();
+
   var booksList = <BookItem>[].obs;
   late Rx<List<BookItem>> filteredBooksRx;
 
@@ -35,6 +43,7 @@ class ReaderController extends GetxController {
     ever(searchQuery, (_) => _updateFilteredBooks());
     ever(sortBy, (_) => _updateFilteredBooks());
     ever(filterStatus, (_) => _updateFilteredBooks());
+    scrollController.addListener(_onScroll);
 
     // Fetch all books at once so local filtering works for all tabs
     fetchBooksData(status: 'all');
@@ -42,6 +51,38 @@ class ReaderController extends GetxController {
 
   void _updateFilteredBooks() {
     filteredBooksRx.value = _getFilteredBooks();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 120 &&
+        !isLoadingMore.value &&
+        !isLibrary.value &&
+        currentPage.value < totalPages.value) {
+      currentPage.value++;
+      fetchBooksData(status: _currentFetchStatus(), loadMore: true);
+    }
+  }
+
+  @override
+  void onClose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  String _currentFetchStatus() {
+    if (filterStatus.value != 'All') {
+      return filterStatus.value.toLowerCase();
+    }
+
+    if (selectedTab.value == 'Signed') {
+      return 'signed';
+    } else if (selectedTab.value == 'Unsigned') {
+      return 'unsigned';
+    }
+
+    return 'all';
   }
 
   List<BookItem> _getFilteredBooks() {
@@ -95,11 +136,11 @@ class ReaderController extends GetxController {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sortBy.value == "Date Newest") {
       books.sort(
-        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
       );
     } else if (sortBy.value == "Date Oldest") {
       books.sort(
-        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
       );
     }
 
@@ -164,11 +205,11 @@ class ReaderController extends GetxController {
       books.sort((a, b) => b.title.compareTo(a.title));
     } else if (sort == "Date Newest") {
       books.sort(
-        (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
+            (a, b) => _parseDate(b.uploadDate).compareTo(_parseDate(a.uploadDate)),
       );
     } else if (sort == "Date Oldest") {
       books.sort(
-        (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
+            (a, b) => _parseDate(a.uploadDate).compareTo(_parseDate(b.uploadDate)),
       );
     }
 
@@ -231,21 +272,19 @@ class ReaderController extends GetxController {
   }
 
   Future<void> refreshRequests() async {
-    final tab = selectedTab.value;
-    if (tab == "Signed") {
-      await fetchBooksData(status: 'signed');
-    } else if (tab == "Unsigned") {
-      await fetchBooksData(status: 'unsigned');
-    } else {
-      await fetchBooksData(status: 'all');
-    }
+    currentPage.value = 1;
+    await fetchBooksData(status: _currentFetchStatus());
   }
 
   // 'status' parameter add karein (default 'all' rakhein)
-  Future<void> fetchBooksData({String status = 'all'}) async {
+  Future<void> fetchBooksData({String status = 'all', bool loadMore = false}) async {
     try {
-      isLibrary.value = true;
-      booksList.clear(); // Clear previous data
+      if (loadMore) {
+        isLoadingMore.value = true;
+      } else {
+        isLibrary.value = true;
+        booksList.clear(); // Clear previous data
+      }
 
       final token =
           SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
@@ -254,25 +293,27 @@ class ReaderController extends GetxController {
         return;
       }
 
-      // Handle 'all' status by fetching both signed and unsigned
-      if (status == 'all') {
-        await _fetchBooksWithStatus('signed');
-        await _fetchBooksWithStatus('unsigned');
-      } else if (status.isNotEmpty) {
-        await _fetchBooksWithStatus(status);
-      }
+      await _fetchBooksWithStatus(status, loadMore: loadMore);
     } catch (e) {
       Utils.showToast('Something went wrong: $e', true);
     } finally {
-      isLibrary.value = false;
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isLibrary.value = false;
+      }
     }
   }
 
-  Future<void> _fetchBooksWithStatus(String status) async {
+  Future<void> _fetchBooksWithStatus(String status,
+      {bool loadMore = false}) async {
     try {
-       final Map<String, String> queryParams = {'page': '1', 'limit': '10'};
+      final Map<String, String> queryParams = {
+        'page': currentPage.value.toString(),
+        'limit': '10',
+      };
 
-      if (status == 'signed' || status == 'unsigned') {
+      if (status != 'all') {
         queryParams['status'] = status;
       }
 
@@ -286,14 +327,22 @@ class ReaderController extends GetxController {
       debugPrint('DEBUG: Response: $response');
 
       if (response['success'] == true) {
-        if (response['items'] != null) {
-          final BookResponseModel model = BookResponseModel.fromJson(response);
-          debugPrint('DEBUG: Parsed ${model.items.length} books');
+        final BookResponseModel model = BookResponseModel.fromJson(response);
+        debugPrint('DEBUG: Parsed ${model.items.length} books');
+
+        if (loadMore) {
           booksList.addAll(model.items);
-          debugPrint('DEBUG: Total books after adding: ${booksList.length}');
-        } else if (response['message'] != null) {
-          Utils.showToast(response['message'], false);
+        } else {
+          booksList.assignAll(model.items);
         }
+
+        currentPage.value = model.page;
+        totalPages.value = model.totalPages;
+        totalItems.value = model.total;
+
+        debugPrint('DEBUG: Total books after adding: ${booksList.length}');
+      } else if (response['message'] != null) {
+        Utils.showToast(response['message'], false);
       }
       // baseGetAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
@@ -302,65 +351,65 @@ class ReaderController extends GetxController {
     }
   }
 
-  // Future<void> _fetchBooksWithStatus(String status) async {
-  //   try {
-  //     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-  //     if (token.isEmpty) {
-  //       print('DEBUG: Token is empty');
-  //       return;
-  //     }
-  //
-  //     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
-  //
-  //     // Build query parameters - only add status if it's valid (signed or unsigned)
-  //     final Map<String, String> queryParams = {
-  //       'page': '1',
-  //       'limit': '10',
-  //     };
-  //
-  //     // Only add status if it's signed or unsigned (not 'all')
-  //     if (status == 'signed' || status == 'unsigned') {
-  //       queryParams['status'] = status;
-  //     }
-  //
-  //     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-  //     print('DEBUG: API URL: $uri');
-  //
-  //     final response = await http.get(
-  //       uri,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //     );
-  //
-  //     print('DEBUG: Status Code: ${response.statusCode}');
-  //     print('DEBUG: Response Body: ${response.body}');
-  //
-  //     if (response.statusCode >= 200 && response.statusCode < 300) {
-  //       final responseBody = jsonDecode(response.body);
-  //       print('DEBUG: Decoded Response: $responseBody');
-  //
-  //       if (responseBody['items'] != null) {
-  //         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
-  //         print('DEBUG: Parsed ${model.items.length} books');
-  //         booksList.addAll(model.items);
-  //         print('DEBUG: Total books after adding: ${booksList.length}');
-  //       } else if (responseBody['message'] != null) {
-  //         Utils.showToast(responseBody['message'], false);
-  //       }
-  //     } else {
-  //       try {
-  //         final errorBody = jsonDecode(response.body);
-  //         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
-  //         Utils.showToast(errorMsg, true);
-  //       } catch (_) {
-  //         Utils.showToast('Failed to load books: ${response.statusCode}', true);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('DEBUG: Exception: $e');
-  //     Utils.showToast('Error: $e', true);
-  //   }
-  // }
+// Future<void> _fetchBooksWithStatus(String status) async {
+//   try {
+//     final token = SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
+//     if (token.isEmpty) {
+//       print('DEBUG: Token is empty');
+//       return;
+//     }
+//
+//     final baseUrl = '${BaseService().baseURL}${ApiEndPoints.listMyBook}';
+//
+//     // Build query parameters - only add status if it's valid (signed or unsigned)
+//     final Map<String, String> queryParams = {
+//       'page': '1',
+//       'limit': '10',
+//     };
+//
+//     // Only add status if it's signed or unsigned (not 'all')
+//     if (status == 'signed' || status == 'unsigned') {
+//       queryParams['status'] = status;
+//     }
+//
+//     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
+//     print('DEBUG: API URL: $uri');
+//
+//     final response = await http.get(
+//       uri,
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer $token',
+//       },
+//     );
+//
+//     print('DEBUG: Status Code: ${response.statusCode}');
+//     print('DEBUG: Response Body: ${response.body}');
+//
+//     if (response.statusCode >= 200 && response.statusCode < 300) {
+//       final responseBody = jsonDecode(response.body);
+//       print('DEBUG: Decoded Response: $responseBody');
+//
+//       if (responseBody['items'] != null) {
+//         final BookResponseModel model = BookResponseModel.fromJson(responseBody);
+//         print('DEBUG: Parsed ${model.items.length} books');
+//         booksList.addAll(model.items);
+//         print('DEBUG: Total books after adding: ${booksList.length}');
+//       } else if (responseBody['message'] != null) {
+//         Utils.showToast(responseBody['message'], false);
+//       }
+//     } else {
+//       try {
+//         final errorBody = jsonDecode(response.body);
+//         final errorMsg = errorBody['message'] ?? 'Failed to load books: ${response.statusCode}';
+//         Utils.showToast(errorMsg, true);
+//       } catch (_) {
+//         Utils.showToast('Failed to load books: ${response.statusCode}', true);
+//       }
+//     }
+//   } catch (e) {
+//     print('DEBUG: Exception: $e');
+//     Utils.showToast('Error: $e', true);
+//   }
+// }
 }

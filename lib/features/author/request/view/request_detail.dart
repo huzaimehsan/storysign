@@ -16,25 +16,17 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    // Read arguments — works with both MaterialPageRoute and GetPageRoute
-    final modalArgs = ModalRoute.of(context)?.settings.arguments;
-    final getArgs = Get.arguments;
-    final rawArgs = (modalArgs != null) ? modalArgs : getArgs;
-    final args = rawArgs is Map<String, dynamic>
-        ? rawArgs
-        : (rawArgs is Map ? Map<String, dynamic>.from(rawArgs) : null);
+    // Get arguments from ModalRoute when using Navigator.pushNamed()
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String from = args?['from'] ?? '';
+    final String id = args?['autographRequestId'] ?? '';
 
-    final String from = args?['from']?.toString() ?? '';
-    final String id = args?['autographRequestId']?.toString() ?? '';
+    print("RECEIVED ARGS - From: $from, ID: $id");
 
-    // Defer initData to AFTER build — calling it directly in build() triggers
-    // Obx state changes mid-frame, causing "setState() called during build" error.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.initData(from, id);
-    });
+    // Initialize controller with data
+    controller.initData(from, id);
 
     final bool isFromDelivered = from == 'all_delivered';
-
 
     return Scaffold(
       body: SafeArea(
@@ -71,7 +63,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     child: customText(
                       text: "No request details found",
                       fontSize: 14.sp,
-                      fontFamily: 'Poppins',
+                    fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
                       color: greyColor,
                     ),
@@ -107,14 +99,13 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                       letterSpacing: 0.0,
                       text: "Reader",
                       fontSize: 16.sp,
-                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
                       color: whiteColor,
                       textAlign: TextAlign.start,
                     ),
                   ],
                 ),
-              ),    SizedBox(height: 0.5.h),
+              ),
 
               AllPendingRequest(
                 imagePath: requestDetail.reader.profilePicture,
@@ -130,7 +121,6 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                 child: customText(
                   text: "Ebook Detail",
                   fontSize: 16.sp,
-                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                   color: whiteColor,
                   textAlign: TextAlign.start,
@@ -141,7 +131,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               eBookDetail(
                 imagePath: requestDetail.coverImage,
                 bookName: requestDetail.bookTitle,
-                authorName: requestDetail.reader.fullName,
+                authorName: requestDetail.author.fullName,
               ),
 
               SizedBox(height: 2.h),
@@ -153,7 +143,6 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                   letterSpacing: 0.0,
                   text: "Personal Message",
                   fontSize: 16.sp,
-                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
                   color: whiteColor,
                   textAlign: TextAlign.start,
@@ -166,8 +155,9 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                 margin: EdgeInsets.symmetric(horizontal: 4.w),
               ),
 
-              if (!isFromDelivered)
-                Padding(
+              (!isFromDelivered
+                 )
+               ? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Column(
                     children: [
@@ -210,7 +200,22 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                       ),
                     ],
                   ),
-                ),
+                ) :  Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 10.h),
+          child: buttonWidget(
+          "Back To DeliveredScreen",
+          whiteColor,
+          onTap: () {
+          Get.back();
+          },
+          colors: btnColor,
+          height: 5.2.h,
+          fontFamily: 'Poppins',
+          width: double.infinity,
+          fontsize: 16.sp,
+          fontweight: FontWeight.w600,
+          ),
+          ),
 
               SizedBox(height: 2.h),
             ],

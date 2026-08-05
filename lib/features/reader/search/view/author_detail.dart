@@ -80,10 +80,9 @@ class AuthorDetail extends GetView<SearchPageController> {
                 ),
                 SizedBox(height: 10.h),
 
-
                 role != 'allAuthor'
                     ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
                         child: buttonWidget(
                           "Request Autograph",
                           whiteColor,
@@ -99,7 +98,22 @@ class AuthorDetail extends GetView<SearchPageController> {
                           fontweight: FontWeight.w600,
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 4.w),
+                      child: buttonWidget(
+                          "Back To Dashboard",
+                          whiteColor,
+                          onTap: () {
+                            Get.back();
+                          },
+                          colors: btnColor,
+                          height: 5.2.h,
+                          fontFamily: 'Poppins',
+                          width: double.infinity,
+                          fontsize: 16.sp,
+                          fontweight: FontWeight.w600,
+                        ),
+                    ),
               ],
             ],
           );

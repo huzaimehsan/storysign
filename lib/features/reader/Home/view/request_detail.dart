@@ -117,7 +117,7 @@ class RequestDetail extends GetView<ReaderDetailController> {
                       whiteColor,
                       onTap: data.isPaid
                           ? () {
-                              // JAB PEHLE SE PAID HAI, TAB DIALOG DIKHAYEIN
+
                               showSuccessDialog(
                                 context,
                                 desc:
@@ -144,14 +144,13 @@ class RequestDetail extends GetView<ReaderDetailController> {
                                     );
 
                                 if (isPaid) {
-                                  // PAYMENT SUCCESS: Bas UI update karein (dialog nahi dikhana)
-                                  // Obx rebuild hoga aur button/price khud update ho jayenge
+
                                   controller
                                       .selectedRequest
                                       .value = data.copyWith(
                                     isPaid: true,
                                     status:
-                                        "Paid", // Agar aap status bhi update karna chahte hain
+                                        "Paid",
                                   );
                                 }
                               } else {

@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
+import 'cover_image_widget.dart';
 import 'customText_widget.dart';
 import 'formatted_date_widget.dart';
 
@@ -31,21 +30,6 @@ class AuthorInfoCard extends StatelessWidget {
       dateStr = date.toString().replaceFirst('Joined', '').trim();
     }
 
-    final String path = imagePath?.toString() ?? "";
-
-    // 1. ImageProvider define karein
-    ImageProvider? imageProvider;
-    bool isPlaceholder = (path.isEmpty || path == "null");
-
-    if (!isPlaceholder) {
-      if (path.startsWith('http')) {
-        imageProvider = NetworkImage(path);
-      } else if (path.startsWith('/')) {
-        imageProvider = FileImage(File(path));
-      } else {
-        imageProvider = AssetImage(path);
-      }
-    }
     return Container(
       width: 100.w,
       margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
@@ -70,35 +54,17 @@ class AuthorInfoCard extends StatelessWidget {
             width: 14.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isPlaceholder
-                  ? Colors.grey.withOpacity(0.2)
-                  : buttonColor.withOpacity(0.05),
-              border: isPlaceholder
-                  ? Border.all(color: buttonColor, width: 1.2)
-                  : null,
+              color: white,
             ),
             child: ClipOval(
-              child: isPlaceholder
-                  ? Center(
-                      child: Icon(
-                        Icons.person_rounded,
-                        color: buttonColor.withOpacity(0.6),
-                        size: 9.w,
-                      ),
-                    )
-                  : Image(
-                      image: imageProvider!,
-                      fit: BoxFit.cover,
-                      width: 14.w,
-                      height: 14.w,
-                      errorBuilder: (_, __, ___) => Center(
-                        child: Icon(
-                          Icons.person_rounded,
-                          color: buttonColor.withOpacity(0.6),
-                          size: 9.w,
-                        ),
-                      ),
-                    ),
+              child: CoverImageWidget(
+                assetPath: 'assets/icon/book_cover_placeholder.png',
+                imageUrl: imagePath,
+                height: 14.w,
+                width: 14.w,
+                fit: BoxFit.cover,
+                fallbackIcon: Icons.person_rounded,
+              ),
             ),
           ),
 

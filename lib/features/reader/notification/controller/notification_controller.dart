@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,28 +34,24 @@ class NotificationController extends NotificationScreenController {
   }
 
   final BaseService baseService = BaseService();
-
-  Future<void> getNotifications() async {
+  Future<void> getNotifications({int page = 1, int limit = 20}) async {
     try {
       isNotificationsLoading.value = true;
 
       final Map<String, dynamic> response = await baseService.baseGetAPI(
-        ApiEndPoints.notifications,
+        ApiEndPoints.readerNotifications(page: page, limit: limit), // ✅
         loading: false,
         showErrorToast: false,
       );
 
       if (response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
-
         final allNotifications = list
             .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
             .toList();
 
         notificationList.value = allNotifications.where((n) => !n.isRead).toList();
         unreadCount.value = notificationList.length;
-
-        debugPrint("Notifications loaded: ${notificationList.length}");
       } else {
         Utils.showToast(response['message'] ?? "Failed to load", true);
       }
@@ -63,7 +61,6 @@ class NotificationController extends NotificationScreenController {
       isNotificationsLoading.value = false;
     }
   }
-
   @override // 👈 lagaya
   Future<void> markAllAsRead() async {
     try {

@@ -19,6 +19,7 @@ const textFeildContainColor = Color(0xFFFBF0E3);
 const bottomNavColor = Color(0xFFFFEBBC);
 
 const iconColor = Color(0xFFADADAD);
+const btnColor = Color(0xFF6B6A6A);
 
 
 const secondryColor = Color(0xFF3D3D3D);

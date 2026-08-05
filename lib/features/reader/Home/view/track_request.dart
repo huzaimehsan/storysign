@@ -124,9 +124,18 @@ class TrackRequest extends GetView<TrackRequestController> {
                     );
                   }
                   return ListView.builder(
+                    controller: controller.scrollController,
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: books.length,
+                    itemCount: books.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == books.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: CircularProgressIndicator(color: buttonColor),
+                          ),
+                        );
+                      }
                       final book = books[index];
 
                       // Safe Date Formatting
@@ -143,23 +152,23 @@ class TrackRequest extends GetView<TrackRequestController> {
                         formattedDate = "Joined: Invalid Date";
                       }
 
-                     return recentlySignedBooks(
+                      return recentlySignedBooks(
                         imageUrl: book.coverImage,
                         bookTitle: book.title,
                         authorName: book.author.fullName,
                         date: formattedDate,
-                       trackRequest: () {
+                        trackRequest: () {
 
-                         print("DEBUG: Sending book title: ${book.title}");
+                          print("DEBUG: Sending book title: ${book.title}");
 
 
-                         if (book != null) {
-                           Get.toNamed("/tracking", arguments: {'autographRequestId': book.id});
-                         }
-                         else {
+                          if (book != null) {
+                            Get.toNamed("/tracking", arguments: {'autographRequestId': book.id});
+                          }
+                          else {
 
-                         }
-                       },
+                          }
+                        },
 
 
                         status: book.status,
@@ -263,10 +272,10 @@ class TrackRequest extends GetView<TrackRequestController> {
 
   static const List<String> _statusOptions = [
     "All",
+    "Submitted",
     "Rejected",
-    "In process",
+    "In Process",
     "Delivered",
-
   ];
 
   PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {

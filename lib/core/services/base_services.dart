@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -48,6 +48,7 @@ class BaseService {
       dynamic body, {
         bool loading = true,
         bool? isStripe,
+        bool showErrorToast = true,
       }) async {
     if (loading) {
       EasyLoading.show(
@@ -58,6 +59,9 @@ class BaseService {
 
     if (!await checkInternetConnection()) {
       EasyLoading.dismiss();
+      if (showErrorToast) {
+        Utils.showToast("Check Internet Connection", true);
+      }
       return {'success': false, 'message': 'Check Internet Connection'};
     }
 
@@ -84,12 +88,12 @@ class BaseService {
         if (jsonData is List) {
           return {
             "success": true,
-            "data": jsonData, // List ko 'data' key mein dal diya
+            "data": jsonData,
             "statusCode": response.statusCode,
           };
         }
 
-        // Agar response pehle se hi Map hai
+
         return {
           "success": true,
           ...jsonData,
@@ -101,7 +105,9 @@ class BaseService {
       if (response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
 
-        Utils.showToast(_parseMessage(jsonData["message"]), true);
+        if (showErrorToast) {
+          Utils.showToast(_parseMessage(jsonData["message"]), true);
+        }
 
         return {
           "success": false,
@@ -110,15 +116,21 @@ class BaseService {
         };
       }
 
-      Utils.showToast("Something went wrong", true);
+      if (showErrorToast) {
+        Utils.showToast("Something went wrong", true);
+      }
       return {"success": false};
     } on TimeoutException {
       EasyLoading.dismiss();
-      Utils.showToast("Request timed out", true);
+      if (showErrorToast) {
+        Utils.showToast("Request timed out", true);
+      }
       return {"success": false};
     } catch (e) {
       EasyLoading.dismiss();
-      Utils.showToast("Unexpected error", true);
+      if (showErrorToast) {
+        Utils.showToast("Unexpected error", true);
+      }
       return {"success": false};
     }
   }
@@ -191,6 +203,90 @@ class BaseService {
         Utils.showToast("Something went wrong", true);
       }
       return {"success": false, "message": "Something went wrong"};
+    } on TimeoutException {
+      EasyLoading.dismiss();
+      Utils.showToast("Request timed out", true);
+      return {"success": false, "message": "Request timed out"};
+    } catch (e) {
+      EasyLoading.dismiss();
+      Utils.showToast("Unexpected error", true);
+      return {"success": false, "message": "Unexpected error"};
+    }
+  }
+
+  Future<Map<String, dynamic>> basePostMultipartAPI(
+      String endPoint,
+      Map<String, String> fields, {
+        Map<String, String>? filePaths,
+        bool loading = true,
+        bool? isStripe,
+      }) async {
+    if (loading) {
+      EasyLoading.show(
+        status: 'Please wait...',
+        maskType: EasyLoadingMaskType.black,
+      );
+    }
+
+    if (!await checkInternetConnection()) {
+      EasyLoading.dismiss();
+      return {'success': false, 'message': 'Check Internet Connection'};
+    }
+
+    try {
+      final uri = Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint");
+      final request = http.MultipartRequest('POST', uri);
+      final token = prefs.getString(LocalDBKeys.TOKEN);
+      if (token != null && token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      request.fields.addAll(fields);
+
+      if (filePaths != null) {
+        for (final entry in filePaths.entries) {
+          request.files.add(await http.MultipartFile.fromPath(entry.key, entry.value));
+        }
+      }
+
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final responseString = await streamedResponse.stream.bytesToString();
+
+      EasyLoading.dismiss();
+
+      print("POST MULTIPART URL: $uri");
+      print("Fields: $fields");
+      print("Files: ${filePaths?.keys.toList()}");
+      print("Status: ${streamedResponse.statusCode}");
+      print("Response: $responseString");
+
+      if (streamedResponse.statusCode >= 200 && streamedResponse.statusCode < 300) {
+        var jsonData = json.decode(responseString);
+        if (jsonData is List) {
+          return {
+            "success": true,
+            "data": jsonData,
+            "statusCode": streamedResponse.statusCode,
+          };
+        }
+        return {
+          "success": true,
+          ...jsonData,
+          "statusCode": streamedResponse.statusCode,
+        };
+      }
+
+      if (responseString.isNotEmpty) {
+        var jsonData = json.decode(responseString);
+        Utils.showToast(_parseMessage(jsonData["message"]), true);
+        return {
+          "success": false,
+          "message": jsonData["message"] ?? "Something went wrong",
+          "statusCode": streamedResponse.statusCode,
+        };
+      }
+
+      Utils.showToast("Something went wrong", true);
+      return {"success": false, "message": "Something went wrong", "statusCode": streamedResponse.statusCode};
     } on TimeoutException {
       EasyLoading.dismiss();
       Utils.showToast("Request timed out", true);
@@ -344,6 +440,7 @@ class BaseService {
       String endPoint, {
         String method = 'POST',
         bool? isStripe,
+        bool showErrorToast = true,
         Map<String, String>? headers,
       }) async {
     final request = http.MultipartRequest(

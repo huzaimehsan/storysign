@@ -39,6 +39,7 @@ class FinalReviewController extends GetxController {
 
       final request = await BaseService().buildMultipartRequest(
         ApiEndPoints.approveSendAutographRequest(autographRequestId),
+
       );
 
       print('⏳ APPROVE SEND API URL: ${request.url}');

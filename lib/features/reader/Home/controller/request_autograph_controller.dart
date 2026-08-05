@@ -1,22 +1,11 @@
-import 'package:get/get.dart';
-
-import 'package:get/get.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
@@ -112,51 +101,20 @@ class RequestAutographController extends GetxController {
               'bookId': bookId!,
             });
       } else {
-        final uri = Uri.parse(
-          '${BaseService().baseURL}${ApiEndPoints.requestAutoGraphHome}',
+        final filePaths = {
+          'bookPdf': bookPdfFile.value!.path,
+          'coverImage': bookCoverImage.value!.path,
+        };
+
+        response = await BaseService().basePostMultipartAPI(
+          ApiEndPoints.requestAutoGraphHome,
+          {
+            'authorId': authorId,
+            'personalMessage': personalMessageController.text.trim(),
+            'bookTitle': bookTitleControllerRequest.text.trim(),
+          },
+          filePaths: filePaths,
         );
-        final request = http.MultipartRequest('POST', uri);
-
-        final token = SharedPreferencesMethod.storage.getString(
-          LocalDBKeys.TOKEN,
-        );
-        request.headers['Authorization'] = 'Bearer $token';
-
-        request.fields['authorId'] = authorId;
-        request.fields['personalMessage'] = personalMessageController.text
-            .trim();
-        request.fields['bookTitle'] = bookTitleControllerRequest.text.trim();
-
-        request.files.add(
-          await http.MultipartFile.fromPath('bookPdf', bookPdfFile.value!.path),
-        );
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'coverImage',
-            bookCoverImage.value!.path,
-          ),
-        );
-
-        EasyLoading.show(
-          status: 'Sending...',
-          maskType: EasyLoadingMaskType.black,
-        );
-
-        final streamedResponse = await request.send();
-        final responseString = await streamedResponse.stream.bytesToString();
-        final responseMap = json.decode(responseString);
-
-        EasyLoading.dismiss();
-
-        debugPrint("API Response: $responseMap");
-
-        if (streamedResponse.statusCode == 200 ||
-            streamedResponse.statusCode == 201) {
-          response = {"success": true, ...responseMap};
-        } else {
-          Utils.showToast(responseMap['message'] ?? 'Request failed', true);
-          return null;
-        }
       }
 
       debugPrint("API Response: $response");

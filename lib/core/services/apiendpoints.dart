@@ -37,11 +37,15 @@ class ApiEndPoints {
   static const String helpSupport = "/reader/help";
   static const String authorHelpSupport = "/author/help";
   static const String authorFaqs = "/author/faqs";
-  static const String notifications = "/reader/notifications?page=1&limit=20";
+  static String readerNotifications({int page = 1, int limit = 20}) {
+    return '/reader/notifications?page=$page&limit=$limit';
+  }
 
-  static const String authorNotifications = "/author/notifications?page=1&limit=20";
+  static const String authorNotifications = "/author/notifications";
 
-
+  static String authorNotificationsList({int page = 1, int limit = 20}) {
+    return '/author/notifications?page=$page&limit=$limit';
+  }
   static const String profile = "/reader/profile";
 
   static const String authorProfile = "/author/profile";
