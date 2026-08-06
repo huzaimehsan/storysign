@@ -87,7 +87,7 @@ class AllPendingRequest extends StatelessWidget {
                     SizedBox(height: 0.4.h),
                     customText(
                       fontFamily: "Poppins",
-                      text: bookName,
+                      text:"Book : $bookName" ,
                       color: primaryColor.withOpacity(0.7),
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
@@ -166,7 +166,7 @@ Widget eBookDetail({
                 SizedBox(height: 0.4.h),
                 customText(
                   fontFamily: "Poppins",
-                  text:"Reader : $authorName" ,
+                  text:"Author : $authorName" ,
                   color: primaryColor.withOpacity(0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,

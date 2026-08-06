@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/widgets/cover_image_widget.dart';
+import 'package:storysign/widgets/customText_widget.dart';
 
 /// Widget 1: "Ready to Send" card — reader avatar + name, book cover + title
 class ReadyToSendCard extends StatelessWidget {
@@ -54,31 +55,26 @@ class ReadyToSendCard extends StatelessWidget {
               ),
               SizedBox(width: 4.w),
               Expanded(
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
+                child: Row(
+                  children: [
+                    customText(
+                      text: 'Reader: ',
                       color: primaryColor.withOpacity(0.7),
                       fontFamily: 'Poppins',
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w400,
                     ),
-                    children: [
-                      const TextSpan(
-                        text: 'Reader: ',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
+                    Expanded(
+                      child: customText(
                         text: readerName,
-                        style: const TextStyle(
-                          color: secondryColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
+                        color: secondryColor,
+                        fontFamily: 'Poppins',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        overFlow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -96,58 +92,39 @@ class ReadyToSendCard extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.15),
                 ),
                 clipBehavior: Clip.hardEdge,
-                child: bookImagePath.trim().isEmpty
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.2),
-                      )
-                    : (bookImagePath.startsWith('http://') ||
-                            bookImagePath.startsWith('https://')
-                        ? Image.network(
-                            bookImagePath,
-                            fit: BoxFit.cover,
-                            width: 12.w,
-                            height: 12.w,
-                            errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                          )
-                        : Image.asset(
-                            bookImagePath,
-                            fit: BoxFit.cover,
-                            width: 12.w,
-                            height: 12.w,
-                            errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                          )),
+                child: CoverImageWidget(
+                  assetPath: bookImagePath,
+                  imageUrl: bookImagePath.startsWith('http://') || bookImagePath.startsWith('https://')
+                      ? bookImagePath
+                      : null,
+                  fit: BoxFit.cover,
+                  width: 12.w,
+                  height: 12.w,
+                  fallbackIcon: Icons.book_rounded,
+                ),
               ),
               SizedBox(width: 4.w),
               Expanded(
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(
+                child: Row(
+                  children: [
+                    customText(
+                      text: 'Ebook: ',
                       color: primaryColor.withOpacity(0.7),
                       fontFamily: 'Poppins',
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w400,
                     ),
-                    children: [
-                      const TextSpan(
-                        text: 'Ebook: ',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
+                    Expanded(
+                      child: customText(
                         text: ebookTitle,
-                        style: const TextStyle(
-                          color: secondryColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
+                        color: secondryColor,
+                        fontFamily: 'Poppins',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        overFlow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],

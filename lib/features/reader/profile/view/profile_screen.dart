@@ -45,6 +45,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
 
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   child: Obx(() {
                     if (controller.isLoading.value) {
                       return SizedBox(

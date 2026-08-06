@@ -100,32 +100,33 @@ Widget profileHeaderCard({
               Row(
                 children: [
                   if (author == true)
-                    buttonWidget(
-                      plan,
-                      buttonColor,
-                      onTap: () {},
-                      colors: buttonColor.withOpacity(0.15),
-                      fontFamily: 'Poppins',
-                      height: 2.6.h,
-                      width: 22.w,
-                      borderColor: buttonColor,
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w600,
+                    Expanded(
+                      child: buttonWidget(
+                        plan,
+                        buttonColor,
+                        onTap: () {},
+                        colors: buttonColor.withOpacity(0.15),
+                        fontFamily: 'Poppins',
+                        height: 2.6.h,
+                        borderColor: buttonColor,
+                        fontsize: 13.sp,
+                        fontweight: FontWeight.w600,
+                      ),
                     ),
-                  SizedBox(width: 4.w),
+                  if (author == true) SizedBox(width: 2.w),
                   if (author == true)
-                    buttonWidget(
-                      "$autograph Autographs",
-                      buttonColor,
-                      onTap: () {},
-                      isShadow: true,
-                      colors: bottomNavColor,
-                      fontFamily: 'Poppins',
-                      height: 2.7.h,
-                      width: 30.w,
-
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w500,
+                    Expanded(
+                      child: buttonWidget(
+                        "$autograph Autographs",
+                        buttonColor,
+                        onTap: () {},
+                        isShadow: true,
+                        colors: bottomNavColor,
+                        fontFamily: 'Poppins',
+                        height: 2.7.h,
+                        fontsize: 13.sp,
+                        fontweight: FontWeight.w500,
+                      ),
                     ),
                 ],
               ),

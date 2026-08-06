@@ -33,8 +33,21 @@ class HomeScreen extends GetView<HomeController> {
         color: white,
         onRefresh: () => controller.refreshHomeRequests(),
         child: Scaffold(
-          body: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+          body: controller.errorMessage.value.isNotEmpty
+              ? SizedBox(
+                  height: 60.h,
+                  child: Center(
+                    child: customText(
+                      text: controller.errorMessage.value,
+                      color: greyColor,
+                      fontSize: 15.sp,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              : SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 7.h),
               child: Column(

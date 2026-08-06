@@ -75,9 +75,18 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               Expanded(
                 child: Obx(
                   () {
-                    final Map<String, dynamic>? args = Get.arguments;
-                    String? activePlanName = args?['planName'];
+                    // Resolve the active plan name from live controllers (always fresh after payment).
+                    // Falls back to stale args only when controllers haven't loaded yet (e.g. first sign-up).
+                    // Name-based matching is safe here because plans are pre-filtered by planType,
+                    // so within the visible list each plan name is unique.
+                    String? activePlanName;
 
+                    if (Get.isRegistered<AuthorHomeController>()) {
+                      activePlanName = Get.find<AuthorHomeController>()
+                          .activeSub
+                          .value
+                          ?.planName;
+                    }
                     if ((activePlanName == null || activePlanName.isEmpty) &&
                         Get.isRegistered<AuthorProfileController>()) {
                       activePlanName = Get.find<AuthorProfileController>()
@@ -85,12 +94,10 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                           .value
                           ?.activePlanName;
                     }
-                    if ((activePlanName == null || activePlanName.isEmpty) &&
-                        Get.isRegistered<AuthorHomeController>()) {
-                      activePlanName = Get.find<AuthorHomeController>()
-                          .activeSub
-                          .value
-                          ?.planName;
+                    // Last resort: use args (only present before controllers load)
+                    if (activePlanName == null || activePlanName.isEmpty) {
+                      final Map<String, dynamic>? navArgs = Get.arguments;
+                      activePlanName = navArgs?['planName']?.toString();
                     }
 
                     if (controller.isLoading.value) {
@@ -112,31 +119,30 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                     }
 
                     return RefreshIndicator(
-                      backgroundColor :containerColor,
+                      backgroundColor: containerColor,
                       color: white,
                       onRefresh: () => controller.fetchSubscriptionPlans(
-                        controller.isYearly.value ? 'yearly' : 'monthly'
+                        controller.isYearly.value ? 'yearly' : 'monthly',
                       ),
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         itemCount: controller.plans.length,
                         itemBuilder: (context, index) {
                           final plan = controller.plans[index];
-                          final isCurrentPlan = activePlanName != null &&
+
+                          // Compare by name (safe — list is already filtered by planType,
+                          // so no two visible plans can share the same name).
+                          final bool isCurrentPlan = activePlanName != null &&
                               activePlanName.isNotEmpty &&
                               plan.name.trim().toLowerCase() ==
                                   activePlanName.trim().toLowerCase();
 
-                          String getButtonText(){
-                            if (isCurrentPlan) {
-                              return 'Current Plan';
-                            }
-                            else if (activePlanName == null || activePlanName!.isEmpty || fromSignUp){
-                              return 'Select Plan';
-                            }
-                            else {
-                              return 'Upgrade to ${plan.name}';
-                            }
+                          String getButtonText() {
+                            if (isCurrentPlan) return 'Current Plan';
+                            if (activePlanName == null ||
+                                activePlanName.isEmpty ||
+                                fromSignUp) return 'Select Plan';
+                            return 'Upgrade to ${plan.name}';
                           }
 
                           return SubscriptionPlanCard(

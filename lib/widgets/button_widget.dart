@@ -74,12 +74,15 @@ Widget buttonWidget(
               ),
               SizedBox(width: 2.w),
             ],
-            customText(
-                text: text,
-                fontSize: fontsize != null ? fontsize : 17.sp,
-                fontFamily: fontFamily,
-                color: textColor,
-                fontWeight: fontweight ?? FontWeight.w500
+            Flexible(
+              child: customText(
+                  text: text,
+                  fontSize: fontsize != null ? fontsize : 17.sp,
+                  fontFamily: fontFamily,
+                  color: textColor,
+                  fontWeight: fontweight ?? FontWeight.w500,
+                  overFlow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ):
@@ -90,12 +93,15 @@ Widget buttonWidget(
               image,
               SizedBox(width: 2.w),
             ],
-            customText(
-                text: text,
-                fontSize: fontsize != null ? fontsize : 17.sp,
-                fontFamily: fontFamily,
-                color: textColor,
-                fontWeight: FontWeight.w500
+            Flexible(
+              child: customText(
+                  text: text,
+                  fontSize: fontsize != null ? fontsize : 17.sp,
+                  fontFamily: fontFamily,
+                  color: textColor,
+                  fontWeight: FontWeight.w500,
+                  overFlow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

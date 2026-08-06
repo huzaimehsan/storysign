@@ -11,10 +11,13 @@ import '../../../shared/notification/controller/notification_screen_controller.d
 class AuthorNotificationController extends NotificationScreenController {
   @override
   var isNotificationsLoading = false.obs;
-RxInt currentPage=0.obs;
+  RxInt currentPage=0.obs;
   RxInt totalPages=0.obs;
   @override
   var notificationList = <NotificationModel>[].obs;
+
+  @override
+  var errorMessage = ''.obs;
 
   var unreadCount = 0.obs;
   String role = 'author';
@@ -35,13 +38,14 @@ RxInt currentPage=0.obs;
   Future<void> getNotifications({int page = 1, int limit = 20}) async {
     try {
       isNotificationsLoading.value = true;
+      errorMessage.value = '';
 
       final Map<String, dynamic> response = await baseService.baseGetAPI(
         ApiEndPoints.authorNotificationsList(page: page ,limit: limit),
         loading: false,
       );
 
-      if (response['success'] == true) {
+      if (response != null && response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
 
         final allNotifications = list
@@ -56,15 +60,17 @@ RxInt currentPage=0.obs;
 
         debugPrint("Notifications loaded: ${notificationList.length}");
       } else {
-        Utils.showToast(response['message'] ?? "Failed to load", true);
+        errorMessage.value = response?['message']?.toString() ?? "Failed to load notifications";
+        Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {
+      errorMessage.value = "Error fetching notifications: $e";
       debugPrint("Error fetching notifications: $e");
-      Utils.showToast("Something went wrong", true);
     } finally {
       isNotificationsLoading.value = false;
     }
   }
+
   @override
   Future<void> markAllAsRead() async {
     try {

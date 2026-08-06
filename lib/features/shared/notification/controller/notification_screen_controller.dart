@@ -5,6 +5,7 @@ import 'package:storysign/features/reader/notification/model/notification_model.
 abstract class NotificationScreenController extends GetxController {
   RxBool get isNotificationsLoading;
   RxList<NotificationModel> get notificationList;
+  RxString get errorMessage;
   Future<void> markAllAsRead();
   Future<void> refreshAlert();
 }

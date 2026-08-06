@@ -22,12 +22,15 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
     final String bookPdf = routeArgs is Map
         ? routeArgs['bookPdf']?.toString() ?? ''
         : (Get.arguments is Map ? Get.arguments['bookPdf']?.toString() ?? '' : '');
+    final bool shouldAccept = routeArgs is Map
+        ? routeArgs['shouldAccept'] == true
+        : (Get.arguments is Map ? Get.arguments['shouldAccept'] == true : false);
 
-    print("📄 BookPreviewPage - ID received: $id, bookPdf: $bookPdf");
+    print("📄 BookPreviewPage - ID received: $id, bookPdf: $bookPdf, shouldAccept: $shouldAccept");
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (id.isNotEmpty || bookPdf.isNotEmpty) {
-        controller.initWithId(id, bookPdf: bookPdf);
+        controller.initWithId(id, bookPdf: bookPdf, shouldAccept: shouldAccept);
       }
     });
 
@@ -127,14 +130,12 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                   child: Icon(Icons.zoom_in, color: bottomNavColor, size: 7.w),
                 ),
                 SizedBox(width: 3.w),
-                Obx(() => Text(
-                  "${(controller.zoomLevel.value * 100).toInt()}%",
-                  style: TextStyle(
-                    color: bottomNavColor,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Poppins',
-                  ),
+                Obx(() => customText(
+                  text: "${(controller.zoomLevel.value * 100).toInt()}%",
+                  color: bottomNavColor,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
                 )),
                 SizedBox(width: 3.w),
                 GestureDetector(
@@ -166,14 +167,12 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
                   ),
                 ),
                 SizedBox(width: 6.w),
-                Obx(() => Text(
-                  "${controller.currentPage.value} of ${controller.pageCount.value}",
-                  style: TextStyle(
-                    color: bottomNavColor,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Poppins',
-                  ),
+                Obx(() => customText(
+                  text: "${controller.currentPage.value} of ${controller.pageCount.value}",
+                  color: bottomNavColor,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
                 )),
                 SizedBox(width: 6.w),
                 GestureDetector(

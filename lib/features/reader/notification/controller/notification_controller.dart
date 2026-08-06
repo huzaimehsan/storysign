@@ -18,6 +18,9 @@ class NotificationController extends NotificationScreenController {
   @override
   var notificationList = <NotificationModel>[].obs;
 
+  @override
+  var errorMessage = ''.obs;
+
   var unreadCount = 0.obs;
 
   @override
@@ -37,6 +40,7 @@ class NotificationController extends NotificationScreenController {
   Future<void> getNotifications({int page = 1, int limit = 20}) async {
     try {
       isNotificationsLoading.value = true;
+      errorMessage.value = '';
 
       final Map<String, dynamic> response = await baseService.baseGetAPI(
         ApiEndPoints.readerNotifications(page: page, limit: limit), // ✅
@@ -44,7 +48,7 @@ class NotificationController extends NotificationScreenController {
         showErrorToast: false,
       );
 
-      if (response['success'] == true) {
+      if (response != null && response['success'] == true) {
         List<dynamic> list = response['items'] ?? [];
         final allNotifications = list
             .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
@@ -53,9 +57,11 @@ class NotificationController extends NotificationScreenController {
         notificationList.value = allNotifications.where((n) => !n.isRead).toList();
         unreadCount.value = notificationList.length;
       } else {
-        Utils.showToast(response['message'] ?? "Failed to load", true);
+        errorMessage.value = response?['message']?.toString() ?? "Failed to load notifications";
+        Utils.showToast(errorMessage.value, true);
       }
     } catch (e) {
+      errorMessage.value = "Error fetching notifications: $e";
       debugPrint("Error fetching notifications: $e");
     } finally {
       isNotificationsLoading.value = false;

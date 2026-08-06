@@ -30,7 +30,7 @@ class ReaderController extends GetxController {
 
   var booksList = <BookItem>[].obs;
   late Rx<List<BookItem>> filteredBooksRx;
-
+  RxString errorMessage = ''.obs;
   @override
   void onInit() {
     super.onInit();
@@ -284,6 +284,7 @@ class ReaderController extends GetxController {
       } else {
         isLibrary.value = true;
         booksList.clear(); // Clear previous data
+        errorMessage.value = ''; // clear on fresh load
       }
 
       final token =
@@ -295,7 +296,8 @@ class ReaderController extends GetxController {
 
       await _fetchBooksWithStatus(status, loadMore: loadMore);
     } catch (e) {
-      Utils.showToast('Something went wrong: $e', true);
+      errorMessage.value = 'Something went wrong: $e';
+      Utils.showToast(errorMessage.value, true);
     } finally {
       if (loadMore) {
         isLoadingMore.value = false;
@@ -341,13 +343,13 @@ class ReaderController extends GetxController {
         totalItems.value = model.total;
 
         debugPrint('DEBUG: Total books after adding: ${booksList.length}');
-      } else if (response['message'] != null) {
-        Utils.showToast(response['message'], false);
+      } else {
+        errorMessage.value = response['message']?.toString() ?? 'Failed to load books';
+        Utils.showToast(errorMessage.value, true);
       }
-      // baseGetAPI already error toast dikha chuka hai — dobara mat lagao
     } catch (e) {
-      debugPrint('DEBUG: Exception: $e');
-      Utils.showToast('Error: $e', true);
+      errorMessage.value = 'Error fetching books: $e';
+      debugPrint('Exception in _fetchBooksWithStatus: $e');
     }
   }
 

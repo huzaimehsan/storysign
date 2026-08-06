@@ -23,6 +23,7 @@ class ProfileScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    errorMessage.value = '';
     getProfile();
     fetchLibraryStats();
     downloadHistory();
@@ -30,6 +31,7 @@ class ProfileScreenController extends GetxController {
   }
 
   Future<void> refreshRequests() async {
+    errorMessage.value = '';
     await Future.wait([
       getProfile(),
       fetchLibraryStats(),
@@ -41,7 +43,6 @@ class ProfileScreenController extends GetxController {
   Future<void> getProfile() async {
     try {
       isLoading.value = true;
-      errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
         ApiEndPoints.profile,
@@ -122,6 +123,7 @@ class ProfileScreenController extends GetxController {
   final RxInt currentPage = 1.obs;
   final RxInt totalPages = 1.obs;
   final int limit = 10;
+
   Future<void> fetchMyBooks({bool loadMore = false}) async {
     if (loadMore) {
       if (currentPage.value >= totalPages.value) return;
@@ -134,7 +136,6 @@ class ProfileScreenController extends GetxController {
 
     try {
       isBookLoading.value = true;
-      errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
         ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
@@ -143,33 +144,27 @@ class ProfileScreenController extends GetxController {
       );
 
       if (response['success'] == true) {
-
         final data = MyBooksResponse.fromJson(response);
-
         if (loadMore) {
           books.addAll(data.items);
         } else {
           books.assignAll(data.items);
         }
-
         totalPages.value = data.totalPages;
       } else {
-
         if (loadMore) currentPage.value--;
-
-        errorMessage.value =
-            response['message']?.toString() ?? 'Failed to load books';
-
+        // Secondary call — only toast, do NOT set errorMessage (profile is already loaded)
+        debugPrint('fetchMyBooks API error: ${response['message']}');
       }
     } catch (e) {
       if (loadMore) currentPage.value--;
       debugPrint('fetchMyBooks error: $e');
-      errorMessage.value = 'Something went wrong while loading books';
-      Utils.showToast(errorMessage.value, true);
+      // Secondary call — only toast, do NOT set errorMessage (profile is already loaded)
     } finally {
       isBookLoading.value = false;
     }
   }
+
   Future<void> refreshBooks() async {
     await fetchMyBooks();
   }

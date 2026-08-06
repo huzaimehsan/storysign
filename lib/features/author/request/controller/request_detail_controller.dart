@@ -65,7 +65,6 @@ class RequestDetailController extends GetxController {
     }
   }
 
-
   bool get isFromDelivered => sourceScreen.value == 'all_delivered';
 
 

@@ -318,7 +318,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                 ),
                               ] else ...[
                                 buttonWidget(
-                                  "Go to Library",
+                                  "Back to Library",
                                   whiteColor,
                                   onTap: () {
                                     controller.selectedAuthorId.value = '';

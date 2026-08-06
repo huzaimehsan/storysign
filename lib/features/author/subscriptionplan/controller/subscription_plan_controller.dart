@@ -60,7 +60,9 @@ class SubscriptionPlanController extends GetxController {
             try {
               if (item is Map<String, dynamic>) {
                 final plan = SubscriptionPlan.fromJson(item);
-                parsedPlans.add(plan);
+                if (plan.planType.trim().toLowerCase() == planType.trim().toLowerCase()) {
+                  parsedPlans.add(plan);
+                }
               }
             } catch (e) {
               print('❌ DEBUG: Error parsing item: $e');

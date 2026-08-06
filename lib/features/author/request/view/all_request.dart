@@ -58,6 +58,21 @@ class AllRequest extends GetView<AuthorHomeController> {
                     );
                   }
 
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return SizedBox(
+                      height: 60.h,
+                      child: Center(
+                        child: customText(
+                          text: controller.errorMessage.value,
+                          color: greyColor,
+                          fontSize: 15.sp,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }
+
                   if (controller.filteredAutographList.isEmpty) {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),

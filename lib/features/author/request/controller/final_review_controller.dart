@@ -20,6 +20,11 @@ class FinalReviewController extends GetxController {
 
     final String autographRequestId = reqService.autographRequestId;
 
+    print('🔍 APPROVE & SEND - autographRequestId: "$autographRequestId"');
+    print('🔍 APPROVE & SEND - readerName: "${reqService.readerName}"');
+    print('🔍 APPROVE & SEND - bookTitle: "${reqService.bookTitle}"');
+    print('🔍 APPROVE & SEND - pageIndex: ${reqService.pageIndex}');
+
     if (autographRequestId.isEmpty) {
       Utils.showToast('Request ID is missing', true);
       return;

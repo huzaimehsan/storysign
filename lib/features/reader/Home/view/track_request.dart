@@ -110,24 +110,30 @@ class TrackRequest extends GetView<TrackRequestController> {
                   }
 
                   final books = controller
-                      .filteredTrackRequest; // ✅ sirf ye line change hui
+                      .filteredTrackRequest;
 
-                  if (books.isEmpty) {
-                    return Center(
-                      child: customText(
-                        text: "No Tracking Request",
-                        color: greyColor,
-                        fontSize: 15.sp,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w500,
-                      ),
-                    );
-                  }
                   return ListView.builder(
                     controller: controller.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: books.length + (controller.isLoadingMore.value ? 1 : 0),
+                    itemCount: books.isEmpty
+                        ? 1
+                        : books.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (books.isEmpty) {
+                        return SizedBox(
+                          height: 62.h,
+                          child:  Center(
+                            child: customText(
+                              text: "No Tracking Request",
+                              color: greyColor,
+                              fontSize: 15.sp,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }
                       if (index == books.length) {
                         return const Center(
                           child: Padding(

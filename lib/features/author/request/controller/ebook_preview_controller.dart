@@ -19,20 +19,20 @@ class EbookPreviewController extends GetxController {
   late String autographRequestId;
   bool _isInitialized = false;
 
-  void initWithId(String id, {String bookPdf = ''}) {
+  void initWithId(String id, {String bookPdf = '', bool shouldAccept = false}) {
     if (_isInitialized) return;
     _isInitialized = true;
 
     autographRequestId = id;
     print(
-      '📌 EbookPreviewController - ID received: $autographRequestId, bookPdf passed: ${bookPdf.isNotEmpty}',
+      '📌 EbookPreviewController - ID received: $autographRequestId, bookPdf passed: ${bookPdf.isNotEmpty}, shouldAccept: $shouldAccept',
     );
 
     if (bookPdf.isNotEmpty) {
       bookPdfUrl.value = bookPdf;
       isLoading.value = true;
 
-      if (autographRequestId.isNotEmpty) {
+      if (shouldAccept && autographRequestId.isNotEmpty) {
         acceptRequestAndLoadPdf(skipPdfUpdate: true);
       }
       return;
@@ -56,7 +56,7 @@ class EbookPreviewController extends GetxController {
         ApiEndPoints.acceptAutographRequest(autographRequestId),
         {},
         loading: true,
-        showErrorToast: !skipPdfUpdate,
+        showErrorToast: skipPdfUpdate,
       );
 
       print('✅ ACCEPT RESPONSE: $response');

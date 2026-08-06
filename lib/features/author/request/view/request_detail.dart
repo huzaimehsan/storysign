@@ -63,7 +63,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     child: customText(
                       text: "No request details found",
                       fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
                       color: greyColor,
                     ),
@@ -156,66 +156,70 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
               ),
 
               (!isFromDelivered
-                 )
-               ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 18.h),
-                      buttonWidget(
-                        "Accept Request",
-                        whiteColor,
-                        onTap: () => Navigator.of(context).pushNamed(
-                          '/pdfReview',
-                          arguments: {'autographRequestId': id ,'bookPdf' : requestDetail.bookPdfUrl},
-                        ),
-                        colors: buttonColor,
-                        fontFamily: 'Poppins',
-                        height: 5.2.h,
-                        width: double.infinity,
-                        fontsize: 16.sp,
-                        fontweight: FontWeight.w600,
-                      ),
-                      SizedBox(height: 2.h),
-                      buttonWidget(
-                        "Decline Request",
-                        whiteColor,
-                        onTap: () {
-                          showDeclineDialog(
-                            context,
-                            desc: "Are you sure you want to decline this request?",
-                            buttonText: "Confirm",
-                            ontap: () {
-                              Get.back();
-                              controller.rejectRequest(context);
-                            },
-                          );
+              )
+                  ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Column(
+                  children: [
+                    SizedBox(height: 18.h),
+                    buttonWidget(
+                      "Accept Request",
+                      whiteColor,
+                      onTap: () => Navigator.of(context).pushNamed(
+                        '/pdfReview',
+                        arguments: {
+                          'autographRequestId': id,
+                          'bookPdf': requestDetail.bookPdfUrl,
+                          'shouldAccept': true,
                         },
-                        colors: greyColor,
-                        fontFamily: 'Poppins',
-                        height: 5.2.h,
-                        width: double.infinity,
-                        fontsize: 16.sp,
-                        fontweight: FontWeight.w600,
                       ),
-                    ],
-                  ),
-                ) :  Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 10.h),
-          child: buttonWidget(
-          "Back To DeliveredScreen",
-          whiteColor,
-          onTap: () {
-          Get.back();
-          },
-          colors: btnColor,
-          height: 5.2.h,
-          fontFamily: 'Poppins',
-          width: double.infinity,
-          fontsize: 16.sp,
-          fontweight: FontWeight.w600,
-          ),
-          ),
+                      colors: buttonColor,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
+                      width: double.infinity,
+                      fontsize: 16.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                    SizedBox(height: 2.h),
+                    buttonWidget(
+                      "Decline Request",
+                      whiteColor,
+                      onTap: () {
+                        showDeclineDialog(
+                          context,
+                          desc: "Are you sure you want to decline this request?",
+                          buttonText: "Confirm",
+                          ontap: () {
+                            Get.back();
+                            controller.rejectRequest(context);
+                          },
+                        );
+                      },
+                      colors: greyColor,
+                      fontFamily: 'Poppins',
+                      height: 5.2.h,
+                      width: double.infinity,
+                      fontsize: 16.sp,
+                      fontweight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              ) :  Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 10.h),
+                child: buttonWidget(
+                  "Back To DeliveredScreen",
+                  whiteColor,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  colors: btnColor,
+                  height: 5.2.h,
+                  fontFamily: 'Poppins',
+                  width: double.infinity,
+                  fontsize: 16.sp,
+                  fontweight: FontWeight.w600,
+                ),
+              ),
 
               SizedBox(height: 2.h),
             ],

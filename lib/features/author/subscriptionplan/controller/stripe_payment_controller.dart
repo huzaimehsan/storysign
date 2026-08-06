@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:storysign/utils/shared_prefrences_methods.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
 import '../../../../constants/local_db_key.dart';
+import '../../home/controller/home_controller.dart';
+import '../../profile/controller/profile_controller.dart';
 
 class StripePaymentController extends GetxController {
   RxBool isPaymentLoading = false.obs;
@@ -31,7 +34,9 @@ class StripePaymentController extends GetxController {
           'paymentIntentId': paymentIntentId,
         };
       } else {
-        throw Exception('Failed to create payment intent: ${response['message']}');
+        throw Exception(
+          'Failed to create payment intent: ${response['message']}',
+        );
       }
     } catch (e) {
       Utils.showToast('Error: $e', true);
@@ -47,14 +52,18 @@ class StripePaymentController extends GetxController {
       );
 
       if (response['success'] == true) {
-        // // final prefs = await SharedPreferences.getInstance();
-        // // await prefs.setBool(LocalDBKeys.IS_SUBSCRIBED, true);
-        // // await prefs.setBool('isSubscribed', true);
-        // debugPrint("Saved isSubscribed: ${prefs.getBool(LocalDBKeys.IS_SUBSCRIBED)}, rawValue=${prefs.getBool('isSubscribed')} keys=${prefs.getKeys().toList()}");
+        // Correctly save the isSubscribed flag so the app knows on restart
+        await SharedPreferencesMethod.setBool(
+          key: LocalDBKeys.IS_SUBSCRIBED,
+          value: true,
+        );
+        debugPrint("Saved IS_SUBSCRIBED = true");
 
         Utils.showToast('Subscription activated successfully', false);
       } else {
-        throw Exception('Failed to confirm subscription payment: ${response['message']}');
+        throw Exception(
+          'Failed to confirm subscription payment: ${response['message']}',
+        );
       }
     } catch (e) {
       Utils.showToast('Error: $e', true);
@@ -83,15 +92,22 @@ class StripePaymentController extends GetxController {
       debugPrint('Payment sheet presented');
       await confirmSubscriptionPayment(paymentIntentId);
       debugPrint('Subscription confirmation complete');
-        //  final prefs = await SharedPreferences.getInstance();
-        // await prefs.setBool(LocalDBKeys.IS_SUBSCRIBED, true);
-        // await prefs.setBool('isSubscribed', true);
-        // debugPrint("Saved isSubscribed: ${prefs.getBool(LocalDBKeys.IS_SUBSCRIBED)}, rawValue=${prefs.getBool('isSubscribed')} keys=${prefs.getKeys().toList()}");
+
+      // Refresh live controllers so plan screen reflects new active plan immediately
+      if (Get.isRegistered<AuthorHomeController>()) {
+        await Get.find<AuthorHomeController>().fetchSubscriptionPlan();
+      }
+      if (Get.isRegistered<AuthorProfileController>()) {
+        await Get.find<AuthorProfileController>().getProfile();
+      }
 
       Get.snackbar('Success', 'Payment completed successfully');
       return true;
     } on StripeException catch (e) {
-      Get.snackbar('Payment Failed', e.error.localizedMessage ?? 'Payment was cancelled or failed');
+      Get.snackbar(
+        'Payment Failed',
+        e.error.localizedMessage ?? 'Payment was cancelled or failed',
+      );
       debugPrint('StripeException during payment: ${e.error.localizedMessage}');
       return false;
     } catch (e) {

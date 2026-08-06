@@ -21,98 +21,98 @@ class ReaderLibrary extends GetView<ReaderController> {
   Widget build(BuildContext context) {
     final List<String> tabs = ["All", "Signed", "Unsigned"];
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () => controller.refreshRequests(),
-        backgroundColor :containerColor,
-        color: white,
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              customHeader(
-                context: context,
-                title: "My Library",
-                onBack: () => Get.back(),
-                onIconPressed: () {},
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            customHeader(
+              context: context,
+              title: "My Library",
+              onBack: () => Get.back(),
+              onIconPressed: () {},
+            ),
+            SizedBox(height: 2.h),
+
+            searchWidget(
+              onChanged: (val) {
+                controller.searchQuery.value = val;
+              },
+            ),
+            SizedBox(height: 1.5.h),
+            Padding(
+              padding: EdgeInsets.only(right: 5.w, left: 3.w),
+              child: Row(
+                children: [
+                  ...tabs.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String tab = entry.value;
+
+                    int flexValue = index == 0 ? 2 : 3;
+
+                    return Expanded(
+                      flex: flexValue,
+                      child: Obx(() {
+                        bool isSelected = controller.selectedTab.value == tab;
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 2.w),
+                          child: buttonWidget(
+                            tab,
+                            isSelected ? whiteColor : buttonColor,
+                            onTap: () => controller.selectTab(tab),
+                            colors: isSelected
+                                ? buttonColor
+                                : const Color(0xFFF5E6D3),
+                            height: 4.5.h,
+                            fontFamily: "Poppins",
+                            fontsize: 14.sp,
+                            fontweight: FontWeight.w600,
+                          ),
+                        );
+                      }),
+                    );
+                  }),
+
+                  SizedBox(width: 2.w),
+                  buildFilterDropdown(context),
+                ],
               ),
-              SizedBox(height: 2.h),
+            ),
+            SizedBox(height: 2.h),
 
-              searchWidget(
-                onChanged: (val) {
-                  controller.searchQuery.value = val;
-                },
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  customText(
+                    color: whiteColor,
+                    fontFamily: 'Poppins',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    text: "All Books",
+                  ),
+                  Spacer(),
+                  buttonWidget(
+                    "Upload Book",
+                    whiteColor,
+                    onTap: () => {Get.toNamed("/uploadbook")},
+                    colors: buttonColor,
+                    width: 35.w,
+                    height: 4.4.h,
+                    fontFamily: "Poppins",
+                    fontsize: 14.sp,
+                    fontweight: FontWeight.w500,
+                  ),
+                ],
               ),
-              SizedBox(height: 1.5.h),
-              Padding(
-                padding: EdgeInsets.only(right: 5.w, left: 3.w),
-                child: Row(
-                  children: [
-                    ...tabs.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      String tab = entry.value;
+            ),
+            SizedBox(height: 1.h),
 
-                      int flexValue = index == 0 ? 2 : 3;
-
-                      return Expanded(
-                        flex: flexValue,
-                        child: Obx(() {
-                          bool isSelected = controller.selectedTab.value == tab;
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                            child: buttonWidget(
-                              tab,
-                              isSelected ? whiteColor : buttonColor,
-                              onTap: () => controller.selectTab(tab),
-                              colors: isSelected
-                                  ? buttonColor
-                                  : const Color(0xFFF5E6D3),
-                              height: 4.5.h,
-                              fontFamily: "Poppins",
-                              fontsize: 14.sp,
-                              fontweight: FontWeight.w600,
-                            ),
-                          );
-                        }),
-                      );
-                    }),
-
-                    SizedBox(width: 2.w),
-                    buildFilterDropdown(context), // ✅ dropdown seedha yahan
-                  ],
-                ),
-              ),
-              SizedBox(height: 2.h),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    customText(
-                      color: whiteColor,
-                      fontFamily: 'Poppins',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      text: "All Books",
-                    ),
-                    Spacer(),
-                    buttonWidget(
-                      "Upload Book",
-                      whiteColor,
-                      onTap: () => {Get.toNamed("/uploadbook")},
-                      colors: buttonColor,
-                      width: 35.w,
-                      height: 4.4.h,
-                      fontFamily: "Poppins",
-                      fontsize: 14.sp,
-                      fontweight: FontWeight.w500,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 1.h),
-
-              Expanded(
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => controller.refreshRequests(),
+                backgroundColor: containerColor,
+                color: white,
                 child: Obx(() {
                   if (controller.isLibrary.value) {
                     return const Center(
@@ -120,24 +120,51 @@ class ReaderLibrary extends GetView<ReaderController> {
                     );
                   }
 
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      children: [
+                        SizedBox(height: 60.h),
+                        Center(
+                          child: customText(
+                            text: controller.errorMessage.value,
+                            color: greyColor,
+                            fontSize: 15.sp,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
                   final List<BookItem> books = controller.filteredBooksRx.value;
                   if (books.isEmpty) {
-                    return Center(
-                      child: customText(
-                        text: "No books found",
-                        color: greyColor,
-                        fontSize: 15.sp,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w500,
-                      ),
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      children: [
+                        SizedBox(height: 25.h),
+                        Center(
+                          child: customText(
+                            text: "No books found",
+                            color: greyColor,
+                            fontSize: 15.sp,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     );
                   }
 
                   return ListView.builder(
                     controller: controller.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount:
-                        books.length + (controller.isLoadingMore.value ? 1 : 0),
+                    books.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == books.length) {
                         return const Center(
@@ -147,11 +174,12 @@ class ReaderLibrary extends GetView<ReaderController> {
                           ),
                         );
                       }
-                      final book = books[index];
 
+                      final book = books[index];
                       final DateTime dateTime = DateTime.parse(book.uploadDate);
                       final formattedDate =
                           "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
+
                       return recentlySignedBooks(
                         imagePath: book.coverImage,
                         signed: book.status,
@@ -181,13 +209,15 @@ class ReaderLibrary extends GetView<ReaderController> {
                   );
                 }),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+
+
     );
   }
-// ✅ Dropdown menu — button ke bilkul neeche khulta hai, bottom sheet NAHI hai
+
   Widget buildFilterDropdown(BuildContext context) {
     return PopupMenuButton<String>(
       color: white,
@@ -207,7 +237,7 @@ class ReaderLibrary extends GetView<ReaderController> {
         } else if (value.startsWith("status:")) {
           final selectedStatus = value.replaceFirst("status:", "");
           controller.filterStatus.value = selectedStatus;
-          // Status filter ke liye All tab pe switch karo taake pura data ho
+
           if (selectedStatus != "All") {
             controller.selectedTab.value = "All";
             controller.fetchBooksData(status: 'all');

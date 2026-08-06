@@ -47,6 +47,21 @@ class SearchScreen extends GetView<SearchPageController> {
                       child: CircularProgressIndicator(color: buttonColor),
                     );
                   }
+
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return SizedBox(
+                      height: 60.h,
+                      child: Center(
+                        child: customText(
+                          text: controller.errorMessage.value,
+                          color: greyColor,
+                          fontSize: 15.sp,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }
                   final list = controller.filteredAuthors;
                   if (list.isEmpty) {
                     return Center(

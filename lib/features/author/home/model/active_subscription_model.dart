@@ -1,4 +1,5 @@
 class activeSubscription {
+  final String planId;
   final String planName;
   final double amountPaid;
   final String startedAt;
@@ -8,6 +9,7 @@ class activeSubscription {
   final int remainingSigns;
 
   activeSubscription({
+    required this.planId,
     required this.planName,
     required this.amountPaid,
     required this.startedAt,
@@ -19,6 +21,10 @@ class activeSubscription {
 
   factory activeSubscription.fromJson(Map<String, dynamic> json) {
     return activeSubscription(
+      planId: json['planId']?.toString() ??
+          json['_id']?.toString() ??
+          json['id']?.toString() ??
+          '',
       planName: json['planName'] ?? '',
       amountPaid: (json['amountPaid'] is num)
           ? (json['amountPaid'] as num).toDouble()
@@ -39,6 +45,7 @@ class activeSubscription {
 
   Map<String, dynamic> toJson() {
     return {
+      'planId': planId,
       'planName': planName,
       'amountPaid': amountPaid,
       'startedAt': startedAt,
@@ -48,4 +55,4 @@ class activeSubscription {
       'remainingSigns': remainingSigns,
     };
   }
-}
+}

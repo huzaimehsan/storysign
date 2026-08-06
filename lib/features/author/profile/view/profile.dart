@@ -59,7 +59,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                           child: Center(
                             child: customText(
                               text: controller.errorMessage.value,
-                              color: whiteColor,
+                              color: greyColor,
                               fontSize: 15.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
@@ -143,6 +143,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                                   arguments: {
                                     'source': 'profile',
                                     'planType': 'premium',
+                                    'planId': profile.activePlanId ?? '',
                                     'planName': profile.activePlanName ?? '',
                                   },
                                 ),

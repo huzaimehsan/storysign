@@ -4,6 +4,6 @@ import '../controller/subscription_plan_controller.dart';
 class SubscriptionPlanBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<SubscriptionPlanController>(() => SubscriptionPlanController());
+    Get.lazyPut<SubscriptionPlanController>(() => SubscriptionPlanController(), fenix: true);
   }
 }

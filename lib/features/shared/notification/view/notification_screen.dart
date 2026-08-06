@@ -47,6 +47,21 @@ class NotificationScreen extends StatelessWidget {
                     );
                   }
 
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return SizedBox(
+                      height: 60.h,
+                      child: Center(
+                        child: customText(
+                          text: controller.errorMessage.value,
+                          color: greyColor,
+                          fontSize: 15.sp,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }
+
                   if (notificationController.isEmpty) {
                     // When not loading and the list is empty, show a "No Notification found" message.
                     // Avoid scheduling a refresh every build (which caused the loader to loop).

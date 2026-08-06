@@ -28,12 +28,25 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
       return Scaffold(
         body: SafeArea(
           bottom: false,
-          child: RefreshIndicator(
-            backgroundColor: containerColor,
-            color: white,
-            onRefresh: () => controller.refreshHomeRequests(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+          child: controller.errorMessage.value.isNotEmpty
+              ? SizedBox(
+                  height: 60.h,
+                  child: Center(
+                    child: customText(
+                      text: controller.errorMessage.value,
+                      color: greyColor,
+                      fontSize: 15.sp,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              : RefreshIndicator(
+                  backgroundColor: containerColor,
+                  color: white,
+                  onRefresh: () => controller.refreshHomeRequests(),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
                   Obx(() {
@@ -127,7 +140,10 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                       ontap: () {
                         Get.toNamed(
                           '/plan',
-                          arguments: {'planName': active.planName},
+                          arguments: {
+                            'planId': active.planId,
+                            'planName': active.planName,
+                          },
                         );
                       },
                       title: 'Active Subscription',
