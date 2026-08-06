@@ -165,14 +165,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                     buttonWidget(
                       "Accept Request",
                       whiteColor,
-                      onTap: () => Navigator.of(context).pushNamed(
-                        '/pdfReview',
-                        arguments: {
-                          'autographRequestId': id,
-                          'bookPdf': requestDetail.bookPdfUrl,
-                          'shouldAccept': true,
-                        },
-                      ),
+                      onTap: () => controller.acceptAndNavigate(context),
                       colors: buttonColor,
                       fontFamily: 'Poppins',
                       height: 5.2.h,

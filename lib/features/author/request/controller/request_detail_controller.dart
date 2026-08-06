@@ -159,6 +159,81 @@ class RequestDetailController extends GetxController {
     }
   }
 
+  /// Accept the request first, then navigate to PDF review.
+  /// If the request is already accepted (e.g. user closed app mid-flow),
+  /// we silently ignore the accept error and still navigate.
+  Future<void> acceptAndNavigate(BuildContext context) async {
+    final detail = selectedRequestDetail.value;
+    if (detail == null || autographRequestId.isEmpty) {
+      Utils.showToast('Request data is missing', true);
+      return;
+    }
+
+    // If request is already accepted (status can be 'In process', 'in_progress', or 'accepted'),
+    // skip the accept API call entirely
+    final statusLower = detail.status.toLowerCase().trim();
+    if (statusLower == 'accepted' ||
+        statusLower == 'in process' ||
+        statusLower == 'in_progress' ||
+        statusLower == 'inprocess') {
+      print('📌 Request already accepted ($statusLower), skipping accept API');
+      _navigateToPdfReview(context, detail.bookPdfUrl);
+      return;
+    }
+
+    try {
+      EasyLoading.show(
+        status: 'Accepting request...',
+        maskType: EasyLoadingMaskType.black,
+      );
+
+      final response = await BaseService().basePostAPI(
+        ApiEndPoints.acceptAutographRequest(autographRequestId),
+        {},
+        loading: false,
+        showErrorToast: false,
+      );
+
+      print('✅ ACCEPT RESPONSE: $response');
+
+      if (response['success'] == true) {
+        // Accept succeeded — navigate to PDF review
+        _navigateToPdfReview(context, detail.bookPdfUrl);
+      } else {
+        final message = response['message']?.toString() ?? '';
+        final statusCode = response['statusCode'];
+
+        // If the backend says "Request not found" or returns 400/404,
+        // it likely means the request is already accepted — still navigate
+        if (statusCode == 400 || statusCode == 404 ||
+            message.toLowerCase().contains('not found') ||
+            message.toLowerCase().contains('already')) {
+          print('📌 Accept failed but request likely already accepted: $message');
+          _navigateToPdfReview(context, detail.bookPdfUrl);
+        } else {
+          Utils.showToast(message.isNotEmpty ? message : 'Failed to accept request', true);
+        }
+      }
+    } on TimeoutException {
+      Utils.showToast('Request timed out', true);
+    } catch (e) {
+      debugPrint('Accept error: $e');
+      Utils.showToast('Something went wrong while accepting request', true);
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  void _navigateToPdfReview(BuildContext context, String bookPdfUrl) {
+    Navigator.of(context).pushNamed(
+      '/pdfReview',
+      arguments: {
+        'autographRequestId': autographRequestId,
+        'bookPdf': bookPdfUrl,
+      },
+    );
+  }
+
   Future<void> rejectRequest(BuildContext context, {String? reason}) async {
     if (autographRequestId.isEmpty) {
       Utils.showToast('Request ID is missing', true);

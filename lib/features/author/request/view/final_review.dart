@@ -132,7 +132,7 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                             alignment: Alignment.bottomRight,
                             child: Obx(() => customText(
                               text: '${messageCtrl.charCount.value} Characters',
-                              fontSize: 11.sp,
+                              fontSize: 11.6.sp,
                               fontWeight: FontWeight.w500,
                               color: buttonColor,
                               fontFamily: 'Poppins',

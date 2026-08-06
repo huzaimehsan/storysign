@@ -16,11 +16,11 @@ class EbookPreviewController extends GetxController {
   final RxBool isLoading = true.obs;
   final BaseService baseService = BaseService();
   final RxString bookPdfUrl = ''.obs;
-  late String autographRequestId;
+  String autographRequestId = '';
   bool _isInitialized = false;
 
   void initWithId(String id, {String bookPdf = '', bool shouldAccept = false}) {
-    if (_isInitialized) return;
+    if (_isInitialized && autographRequestId == id) return;
     _isInitialized = true;
 
     autographRequestId = id;
@@ -46,17 +46,12 @@ class EbookPreviewController extends GetxController {
   }
 
   Future<void> acceptRequestAndLoadPdf({bool skipPdfUpdate = false}) async {
-    // if (autographRequestId.isEmpty) {
-    //   Utils.showToast('Request ID missing', true);
-    //   return;
-    // }
-
     try {
       final response = await baseService.basePostAPI(
         ApiEndPoints.acceptAutographRequest(autographRequestId),
         {},
-        loading: true,
-        showErrorToast: skipPdfUpdate,
+        loading: !skipPdfUpdate,
+        showErrorToast: !skipPdfUpdate,
       );
 
       print('✅ ACCEPT RESPONSE: $response');
@@ -64,6 +59,7 @@ class EbookPreviewController extends GetxController {
 
       if (response['success'] == true) {
         if (skipPdfUpdate) {
+          // Accept succeeded but we already have the PDF — nothing more to do
           return;
         }
 
@@ -88,25 +84,18 @@ class EbookPreviewController extends GetxController {
         bookPdfUrl.value = pdfUrl.toString();
         isLoading.value = true;
       } else {
-        final message = response['message'];
-        final statusCode = response['statusCode'];
-
-        if (skipPdfUpdate &&
-            (message == 'Request not found' ||
-                statusCode == 404 ||
-                statusCode == 400)) {
-          // baseService already error toast dikha chuka hoga (error path me),
-          // agar skipPdfUpdate hai to bas silently ignore/log karo
-          print('Silently ignored accept failure: $message');
+        if (skipPdfUpdate) {
+          // Already have PDF — silently ignore accept failure
+          // (request may already be accepted from a previous session)
+          print('Silently ignored accept failure: ${response['message']}');
         }
-        // else: baseService.basePostAPI ne already error toast show kar diya hai,
-        // isliye yahan dobara toast nahi maar rahe (duplicate avoid karne ke liye)
+        // When !skipPdfUpdate, basePostAPI already showed the error toast
       }
     } catch (e) {
-      if (!skipPdfUpdate) {
-        Utils.showToast('Something went wrong: $e', true);
-      } else {
+      if (skipPdfUpdate) {
         print('Silently ignored accept failure: $e');
+      } else {
+        Utils.showToast('Something went wrong: $e', true);
       }
     }
   }

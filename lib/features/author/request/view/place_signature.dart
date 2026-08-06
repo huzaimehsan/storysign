@@ -200,8 +200,8 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
                               text:
                                   'X ${controller.xPosition.value.toInt()}, '
                                   'Y ${controller.yPosition.value.toInt()}',
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w400,
+                              fontSize: 11.4.sp,
+                              fontWeight: FontWeight.w600,
                               color: buttonColor,
                               fontFamily: 'Poppins',
                             ),
@@ -217,8 +217,8 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
                               text:
                                   'Scale: ${controller.scalePercentage}%, '
                                   'Rotation: ${controller.rotationDegrees}%',
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w400,
+                              fontSize: 11.4.sp,
+                              fontWeight: FontWeight.w600,
                               color: buttonColor,
                               fontFamily: 'Poppins',
                             ),
@@ -260,8 +260,8 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
                   Obx(
                     () => customText(
                       text: 'Rotate : ${controller.rotationDegrees}%',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w300,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
                       color: bottomNavColor,
                       fontFamily: 'Poppins',
                     ),

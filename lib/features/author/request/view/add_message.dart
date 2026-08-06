@@ -87,8 +87,8 @@ class AddMessageScreen extends GetView<AddMessageController> {
                       right: 5.w,
                       child: Obx(() => customText(
                             text: '${controller.charCount.value} Characters',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 11.6.sp,
+                            fontWeight: FontWeight.w600,
                             color: buttonColor,
                             fontFamily: 'Poppins',
                           )),
