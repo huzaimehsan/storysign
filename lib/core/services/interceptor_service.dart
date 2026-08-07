@@ -10,8 +10,10 @@ import '../../utils/utility.dart';
 class ApiInterceptor extends http.BaseClient {
   final http.Client _inner;
   final prefs = SharedPreferencesMethod.storage;
-  final String baseURL = "https://mockup.testdevlink.com/story-sign-backend/api/v1";
-  static const String refreshTokenEndpoint = '/auth/refresh'; // 👈 your endpoint
+  final String baseURL =
+      "https://mockup.testdevlink.com/story-sign-backend/api/v1";
+  static const String refreshTokenEndpoint =
+      '/auth/refresh'; // 👈 your endpoint
 
   Future<bool>? _refreshFuture;
 
@@ -29,7 +31,10 @@ class ApiInterceptor extends http.BaseClient {
       if (refreshed) {
         final retryRequest = _cloneRequest(request);
         try {
-          final retryResponse = await _sendWithAuth(retryRequest, isStreamed: true);
+          final retryResponse = await _sendWithAuth(
+            retryRequest,
+            isStreamed: true,
+          );
           return http.StreamedResponse(
             Stream.value(retryResponse.bodyBytes),
             retryResponse.statusCode,
@@ -62,13 +67,16 @@ class ApiInterceptor extends http.BaseClient {
     );
   }
 
-  Future<http.Response> _sendWithAuth(http.BaseRequest request, {bool isStreamed = false}) async {
+  Future<http.Response> _sendWithAuth(
+    http.BaseRequest request, {
+    bool isStreamed = false,
+  }) async {
     final bearerToken = await prefs.getString(LocalDBKeys.TOKEN);
-    
+
     if (request is! http.MultipartRequest) {
       request.headers['Content-Type'] = 'application/json; charset=UTF-8';
     }
-  
+
     if (bearerToken != null && bearerToken.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $bearerToken';
     } else {
@@ -78,8 +86,9 @@ class ApiInterceptor extends http.BaseClient {
     print("➡️ [${request.method}] ${request.url}");
 
     try {
-      final streamedResponse =
-      await _inner.send(request).timeout(const Duration(seconds: 60));
+      final streamedResponse = await _inner
+          .send(request)
+          .timeout(const Duration(seconds: 60));
       final response = await http.Response.fromStream(streamedResponse);
 
       print("⬅️ [${response.statusCode}] ${request.url}");
@@ -105,18 +114,22 @@ class ApiInterceptor extends http.BaseClient {
   Future<bool> _doRefresh() async {
     try {
       // Use only the refresh token for refresh calls. Do NOT fall back to access token.
-      final savedRefreshToken = await prefs.getString(LocalDBKeys.REFRESH_TOKEN);
+      final savedRefreshToken = await prefs.getString(
+        LocalDBKeys.REFRESH_TOKEN,
+      );
       if (savedRefreshToken == null || savedRefreshToken.isEmpty) {
         print('🔁 No refresh token available');
         return false;
       }
 
       print('🔁 Refreshing session using stored refresh token...');
-      final response = await _inner.post(
-        Uri.parse("$baseURL$refreshTokenEndpoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: jsonEncode({"refreshToken": savedRefreshToken}),
-      ).timeout(const Duration(seconds: 30));
+      final response = await _inner
+          .post(
+            Uri.parse("$baseURL$refreshTokenEndpoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            body: jsonEncode({"refreshToken": savedRefreshToken}),
+          )
+          .timeout(const Duration(seconds: 30));
 
       print('🔁 Refresh response status: ${response.statusCode}');
       print('🔁 Refresh response body: ${response.body}');
@@ -134,8 +147,12 @@ class ApiInterceptor extends http.BaseClient {
             newToken = d['token'] ?? d['accessToken'] ?? d['access_token'];
             newRefreshToken = d['refreshToken'] ?? d['refresh_token'];
           }
-          newToken ??= jsonData['token'] ?? jsonData['accessToken'] ?? jsonData['access_token'];
-          newRefreshToken ??= jsonData['refreshToken'] ?? jsonData['refresh_token'];
+          newToken ??=
+              jsonData['token'] ??
+              jsonData['accessToken'] ??
+              jsonData['access_token'];
+          newRefreshToken ??=
+              jsonData['refreshToken'] ?? jsonData['refresh_token'];
         }
 
         if (newToken != null && newToken.isNotEmpty) {
@@ -180,7 +197,9 @@ class ApiInterceptor extends http.BaseClient {
       final jsonData = json.decode(response.body);
       final message = jsonData is Map ? jsonData["message"] : null;
       Utils.showToast(
-        message is List ? message.join(', ') : (message?.toString() ?? "Something went wrong"),
+        message is List
+            ? message.join(', ')
+            : (message?.toString() ?? "Something went wrong"),
         true,
       );
     } catch (_) {}

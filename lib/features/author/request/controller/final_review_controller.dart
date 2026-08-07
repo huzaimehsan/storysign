@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:sizer/sizer.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../core/services/request_service.dart';
@@ -44,7 +45,6 @@ class FinalReviewController extends GetxController {
 
       final request = await BaseService().buildMultipartRequest(
         ApiEndPoints.approveSendAutographRequest(autographRequestId),
-
       );
 
       print('⏳ APPROVE SEND API URL: ${request.url}');
@@ -63,9 +63,14 @@ class FinalReviewController extends GetxController {
       request.fields['yRatio'] = reqService.yRatio.toString();
       request.fields['widthRatio'] = reqService.widthRatio.toString();
       request.fields['heightRatio'] = reqService.heightRatio.toString();
-      request.fields['pageWidthPts'] = reqService.pageWidthPts.toInt().toString();
-      request.fields['pageHeightPts'] = reqService.pageHeightPts.toInt().toString();
-      request.fields['authorMessage'] = messageCtrl.messageController.text.trim();
+      request.fields['pageWidthPts'] = reqService.pageWidthPts
+          .toInt()
+          .toString();
+      request.fields['pageHeightPts'] = reqService.pageHeightPts
+          .toInt()
+          .toString();
+      request.fields['authorMessage'] = messageCtrl.messageController.text
+          .trim();
 
       print('➡ APPROVE SEND FIELDS: ${request.fields}');
 
@@ -81,10 +86,16 @@ class FinalReviewController extends GetxController {
         reqService.clear();
         finalReviewSucess(
           context,
-          desc: responseMap['message'] ?? 'Signed Ebook has been sent successfully',
+          width: 22.w,
+          desc:
+              responseMap['message'] ??
+              'Signed Ebook has been sent successfully',
         );
       } else {
-        Utils.showToast(responseMap['message'] ?? 'Failed to approve and send', true);
+        Utils.showToast(
+          responseMap['message'] ?? 'Failed to approve and send',
+          true,
+        );
       }
     } on TimeoutException {
       Utils.showToast('Request timed out', true);

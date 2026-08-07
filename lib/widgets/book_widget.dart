@@ -17,6 +17,7 @@ Widget recentlySignedBooks({
   required String bookTitle,
   String authorName = '',
   required String date,
+  String dateFormat = 'dd MMM, yyyy',
   VoidCallback? trackRequest,
   required String status,
   EdgeInsetsGeometry? margin,
@@ -62,32 +63,36 @@ Widget recentlySignedBooks({
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
-                  child: customText(
-                    fontFamily: "Poppins",
-                    text: bookTitle,
-                    color: secondryColor,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    maxLines: 2,
-                    overFlow: TextOverflow.ellipsis,
+                  child: Padding(
+                    padding:  EdgeInsets.only(right:2.w),
+                    child: customText(
+                      fontFamily: "Poppins",
+                      text: bookTitle,
+                      color: secondryColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      maxLines: 1,
+                      overFlow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 if (showAuthor && authorName.isNotEmpty) ...[
                   SizedBox(height: 0.6.h),
                   customText(
                     fontFamily: "Poppins",
-                    text: authorName,
+                    text: "Author : $authorName",
                     color: primaryColor,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
+                   
                   ),
                 ],
                 SizedBox(height: 0.6.h),
 
                 FormattedRequestDate(
-                  dateString: date, // Yeh ab raw date string legi (jaise book.uploadDate.toString())
-                  dateFormat: 'dd MMM, yyyy',
-                  color:  secondryColor.withOpacity(0.7),
+                  dateString: date, // raw date string (e.g. book.uploadDate)
+                  dateFormat: dateFormat,
+                  color: secondryColor.withOpacity(0.7),
                   fontSize: 14.sp,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,

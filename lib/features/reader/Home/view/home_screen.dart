@@ -8,7 +8,7 @@ import 'package:storysign/widgets/search_widget.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../../../author/profile/model/help_support_model.dart';
+
 import '../controller/home_controller.dart';
 import '../widgets/reader/build_profile_card.dart';
 import '../widgets/reader/user_profile_card.dart';
@@ -33,21 +33,8 @@ class HomeScreen extends GetView<HomeController> {
         color: white,
         onRefresh: () => controller.refreshHomeRequests(),
         child: Scaffold(
-          body: controller.errorMessage.value.isNotEmpty
-              ? SizedBox(
-                  height: 60.h,
-                  child: Center(
-                    child: customText(
-                      text: controller.errorMessage.value,
-                      color: greyColor,
-                      fontSize: 15.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-              : SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
+          body: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 7.h),
               child: Column(
@@ -71,7 +58,9 @@ class HomeScreen extends GetView<HomeController> {
                           Get.toNamed(
                             "/requestautographcard",
                             arguments: {
-                              'role': 'fromHome',
+                              'authorId': 'authorId',
+                              'bookId': 'bookId',
+                              'isFromHome': true,
                             },
                           );
                         },
@@ -99,6 +88,7 @@ class HomeScreen extends GetView<HomeController> {
 
                   Obx(() {
                     final authorsList = controller.filteredAuthors;
+                  
                     if (authorsList.isEmpty) {
                       return SizedBox(
                         height: 10.h,
@@ -158,6 +148,16 @@ class HomeScreen extends GetView<HomeController> {
 
                   Obx(() {
                     final books = controller.filteredBooks;
+                    if (controller.isBookLoading.value) {
+                      return SizedBox(
+                        height: 34.h,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: buttonColor,
+                          ),
+                        ),
+                      );
+                    }
                     if (books.isEmpty) {
                       return SizedBox(
                         height: 34.h,

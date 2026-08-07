@@ -11,6 +11,7 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/image_picker.dart';
+import '../../../../widgets/sucess_widget.dart';
 import '../../../reader/profile/model/profile_screen_model.dart';
 
 import '../../../reader/Home/controller/home_controller.dart';
@@ -92,7 +93,6 @@ class EditProfileController extends GetxController {
       );
 
       if (response['success'] == true) {
-        Utils.showToast('Profile updated successfully', false);
         clearImageProfile();
         if (Get.isRegistered<ProfileScreenController>()) {
           Get.find<ProfileScreenController>().getProfile();
@@ -100,7 +100,15 @@ class EditProfileController extends GetxController {
         if (Get.isRegistered<HomeController>()) {
           Get.find<HomeController>().loadUserProfile();
         }
-        Get.back();
+        showSuccessDialog(
+          Get.context!,
+          desc: 'Profile updated successfully',
+          buttonText: 'Okay',
+          ontap: () {
+            Get.back(); // close dialog
+            Get.back(); // go back to profile
+          },
+        );
       } else {
         Utils.showToast(response['message'] ?? 'Update failed', true);
       }

@@ -13,16 +13,13 @@ import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
 import 'package:storysign/features/author/request/view/add_message.dart';
 import 'package:storysign/features/author/request/view/final_review.dart';
-import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+
 import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
 import 'package:storysign/features/author/request/binding/final_review_binding.dart';
 
-import '../../../reader/library/view/reader_library.dart';
-import '../../../reader/notification/binding/notification_binding.dart';
-import '../../../reader/notification/view/notification.dart';
 import '../../../shared/notification/view/notification_screen.dart';
 import '../../notification/binding/author_notification_binding.dart';
-import '../../profile/binding/profile_binding.dart';
+
 import '../../request/binding/add_message_binding.dart';
 import '../../request/binding/draw_signature_binding.dart';
 import '../../request/binding/ebook_preview_binding.dart';
@@ -30,8 +27,6 @@ import '../../request/binding/request_detail_binding.dart';
 
 class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
   AuthorBottomNavLayout({super.key});
-
-
 
   // // Tab 0 (Home) ka initial route tree
   // Route _buildHomeRoute(RouteSettings settings) {
@@ -111,8 +106,9 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        final currentNavigator =
-            controller.navigatorKeys[controller.currentIndex.value].currentState;
+        final currentNavigator = controller
+            .navigatorKeys[controller.currentIndex.value]
+            .currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
         }
@@ -120,10 +116,9 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
       child: Scaffold(
         extendBody: true,
         body: Obx(
-              () => IndexedStack(
+          () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
-
               Navigator(
                 key: controller.navigatorKeys[0],
                 onGenerateRoute: (_) =>
@@ -141,17 +136,17 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
               ),
 
               Navigator(
-                  key: controller.navigatorKeys[3],
-                  onGenerateRoute: (RouteSettings settings) {
-                    return GetPageRoute(
-                      page: () => const NotificationScreen(),
-                      binding: AuthorNotificationBinding(),
-                      settings: RouteSettings(
-                        name: settings.name,
-                        arguments: {'role': 'author'},   // 👈 ye add karein
-                      ),
-                    );
-                  }
+                key: controller.navigatorKeys[3],
+                onGenerateRoute: (RouteSettings settings) {
+                  return GetPageRoute(
+                    page: () => const NotificationScreen(),
+                    binding: AuthorNotificationBinding(),
+                    settings: RouteSettings(
+                      name: settings.name,
+                      arguments: {'role': 'author'}, // 👈 ye add karein
+                    ),
+                  );
+                },
               ),
 
               Navigator(

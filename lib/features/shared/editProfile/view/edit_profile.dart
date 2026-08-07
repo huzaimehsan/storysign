@@ -51,9 +51,11 @@ class EditProfile extends StatelessWidget {
                   children: [
                     Obx(() {
                       final File? pickedImage = controller.profileImage.value;
-                      final String? networkUrl =
-                          controller.profileModel.value?.profilePicture
-                              ?.toString();
+                      final String? networkUrl = controller
+                          .profileModel
+                          .value
+                          ?.profilePicture
+                          ?.toString();
                       final bool hasNetwork =
                           networkUrl != null && networkUrl.isNotEmpty;
 
@@ -73,22 +75,22 @@ class EditProfile extends StatelessWidget {
                                   height: 30.w,
                                 )
                               : hasNetwork
-                                  ? Image.network(
-                                      networkUrl!,
-                                      fit: BoxFit.cover,
-                                      width: 30.w,
-                                      height: 30.w,
-                                      errorBuilder: (ctx, err, stack) => Icon(
-                                        Icons.person_rounded,
-                                        color: buttonColor.withOpacity(0.6),
-                                        size: 12.w,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.person_rounded,
-                                      color: buttonColor.withOpacity(0.6),
-                                      size: 12.w,
-                                    ),
+                              ? Image.network(
+                                  networkUrl!,
+                                  fit: BoxFit.cover,
+                                  width: 30.w,
+                                  height: 30.w,
+                                  errorBuilder: (ctx, err, stack) => Icon(
+                                    Icons.person_rounded,
+                                    color: buttonColor.withOpacity(0.6),
+                                    size: 12.w,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.person_rounded,
+                                  color: buttonColor.withOpacity(0.6),
+                                  size: 12.w,
+                                ),
                         ),
                       );
                     }),
@@ -142,10 +144,9 @@ class EditProfile extends StatelessWidget {
                           'Bio',
                           'Enter your biography',
                           controller: controller.bioUpdateController,
-                          validator: (value) =>
-                              value == null || value.isEmpty
-                                  ? 'Bio cannot be empty'
-                                  : null,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Bio cannot be empty'
+                              : null,
                         ),
                       ],
                     ],
@@ -156,34 +157,29 @@ class EditProfile extends StatelessWidget {
               SizedBox(height: 10.h),
 
               // Save Changes Button — Obx reads isLoading observable
-           Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  child:  buttonWidget(
-                    "Save Changes",
-                    onTap: () {
-                      if (controller.formKey.currentState?.validate() ??
-                          false) {
-                        role == 'author'
-                            ? controller.updateAuthorProfileWithImage(
-                          controller.selectedImage.value,
-                        )
-                            : controller.updateProfileWithImage(
-                          controller.selectedImage.value,
-                        );
-                      }
-                    },
-                    colors: buttonColor,
-                    height: 5.2.h,
-                    width: double.infinity,
-                    fontFamily: 'Poppins',
-                    fontsize: 16.sp,
-                    whiteColor,
-                  ),
-
-
-
-           ) ,
-
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: buttonWidget(
+                  "Save Changes",
+                  onTap: () {
+                    if (controller.formKey.currentState?.validate() ?? false) {
+                      role == 'author'
+                          ? controller.updateAuthorProfileWithImage(
+                              controller.selectedImage.value,
+                            )
+                          : controller.updateProfileWithImage(
+                              controller.selectedImage.value,
+                            );
+                    }
+                  },
+                  colors: buttonColor,
+                  height: 5.2.h,
+                  width: double.infinity,
+                  fontFamily: 'Poppins',
+                  fontsize: 16.sp,
+                  whiteColor,
+                ),
+              ),
             ],
           ),
         ),

@@ -205,7 +205,8 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                 emailTextFeild(
                                   'Personal Message',
                                   "Write a personal message...",
-                                  maxLength: 200,
+
+
                                   maxLines: 4,
                                   controller:
                                       homeController.personalMessageController,

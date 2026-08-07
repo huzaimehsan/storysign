@@ -51,6 +51,7 @@ Widget emailTextFeild(
                 obscureText: isPasswordHidden!.value,
                 decoration: InputDecoration(
                   filled: true,
+
                   fillColor: textFeildContainColor,
                   isDense: true,
                   hintText: hinttext,

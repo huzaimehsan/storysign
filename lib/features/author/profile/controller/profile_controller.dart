@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -14,6 +13,7 @@ import '../../../../utils/utility.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../../../../widgets/image_picker.dart';
+import '../../../../widgets/sucess_widget.dart';
 
 class AuthorProfileController extends GetxController {
   RxBool isLoading = false.obs;
@@ -134,8 +134,6 @@ class AuthorProfileController extends GetxController {
       );
 
       if (response['success'] == true) {
-        Utils.showToast('Profile updated successfully', false);
-
         if (Get.isRegistered<AuthorProfileController>()) {
           Get.find<AuthorProfileController>().getProfile();
         }
@@ -145,7 +143,15 @@ class AuthorProfileController extends GetxController {
 
         clearImageProfile();
         clearEditProfile();
-        Get.back();
+        showSuccessDialog(
+          Get.context!,
+          desc: 'Profile updated successfully',
+          buttonText: 'Okay',
+          ontap: () {
+            Get.back(); // close dialog
+            Get.back(); // go back to profile
+          },
+        );
       } else {
         Utils.showToast(response['message'] ?? 'Update failed', true);
       }

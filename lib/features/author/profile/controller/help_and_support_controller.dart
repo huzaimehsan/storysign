@@ -5,16 +5,13 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
 import '../../../reader/profile/model/profile_screen_model.dart';
 import '../model/help_support_model.dart' hide AuthorHelpSupportModel;
-import '../model/profile_model.dart';
 
 class AuthorHelpSupportController extends GetxController {
   RxBool isFaqsLoading = false.obs;
   RxString searchQuery = ''.obs;
   Rxn<AuthorHelpSupportModel> supportAuthorData = Rxn<AuthorHelpSupportModel>();
 
-
   List<AuthorFaqModel> _originalFaqAuthorList = [];
-
 
   RxList<AuthorFaqModel> faqAuthorList = <AuthorFaqModel>[].obs;
 
@@ -23,7 +20,6 @@ class AuthorHelpSupportController extends GetxController {
     super.onInit();
     getAuthorHelpSupportData();
     getAuthorFaqs();
-
 
     ever(searchQuery, (_) {
       _filterAuthorFaqs(searchQuery.value);
@@ -38,12 +34,18 @@ class AuthorHelpSupportController extends GetxController {
   Future<void> getAuthorHelpSupportData() async {
     try {
       final BaseService baseService = BaseService();
-      final response = await baseService.baseGetAPI(ApiEndPoints.authorHelpSupport,loading: false);
+      final response = await baseService.baseGetAPI(
+        ApiEndPoints.authorHelpSupport,
+        loading: false,
+      );
 
       if (response['success'] == true) {
         supportAuthorData.value = AuthorHelpSupportModel.fromJson(response);
       } else {
-        Utils.showToast(response['message'] ?? "Failed to load support data", true);
+        Utils.showToast(
+          response['message'] ?? "Failed to load support data",
+          true,
+        );
       }
     } catch (e) {
       Utils.showToast("Unexpected error occurred", true);
@@ -55,19 +57,23 @@ class AuthorHelpSupportController extends GetxController {
     try {
       isFaqsLoading.value = true;
       final BaseService baseService = BaseService();
-      final Map<String, dynamic> response = await baseService.baseGetAPI(ApiEndPoints.authorFaqs,loading: false);
+      final Map<String, dynamic> response = await baseService.baseGetAPI(
+        ApiEndPoints.authorFaqs,
+        loading: false,
+      );
 
       if (response['success'] == true) {
         List<dynamic> list = response['data'] ?? [];
 
         // 4. Original list mein data store karein
         _originalFaqAuthorList = list
-            .map((item) => AuthorFaqModel.fromJson(item as Map<String, dynamic>))
+            .map(
+              (item) => AuthorFaqModel.fromJson(item as Map<String, dynamic>),
+            )
             .toList();
 
         // 5. Initial load par filter call karein
         _filterAuthorFaqs(searchQuery.value);
-
       } else {
         Utils.showToast(response['message'] ?? "Error", true);
       }
@@ -84,10 +90,13 @@ class AuthorHelpSupportController extends GetxController {
       faqAuthorList.assignAll(_originalFaqAuthorList);
     } else {
       faqAuthorList.assignAll(
-        _originalFaqAuthorList.where((faq) =>
-        faq.question.toLowerCase().contains(query.toLowerCase()) ||
-            faq.answer.toLowerCase().contains(query.toLowerCase())
-        ).toList(),
+        _originalFaqAuthorList
+            .where(
+              (faq) =>
+                  faq.question.toLowerCase().contains(query.toLowerCase()) ||
+                  faq.answer.toLowerCase().contains(query.toLowerCase()),
+            )
+            .toList(),
       );
     }
   }

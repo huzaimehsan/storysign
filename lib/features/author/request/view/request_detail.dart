@@ -76,145 +76,156 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Fixed Header ──
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    customHeaderAuthor(
-                      context: context,
-                      title: 'Request Detail',
-                      onBack: () {
-                        if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                        } else {
-                          Get.back();
-                        }
-                      },
-                      onIconPressed: () {},
-                    ),
-                    SizedBox(height: 2.h),
-                    customText(
-                      height: 1.0,
-                      letterSpacing: 0.0,
-                      text: "Reader",
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: whiteColor,
-                      textAlign: TextAlign.start,
-                    ),
-                  ],
-                ),
-              ),
-
-              AllPendingRequest(
-                imagePath: requestDetail.reader.profilePicture,
-                authorName: requestDetail.reader.fullName,
-                bookName: requestDetail.bookTitle,
-                date: requestDetail.requestDate,
-                ontap: () {},
-              ),
-
-              SizedBox(height: 2.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: customText(
-                  text: "Ebook Detail",
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: whiteColor,
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              SizedBox(height: 0.5.h),
-
-              eBookDetail(
-                imagePath: requestDetail.coverImage,
-                bookName: requestDetail.bookTitle,
-                authorName: requestDetail.author.fullName,
-              ),
-
-              SizedBox(height: 2.h),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: customText(
-                  height: 1.0,
-                  letterSpacing: 0.0,
-                  text: "Personal Message",
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: whiteColor,
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              SizedBox(height: 2.h),
-
-              signedCopyMessageCard(
-                message: requestDetail.personalMessage,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-              ),
-
-              (!isFromDelivered
-              )
-                  ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Column(
-                  children: [
-                    SizedBox(height: 18.h),
-                    buttonWidget(
-                      "Accept Request",
-                      whiteColor,
-                      onTap: () => controller.acceptAndNavigate(context),
-                      colors: buttonColor,
-                      fontFamily: 'Poppins',
-                      height: 5.2.h,
-                      width: double.infinity,
-                      fontsize: 16.sp,
-                      fontweight: FontWeight.w600,
-                    ),
-                    SizedBox(height: 2.h),
-                    buttonWidget(
-                      "Decline Request",
-                      whiteColor,
-                      onTap: () {
-                        showDeclineDialog(
-                          context,
-                          desc: "Are you sure you want to decline this request?",
-                          buttonText: "Confirm",
-                          ontap: () {
-                            Get.back();
-                            controller.rejectRequest(context);
-                          },
-                        );
-                      },
-                      colors: greyColor,
-                      fontFamily: 'Poppins',
-                      height: 5.2.h,
-                      width: double.infinity,
-                      fontsize: 16.sp,
-                      fontweight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-              ) :  Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 4.w,vertical: 10.h),
-                child: buttonWidget(
-                  "Back To DeliveredScreen",
-                  whiteColor,
-                  onTap: () {
-                    Navigator.of(context).pop();
+                child: customHeaderAuthor(
+                  context: context,
+                  title: 'Request Detail',
+                  onBack: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      Get.back();
+                    }
                   },
-                  colors: btnColor,
-                  height: 5.2.h,
-                  fontFamily: 'Poppins',
-                  width: double.infinity,
-                  fontsize: 16.sp,
-                  fontweight: FontWeight.w600,
+                  onIconPressed: () {},
                 ),
               ),
 
-              SizedBox(height: 2.h),
+              // ── Scrollable Body ──
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: 2.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 2.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                        child: customText(
+                          height: 1.0,
+                          letterSpacing: 0.0,
+                          text: "Reader",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: whiteColor,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+
+                      AllPendingRequest(
+                        imagePath: requestDetail.reader.profilePicture,
+                        authorName: requestDetail.reader.fullName,
+                        bookName: requestDetail.bookTitle,
+                        date: requestDetail.requestDate,
+                        ontap: () {},
+                      ),
+
+                      SizedBox(height: 2.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                        child: customText(
+                          text: "Ebook Detail",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: whiteColor,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      SizedBox(height: 0.5.h),
+
+                      eBookDetail(
+                        imagePath: requestDetail.coverImage,
+                        bookName: requestDetail.bookTitle,
+                        authorName: requestDetail.author.fullName,
+                      ),
+
+                      SizedBox(height: 2.h),
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                        child: customText(
+                          height: 1.0,
+                          letterSpacing: 0.0,
+                          text: "Personal Message",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: whiteColor,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+
+                      signedCopyMessageCard(
+                        message: requestDetail.personalMessage,
+                        margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      ),
+
+                      (!isFromDelivered)
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4.w),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 4.h),
+                                  buttonWidget(
+                                    "Accept Request",
+                                    whiteColor,
+                                    onTap: () => controller.acceptAndNavigate(context),
+                                    colors: buttonColor,
+                                    fontFamily: 'Poppins',
+                                    height: 5.2.h,
+                                    width: double.infinity,
+                                    fontsize: 16.sp,
+                                    fontweight: FontWeight.w600,
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  buttonWidget(
+                                    "Decline Request",
+                                    whiteColor,
+                                    onTap: () {
+                                      showDeclineDialog(
+                                        context,
+                                        desc: "Are you sure you want to decline this request?",
+                                        buttonText: "Confirm",
+                                        ontap: () {
+                                          Get.back();
+                                          controller.rejectRequest(context);
+                                        },
+                                      );
+                                    },
+                                    colors: greyColor,
+                                    fontFamily: 'Poppins',
+                                    height: 5.2.h,
+                                    width: double.infinity,
+                                    fontsize: 16.sp,
+                                    fontweight: FontWeight.w600,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                              child: buttonWidget(
+                                "Back To DeliveredScreen",
+                                whiteColor,
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                colors: btnColor,
+                                height: 5.2.h,
+                                fontFamily: 'Poppins',
+                                width: double.infinity,
+                                fontsize: 16.sp,
+                                fontweight: FontWeight.w600,
+                              ),
+                            ),
+
+                      SizedBox(height: 2.h),
+                    ],
+                  ),
+                ),
+              ),
             ],
           );
         }),

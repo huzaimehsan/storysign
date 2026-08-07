@@ -35,6 +35,7 @@ Widget recentSignedBookCard({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           customText(
+            overFlow: TextOverflow.ellipsis,
             fontFamily: 'Poppins',
             text: title,
             color: secondryColor,

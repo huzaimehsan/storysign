@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
-import '../../../../widgets/button_widget.dart';
+
 import '../../../../widgets/customText_widget.dart';
+
 Widget activeSubscription({
   required String title,
   required String price,
@@ -13,7 +14,7 @@ Widget activeSubscription({
   VoidCallback? ontap,
 }) {
   return Padding(
-    padding:  EdgeInsets.symmetric(vertical: 1.h,horizontal: 4.w),
+    padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.w),
     child: Container(
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,

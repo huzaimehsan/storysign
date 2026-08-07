@@ -77,14 +77,13 @@ class SignedCopy extends GetView<SignedCopyController> {
                 ),
               ),
               SizedBox(height: 1.h),
-              // 1. First Obx (Book Detail ke liye)
+           
               Obx(() {
                 final book = controller.selectedRequest.value;
 
-                // Agar data abhi tak load nahi hua, toh loading dikhayein
                 if (book == null) {
                   return SizedBox(
-                    height: 30.h,
+                    height: 29.7.h,
                     child: const Center(
                       child: CircularProgressIndicator(color: buttonColor),
                     ),
@@ -95,11 +94,8 @@ class SignedCopy extends GetView<SignedCopyController> {
                   imageUrl: book.coverImage,
                   bookTitle: book.title,
                   authorName: book.author.fullName,
-                  date: book.uploadDate.isNotEmpty
-                      ? DateFormat(
-                          'dd MMM, hh:mm a',
-                        ).format(DateTime.parse(book.uploadDate).toLocal())
-                      : '',
+                  date: book.uploadDate.isNotEmpty ? book.uploadDate : '',
+                  dateFormat: 'dd MMM, hh:mm a',
                   status: book.status,
                   trackRequest: () {},
                   showArrow: false,

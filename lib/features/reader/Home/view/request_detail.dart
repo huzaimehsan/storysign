@@ -123,6 +123,7 @@ class RequestDetail extends GetView<ReaderDetailController> {
 
                              showSuccessDialog(
                                context,
+                               width: 40.w,
                                desc:
                                "Your Autograph Request have been sent Successfully",
                                buttonText: "Back To Dashboard",

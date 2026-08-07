@@ -29,9 +29,9 @@ class BaseService {
   String? stripeToken;
 
   String _parseMessage(
-      dynamic message, {
-        String defaultMessage = "Something went wrong",
-      }) {
+    dynamic message, {
+    String defaultMessage = "Something went wrong",
+  }) {
     if (message is List) {
       return message.join(', ');
     }
@@ -44,12 +44,12 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> basePostAPI(
-      String endPoint,
-      dynamic body, {
-        bool loading = true,
-        bool? isStripe,
-        bool showErrorToast = true,
-      }) async {
+    String endPoint,
+    dynamic body, {
+    bool loading = true,
+    bool? isStripe,
+    bool showErrorToast = true,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -69,10 +69,10 @@ class BaseService {
       // Token injection & 401 refresh handled by ApiInterceptor
       final response = await _client
           .post(
-        Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: jsonEncode(body),
-      )
+            Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            body: jsonEncode(body),
+          )
           .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();
@@ -92,7 +92,6 @@ class BaseService {
             "statusCode": response.statusCode,
           };
         }
-
 
         return {
           "success": true,
@@ -136,11 +135,11 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> baseGetAPI(
-      String endPoint, {
-        bool loading = true,
-        bool? isStripe,
-        bool showErrorToast = true,
-      }) async {
+    String endPoint, {
+    bool loading = true,
+    bool? isStripe,
+    bool showErrorToast = true,
+  }) async {
     if (loading) {
       // NOTE: Original code had EasyLoading commented out here. Keeping it that way.
       EasyLoading.show(
@@ -158,9 +157,9 @@ class BaseService {
     try {
       final response = await _client
           .get(
-        Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      )
+            Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          )
           .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();
@@ -215,12 +214,12 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> basePostMultipartAPI(
-      String endPoint,
-      Map<String, String> fields, {
-        Map<String, String>? filePaths,
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint,
+    Map<String, String> fields, {
+    Map<String, String>? filePaths,
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -234,7 +233,9 @@ class BaseService {
     }
 
     try {
-      final uri = Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint");
+      final uri = Uri.parse(
+        isStripe == true ? baseURLStripe : "$baseURL$endPoint",
+      );
       final request = http.MultipartRequest('POST', uri);
       final token = prefs.getString(LocalDBKeys.TOKEN);
       if (token != null && token.isNotEmpty) {
@@ -244,11 +245,15 @@ class BaseService {
 
       if (filePaths != null) {
         for (final entry in filePaths.entries) {
-          request.files.add(await http.MultipartFile.fromPath(entry.key, entry.value));
+          request.files.add(
+            await http.MultipartFile.fromPath(entry.key, entry.value),
+          );
         }
       }
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 60));
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 60),
+      );
       final responseString = await streamedResponse.stream.bytesToString();
 
       EasyLoading.dismiss();
@@ -259,7 +264,8 @@ class BaseService {
       print("Status: ${streamedResponse.statusCode}");
       print("Response: $responseString");
 
-      if (streamedResponse.statusCode >= 200 && streamedResponse.statusCode < 300) {
+      if (streamedResponse.statusCode >= 200 &&
+          streamedResponse.statusCode < 300) {
         var jsonData = json.decode(responseString);
         if (jsonData is List) {
           return {
@@ -286,7 +292,11 @@ class BaseService {
       }
 
       Utils.showToast("Something went wrong", true);
-      return {"success": false, "message": "Something went wrong", "statusCode": streamedResponse.statusCode};
+      return {
+        "success": false,
+        "message": "Something went wrong",
+        "statusCode": streamedResponse.statusCode,
+      };
     } on TimeoutException {
       EasyLoading.dismiss();
       Utils.showToast("Request timed out", true);
@@ -299,11 +309,11 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> basePutAPI(
-      String endPoint, {
-        required Map<String, dynamic> body,
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint, {
+    required Map<String, dynamic> body,
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -320,10 +330,10 @@ class BaseService {
     try {
       final response = await _client
           .put(
-        Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: json.encode(body),
-      )
+            Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            body: json.encode(body),
+          )
           .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();
@@ -368,11 +378,11 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> basePatchAPI(
-      String endPoint, {
-        required Map<String, dynamic> body,
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint, {
+    required Map<String, dynamic> body,
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -389,10 +399,10 @@ class BaseService {
     try {
       final response = await _client
           .patch(
-        Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: json.encode(body),
-      )
+            Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            body: json.encode(body),
+          )
           .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();
@@ -437,12 +447,12 @@ class BaseService {
   }
 
   Future<http.MultipartRequest> buildMultipartRequest(
-      String endPoint, {
-        String method = 'POST',
-        bool? isStripe,
-        bool showErrorToast = true,
-        Map<String, String>? headers,
-      }) async {
+    String endPoint, {
+    String method = 'POST',
+    bool? isStripe,
+    bool showErrorToast = true,
+    Map<String, String>? headers,
+  }) async {
     final request = http.MultipartRequest(
       method,
       Uri.parse(isStripe == true ? baseURLStripe : '$baseURL$endPoint'),
@@ -461,11 +471,11 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> baseMultipartPostAPI(
-      String endPoint, {
-        required http.MultipartRequest request,
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint, {
+    required http.MultipartRequest request,
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -485,7 +495,9 @@ class BaseService {
         request.headers['Authorization'] = 'Bearer $token';
       }
 
-      final streamedResponse = await _client.send(request).timeout(const Duration(seconds: 60));
+      final streamedResponse = await _client
+          .send(request)
+          .timeout(const Duration(seconds: 60));
       final response = await http.Response.fromStream(streamedResponse);
 
       EasyLoading.dismiss();
@@ -503,7 +515,11 @@ class BaseService {
             'statusCode': response.statusCode,
           };
         }
-        return {'success': true, 'data': jsonData, 'statusCode': response.statusCode};
+        return {
+          'success': true,
+          'data': jsonData,
+          'statusCode': response.statusCode,
+        };
       }
 
       if (response.body.isNotEmpty) {
@@ -518,7 +534,11 @@ class BaseService {
           };
         } catch (_) {
           Utils.showToast('Something went wrong', true);
-          return {'success': false, 'message': 'Something went wrong', 'statusCode': response.statusCode};
+          return {
+            'success': false,
+            'message': 'Something went wrong',
+            'statusCode': response.statusCode,
+          };
         }
       }
 
@@ -536,11 +556,11 @@ class BaseService {
   }
 
   Future<Map<String, dynamic>> baseMultipartPatchAPI(
-      String endPoint, {
-        required http.MultipartRequest request,
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint, {
+    required http.MultipartRequest request,
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -560,7 +580,9 @@ class BaseService {
         request.headers['Authorization'] = 'Bearer $token';
       }
 
-      final streamedResponse = await _client.send(request).timeout(const Duration(seconds: 60));
+      final streamedResponse = await _client
+          .send(request)
+          .timeout(const Duration(seconds: 60));
       final response = await http.Response.fromStream(streamedResponse);
 
       EasyLoading.dismiss();
@@ -578,7 +600,11 @@ class BaseService {
             'statusCode': response.statusCode,
           };
         }
-        return {'success': true, 'data': jsonData, 'statusCode': response.statusCode};
+        return {
+          'success': true,
+          'data': jsonData,
+          'statusCode': response.statusCode,
+        };
       }
 
       if (response.body.isNotEmpty) {
@@ -593,7 +619,11 @@ class BaseService {
           };
         } catch (_) {
           Utils.showToast('Something went wrong', true);
-          return {'success': false, 'message': 'Something went wrong', 'statusCode': response.statusCode};
+          return {
+            'success': false,
+            'message': 'Something went wrong',
+            'statusCode': response.statusCode,
+          };
         }
       }
 
@@ -612,10 +642,10 @@ class BaseService {
 
   // 💡 NEW FUNCTION: baseDeleteAPI
   Future<Map<String, dynamic>> baseDeleteAPI(
-      String endPoint, {
-        bool loading = true,
-        bool? isStripe,
-      }) async {
+    String endPoint, {
+    bool loading = true,
+    bool? isStripe,
+  }) async {
     if (loading) {
       EasyLoading.show(
         status: 'Please wait...',
@@ -632,9 +662,9 @@ class BaseService {
     try {
       final response = await _client
           .delete(
-        Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      )
+            Uri.parse(isStripe == true ? baseURLStripe : "$baseURL$endPoint"),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          )
           .timeout(const Duration(seconds: 60));
 
       EasyLoading.dismiss();

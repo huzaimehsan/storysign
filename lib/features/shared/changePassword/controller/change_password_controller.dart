@@ -14,16 +14,15 @@ class ChangePasswordController extends GetxController {
   final RxBool isNewPasswordHidden = true.obs;
   final RxBool isConfirmPasswordHidden = true.obs;
 
-
   final confirmPasswordController = TextEditingController();
   RxBool isLoading = false.obs;
- final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void onInit() {
     super.onInit();
     // Retrieve role from navigation arguments if available
 
-    print( ApiEndPoints.changePassword);
+    print(ApiEndPoints.changePassword);
   }
 
   Future<void> changePassword() async {
@@ -42,37 +41,34 @@ class ChangePasswordController extends GetxController {
     }
 
     try {
-      final response = await BaseService().basePostAPI(
-        ApiEndPoints.changePassword,
-        {
-
-          'currentPassword': oldPassword,
-          'newPassword': newPassword,
-          'confirmPassword': confirmPassword,
-        },
-      );
+      final response = await BaseService()
+          .basePostAPI(ApiEndPoints.changePassword, {
+            'currentPassword': oldPassword,
+            'newPassword': newPassword,
+            'confirmPassword': confirmPassword,
+          });
 
       if (response['success'] == true) {
-        Utils.showToast(
-          response['message'] ?? 'Password changed successful',
-          false,
+        showSuccessDialog(
+          Get.context!,
+          desc: response['message'] ?? 'Password changed successfully',
+          buttonText: 'Okay',
+          ontap: () {
+            Get.back(); // close dialog
+            Get.back(); // go back
+          },
         );
-Get.back();
-       // Get.offAllNamed('/login');
         clearNewPasswordFeild();
       }
-
     } catch (e) {
       debugPrint('resetPassword error: $e');
       Utils.showToast('Something went wrong', true);
     }
   }
 
-  void clearNewPasswordFeild(){
+  void clearNewPasswordFeild() {
     oldPasswordController.clear();
     newPasswordController.clear();
     confirmPasswordController.clear();
-
   }
-
 }

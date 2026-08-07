@@ -38,10 +38,10 @@ class SearchAuthorCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
-        height: 13.8.h,
+        height: 13.2.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.only(top: 5.w,bottom: 4.w,right: 4.w,left:4.w ),
+        padding: EdgeInsets.only(top: 4.w,bottom: 4.w,right: 4.w,left:4.w ),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -57,8 +57,8 @@ class SearchAuthorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 10.h,
-              width: 9.8.h,
+              height: 9.7.h,
+              width: 9.6.h,
               decoration: BoxDecoration(
                 border: (path.isEmpty || path == "null")
                     ? Border.all(color: Color(0xFFACACAC), width: 1.2)
@@ -77,16 +77,17 @@ class SearchAuthorCard extends StatelessWidget {
                   customText(
                     fontFamily: "Poppins",
                     text: bookTitle,
+                    overFlow : TextOverflow.ellipsis,
                     color: secondryColor,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
 
-                  SizedBox(height: 0.1.h),
+                  SizedBox(height: 0.4.h),
                   customText(
                     fontFamily: "Poppins",
                     text: date,
-                    color: secondryColor.withOpacity(0.7),
+                    color: secondryColor,
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                   ),

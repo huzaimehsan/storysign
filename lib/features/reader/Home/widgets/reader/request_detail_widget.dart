@@ -56,7 +56,7 @@ Widget RequestDetailWidget({
                     color: secondryColor,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    maxLines: 2,
+                    maxLines: 1,
                     overFlow: TextOverflow.ellipsis,
                   ),
                 ),

@@ -38,9 +38,9 @@ Widget customText({
       fontWeight: fontWeight, // Ensure the weight is respected
       fontStyle: fontStyle,
       decoration: effectiveDecoration,
-      decorationColor: decorationColor,
-      decorationThickness: 1.0,
-      letterSpacing: letterSpacing ?? - 0.5,
+      decorationColor: effectiveDecoration != null ? decorationColor : null,
+      decorationThickness: effectiveDecoration != null ? 1.0 : null,
+      letterSpacing: letterSpacing ?? -0.5,
       height: height,
     ),
   );

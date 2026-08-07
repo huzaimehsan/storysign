@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -7,9 +5,16 @@ import 'package:sizer/sizer.dart';
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
 import 'customText_widget.dart';
-void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap ,String? buttonText}) {
+
+void showSuccessDialog(
+  BuildContext context, {
+  String? desc,
+  double? width,
+  VoidCallback? ontap,
+  String? buttonText,
+}) {
   showDialog(
-    context:Get.context!,
+    context: Get.context!,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return Dialog(
@@ -18,10 +23,7 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
         child: Container(
           width: 92.w,
 
-          padding: EdgeInsets.symmetric(
-            vertical: 4.h,
-            horizontal: 4.4.w,
-          ),
+          padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.4.w),
           decoration: BoxDecoration(
             color: textFeildContainColor,
             borderRadius: BorderRadius.circular(5.w),
@@ -36,16 +38,9 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
                 decoration: BoxDecoration(
                   color: buttonColor.withOpacity(0.2),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: buttonColor,
-                    width: 0.3.w,
-                  ),
+                  border: Border.all(color: buttonColor, width: 0.3.w),
                 ),
-                child: Icon(
-                  Icons.check_circle,
-                  color: buttonColor,
-                  size: 8.w,
-                ),
+                child: Icon(Icons.check_circle, color: buttonColor, size: 8.w),
               ),
               SizedBox(height: 3.h),
 
@@ -70,7 +65,7 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
                   colors: buttonColor,
                   fontFamily: 'Poppins',
                   height: 4.h,
-                  width: 39.w,
+                  width: width ?? 35.w,
                   fontsize: 15.sp,
                   fontweight: FontWeight.w600,
                 ),
@@ -83,7 +78,7 @@ void showSuccessDialog(BuildContext context, {String? desc , VoidCallback? ontap
   );
 }
 
-void finalReviewSucess(BuildContext context, {String? desc}) {
+void finalReviewSucess(BuildContext context, {String? desc, double? width}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -93,10 +88,7 @@ void finalReviewSucess(BuildContext context, {String? desc}) {
         backgroundColor: Colors.transparent,
         child: Container(
           width: 92.w,
-          padding: EdgeInsets.symmetric(
-            vertical: 4.h,
-            horizontal: 4.w,
-          ),
+          padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
           decoration: BoxDecoration(
             color: textFeildContainColor,
             borderRadius: BorderRadius.circular(5.w),
@@ -111,27 +103,24 @@ void finalReviewSucess(BuildContext context, {String? desc}) {
                 decoration: BoxDecoration(
                   color: buttonColor.withOpacity(0.2),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: buttonColor,
-                    width: 0.3.w,
-                  ),
+                  border: Border.all(color: buttonColor, width: 0.3.w),
                 ),
-                child: Icon(
-                  Icons.check_circle,
-                  color: buttonColor,
-                  size: 8.w,
-                ),
+                child: Icon(Icons.check_circle, color: buttonColor, size: 8.w),
               ),
               SizedBox(height: 3.h),
 
               // Success Message
-              customText(
-                fontFamily: "Poppins",
-                text: desc ?? "Success!", // Default text agar desc null ho
-                color: secondryColor,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                textAlign: TextAlign.center,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: customText(
+                  fontFamily: "Poppins",
+                  text: desc ?? "Success!", // Default text agar desc null ho
+                  color: secondryColor,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
               ),
               SizedBox(height: 3.h),
 
@@ -139,18 +128,17 @@ void finalReviewSucess(BuildContext context, {String? desc}) {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 2.w),
                 child: buttonWidget(
-                  "Okay" ,
+                  "Okay",
                   whiteColor,
                   onTap: () {
                     // Dialog band karne ke liye
                     Get.back();
                     Get.offAllNamed("/authorbottomnav");
-
                   },
                   colors: buttonColor,
                   fontFamily: 'Poppins',
                   height: 4.h,
-                  width: 35.w,
+                  width: width ?? 35.w,
                   fontsize: 15.sp,
                   fontweight: FontWeight.w600,
                 ),
@@ -163,7 +151,13 @@ void finalReviewSucess(BuildContext context, {String? desc}) {
   );
 }
 
-void showDeclineDialog(BuildContext context, {String? desc, VoidCallback? ontap, String? buttonText}) {
+void showDeclineDialog(
+  BuildContext context, {
+  String? desc,
+  double? width,
+  VoidCallback? ontap,
+  String? buttonText,
+}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -222,7 +216,7 @@ void showDeclineDialog(BuildContext context, {String? desc, VoidCallback? ontap,
                   colors: buttonColor, // Red button for decline action
                   fontFamily: 'Poppins',
                   height: 4.h,
-                  width: 35.w,
+                  width: width ?? 30.w,
                   fontsize: 15.sp,
                   fontweight: FontWeight.w600,
                 ),

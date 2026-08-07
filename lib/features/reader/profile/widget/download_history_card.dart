@@ -49,6 +49,7 @@ Widget downloadHistoryCard({
                   text: title,
                   color: secondryColor,
                   fontSize: 15.sp,
+                  overFlow: TextOverflow.ellipsis,
                   fontWeight: FontWeight.w600,
                 ),
                 // SizedBox(height: 0.4.h),

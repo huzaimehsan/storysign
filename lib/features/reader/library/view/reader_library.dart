@@ -184,7 +184,7 @@ class ReaderLibrary extends GetView<ReaderController> {
                         imagePath: book.coverImage,
                         signed: book.status,
                         bookTitle: book.title,
-                        authorName: book.author?.fullName ?? "",
+                        authorName: book.author?.fullName ?? "No Author Selected",
                         date: formattedDate,
                         status: book.status,
                         showArrow: true,

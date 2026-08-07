@@ -23,11 +23,11 @@ class PendingRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check karein ke imagePath khali toh nahi hai
+
     bool hasImage = imagePath.trim().isNotEmpty;
 
     return InkWell(
-      onTap: authorDetail, // Yahan onep tap pure card par bhi laga sakte hain agar zaroorat ho
+      onTap: authorDetail,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 0.1.h),
         child: Container(
@@ -82,6 +82,7 @@ class PendingRequest extends StatelessWidget {
                     customText(
                       fontFamily: "Poppins",
                       text: authorName,
+                      overFlow: TextOverflow.ellipsis,
                       color: secondryColor,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
