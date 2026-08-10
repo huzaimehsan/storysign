@@ -7,6 +7,7 @@ import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../model/active_subscription_model.dart';
 import '../model/home_model.dart';
+
 class AuthorHomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   var authorStats = Rxn<SubscriptionStats>();
@@ -18,7 +19,7 @@ class AuthorHomeController extends GetxController {
   var filteredAutographList = <AutographItemModel>[].obs;
   RxString userRole = ''.obs;
   var isFetchPending = false.obs;
-
+  var isPageLoading = false.obs;
   var isUserDataLoading = false.obs;
   RxString errorMessage = ''.obs;
   RxString searchQuery = ''.obs;
@@ -26,12 +27,27 @@ class AuthorHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchLibraryStats();
-    fetchAutographRequests();
-    loadAuthorProfile();
-    fetchSubscriptionPlan();
+    loadHomeData();
     // Search query change hone par list filter karo
     ever(searchQuery, (_) => _applyFilter());
+  }
+
+  Future<void> loadHomeData() async {
+    isPageLoading.value = true;
+    errorMessage.value = '';
+    try {
+      await Future.wait([
+        fetchLibraryStats(),
+        fetchAutographRequests(),
+        loadAuthorProfile(),
+        fetchSubscriptionPlan(),
+      ]);
+    } catch (e) {
+      debugPrint('loadHomeData error: $e');
+      errorMessage.value = 'Unable to load home data';
+    } finally {
+      isPageLoading.value = false;
+    }
   }
 
   void _applyFilter() {
@@ -49,23 +65,20 @@ class AuthorHomeController extends GetxController {
     }
   }
 
-
   Future<void> refreshHomeRequests() async {
-    fetchLibraryStats();
-    fetchAutographRequests();
-    fetchSubscriptionPlan();
-    loadAuthorProfile();
+    isPageLoading.value = true;
+    await Future.wait([
+      fetchLibraryStats(),
+      fetchAutographRequests(),
+      fetchSubscriptionPlan(),
+      loadAuthorProfile(),
+    ]);
+    isPageLoading.value = false;
   }
-
-
 
   Future<void> refreshPendingRequest() async {
-
-
     fetchAutographRequests();
   }
-
-
 
   void filterRequests(String query) {
     searchQuery.value = query;
@@ -97,7 +110,6 @@ class AuthorHomeController extends GetxController {
     }
   }
 
-
   Future<void> fetchAutographRequests() async {
     try {
       isFetchPending.value = true;
@@ -114,7 +126,8 @@ class AuthorHomeController extends GetxController {
         autographList.assignAll(paginatedData.items);
         _applyFilter();
       } else {
-        errorMessage.value = response['message']?.toString() ?? 'Failed to load data';
+        errorMessage.value =
+            response['message']?.toString() ?? 'Failed to load data';
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -139,7 +152,6 @@ class AuthorHomeController extends GetxController {
     }
   }
 
-
   Future<void> loadAuthorProfile() async {
     try {
       isUserDataLoading.value = true;
@@ -163,5 +175,4 @@ class AuthorHomeController extends GetxController {
       isUserDataLoading.value = false;
     }
   }
-
 }

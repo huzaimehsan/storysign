@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/author/home/controller/home_controller.dart';
-
+import 'package:storysign/features/author/request/controller/all_request_controller.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../../../../widgets/formatted_date_widget.dart';
+
 import '../../../../widgets/search_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
 import '../../../reader/Home/widgets/reader/user_profile_card.dart';
 
-class AllRequest extends GetView<AuthorHomeController> {
+class AllRequest extends GetView<AllRequestController> {
   const AllRequest({super.key});
 
   @override
@@ -49,7 +48,7 @@ class AllRequest extends GetView<AuthorHomeController> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: controller.refreshPendingRequest,
-                backgroundColor :containerColor,
+                backgroundColor: containerColor,
                 color: white,
                 child: Obx(() {
                   if (controller.isFetchPending.value) {
@@ -73,8 +72,9 @@ class AllRequest extends GetView<AuthorHomeController> {
                     );
                   }
 
-                  if (controller.filteredAutographList.isEmpty) {
+                  if (controller.filteredRequests.isEmpty) {
                     return ListView(
+                      controller: controller.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         SizedBox(height: 40.h),
@@ -93,23 +93,35 @@ class AllRequest extends GetView<AuthorHomeController> {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: controller.filteredAutographList.length,
+                    itemCount:
+                        controller.filteredRequests.length +
+                        (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
-                      final request = controller.filteredAutographList[index];
+                      if (index >= controller.filteredRequests.length) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.h),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
+                          ),
+                        );
+                      }
+                      final request = controller.filteredRequests[index];
                       return AllPendingRequest(
-                        imagePath: request.reader.profilePicture,
-                        authorName: request.reader.fullName,
-                        bookName: request.bookTitle,
-                        date: request.requestDate,
+                        imagePath: request['imagePath'] ?? '',
+                        authorName: request['authorName'] ?? 'Unknown',
+                        bookName: request['bookName'] ?? 'Unknown',
+                        date: request['date'] ?? '',
                         ontap: () {
-                          print("NAVIGATING WITH ID: ${request.id}");
                           Navigator.of(context).pushNamed(
                             '/requestDetail',
                             arguments: {
                               'from': 'all_request',
-                              'autographRequestId': request.id,
+                              'autographRequestId': request['id'],
                             },
                           );
                         },

@@ -83,10 +83,20 @@ class NotificationScreen extends StatelessWidget {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: notificationController.length,
+                    itemCount: notificationController.length +
+                        (controller.isLoadingMoreNotifications.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index == notificationController.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: CircularProgressIndicator(color: buttonColor),
+                          ),
+                        );
+                      }
                       final data = notificationController[index];
                       return notificationTile(
                         title: data.title,

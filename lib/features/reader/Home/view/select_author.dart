@@ -77,7 +77,8 @@ class SelectAuthor extends GetView<SelectAuthorController> {
                       return WidgetSelectAuthor(
                         imagePath: author.profilePicture?.toString() ?? "",
                         bookTitle: author.fullName,
-                        date: "Joined: ${author.dateJoined.day}/${author.dateJoined.month}/${author.dateJoined.year}",
+                        date: author.dateJoined?.toString() ?? "",
+
                         isActive: active,
                         ontap: () {
                           if (active) {

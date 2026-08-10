@@ -14,6 +14,7 @@ import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
+import '../../../../widgets/sucess_widget.dart';
 
 class UploadBookController extends GetxController {
   final TextEditingController bookTitleController = TextEditingController();
@@ -76,12 +77,16 @@ class UploadBookController extends GetxController {
       );
 
       if (responseMap['success'] == true) {
-        Utils.showToast(
-          responseMap['message'] ?? 'Book uploaded successfully',
-          false,
-        );
         clearUploadBookFields();
-        Get.back();
+        showSuccessDialog(
+          context,
+          desc: responseMap['message'] ?? 'Book uploaded successfully',
+          buttonText: 'Okay',
+          ontap: () {
+            Get.back();
+            Get.back();
+          },
+        );
       } else {
         Utils.showToast(responseMap['message'] ?? 'Book upload failed', true);
       }

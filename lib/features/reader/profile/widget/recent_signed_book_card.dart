@@ -5,6 +5,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
+
 Widget recentSignedBookCard({
   required String title,
   required String price,
@@ -14,7 +15,7 @@ Widget recentSignedBookCard({
   VoidCallback? ontap,
 }) {
   return Padding(
-    padding:  EdgeInsets.symmetric(vertical: 1.h),
+    padding: EdgeInsets.symmetric(vertical: 1.h),
     child: Container(
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,
@@ -31,7 +32,6 @@ Widget recentSignedBookCard({
         ],
       ),
       child: Column(
-
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           customText(
@@ -41,11 +41,11 @@ Widget recentSignedBookCard({
             color: secondryColor,
             fontSize: 15.sp,
             fontWeight: FontWeight.w600,
+            maxLines: 1,
           ),
           SizedBox(height: 0.8.h),
           Row(
             children: [
-
               customText(
                 fontFamily: 'Poppins',
                 text: price,
@@ -64,14 +64,14 @@ Widget recentSignedBookCard({
               FormattedRequestDate(
                 dateString: date,
                 dateFormat: 'dd MMM, yyyy',
-                color:  secondryColor.withOpacity(0.7),
+                color: secondryColor.withOpacity(0.7),
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
               ),
               Spacer(),
               buttonWidget(
-                status ,
+                status,
                 buttonColor,
                 colors: buttonColor.withOpacity(0.2),
                 fontFamily: 'Poppins',
@@ -81,7 +81,6 @@ Widget recentSignedBookCard({
                 fontsize: 13.sp,
                 fontweight: FontWeight.w600,
               ),
-
             ],
           ),
         ],

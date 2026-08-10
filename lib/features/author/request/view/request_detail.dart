@@ -17,7 +17,8 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
   @override
   Widget build(BuildContext context) {
     // Get arguments from ModalRoute when using Navigator.pushNamed()
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final String from = args?['from'] ?? '';
     final String id = args?['autographRequestId'] ?? '';
 
@@ -133,8 +134,6 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                           textAlign: TextAlign.start,
                         ),
                       ),
-                      SizedBox(height: 0.5.h),
-
                       eBookDetail(
                         imagePath: requestDetail.coverImage,
                         bookName: requestDetail.bookTitle,
@@ -155,7 +154,7 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                           textAlign: TextAlign.start,
                         ),
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: 1.3.h),
 
                       signedCopyMessageCard(
                         message: requestDetail.personalMessage,
@@ -171,7 +170,8 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                                   buttonWidget(
                                     "Accept Request",
                                     whiteColor,
-                                    onTap: () => controller.acceptAndNavigate(context),
+                                    onTap: () =>
+                                        controller.acceptAndNavigate(context),
                                     colors: buttonColor,
                                     fontFamily: 'Poppins',
                                     height: 5.2.h,
@@ -186,7 +186,8 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                                     onTap: () {
                                       showDeclineDialog(
                                         context,
-                                        desc: "Are you sure you want to decline this request?",
+                                        desc:
+                                            "Are you sure you want to decline this request?",
                                         buttonText: "Confirm",
                                         ontap: () {
                                           Get.back();
@@ -205,9 +206,12 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
                               ),
                             )
                           : Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4.w,
+                                vertical: 6.h,
+                              ),
                               child: buttonWidget(
-                                "Back To DeliveredScreen",
+                                "Back To Delivered",
                                 whiteColor,
                                 onTap: () {
                                   Navigator.of(context).pop();

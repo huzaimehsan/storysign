@@ -19,15 +19,38 @@ class ProfileScreenController extends GetxController {
   RxBool isStatsLoading = false.obs;
   RxList<BookItem> bookList = <BookItem>[].obs;
   RxBool isbookLoading = false.obs;
+  RxBool isLoadingMoreHistory = false.obs;
+  RxInt historyCurrentPage = 1.obs;
+  RxInt historyTotalPages = 1.obs;
+  final int historyLimit = 10;
 
   @override
   void onInit() {
     super.onInit();
     errorMessage.value = '';
+    booksScrollController.addListener(_onBooksScroll);
     getProfile();
     fetchLibraryStats();
     downloadHistory();
     fetchMyBooks();
+  }
+
+  void _onBooksScroll() {
+    if (booksScrollController.position.pixels >=
+            booksScrollController.position.maxScrollExtent - 120) {
+      if (!isBookLoading.value &&
+          !isLoadingMoreBooks.value &&
+          currentPage.value < totalPages.value) {
+        fetchMyBooks(loadMore: true);
+        return;
+      }
+
+      if (!isbookLoading.value &&
+          !isLoadingMoreHistory.value &&
+          historyCurrentPage.value < historyTotalPages.value) {
+        downloadHistory(loadMore: true);
+      }
+    }
   }
 
   Future<void> refreshRequests() async {
@@ -84,26 +107,49 @@ class ProfileScreenController extends GetxController {
     }
   }
 
-  Future<void> downloadHistory() async {
+  Future<void> downloadHistory({bool loadMore = false}) async {
+    if (loadMore) {
+      if (historyCurrentPage.value >= historyTotalPages.value) return;
+      historyCurrentPage.value++;
+    } else {
+      historyCurrentPage.value = 1;
+      bookList.clear();
+    }
+
     try {
-      isbookLoading.value = true;
+      if (loadMore) {
+        isLoadingMoreHistory.value = true;
+      } else {
+        isbookLoading.value = true;
+      }
 
       final response = await BaseService().baseGetAPI(
-        ApiEndPoints.bookHistory,
+        ApiEndPoints.bookHistory(
+          page: historyCurrentPage.value,
+          limit: historyLimit,
+        ),
         loading: false,
         showErrorToast: false,
       );
 
       if (response['success'] == true) {
-
         final data = BookResponse.fromJson(response);
-        bookList.assignAll(data.items);
+        if (loadMore) {
+          bookList.addAll(data.items);
+        } else {
+          bookList.assignAll(data.items);
+        }
+        historyTotalPages.value = data.totalPages;
       }
-
     } catch (e) {
+      if (loadMore) historyCurrentPage.value--;
       debugPrint('ProfileScreenController downloadHistory error: $e');
     } finally {
-      isbookLoading.value = false;
+      if (loadMore) {
+        isLoadingMoreHistory.value = false;
+      } else {
+        isbookLoading.value = false;
+      }
     }
   }
 
@@ -119,6 +165,8 @@ class ProfileScreenController extends GetxController {
   }
   final RxList<MyProfileBookModel> books = <MyProfileBookModel>[].obs;
   final RxBool isBookLoading = false.obs;
+  final RxBool isLoadingMoreBooks = false.obs;
+  final ScrollController booksScrollController = ScrollController();
 
   final RxInt currentPage = 1.obs;
   final RxInt totalPages = 1.obs;
@@ -135,7 +183,11 @@ class ProfileScreenController extends GetxController {
     }
 
     try {
-      isBookLoading.value = true;
+      if (loadMore) {
+        isLoadingMoreBooks.value = true;
+      } else {
+        isBookLoading.value = true;
+      }
 
       final response = await BaseService().baseGetAPI(
         ApiEndPoints.listMyBooks(page: currentPage.value, limit: limit),
@@ -161,11 +213,22 @@ class ProfileScreenController extends GetxController {
       debugPrint('fetchMyBooks error: $e');
       // Secondary call — only toast, do NOT set errorMessage (profile is already loaded)
     } finally {
-      isBookLoading.value = false;
+      if (loadMore) {
+        isLoadingMoreBooks.value = false;
+      } else {
+        isBookLoading.value = false;
+      }
     }
   }
 
   Future<void> refreshBooks() async {
     await fetchMyBooks();
+  }
+
+  @override
+  void onClose() {
+    booksScrollController.removeListener(_onBooksScroll);
+    booksScrollController.dispose();
+    super.onClose();
   }
 }

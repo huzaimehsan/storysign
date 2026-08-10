@@ -65,6 +65,8 @@ Widget profileHeaderCard({
                 color: secondryColor,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
+                overFlow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
               SizedBox(height: 0.4.h),
               customText(
@@ -73,6 +75,8 @@ Widget profileHeaderCard({
                 color: secondryColor.withOpacity(0.75),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
+                overFlow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
               SizedBox(height: 0.4.h),
               Row(
@@ -81,17 +85,20 @@ Widget profileHeaderCard({
                     fontFamily: 'Poppins',
                     text: 'Joined: ',
                     color: secondryColor,
-
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                   ),
-                  FormattedRequestDate(
-                    dateString: joinedDate.isNotEmpty ? joinedDate : 'Unknown',
-                    dateFormat: 'dd MMM, yyyy',
-                    color: secondryColor.withOpacity(0.7),
-                    fontSize: 13.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: FormattedRequestDate(
+                      dateString: joinedDate.isNotEmpty ? joinedDate : 'Unknown',
+                      dateFormat: 'dd MMM, yyyy',
+                      color: secondryColor.withOpacity(0.7),
+                      fontSize: 13.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      overFlow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                 ],
               ),
@@ -100,7 +107,7 @@ Widget profileHeaderCard({
               Row(
                 children: [
                   if (author == true)
-                    Expanded(
+                    Flexible(
                       child: buttonWidget(
                         plan,
                         buttonColor,
@@ -115,7 +122,7 @@ Widget profileHeaderCard({
                     ),
                   if (author == true) SizedBox(width: 2.w),
                   if (author == true)
-                    Expanded(
+                    Flexible(
                       child: buttonWidget(
                         "$autograph Autographs",
                         buttonColor,

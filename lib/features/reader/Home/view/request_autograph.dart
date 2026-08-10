@@ -120,9 +120,6 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                             isPaid: detail.isPaid,
                           ),
                           SizedBox(height: 1.5.h),
-
-
-
                         ],
                       );
                     }),
@@ -204,9 +201,9 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                               children: [
                                 emailTextFeild(
                                   'Personal Message',
-                                  "Write a personal message...",
+                                  "Write a personal message to the author about why this book is special to you…",
 
-
+                                  width: 20.sp,
                                   maxLines: 4,
                                   controller:
                                       homeController.personalMessageController,
@@ -226,12 +223,12 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                               libraryDetailController.isLoading.value &&
                               detail == null;
                           final bool canShowButtons =
-                              !isLibraryRequest ||
-                              detail != null;
+                              !isLibraryRequest || detail != null;
                           if (isLoadingDetail || !canShowButtons)
                             return const SizedBox.shrink();
 
-                          final bool isPaidLibraryBook = detail?.isPaid ?? false;
+                          final bool isPaidLibraryBook =
+                              detail?.isPaid ?? false;
 
                           return Column(
                             children: [
@@ -268,8 +265,8 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                             .selectedAuthorId
                                             .value
                                             .isNotEmpty
-                                        ? lightTextColor
-                                        : buttonColor,
+                                        ? greyColor
+                                        : greyColor,
                                   ),
                                 ),
                                 SizedBox(height: 2.h),
@@ -293,7 +290,8 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                         arguments: {
                                           'autographRequestId':
                                               result['requestId'],
-                                          'clientSecret': result['clientSecret'],
+                                          'clientSecret':
+                                              result['clientSecret'],
                                           'paymentIntentId':
                                               result['paymentIntentId'],
                                           'bookId': isLibraryRequest

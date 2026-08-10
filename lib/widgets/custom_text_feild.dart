@@ -15,6 +15,7 @@ Widget emailTextFeild(
   Widget? suffixIcon,
   int? maxLength,
   int? maxLines,
+  double? width,
   bool? showSuffix,
   String? Function(String?)? validator,
   bool? isPaymentScreen = false,
@@ -96,25 +97,25 @@ Widget emailTextFeild(
                   ),
 
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(
                       color: borderGreyColor,
                       width: 0.15.h,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(
                       color: borderGreyColor,
                       width: 0.2.h,
                     ),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(color: Colors.red, width: 0.15.h),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(color: Colors.red, width: 0.2.h),
                   ),
                 ),
@@ -166,19 +167,19 @@ Widget emailTextFeild(
                     : null,
 
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: borderGreyColor, width: 0.15.h),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: borderGreyColor, width: 0.2.h),
                 ),
                 errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: Colors.red, width: 0.15.h),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: Colors.red, width: 0.2.h),
                 ),
               ),

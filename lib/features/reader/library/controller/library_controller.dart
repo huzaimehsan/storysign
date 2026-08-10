@@ -11,12 +11,9 @@ import '../../../../utils/utility.dart';
 import '../model/library_model.dart';
 
 class ReaderController extends GetxController {
-  RxString selectedTab = "All".obs;
   RxString searchQuery = "".obs;
-  RxString sortBy = "None"
-      .obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
-  RxString filterStatus =
-      "All".obs; // "All", "Signed", "In process", "Delivered", "Unsigned"
+  RxString selectedTab = "All".obs;
+  RxString sortBy = "None".obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"
 
   RxBool isLibrary = false.obs;
 
@@ -37,10 +34,9 @@ class ReaderController extends GetxController {
 
     // Listen to changes and update filtered books
     ever(booksList, (_) => _updateFilteredBooks());
-    ever(selectedTab, (_) => _updateFilteredBooks());
     ever(searchQuery, (_) => _updateFilteredBooks());
+    ever(selectedTab, (_) => _updateFilteredBooks());
     ever(sortBy, (_) => _updateFilteredBooks());
-    ever(filterStatus, (_) => _updateFilteredBooks());
     scrollController.addListener(_onScroll);
 
     // Fetch all books at once so local filtering works for all tabs
@@ -70,56 +66,18 @@ class ReaderController extends GetxController {
   }
 
   String _currentFetchStatus() {
-    if (filterStatus.value != 'All') {
-      return filterStatus.value.toLowerCase();
-    }
-
     if (selectedTab.value == 'Signed') {
       return 'signed';
     } else if (selectedTab.value == 'Unsigned') {
       return 'unsigned';
     }
-
     return 'all';
   }
 
   List<BookItem> _getFilteredBooks() {
     List<BookItem> books = List<BookItem>.from(booksList);
 
-    // 1. Filter by Tab selection ("All", "Signed", "Unsigned")
-    if (selectedTab.value == "Signed") {
-      books = books.where((book) {
-        final status = book.status.toLowerCase().replaceAll(' ', '_');
-        return status == "signed" ||
-            status == "completed" ||
-            status == "approved" ||
-            status == "delivered";
-      }).toList();
-    } else if (selectedTab.value == "Unsigned") {
-      books = books.where((book) {
-        final status = book.status.toLowerCase().replaceAll(' ', '_');
-        return status == "unsigned" || status == "pending";
-      }).toList();
-    }
-
-    // 2. Filter by filterStatus dropdown
-    if (filterStatus.value != "All") {
-      final target = filterStatus.value.toLowerCase();
-      books = books.where((book) {
-        final status = book.status.toLowerCase().replaceAll(' ', '_');
-        if (target == "signed") {
-          return status == "signed" ||
-              status == "completed" ||
-              status == "approved" ||
-              status == "delivered";
-        } else if (target == "unsigned") {
-          return status == "unsigned" || status == "pending";
-        }
-        return status == target;
-      }).toList();
-    }
-
-    // 3. Filter by search query
+    // 1. Filter by search query
     if (searchQuery.value.trim().isNotEmpty) {
       final query = searchQuery.value.toLowerCase().trim();
       books = books.where((book) {
@@ -127,7 +85,7 @@ class ReaderController extends GetxController {
       }).toList();
     }
 
-    // 4. Sort books
+    // 2. Sort books
     if (sortBy.value == "Title A-Z") {
       books.sort((a, b) => a.title.compareTo(b.title));
     } else if (sortBy.value == "Title Z-A") {
@@ -148,47 +106,12 @@ class ReaderController extends GetxController {
   List<BookItem> get filteredBooks {
     // Explicitly access all observables so Obx() tracks them
     final allBooks = booksList.toList();
-    final tab = selectedTab.value;
     final query = searchQuery.value;
-    final status = filterStatus.value;
     final sort = sortBy.value;
 
     List<BookItem> books = List<BookItem>.from(allBooks);
 
-    // 1. Filter by Tab (All / Signed / Unsigned)
-    if (tab == "Signed") {
-      books = books.where((book) {
-        final st = book.status.toLowerCase().replaceAll(' ', '_');
-        return st == "signed" ||
-            st == "completed" ||
-            st == "approved" ||
-            st == "delivered";
-      }).toList();
-    } else if (tab == "Unsigned") {
-      books = books.where((book) {
-        final st = book.status.toLowerCase().replaceAll(' ', '_');
-        return st == "unsigned" || st == "pending";
-      }).toList();
-    }
-
-    // 2. Filter by filterStatus dropdown
-    if (status != "All") {
-      final target = status.toLowerCase();
-      books = books.where((book) {
-        final st = book.status.toLowerCase().replaceAll(' ', '_');
-        if (target == "signed") {
-          return st == "signed" ||
-              st == "completed" ||
-              st == "approved" ||
-              st == "delivered";
-        } else if (target == "unsigned") {
-          return st == "unsigned" || st == "pending";
-        }
-        return st == target;
-      }).toList();
-    }
-
-    // 3. Filter by search query
+    // 1. Filter by search query
     if (query.trim().isNotEmpty) {
       final q = query.toLowerCase().trim();
       books = books
@@ -196,7 +119,7 @@ class ReaderController extends GetxController {
           .toList();
     }
 
-    // 4. Sort books
+    // 2. Sort books
     if (sort == "Title A-Z") {
       books.sort((a, b) => a.title.compareTo(b.title));
     } else if (sort == "Title Z-A") {
@@ -216,14 +139,8 @@ class ReaderController extends GetxController {
 
   void selectTab(String tab) {
     selectedTab.value = tab;
-    // Re-fetch data based on selected tab
-    if (tab == "All") {
-      fetchBooksData(status: 'all');
-    } else if (tab == "Signed") {
-      fetchBooksData(status: 'signed');
-    } else if (tab == "Unsigned") {
-      fetchBooksData(status: 'unsigned');
-    }
+    currentPage.value = 1;
+    fetchBooksData(status: _currentFetchStatus());
   }
 
   DateTime _parseDate(String dateStr) {

@@ -71,6 +71,8 @@ Widget RequestDetailWidget({
                         color: secondryColor.withOpacity(0.7),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 1.h),
                       if (showSubmittedBadge == true)
@@ -80,7 +82,7 @@ Widget RequestDetailWidget({
                           colors: buttonColor.withOpacity(0.2),
                           fontFamily: 'Poppins',
                           height: 3.h,
-                          width: 20.w,
+                          width: 21.w,
                           borderColor: buttonColor,
                           fontsize: 14.sp,
                           fontweight: FontWeight.w600,

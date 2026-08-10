@@ -277,11 +277,8 @@ class TrackRequest extends GetView<TrackRequestController> {
   ];
 
   static const List<String> _statusOptions = [
-    "All",
     "Submitted",
     "Rejected",
-    "In Process",
-    "Delivered",
   ];
 
   PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {

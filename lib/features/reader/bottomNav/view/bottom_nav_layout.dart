@@ -4,14 +4,11 @@ import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
-import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
-
 import '../../../shared/notification/view/notification_screen.dart';
 import '../../Home/view/home_screen.dart';
 import '../../Home/view/track_request.dart';
 import '../../library/view/reader_library.dart';
-import '../../notification/view/notification.dart';
 import '../../search/view/author_detail.dart';
 import '../../search/view/search_screen.dart';
 import '../controller/bottom_nav_controller.dart';

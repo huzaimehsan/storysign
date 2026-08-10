@@ -44,10 +44,9 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                 onIconPressed: () {},
               ),
             ),
-            SizedBox(height: 3.h),
 
             // ── Section 1: Ready to Send ──
-            SizedBox(height: 1.5.h),
+            SizedBox(height: 3.h),
 
             Expanded(
               child: SingleChildScrollView(
@@ -64,7 +63,7 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                       color: whiteColor,
                       fontFamily: 'Poppins',
                     ),
-                    SizedBox(height: 1.5.h),
+                    SizedBox(height: 1.h),
                     ReadyToSendCard(
                       readerName: reqService.readerName.isNotEmpty
                           ? reqService.readerName
@@ -80,7 +79,7 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                           : 'assets/png/book.png',
                     ),
 
-                    SizedBox(height: 3.h),
+                    SizedBox(height: 2.5.h),
 
                     // ── Section 2: Ebook Detail ──
                     customText(
@@ -91,13 +90,13 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                       letterSpacing: 0,
                       fontFamily: 'Poppins',
                     ),
-                    SizedBox(height: 1.5.h),
+                    SizedBox(height: 1.h),
 
                     SignatureDetailCard(
                       currentPage: placeCtrl.currentPage,
                       signatureBytes: placeCtrl.signatureBytes,
                     ),
-                    SizedBox(height: 2.5.h),
+                    SizedBox(height: 2.h),
 
                     // ── Section 3: Message ──
                     customText(
@@ -107,7 +106,7 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                       color: whiteColor,
                       fontFamily: 'Poppins',
                     ),
-                    SizedBox(height: 1.5.h),
+                    SizedBox(height: 1.h),
 
                     // Message card
                     Container(
@@ -130,13 +129,16 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
                           SizedBox(height: 1.5.h),
                           Align(
                             alignment: Alignment.bottomRight,
-                            child: Obx(() => customText(
-                              text: '${messageCtrl.charCount.value} Characters',
-                              fontSize: 11.6.sp,
-                              fontWeight: FontWeight.w500,
-                              color: buttonColor,
-                              fontFamily: 'Poppins',
-                            )),
+                            child: Obx(
+                              () => customText(
+                                text:
+                                    '${messageCtrl.charCount.value} Characters',
+                                fontSize: 11.6.sp,
+                                fontWeight: FontWeight.w500,
+                                color: buttonColor,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
                           ),
                         ],
                       ),

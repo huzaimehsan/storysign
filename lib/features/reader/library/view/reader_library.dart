@@ -19,7 +19,6 @@ class ReaderLibrary extends GetView<ReaderController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> tabs = ["All", "Signed", "Unsigned"];
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -40,28 +39,25 @@ class ReaderLibrary extends GetView<ReaderController> {
             ),
             SizedBox(height: 1.5.h),
             Padding(
-              padding: EdgeInsets.only(right: 5.w, left: 3.w),
+              padding: EdgeInsets.only(right: 3.w, left: 3.w),
               child: Row(
                 children: [
-                  ...tabs.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    String tab = entry.value;
-
-                    int flexValue = index == 0 ? 2 : 3;
+                  ...["All", "Signed", "Unsigned"].asMap().entries.map((entry) {
+                    final int index = entry.key;
+                    final String tab = entry.value;
+                    final int flexValue = index == 0 ? 2 : 3;
 
                     return Expanded(
                       flex: flexValue,
                       child: Obx(() {
-                        bool isSelected = controller.selectedTab.value == tab;
+                        final bool isSelected = controller.selectedTab.value == tab;
                         return Padding(
                           padding: EdgeInsets.symmetric(horizontal: 2.w),
                           child: buttonWidget(
                             tab,
                             isSelected ? whiteColor : buttonColor,
                             onTap: () => controller.selectTab(tab),
-                            colors: isSelected
-                                ? buttonColor
-                                : const Color(0xFFF5E6D3),
+                            colors: isSelected ? buttonColor : const Color(0xFFF5E6D3),
                             height: 4.5.h,
                             fontFamily: "Poppins",
                             fontsize: 14.sp,
@@ -71,7 +67,6 @@ class ReaderLibrary extends GetView<ReaderController> {
                       }),
                     );
                   }),
-
                   SizedBox(width: 2.w),
                   buildFilterDropdown(context),
                 ],
@@ -229,19 +224,9 @@ class ReaderLibrary extends GetView<ReaderController> {
       onSelected: (value) {
         if (value == "Reset") {
           controller.sortBy.value = "None";
-          controller.filterStatus.value = "All";
-          // Reset karne par current tab ke hisaab se re-fetch
-          controller.selectTab(controller.selectedTab.value);
+          controller.fetchBooksData(status: 'all');
         } else if (value.startsWith("sort:")) {
           controller.sortBy.value = value.replaceFirst("sort:", "");
-        } else if (value.startsWith("status:")) {
-          final selectedStatus = value.replaceFirst("status:", "");
-          controller.filterStatus.value = selectedStatus;
-
-          if (selectedStatus != "All") {
-            controller.selectedTab.value = "All";
-            controller.fetchBooksData(status: 'all');
-          }
         }
       },
       itemBuilder: (context) {
@@ -257,18 +242,6 @@ class ReaderLibrary extends GetView<ReaderController> {
             ),
           ),
           ..._sortOptions.map((label) => _buildMenuItem("sort:$label", label, controller.sortBy.value)),
-          const PopupMenuDivider(),
-          PopupMenuItem<String>(
-            enabled: false,
-            child: customText(
-              text: "Filter by Status",
-              color: secondryColor,
-              fontSize: 13.sp,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          ..._statusOptions.map((label) => _buildMenuItem("status:$label", label, controller.filterStatus.value)),
           const PopupMenuDivider(),
           PopupMenuItem<String>(
             value: "Reset",
@@ -304,12 +277,6 @@ class ReaderLibrary extends GetView<ReaderController> {
     "Title Z-A",
     "Date Newest",
     "Date Oldest",
-  ];
-
-  static const List<String> _statusOptions = [
-    "All",
-    "Signed",
-    "Unsigned",
   ];
 
   PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {

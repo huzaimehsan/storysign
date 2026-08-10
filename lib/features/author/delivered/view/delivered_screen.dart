@@ -76,6 +76,7 @@ class DeliveredScreen extends GetView<DeliveredController> {
 
                   if (controller.filteredRequests.isEmpty) {
                     return ListView(
+                      controller: controller.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         SizedBox(height: 40.h),
@@ -95,9 +96,21 @@ class DeliveredScreen extends GetView<DeliveredController> {
                   }
 
                   return ListView.builder(
+                    controller: controller.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: controller.filteredRequests.length,
+                    itemCount: controller.filteredRequests.length +
+                        (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index >= controller.filteredRequests.length) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.h),
+                          child: const Center(
+                            child: CircularProgressIndicator(color: buttonColor),
+                          ),
+                        );
+                      }
+
                       final request = controller.filteredRequests[index];
                       return AllPendingRequest(
                         imagePath: request.reader!.profilePicture ?? "",
@@ -113,12 +126,6 @@ class DeliveredScreen extends GetView<DeliveredController> {
                               'autographRequestId': request.id,
                             },
                           );
-                          // Get.(
-                          //   '/requestDetail',
-                          //   arguments: {
-                          //
-                          //   },
-                          // );
                         },
                       );
                     },

@@ -21,10 +21,10 @@ Widget customButton({
         borderRadius: BorderRadius.circular(borderRadius ?? 15.sp),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // Shadow ka rang
-            blurRadius: 10,                       // Shadow kitni soft hogi
-            spreadRadius: 4,                      // Shadow ko charo taraf kitna failana hai
-            offset: Offset(0, 0),                 // Offset 0,0 ka matlab hai "overall"
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 4,
+            offset: Offset(0, 0),
           ),
         ],
       ),

@@ -14,19 +14,35 @@ class NotificationController extends NotificationScreenController {
 
   @override
   var isNotificationsLoading = false.obs;
-
+  @override
+  var isLoadingMoreNotifications = false.obs;
   @override
   var notificationList = <NotificationModel>[].obs;
-
   @override
   var errorMessage = ''.obs;
+  @override
+  final ScrollController scrollController = ScrollController();
+
+  RxInt currentPage = 1.obs;
+  RxInt totalPages = 1.obs;
 
   var unreadCount = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(_onScroll);
     getNotifications();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 120 &&
+        !isNotificationsLoading.value &&
+        !isLoadingMoreNotifications.value &&
+        currentPage.value < totalPages.value) {
+      getNotifications(page: currentPage.value + 1, loadMore: true);
+    }
   }
 
   @override
@@ -37,13 +53,17 @@ class NotificationController extends NotificationScreenController {
   }
 
   final BaseService baseService = BaseService();
-  Future<void> getNotifications({int page = 1, int limit = 20}) async {
+  Future<void> getNotifications({int page = 1, int limit = 20, bool loadMore = false}) async {
     try {
-      isNotificationsLoading.value = true;
+      if (loadMore) {
+        isLoadingMoreNotifications.value = true;
+      } else {
+        isNotificationsLoading.value = true;
+      }
       errorMessage.value = '';
 
       final Map<String, dynamic> response = await baseService.baseGetAPI(
-        ApiEndPoints.readerNotifications(page: page, limit: limit), // ✅
+        ApiEndPoints.readerNotifications(page: page, limit: limit),
         loading: false,
         showErrorToast: false,
       );
@@ -54,9 +74,17 @@ class NotificationController extends NotificationScreenController {
             .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
             .toList();
 
-        notificationList.value = allNotifications.where((n) => !n.isRead).toList();
+        final filtered = allNotifications.where((n) => !n.isRead).toList();
+        if (loadMore) {
+          notificationList.addAll(filtered);
+        } else {
+          notificationList.value = filtered;
+        }
         unreadCount.value = notificationList.length;
+        currentPage.value = response['page'] ?? page;
+        totalPages.value = response['totalPages'] ?? totalPages.value;
       } else {
+        if (loadMore && currentPage.value > 1) currentPage.value--;
         errorMessage.value = response?['message']?.toString() ?? "Failed to load notifications";
         Utils.showToast(errorMessage.value, true);
       }
@@ -64,9 +92,20 @@ class NotificationController extends NotificationScreenController {
       errorMessage.value = "Error fetching notifications: $e";
       debugPrint("Error fetching notifications: $e");
     } finally {
-      isNotificationsLoading.value = false;
+      if (loadMore) {
+        isLoadingMoreNotifications.value = false;
+      } else {
+        isNotificationsLoading.value = false;
+      }
     }
   }
+  @override
+  void onClose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.onClose();
+  }
+
   @override // 👈 lagaya
   Future<void> markAllAsRead() async {
     try {

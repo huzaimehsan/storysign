@@ -25,10 +25,25 @@ class TrackingScreen extends GetView<TrackingController> {
 
           final tracking = controller.trackingModel.value;
           final statusLabel = humanizeStatus(tracking?.status);
+          final statusLower = statusLabel.toLowerCase();
+          final statusNormalized = statusLower
+              .replaceAll('_', ' ')
+              .replaceAll('-', ' ')
+              .trim();
           final isPaidState =
               tracking?.isPaid == true ||
-              statusLabel.toLowerCase() == 'paid' ||
-              statusLabel.toLowerCase() == 'delivered';
+              statusNormalized == 'paid' ||
+              statusNormalized == 'delivered';
+          final isSubmittedStageComplete = statusNormalized == 'submitted' ||
+              statusNormalized == 'in process' ||
+              statusNormalized == 'inprogress' ||
+              statusNormalized == 'delivered' ||
+              statusNormalized == 'paid';
+          final isReviewStageComplete = statusNormalized == 'in process' ||
+              statusNormalized == 'inprogress' ||
+              statusNormalized == 'delivered' ||
+              statusNormalized == 'paid';
+          final isDeliveredStageComplete = statusNormalized == 'delivered';
           final paymentDate = displayDateLabel(
             tracking?.signaturePlacement?.paidAt ??
                 tracking?.signaturePlacement?.createdAt ??
@@ -130,32 +145,31 @@ class TrackingScreen extends GetView<TrackingController> {
                           ),
                           SizedBox(height: 2.h),
                           buildInfoCard(
-                            imagePath: 'assets/png/confirmed.png',
+                            imagePath: isSubmittedStageComplete
+                                ? 'assets/png/confirmed.png'
+                                : 'assets/png/noconfirm.png',
                             title: 'Submitted',
                             subtitle: 'Autograph request',
                             date: submittedDate,
                           ),
                           SizedBox(height: 2.h),
                           buildInfoCard(
-                            imagePath:
-                                statusLabel.toLowerCase() == 'submitted' ||
-                                    statusLabel.toLowerCase() == 'in process' ||
-                                    statusLabel.toLowerCase() == 'delivered'
+                            imagePath: isReviewStageComplete
                                 ? 'assets/png/confirmed.png'
                                 : 'assets/png/noconfirm.png',
                             title: 'Author Review',
-                            subtitle: statusLabel.toLowerCase() == 'submitted'
+                            subtitle: statusLower == 'submitted'
                                 ? 'Request in review'
                                 : 'Reviewed by author',
                             date: reviewDate,
                           ),
                           SizedBox(height: 2.h),
                           buildInfoCard(
-                            imagePath: statusLabel.toLowerCase() == 'delivered'
+                            imagePath: isDeliveredStageComplete
                                 ? 'assets/png/confirmed.png'
                                 : 'assets/png/noconfirm.png',
                             title: 'Delivered',
-                            subtitle: statusLabel.toLowerCase() == 'delivered'
+                            subtitle: statusLower == 'delivered'
                                 ? 'Request Completed'
                                 : 'Waiting for delivery',
                             date: deliveredDate,
@@ -199,7 +213,8 @@ String humanizeStatus(String? value) {
     case 'submitted':
       return 'Submitted';
     case 'in process':
-    case 'in_process':
+    case 'in_progress':
+    case 'in_prgress':
     case 'inprogress':
     case 'in-progress':
       return 'In Process';

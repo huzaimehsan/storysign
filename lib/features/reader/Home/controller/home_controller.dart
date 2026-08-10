@@ -26,7 +26,18 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     debugPrint("HomeController onInit called");
+    scrollController.addListener(_onScroll);
     _loadAllData();
+  }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 120 &&
+        !isBookLoading.value &&
+        !isLoadingMore.value &&
+        currentPage.value < totalPages.value) {
+      fetchMyBooks(loadMore: true);
+    }
   }
 
   Future<void> _loadAllData() async {
@@ -244,6 +255,8 @@ class HomeController extends GetxController {
 
   final RxList<SignedBookModel> books = <SignedBookModel>[].obs;
   final RxBool isBookLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final ScrollController scrollController = ScrollController();
 
   final RxInt currentPage = 1.obs;
   final RxInt totalPages = 1.obs;
@@ -259,7 +272,11 @@ class HomeController extends GetxController {
     }
 
     try {
-      isBookLoading.value = true;
+      if (loadMore) {
+        isLoadingMore.value = true;
+      } else {
+        isBookLoading.value = true;
+      }
       errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
@@ -290,7 +307,11 @@ class HomeController extends GetxController {
       errorMessage.value = 'Something went wrong while loading books';
       Utils.showToast(errorMessage.value, true);
     } finally {
-      isBookLoading.value = false;
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isBookLoading.value = false;
+      }
     }
   }
 
@@ -302,6 +323,8 @@ class HomeController extends GetxController {
   void onClose() {
     _searchDebounce?.cancel();
     searchController.dispose();
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
     super.onClose();
   }
 

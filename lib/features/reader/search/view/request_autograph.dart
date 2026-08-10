@@ -48,9 +48,9 @@ class RequestAutograph extends GetView<RequestAutographController> {
                       bookTitle: author?.fullName ?? 'Author',
                       date: author?.dateJoined,
                     ),
-                
+
                     SizedBox(height: 2.h),
-                
+
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Obx(
@@ -62,40 +62,51 @@ class RequestAutograph extends GetView<RequestAutographController> {
                               controller: controller.bookTitleControllerRequest,
                             ),
                             SizedBox(height: 1.5.h),
-                
+
                             FileUploadWidget(
                               title: 'Upload Book',
-                              description: 'Tap to select a pdf file from your device',
+                              description:
+                                  'Tap to select a pdf file from your device',
                               file: controller.bookPdfFile.value,
                               onTap: () async {
-                                final File? file = await mediaPicker.pickMedia(context, mode: PickMode.document);
+                                final File? file = await mediaPicker.pickMedia(
+                                  context,
+                                  mode: PickMode.document,
+                                );
                                 if (file != null) {
                                   controller.bookPdfFile.value = file;
                                 }
                               },
-                              onRemove: () => controller.bookPdfFile.value = null,
+                              onRemove: () =>
+                                  controller.bookPdfFile.value = null,
                             ),
                             SizedBox(height: 1.5.h),
-                
+
                             FileUploadWidget(
                               title: 'Upload Cover Photo',
-                              description: 'Tap to select a png format from your device',
+                              description:
+                                  'Tap to select a png format from your device',
                               file: controller.bookCoverImage.value,
                               onTap: () async {
-                                final File? file = await mediaPicker.pickMedia(context, mode: PickMode.image);
+                                final File? file = await mediaPicker.pickMedia(
+                                  context,
+                                  mode: PickMode.image,
+                                );
                                 if (file != null) {
                                   controller.bookCoverImage.value = file;
                                 }
                               },
-                              onRemove: () => controller.bookCoverImage.value = null,
+                              onRemove: () =>
+                                  controller.bookCoverImage.value = null,
                             ),
-                
+
                             SizedBox(height: 1.5.h),
                             emailTextFeild(
                               'Personal Message',
                               "Write a personal message to the author about why this book is special to you…",
                               maxLength: 200,
                               maxLines: 4,
+                              width: 20.sp,
                               controller: controller.personalMessageController,
                             ),
                             SizedBox(height: 3.h),
@@ -105,18 +116,31 @@ class RequestAutograph extends GetView<RequestAutographController> {
                               whiteColor,
                               onTap: () async {
                                 // Controller se Map return karwayein
-                                final Map<String, dynamic>? result = await controller.requestAutograph(context, authorId);
+                                final Map<String, dynamic>? result =
+                                    await controller.requestAutograph(
+                                      context,
+                                      authorId,
+                                    );
 
                                 // Check karein ke result valid hai
-                                if (result != null && result['requestId'] != null) {
-                                  Get.offNamed('/request', arguments: {
-                                    'autographRequestId': result['requestId'],
-                                    'clientSecret': result['clientSecret'],       // Yeh zaroori hai
-                                    'paymentIntentId': result['paymentIntentId'], // Yeh zaroori hai
-                                    'role': 'alreadySelectedAuthor',
-                                  });
+                                if (result != null &&
+                                    result['requestId'] != null) {
+                                  Get.offNamed(
+                                    '/request',
+                                    arguments: {
+                                      'autographRequestId': result['requestId'],
+                                      'clientSecret':
+                                          result['clientSecret'], // Yeh zaroori hai
+                                      'paymentIntentId':
+                                          result['paymentIntentId'], // Yeh zaroori hai
+                                      'role': 'alreadySelectedAuthor',
+                                    },
+                                  );
                                 } else {
-                                  Utils.showToast("Request failed. Please try again.", true);
+                                  Utils.showToast(
+                                    "Request failed. Please try again.",
+                                    true,
+                                  );
                                 }
                               },
                               colors: buttonColor,
@@ -126,7 +150,7 @@ class RequestAutograph extends GetView<RequestAutographController> {
                               fontsize: 16.sp,
                               fontweight: FontWeight.w600,
                             ),
-                
+
                             SizedBox(height: 5.h),
                           ],
                         ),
@@ -135,7 +159,7 @@ class RequestAutograph extends GetView<RequestAutographController> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

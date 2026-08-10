@@ -87,7 +87,7 @@ class AuthorInfoCard extends StatelessWidget {
                   children: [
                     customText(
                       fontFamily: "Poppins",
-                      text: "Joined ",
+                      text: "Joined : ",
                       color: secondryColor.withOpacity(0.7),
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,

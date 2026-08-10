@@ -75,28 +75,34 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
               Expanded(
                 child: Obx(
                   () {
-                    // Resolve the active plan name from live controllers (always fresh after payment).
+                    // Resolve the active plan from live controllers (always fresh after payment).
                     // Falls back to stale args only when controllers haven't loaded yet (e.g. first sign-up).
-                    // Name-based matching is safe here because plans are pre-filtered by planType,
-                    // so within the visible list each plan name is unique.
+                    String? activePlanId;
                     String? activePlanName;
 
                     if (Get.isRegistered<AuthorHomeController>()) {
-                      activePlanName = Get.find<AuthorHomeController>()
+                      final activeSub = Get.find<AuthorHomeController>()
                           .activeSub
-                          .value
-                          ?.planName;
+                          .value;
+                      activePlanId = activeSub?.planId;
+                      activePlanName = activeSub?.planName;
                     }
-                    if ((activePlanName == null || activePlanName.isEmpty) &&
+                    if ((activePlanId == null || activePlanId.isEmpty) &&
                         Get.isRegistered<AuthorProfileController>()) {
-                      activePlanName = Get.find<AuthorProfileController>()
+                      final profile = Get.find<AuthorProfileController>()
                           .authorProfile
-                          .value
-                          ?.activePlanName;
+                          .value;
+                      activePlanId = profile?.activePlanId;
+                      if (activePlanName == null || activePlanName.isEmpty) {
+                        activePlanName = profile?.activePlanName;
+                      }
                     }
                     // Last resort: use args (only present before controllers load)
+                    final Map<String, dynamic>? navArgs = Get.arguments;
+                    if (activePlanId == null || activePlanId.isEmpty) {
+                      activePlanId = navArgs?['planId']?.toString();
+                    }
                     if (activePlanName == null || activePlanName.isEmpty) {
-                      final Map<String, dynamic>? navArgs = Get.arguments;
                       activePlanName = navArgs?['planName']?.toString();
                     }
 
@@ -130,12 +136,14 @@ class SubscriptionPlan extends GetView<SubscriptionPlanController> {
                         itemBuilder: (context, index) {
                           final plan = controller.plans[index];
 
-                          // Compare by name (safe — list is already filtered by planType,
-                          // so no two visible plans can share the same name).
-                          final bool isCurrentPlan = activePlanName != null &&
+                          final bool isCurrentPlan = (activePlanId != null &&
+                              activePlanId.isNotEmpty &&
+                              plan.id.trim().toLowerCase() ==
+                                  activePlanId.trim().toLowerCase()) ||
+                          (activePlanName != null &&
                               activePlanName.isNotEmpty &&
                               plan.name.trim().toLowerCase() ==
-                                  activePlanName.trim().toLowerCase();
+                                  activePlanName.trim().toLowerCase());
 
                           String getButtonText() {
                             if (isCurrentPlan) return 'Current Plan';

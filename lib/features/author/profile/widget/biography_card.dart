@@ -10,7 +10,7 @@ Widget authorBiographyCard({required String bio}) {
     padding: EdgeInsets.all(4.w),
     decoration: BoxDecoration(
       color: white,
-      borderRadius: BorderRadius.circular(20.sp),
+      borderRadius: BorderRadius.circular(18.sp),
       boxShadow: [
         BoxShadow(
           color: blackColor.withOpacity(0.05),
@@ -31,9 +31,7 @@ Widget authorBiographyCard({required String bio}) {
   );
 }
 
-Widget authorBiographyTextField({
-  required TextEditingController controller,
-}) {
+Widget authorBiographyTextField({required TextEditingController controller}) {
   return Container(
     width: double.infinity,
 

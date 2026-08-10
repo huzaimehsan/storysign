@@ -7,6 +7,7 @@ import 'package:storysign/features/author/profile/controller/profile_controller.
 import '../../../shared/notification/controller/notification_screen_controller.dart';
 
 import '../../home/controller/home_controller.dart';
+import '../../request/controller/all_request_controller.dart';
 
 
 // import '../../author/search/controller/search_controller.dart';
@@ -46,6 +47,10 @@ class AuthorBottomNavController extends GetxController {
       try {
         if (Get.isRegistered<AuthorHomeController>()) {
           Get.find<AuthorHomeController>().fetchAutographRequests();
+        }
+        // Also refresh AllRequestController so its local loader shows when switching tabs
+        if (Get.isRegistered<AllRequestController>()) {
+          Get.find<AllRequestController>().fetchPendingRequests();
         }
       } catch (e) {
         debugPrint("Error refreshing Request tab: $e");

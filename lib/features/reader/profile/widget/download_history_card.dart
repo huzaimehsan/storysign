@@ -50,8 +50,11 @@ Widget downloadHistoryCard({
                   color: secondryColor,
                   fontSize: 15.sp,
                   overFlow: TextOverflow.ellipsis,
+                  maxLines: 1,
+
                   fontWeight: FontWeight.w600,
                 ),
+
                 // SizedBox(height: 0.4.h),
                 // customText(
                 //   fontFamily: 'Poppins',
@@ -60,7 +63,6 @@ Widget downloadHistoryCard({
                 //   fontSize: 14.sp,
                 //   fontWeight: FontWeight.w500,
                 // ),
-
                 SizedBox(height: 0.4.h),
                 FormattedRequestDate(
                   dateString:

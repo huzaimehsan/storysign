@@ -33,22 +33,16 @@ class CustomMessageDisplay extends StatelessWidget {
           // Container for Message
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 4.w,
-              vertical: 2.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
             decoration: BoxDecoration(
               color: textFeildContainColor,
-              borderRadius: BorderRadius.circular(20.sp),
-              border: Border.all(
-                color: borderGreyColor,
-                width: 0.15.h,
-              ),
+              borderRadius: BorderRadius.circular(15.sp),
+              border: Border.all(color: borderGreyColor, width: 0.15.h),
             ),
             child: customText(
               fontFamily: "Poppins",
               text: message,
-              color:textFeildColor ,
+              color: textFeildColor,
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),

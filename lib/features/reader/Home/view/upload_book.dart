@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/reader/Home/binding/upload_book_binding.dart';
+
 import 'package:storysign/features/reader/Home/controller/upload_book_controller.dart';
-import 'package:storysign/widgets/sucess_widget.dart';
+
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
@@ -13,7 +13,7 @@ import '../../../../widgets/custom_text_feild.dart';
 import '../../../../widgets/image_picker.dart';
 import '../../search/widgets/file_upload_widget.dart';
 import '../../search/widgets/header_widget.dart';
-import '../controller/home_controller.dart';
+
 
 class UploadBook extends GetView<UploadBookController> {
   UploadBook({super.key});

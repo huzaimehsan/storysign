@@ -19,7 +19,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isFetchPending.value && controller.autographList.isEmpty) {
+      if (controller.isPageLoading.value) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator(color: buttonColor)),
         );
@@ -47,176 +47,159 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                   onRefresh: () => controller.refreshHomeRequests(),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  Obx(() {
-                    final authorProfile = controller.userAuthorProfile.value;
-                    final role = controller.userRole.value;
+                    child: Column(
+                      children: [
+                        Obx(() {
+                          final authorProfile =
+                              controller.userAuthorProfile.value;
+                          final role = controller.userRole.value;
 
-                    if (authorProfile == null) {
-                      return const SizedBox.shrink();
-                    }
+                          if (authorProfile == null) {
+                            return const SizedBox.shrink();
+                          }
 
-                    return buildProfileCard(
-                      imagePath: authorProfile.profilePicture ?? '',
-                      name: authorProfile.fullName ?? 'User',
-                      role: role.isNotEmpty ? role : null,
-                    );
-                  }),
-                  SizedBox(height: 2.h),
+                          return buildProfileCard(
+                            imagePath: authorProfile.profilePicture ?? '',
+                            name: authorProfile.fullName ?? 'User',
+                            role: role.isNotEmpty ? role : null,
+                          );
+                        }),
+                        SizedBox(height: 2.h),
 
-                  // Search Bar — filterRequests se connected
-                  searchWidget(
-                    controller: controller.searchController,
-                    onChanged: controller.filterRequests,
-                  ),
-                  SizedBox(height: 1.h),
-
-                  // Stats Section
-                  Obx(() {
-                    if (controller.isStatsLoading.value &&
-                        controller.authorStats.value == null) {
-                      return SizedBox(
-                        height: 15.h,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: buttonColor),
+                        // Search Bar — filterRequests se connected
+                        searchWidget(
+                          controller: controller.searchController,
+                          onChanged: controller.filterRequests,
                         ),
-                      );
-                    }
+                        SizedBox(height: 1.h),
 
-                    final stats = controller.authorStats.value;
-                    if (stats == null) {
-                      return SizedBox(
-                        height: 10.h,
-                        child: Center(
-                          child: customText(
-                            text: 'Unable to load stats',
-                            color: greyColor,
-                            fontSize: 14.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                        // Stats Section
+                        Obx(() {
+                          final stats = controller.authorStats.value;
+                          if (stats == null) {
+                            return SizedBox(
+                              height: 10.h,
+                              child: Center(
+                                child: customText(
+                                  text: 'Unable to load stats',
+                                  color: greyColor,
+                                  fontSize: 14.sp,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Wrap(
+                            spacing: 5.5.w,
+                            runSpacing: 1.5.h,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              bookInfoWidget(
+                                title: 'Sign Request',
+                                value: stats.totalSignRequests.toString(),
+                                backgroundColor: buttonColor,
+                                textColor: bottomNavColor,
+                                subtitle: 'Pending till date',
+                                subtitleColor: bottomNavColor,
+                              ),
+                              bookInfoWidget(
+                                title: 'Signed Books',
+                                value: stats.signedBooks.toString(),
+                                backgroundColor: white,
+                                textColor: secondryColor,
+                                subtitle: 'This Month',
+                              ),
+                              bookInfoWidget(
+                                title: 'Remaining Sign',
+                                value: stats.remainingSigns.toString(),
+                                backgroundColor: bottomNavColor,
+                                textColor: buttonColor,
+                                subtitle: 'Pending till date',
+                              ),
+                            ],
+                          );
+                        }),
+
+                        Obx(() {
+                          final active = controller.activeSub.value;
+                          if (active == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return activeSubscription(
+                            ontap: () {
+                              Get.toNamed(
+                                '/plan',
+                                arguments: {
+                                  'planId': active.planId,
+                                  'planName': active.planName,
+                                },
+                              );
+                            },
+                            title: 'Active Subscription',
+                            price: active.planName,
+                            date: '\$${active.amountPaid.toStringAsFixed(2)}',
+                            status: 'Manage',
+                          );
+                        }),
+                        SizedBox(height: 1.h),
+
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                          child: sectionHeader(
+                            title: "Pending Requests",
+                            onSeeAll: () {},
                           ),
                         ),
-                      );
-                    }
+                        SizedBox(height: 1.h),
 
-                    return Wrap(
-                      spacing: 5.5.w,
-                      runSpacing: 1.5.h,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        bookInfoWidget(
-                          title: 'Sign Request',
-                          value: stats.totalSignRequests.toString(),
-                          backgroundColor: buttonColor,
-                          textColor: bottomNavColor,
-                          subtitle: 'Pending till date',
-                          subtitleColor: bottomNavColor,
-                        ),
-                        bookInfoWidget(
-                          title: 'Signed Books',
-                          value: stats.signedBooks.toString(),
-                          backgroundColor: white,
-                          textColor: secondryColor,
-                          subtitle: 'This Month',
-                        ),
-                        bookInfoWidget(
-                          title: 'Remaining Sign',
-                          value: stats.remainingSigns.toString(),
-                          backgroundColor: bottomNavColor,
-                          textColor: buttonColor,
-                          subtitle: 'Pending till date',
-                        ),
+                        // Pending Requests List
+                        Obx(() {
+                          final list = controller.filteredAutographList;
+
+                          if (list.isEmpty) {
+                            return SizedBox(
+                              height: 25.h,
+                              child: Center(
+                                child: customText(
+                                  text: controller.searchQuery.value.isNotEmpty
+                                      ? "No results found for \"${controller.searchQuery.value}\""
+                                      : "No pending requests",
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: greyColor,
+                                  fontFamily: 'Poppins',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            itemCount: list.length,
+                            itemBuilder: (context, index) {
+                              final request = list[index];
+                              return PendingRequest(
+                                imagePath: request.reader.profilePicture,
+                                authorName: request.reader.fullName,
+                                date: request.requestDate,
+                                authorDetail: () {
+                                  Get.find<AuthorBottomNavController>()
+                                      .changeIndex(1);
+                                },
+                                bookName: request.bookTitle,
+                              );
+                            },
+                          );
+                        }),
                       ],
-                    );
-                  }),
-
-                  Obx(() {
-                    final active = controller.activeSub.value;
-                    if (active == null) {
-                      return const SizedBox.shrink();
-                    }
-                    return activeSubscription(
-                      ontap: () {
-                        Get.toNamed(
-                          '/plan',
-                          arguments: {
-                            'planId': active.planId,
-                            'planName': active.planName,
-                          },
-                        );
-                      },
-                      title: 'Active Subscription',
-                      price: active.planName,
-                      date: '\$${active.amountPaid.toStringAsFixed(2)}',
-                      status: 'Manage',
-                    );
-                  }),
-                  SizedBox(height: 1.h),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: sectionHeader(
-                      title: "Pending Requests",
-                      onSeeAll: () {},
                     ),
                   ),
-                  SizedBox(height: 1.h),
-
-                  // Pending Requests List
-                  Obx(() {
-                    final list = controller.filteredAutographList;
-
-                    if (controller.isFetchPending.value && list.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: buttonColor),
-                      );
-                    }
-
-                    if (list.isEmpty) {
-                      return SizedBox(
-                        height: 25.h,
-                        child: Center(
-                          child: customText(
-                            text: controller.searchQuery.value.isNotEmpty
-                                ? "No results found for \"${controller.searchQuery.value}\""
-                                : "No pending requests",
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: greyColor,
-                            fontFamily: 'Poppins',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(bottom: 12.h),
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final request = list[index];
-                        return PendingRequest(
-                          imagePath: request.reader.profilePicture,
-                          authorName: request.reader.fullName,
-                          date: request.requestDate,
-                          authorDetail: () {
-
-                            Get.find<AuthorBottomNavController>().changeIndex(
-                              1,
-                            );
-                          },
-                          bookName: request.bookTitle,
-                        );
-                      },
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ),
+                ),
         ),
       );
     });

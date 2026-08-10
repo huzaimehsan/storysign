@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
 import 'package:sizer/sizer.dart';
 
 import 'package:storysign/widgets/search_widget.dart';
@@ -19,21 +19,19 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-
       if (controller.isPageLoading.value) {
         return const Scaffold(
-          body: Center(child: CircularProgressIndicator(
-
-              color: buttonColor)),
+          body: Center(child: CircularProgressIndicator(color: buttonColor)),
         );
       }
 
       return RefreshIndicator(
-        backgroundColor :containerColor,
+        backgroundColor: containerColor,
         color: white,
         onRefresh: () => controller.refreshHomeRequests(),
         child: Scaffold(
           body: SingleChildScrollView(
+            controller: controller.scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 7.h),
@@ -47,8 +45,7 @@ class HomeScreen extends GetView<HomeController> {
                       final role = controller.userRole.value;
                       return buildProfileCard(
                         imagePath:
-                            controller.userProfile.value?.profilePicture ??
-                            '',
+                            controller.userProfile.value?.profilePicture ?? '',
                         name: name.isNotEmpty ? name : 'User',
                         role: role.isNotEmpty ? role : null,
                         onTrackPressed: () {
@@ -88,7 +85,14 @@ class HomeScreen extends GetView<HomeController> {
 
                   Obx(() {
                     final authorsList = controller.filteredAuthors;
-                  
+                    if (controller.isFetchHome.value) {
+                      return SizedBox(
+                        height: 10.h,
+                        child: const Center(
+                          child: CircularProgressIndicator(color: buttonColor),
+                        ),
+                      );
+                    }
                     if (authorsList.isEmpty) {
                       return SizedBox(
                         height: 10.h,
@@ -152,9 +156,7 @@ class HomeScreen extends GetView<HomeController> {
                       return SizedBox(
                         height: 34.h,
                         child: const Center(
-                          child: CircularProgressIndicator(
-                            color: buttonColor,
-                          ),
+                          child: CircularProgressIndicator(color: buttonColor),
                         ),
                       );
                     }
@@ -176,8 +178,17 @@ class HomeScreen extends GetView<HomeController> {
                       padding: EdgeInsets.only(bottom: 5.h),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: books.length,
+                      itemCount: books.length +
+                          (controller.isLoadingMore.value ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index == books.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16.0),
+                              child: CircularProgressIndicator(color: buttonColor),
+                            ),
+                          );
+                        }
                         final book = books[index];
                         return recentlySignedBooks(
                           imageUrl: book.coverImage,
@@ -197,8 +208,7 @@ class HomeScreen extends GetView<HomeController> {
                           },
                           imagePath: '',
 
-                          showAuthor:true
-                          ,
+                          showAuthor: true,
                         );
                       },
                     );

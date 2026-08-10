@@ -45,6 +45,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
 
               Expanded(
                 child: SingleChildScrollView(
+                  controller: controller.booksScrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Obx(() {
                     if (controller.isLoading.value) {
@@ -144,8 +145,17 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.books.length,
+                                  itemCount: controller.books.length +
+                                      (controller.isLoadingMoreBooks.value ? 1 : 0),
                                   itemBuilder: (context, index) {
+                                    if (index == controller.books.length) {
+                                      return const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                                          child: CircularProgressIndicator(color: buttonColor),
+                                        ),
+                                      );
+                                    }
                                     final book = controller.books[index];
                                     return recentSignedBookCard(
                                       title: book.title ?? " ",
@@ -178,8 +188,17 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.bookList.length,
+                                  itemCount: controller.bookList.length +
+                                      (controller.isLoadingMoreHistory.value ? 1 : 0),
                                   itemBuilder: (context, index) {
+                                    if (index == controller.bookList.length) {
+                                      return const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                                          child: CircularProgressIndicator(color: buttonColor),
+                                        ),
+                                      );
+                                    }
                                     final book = controller.bookList[index];
                                     return downloadHistoryCard(
                                       imagePath: book.coverImage ?? "",

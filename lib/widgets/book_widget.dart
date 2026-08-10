@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -64,7 +63,7 @@ Widget recentlySignedBooks({
               children: [
                 Flexible(
                   child: Padding(
-                    padding:  EdgeInsets.only(right:2.w),
+                    padding: EdgeInsets.only(right: 2.w),
                     child: customText(
                       fontFamily: "Poppins",
                       text: bookTitle,
@@ -84,7 +83,6 @@ Widget recentlySignedBooks({
                     color: primaryColor,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                   
                   ),
                 ],
                 SizedBox(height: 0.6.h),
@@ -104,7 +102,7 @@ Widget recentlySignedBooks({
                   colors: buttonColor.withOpacity(0.2),
                   fontFamily: 'Poppins',
                   height: 3.h,
-                  width: 20.w,
+                  width: 21.w,
                   borderColor: buttonColor,
                   fontsize: 14.sp,
                   fontweight: FontWeight.w600,
@@ -156,7 +154,6 @@ Widget signedCopyMessageCard({
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           if (title != null && title.isNotEmpty) ...[
             customText(
               fontFamily: "Poppins",

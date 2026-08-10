@@ -51,7 +51,9 @@ class ApiEndPoints {
   static const String authorProfile = "/author/profile";
   static const String editProfile = "/reader/profile";
   static const String libraryStats = "/reader/profile/stats";
-  static const String bookHistory = "/reader/download-history?page=1&limit=10";
+  static String bookHistory({int page = 1, int limit = 10}) {
+    return "/reader/download-history?page=$page&limit=$limit";
+  }
   static const String authorReadAllNotifications = "/author/notifications/read-all";
 
   static String markNotificationAsRead(String notificationId) {

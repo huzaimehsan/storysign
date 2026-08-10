@@ -10,20 +10,36 @@ import '../model/delivered_model.dart';
 class DeliveredController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   final RxBool isFetchPending = false.obs;
+  final RxBool isLoadingMore = false.obs;
   final RxString errorMessage = ''.obs;
 
   final RxList<DeliveryItemModel> requests = <DeliveryItemModel>[].obs;
   final RxList<DeliveryItemModel> filteredRequests = <DeliveryItemModel>[].obs;
+  final ScrollController scrollController = ScrollController();
+
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final int limit = 10;
 
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(_onScroll);
     fetchDeliveryRequests();
   }
+
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 120 &&
+        !isFetchPending.value &&
+        !isLoadingMore.value &&
+        currentPage.value < totalPages.value) {
+      fetchDeliveryRequests(loadMore: true);
+    }
+  }
+
   Future<void> refreshDeliveryRequests() async {
-    isFetchPending.value = true;
-    await Future.wait([fetchDeliveryRequests()]);
-    isFetchPending.value = false;
+    await fetchDeliveryRequests();
   }
 
   void filterRequests(String query) {
@@ -43,26 +59,36 @@ class DeliveredController extends GetxController {
     );
   }
 
-  Future<void> fetchDeliveryRequests() async {
+  Future<void> fetchDeliveryRequests({bool loadMore = false}) async {
+    if (loadMore) {
+      if (currentPage.value >= totalPages.value) return;
+      currentPage.value++;
+    } else {
+      currentPage.value = 1;
+      requests.clear();
+      filteredRequests.clear();
+    }
+
     try {
-      isFetchPending.value = true;
+      if (loadMore) {
+        isLoadingMore.value = true;
+      } else {
+        isFetchPending.value = true;
+      }
       errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
-        ApiEndPoints.deliveryRequest(),
+        ApiEndPoints.deliveryRequest(page: currentPage.value, limit: limit),
         loading: false,
       );
-
 
       debugPrint('Delivery API response: $response');
 
       if (response['success'] == true) {
-
         final dynamic payload = response['data'] ?? response;
 
         Map<String, dynamic> payloadMap;
         if (payload is List) {
-
           payloadMap = {
             'items': payload,
             'total': payload.length,
@@ -77,25 +103,38 @@ class DeliveredController extends GetxController {
         }
 
         final paginatedData = DeliveryResponse.fromJson(payloadMap);
-        requests.assignAll(paginatedData.items);
-        filteredRequests.assignAll(paginatedData.items);
+        if (loadMore) {
+          requests.addAll(paginatedData.items);
+        } else {
+          requests.assignAll(paginatedData.items);
+        }
+        filteredRequests.assignAll(requests);
+        totalPages.value = paginatedData.totalPages;
 
         debugPrint('Parsed delivery items count: ${paginatedData.items.length}');
       } else {
+        if (loadMore && currentPage.value > 1) currentPage.value--;
         errorMessage.value = response['message']?.toString() ?? 'Failed to load data';
         debugPrint('Delivery API error: ${errorMessage.value}');
       }
     } catch (e) {
+      if (loadMore && currentPage.value > 1) currentPage.value--;
       debugPrint('Error: $e');
       errorMessage.value = 'Something went wrong while loading data';
     } finally {
-      isFetchPending.value = false;
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isFetchPending.value = false;
+      }
     }
   }
 
   @override
   void onClose() {
     searchController.dispose();
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
     super.onClose();
   }
 }

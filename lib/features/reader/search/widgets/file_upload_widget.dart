@@ -41,27 +41,68 @@ class FileUploadWidget extends StatelessWidget {
             Column(
               children: [
                 if (file!.path.endsWith('.png') || file!.path.endsWith('.jpg') || file!.path.endsWith('.jpeg'))
-                  Container(
-                    width: double.infinity,
-                    height: 20.h,
-                    child: Image.file(
-                      file!,
-                      fit: BoxFit.cover,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16.sp),
+                    child: Container(
+                      width: double.infinity,
+                      height: 20.h,
+                      color: greyColor.withOpacity(0.1),
+                      child: Image.file(
+                        file!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   )
                 else if (file!.path.endsWith('.pdf'))
                   Container(
                     width: double.infinity,
                     height: 20.h,
-                    alignment: Alignment.center,
-                    child: Icon(Icons.picture_as_pdf, size: 14.w, color: Colors.redAccent),
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16.sp),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.picture_as_pdf, size: 14.w, color: Colors.redAccent),
+                        SizedBox(height: 1.h),
+                        customText(
+                          text: file!.path.split('/').last,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.redAccent.shade700,
+                          fontFamily: 'Poppins',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   )
                 else
                   Container(
                     width: double.infinity,
                     height: 20.h,
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16.sp),
+                    ),
                     alignment: Alignment.center,
-                    child: Icon(Icons.insert_drive_file, size: 14.w, color: Colors.blueGrey),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.insert_drive_file, size: 14.w, color: Colors.blueGrey),
+                        SizedBox(height: 1.h),
+                        customText(
+                          text: file!.path.split('/').last,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blueGrey,
+                          fontFamily: 'Poppins',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
 
                 SizedBox(height: 1.h),

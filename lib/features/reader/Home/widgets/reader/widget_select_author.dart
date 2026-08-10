@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/widgets/formatted_date_widget.dart';
 
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/cover_image_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
-
 
 
 class WidgetSelectAuthor extends StatelessWidget {
@@ -41,10 +41,10 @@ class WidgetSelectAuthor extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
-        height: 14.h,
+        height: 13.5.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.symmetric(horizontal: 4.w ,vertical: 4.w),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.w),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -69,9 +69,7 @@ class WidgetSelectAuthor extends StatelessWidget {
                 ),
                 shape: BoxShape.circle,
               ),
-              child: ClipOval(
-                child: imageWidget,
-              ),
+              child: ClipOval(child: imageWidget),
             ),
             SizedBox(width: 4.w),
             Expanded(
@@ -88,15 +86,13 @@ class WidgetSelectAuthor extends StatelessWidget {
 
                   SizedBox(height: 0.4.h),
 
-
-
                   SizedBox(height: 0.4.h),
-                  customText(
+                  FormattedRequestDate(
+                    dateString: date,
                     fontFamily: "Poppins",
-                    text: date,
-                    color: secondryColor.withOpacity(0.7),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
+                    color: secondryColor.withOpacity(0.7),
                   ),
                   SizedBox(height: 1.h),
 
@@ -108,7 +104,9 @@ class WidgetSelectAuthor extends StatelessWidget {
                     fontFamily: 'Poppins',
                     height: 2.7.h,
                     width: 18.w,
-                    borderColor: isActive ? buttonColor : const Color(0xFFACACAC),
+                    borderColor: isActive
+                        ? buttonColor
+                        : const Color(0xFFACACAC),
                     fontsize: 14.sp,
                     fontweight: FontWeight.w600,
                   ),
