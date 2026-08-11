@@ -12,13 +12,11 @@ import '../../../../widgets/search_widget.dart';
 
 import '../../search/widgets/header_widget.dart';
 
-
 class SelectAuthor extends GetView<SelectAuthorController> {
   const SelectAuthor({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -64,9 +62,8 @@ class SelectAuthor extends GetView<SelectAuthorController> {
               final authorsList = controller.filteredAuthors;
               return Expanded(
                 child: RefreshIndicator(
-                  onRefresh: () =>
-                    controller.loadAllData(),
-                  backgroundColor :containerColor,
+                  onRefresh: () => controller.loadAllData(),
+                  backgroundColor: containerColor,
                   color: white,
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
@@ -82,10 +79,12 @@ class SelectAuthor extends GetView<SelectAuthorController> {
                         isActive: active,
                         ontap: () {
                           if (active) {
-                            Get.back(result: {
-                              'id': author.id,
-                              'name': author.fullName,
-                            });
+                            Get.back(
+                              result: {
+                                'id': author.id,
+                                'name': author.fullName,
+                              },
+                            );
                           }
                         },
                       );
@@ -94,7 +93,6 @@ class SelectAuthor extends GetView<SelectAuthorController> {
                 ),
               );
             }),
-
           ],
         ),
       ),

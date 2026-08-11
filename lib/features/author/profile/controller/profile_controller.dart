@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/profile/model/profile_model.dart';
 
@@ -97,18 +98,23 @@ class AuthorProfileController extends GetxController {
       isLoading.value = false;
     }
   }
+void signOut() async {
+  final pref = Get.find<SharedPreferences>();
 
-  void signOut() async {
-    final pref = SharedPreferencesMethod.storage;
-    print(LocalDBKeys.TOKEN);
-    bool hasSeenSplash = pref.getBool(LocalDBKeys.SPLASH) ?? false;
-    await pref.clear();
-    if (hasSeenSplash) {
-      await pref.setBool(LocalDBKeys.SPLASH, true);
-    }
-    Get.offAllNamed('/signin');
+  bool hasSeenOnboarding = pref.getBool(LocalDBKeys.ONBOARDING) ?? false;
+  bool hasSeenSplash = pref.getBool('has_seen_splash') ?? false;
+
+  await pref.clear();
+
+  if (hasSeenOnboarding) {
+    await pref.setBool(LocalDBKeys.ONBOARDING, true);
+  }
+  if (hasSeenSplash) {
+    await pref.setBool('has_seen_splash', true);
   }
 
+  Get.offAllNamed('/signin');
+}
   Future<void> updateAuthorProfileWithImage(File? imageFile) async {
     isLoading.value = true;
 

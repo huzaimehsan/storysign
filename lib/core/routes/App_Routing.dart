@@ -76,12 +76,14 @@ import '../../features/shared/auth/view/forgot_password/reset_password.dart';
 import '../../features/shared/auth/view/forgot_password/send_otp.dart';
 import '../../features/shared/auth/view/sign_in.dart';
 import '../../features/shared/auth/view/sign_up.dart';
+import '../../features/shared/auth/view/onboarding.dart';
 import '../../features/shared/auth/view/splash_screen.dart';
 
 
 class AppRoutes {
   static List<GetPage<dynamic>> routes = [
-    GetPage(name: '/', page: () => SplashScreen(), binding: AuthBinding()),
+    GetPage(name: '/', page: () => const SplashScreen(), binding: AuthBinding()),
+    GetPage(name: '/onboarding', page: () => const OnBoardingScreen(), binding: AuthBinding()),
 
     GetPage(name: '/signin', page: () => SignIn(), binding: AuthBinding()),
     GetPage(name: '/signup', page: () => SignUp(), binding: AuthBinding()),

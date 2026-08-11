@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/profile/controller/profile_screen_controller.dart';
 import 'package:storysign/widgets/sucess_widget.dart';
@@ -13,9 +13,9 @@ import '../widget/profile_header_card.dart';
 import '../widget/library_stat_card.dart';
 import '../widget/recent_signed_book_card.dart';
 import '../widget/download_history_card.dart';
-import '../widget/settings_option_tile.dart';
+
 import '../widget/settings_group_card.dart';
-import '../widget/section_header.dart';
+
 import '../../../../widgets/customText_widget.dart';
 
 class ProfileScreen extends GetView<ProfileScreenController> {
@@ -26,7 +26,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
     return Scaffold(
       backgroundColor: containerColor,
       body: RefreshIndicator(
-        backgroundColor :containerColor,
+        backgroundColor: containerColor,
         color: white,
 
         onRefresh: () => controller.refreshRequests(),
@@ -114,7 +114,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                 libraryStatCard(
                                   title: 'Total Books',
                                   value:
-                                  stats?.totalUploadedBooks?.toString() ??
+                                      stats?.totalUploadedBooks?.toString() ??
                                       "0",
                                   subtitle: '',
                                 ),
@@ -132,7 +132,8 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                             );
                           }),
                           Obx(() {
-                            if (controller.books.isEmpty) return const SizedBox.shrink();
+                            if (controller.books.isEmpty)
+                              return const SizedBox.shrink();
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -145,22 +146,31 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.books.length +
-                                      (controller.isLoadingMoreBooks.value ? 1 : 0),
+                                  itemCount:
+                                      controller.books.length +
+                                      (controller.isLoadingMoreBooks.value
+                                          ? 1
+                                          : 0),
                                   itemBuilder: (context, index) {
                                     if (index == controller.books.length) {
                                       return const Center(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                                          child: CircularProgressIndicator(color: buttonColor),
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 16.0,
+                                          ),
+                                          child: CircularProgressIndicator(
+                                            color: buttonColor,
+                                          ),
                                         ),
                                       );
                                     }
                                     final book = controller.books[index];
                                     return recentSignedBookCard(
-                                      title: book.title ?? " ",
-                                      price: '\u0024 ${book.feeAmount ?? ""}',
-                                      date: book.uploadDate.toString().split(' ')[0],
+                                      title: book.title,
+                                      price: '\u0024 ${book.feeAmount}',
+                                      date: book.uploadDate.toString().split(
+                                        ' ',
+                                      )[0],
                                       status: book.status,
                                     );
                                   },
@@ -172,10 +182,13 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                           Obx(() {
                             if (controller.isbookLoading.value) {
                               return const Center(
-                                child: CircularProgressIndicator(color: buttonColor),
+                                child: CircularProgressIndicator(
+                                  color: buttonColor,
+                                ),
                               );
                             }
-                            if (controller.bookList.isEmpty) return const SizedBox.shrink();
+                            if (controller.bookList.isEmpty)
+                              return const SizedBox.shrink();
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -188,14 +201,21 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: controller.bookList.length +
-                                      (controller.isLoadingMoreHistory.value ? 1 : 0),
+                                  itemCount:
+                                      controller.bookList.length +
+                                      (controller.isLoadingMoreHistory.value
+                                          ? 1
+                                          : 0),
                                   itemBuilder: (context, index) {
                                     if (index == controller.bookList.length) {
                                       return const Center(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                                          child: CircularProgressIndicator(color: buttonColor),
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 16.0,
+                                          ),
+                                          child: CircularProgressIndicator(
+                                            color: buttonColor,
+                                          ),
                                         ),
                                       );
                                     }
@@ -203,7 +223,9 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                     return downloadHistoryCard(
                                       imagePath: book.coverImage ?? "",
                                       title: book.bookTitle,
-                                      date: book.createdAt.toString().split(' ')[0],
+                                      date: book.createdAt.toString().split(
+                                        ' ',
+                                      )[0],
                                     );
                                   },
                                 ),

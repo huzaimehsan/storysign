@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/custom_text_feild.dart';
 
 class CustomPaymentTextField extends StatelessWidget {
   final String label;
@@ -58,17 +57,11 @@ class CustomPaymentTextField extends StatelessWidget {
             isDense: true,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24.sp),
-              borderSide: BorderSide(
-                color: borderGreyColor,
-                width: 0.15.h,
-              ),
+              borderSide: BorderSide(color: borderGreyColor, width: 0.15.h),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24.sp),
-              borderSide: BorderSide(
-                color: borderGreyColor,
-                width: 0.2.h,
-              ),
+              borderSide: BorderSide(color: borderGreyColor, width: 0.2.h),
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 4.w,

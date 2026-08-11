@@ -7,12 +7,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
-
-// Yahan apni routes wali file import karein
 import 'constants/color_constants.dart';
 import 'constants/local_db_key.dart';
-import 'utils/shared_prefrences_methods.dart';
-
 import 'core/routes/App_Routing.dart';
 
 void main() async {
@@ -20,17 +16,12 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
 
-
   Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
   await Stripe.instance.applySettings();
 
   final prefs = await SharedPreferences.getInstance();
   prefs.reload();
   Get.put<SharedPreferences>(prefs);
-
-  bool hasSeenOnboarding = SharedPreferencesMethod.getBool(key: LocalDBKeys.SPLASH);
-  bool isLoggedIn = SharedPreferencesMethod.getBool(key: 'isLoggedIn');
-  String? role = prefs.getString('role');
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -42,31 +33,40 @@ void main() async {
     ),
   );
 
+  final hasSeenSplash = prefs.getBool('has_seen_splash') ?? false;
+print("splash screen : $hasSeenSplash");
   String initialRoute;
-  final bool isSubscribed = SharedPreferencesMethod.getBool(key: LocalDBKeys.IS_SUBSCRIBED);
-  debugPrint('App Startup raw IS_SUBSCRIBED=${prefs.getBool(LocalDBKeys.IS_SUBSCRIBED)}');
 
-  if (!hasSeenOnboarding) {
+  if (!hasSeenSplash) {
+
     initialRoute = '/';
-  } else if (isLoggedIn) {
-    if (role == 'author') {
-      initialRoute = isSubscribed ? '/authorbottomnav' : '/plan';
-      debugPrint('App Startup - hasSeenOnboarding=$hasSeenOnboarding isLoggedIn=$isLoggedIn role=$role isSubscribed=$isSubscribed (storedKeys=${prefs.getKeys().toList()})');
-
-    } else {
-      initialRoute = '/bottomnav';
-    }
   } else {
-    initialRoute = '/signin';
+
+    final hasSeenOnboarding = prefs.getBool(LocalDBKeys.ONBOARDING) ?? false;
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final role = prefs.getString('role');
+    final isSubscribed = prefs.getBool(LocalDBKeys.IS_SUBSCRIBED) ?? false;
+
+    if (!hasSeenOnboarding) {
+      initialRoute = '/onboarding';
+    } else if (isLoggedIn) {
+      if (role == 'author') {
+        initialRoute = isSubscribed ? '/authorbottomnav' : '/plan';
+      } else {
+        initialRoute = '/bottomnav';
+      }
+    } else {
+      initialRoute = '/signin';
+    }
   }
 
-
-  runApp(MyApp(initialRoute : initialRoute));
+  runApp(MyApp(initialRoute: initialRoute));
 }
+
 class MyApp extends StatelessWidget {
   final String initialRoute;
 
-  const MyApp({super.key, required this.initialRoute, });
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +76,8 @@ class MyApp extends StatelessWidget {
           title: 'My Project',
           builder: EasyLoading.init(),
           debugShowCheckedModeBanner: false,
-
-          // Ab yahan variable use karein
           initialRoute: initialRoute,
           getPages: AppRoutes.routes,
-
           theme: ThemeData(
             scaffoldBackgroundColor: containerColor,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

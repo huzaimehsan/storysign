@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/customText_widget.dart';
-import '../../../../../widgets/custom_text_feild.dart';
 
 class FeeFieldWithPrice extends StatefulWidget {
   final String label;
@@ -16,7 +15,8 @@ class FeeFieldWithPrice extends StatefulWidget {
     required this.label,
     required this.price,
     this.controller,
-    this.isPaid = false, required this.amount,
+    this.isPaid = false,
+    required this.amount,
   });
 
   @override
@@ -56,44 +56,39 @@ class _FeeFieldWithPriceState extends State<FeeFieldWithPrice> {
           ),
           SizedBox(height: 1.h),
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 4.w,
-              vertical: 1.2.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
             decoration: BoxDecoration(
               color: textFeildContainColor,
-              border: Border.all(
-                color: borderGreyColor,
-                width: 0.15.h,
-              ),
+              border: Border.all(color: borderGreyColor, width: 0.15.h),
               borderRadius: BorderRadius.circular(24.sp),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (widget.isPaid == true)
-            customText(
-            fontFamily: "Poppins",
-            text: "Paid",
-            color: greenColor,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-          ) else
-                customText(
-                  fontFamily: "Poppins",
-                  text: widget.price,
-                  color: textFeildColor,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-
                   customText(
                     fontFamily: "Poppins",
-                    text: widget.amount,
-                    color: buttonColor,
-                    fontSize: 15.sp,
+                    text: "Paid",
+                    color: greenColor,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  )
+                else
+                  customText(
+                    fontFamily: "Poppins",
+                    text: widget.price,
+                    color: textFeildColor,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
+
+                customText(
+                  fontFamily: "Poppins",
+                  text: widget.amount,
+                  color: buttonColor,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ],
             ),
           ),

@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 
-import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
 
-
-Widget userProfileCard({required dynamic imagePath, required String name, required VoidCallback ontap}) {
+Widget userProfileCard({
+  required dynamic imagePath,
+  required String name,
+  required VoidCallback ontap,
+}) {
   final String path = imagePath?.toString() ?? "";
-
 
   Widget imageWidget;
 
@@ -56,9 +57,7 @@ Widget userProfileCard({required dynamic imagePath, required String name, requir
                 color: buttonColor.withAlpha(30),
                 shape: BoxShape.circle,
               ),
-              child: ClipOval(
-                child: imageWidget,
-              ),
+              child: ClipOval(child: imageWidget),
             ),
 
             Positioned(
@@ -118,4 +117,3 @@ Widget sectionHeader({required String title, required VoidCallback onSeeAll}) {
     ],
   );
 }
-

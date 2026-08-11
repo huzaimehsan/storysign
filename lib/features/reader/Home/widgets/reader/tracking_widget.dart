@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../../constants/color_constants.dart';
 import '../../../../../constants/color_constants.dart' as Colors;
 import '../../../../../widgets/customText_widget.dart';
-
 
 Widget buildInfoCard({
   required String imagePath,
@@ -16,11 +14,7 @@ Widget buildInfoCard({
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       // Image
-      Image.asset(
-        imagePath,
-        width: 15.w,
-        height: 15.w,
-      ),
+      Image.asset(imagePath, width: 15.w, height: 15.w),
       SizedBox(width: 3.w),
 
       // Column with 3 text parameters

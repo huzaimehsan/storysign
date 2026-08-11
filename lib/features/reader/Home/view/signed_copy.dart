@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/signed_copy_controller.dart';
 
-
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/button_widget.dart';
@@ -77,7 +76,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                 ),
               ),
               SizedBox(height: 1.h),
-           
+
               Obx(() {
                 final book = controller.selectedRequest.value;
 
@@ -95,7 +94,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                   bookTitle: book.title,
                   authorName: book.author.fullName,
                   date: book.uploadDate.isNotEmpty ? book.uploadDate : '',
-                  dateFormat: 'dd MMM, hh:mm a',
+                  dateFormat: 'dd MMM yyyy',
                   status: book.status,
                   trackRequest: () {},
                   showArrow: false,
@@ -106,12 +105,11 @@ class SignedCopy extends GetView<SignedCopyController> {
 
               SizedBox(height: 1.h),
 
-        
               Obx(() {
                 final book = controller.selectedRequest.value;
 
                 if (book == null) {
-                  return const SizedBox.shrink(); 
+                  return const SizedBox.shrink();
                 }
 
                 return signedCopyMessageCard(
@@ -144,9 +142,7 @@ class SignedCopy extends GetView<SignedCopyController> {
                   "Back To Dashboard",
                   whiteColor,
                   onTap: () {
-                    Get.offAllNamed(
-                      'bottomnav',
-                    ); 
+                    Get.offAllNamed('bottomnav');
                   },
                   colors: greyColor,
                   fontFamily: 'Poppins',

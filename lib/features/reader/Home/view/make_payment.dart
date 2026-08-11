@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import '../../search/widgets/header_widget.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../../../../widgets/custom_text_feild.dart';
+
 import '../../../../widgets/button_widget.dart';
 import '../widgets/reader/custom_payment_text_field.dart';
 
@@ -51,12 +51,12 @@ class _MakePaymentState extends State<MakePayment> {
                     fontWeight: FontWeight.w400,
                   ),
                   SizedBox(height: 1.h),
-        
-        
+
                   PopupMenuButton<String>(
                     color: white,
-                      position: PopupMenuPosition.under, // Ye menu ko button ke niche fix rakhega
-                      offset: Offset(0, 5),
+                    position: PopupMenuPosition
+                        .under, // Ye menu ko button ke niche fix rakhega
+                    offset: Offset(0, 5),
                     onSelected: (String newValue) {
                       setState(() {
                         selectedPaymentMethod = newValue;
@@ -66,18 +66,25 @@ class _MakePaymentState extends State<MakePayment> {
                       return paymentMethods.map((String method) {
                         return PopupMenuItem<String>(
                           value: method,
-                          child: Text(method, style: TextStyle(fontFamily: "Poppins")),
+                          child: Text(
+                            method,
+                            style: TextStyle(fontFamily: "Poppins"),
+                          ),
                         );
                       }).toList();
                     },
 
-        
-        
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 4.w,
+                        vertical: 1.2.h,
+                      ),
                       decoration: BoxDecoration(
                         color: textFeildContainColor,
-                        border: Border.all(color: borderGreyColor, width: 0.15.h),
+                        border: Border.all(
+                          color: borderGreyColor,
+                          width: 0.15.h,
+                        ),
                         borderRadius: BorderRadius.circular(24.sp),
                       ),
                       child: Row(
@@ -85,8 +92,12 @@ class _MakePaymentState extends State<MakePayment> {
                         children: [
                           customText(
                             fontFamily: "Poppins",
-                            text: selectedPaymentMethod ?? "Choose Payment Method",
-                            color: selectedPaymentMethod == null ? textFeildColor : buttonColor,
+                            text:
+                                selectedPaymentMethod ??
+                                "Choose Payment Method",
+                            color: selectedPaymentMethod == null
+                                ? textFeildColor
+                                : buttonColor,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),

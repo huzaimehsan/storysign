@@ -7,7 +7,6 @@ import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/cover_image_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
 
-
 class WidgetSelectAuthor extends StatelessWidget {
   final String imagePath;
   final String bookTitle;
@@ -90,8 +89,10 @@ class WidgetSelectAuthor extends StatelessWidget {
                   FormattedRequestDate(
                     dateString: date,
                     fontFamily: "Poppins",
-                    fontSize: 14,
+                    fontSize: 13,
+
                     fontWeight: FontWeight.w400,
+                    dateFormat: 'dd MMM yyyy',
                     color: secondryColor.withOpacity(0.7),
                   ),
                   SizedBox(height: 1.h),

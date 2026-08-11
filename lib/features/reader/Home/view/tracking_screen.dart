@@ -34,12 +34,14 @@ class TrackingScreen extends GetView<TrackingController> {
               tracking?.isPaid == true ||
               statusNormalized == 'paid' ||
               statusNormalized == 'delivered';
-          final isSubmittedStageComplete = statusNormalized == 'submitted' ||
+          final isSubmittedStageComplete =
+              statusNormalized == 'submitted' ||
               statusNormalized == 'in process' ||
               statusNormalized == 'inprogress' ||
               statusNormalized == 'delivered' ||
               statusNormalized == 'paid';
-          final isReviewStageComplete = statusNormalized == 'in process' ||
+          final isReviewStageComplete =
+              statusNormalized == 'in process' ||
               statusNormalized == 'inprogress' ||
               statusNormalized == 'delivered' ||
               statusNormalized == 'paid';
@@ -53,11 +55,11 @@ class TrackingScreen extends GetView<TrackingController> {
             tracking?.requestDate ?? tracking?.signaturePlacement?.createdAt,
           );
           final reviewDate = displayDateLabel(
-            tracking?.signaturePlacement?.updatedAt,
+            tracking?.requestDate ?? tracking?.signaturePlacement?.createdAt,
           );
           final deliveredDate = displayDateLabel(
-            tracking?.signaturePlacement?.paidAt ??
-                tracking?.signaturePlacement?.updatedAt,
+            tracking?.signaturePlacement?.createdAt ??
+                tracking?.signaturePlacement?.createdAt,
           );
 
           return Column(

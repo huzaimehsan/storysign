@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storysign/features/reader/profile/model/recently_signed_book_model.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
@@ -152,17 +153,23 @@ class ProfileScreenController extends GetxController {
       }
     }
   }
+void signOut() async {
+  final pref = Get.find<SharedPreferences>();
 
-  void signOut() async {
-    final pref = SharedPreferencesMethod.storage;
-    print(LocalDBKeys.TOKEN);
-    bool hasSeenSplash = pref.getBool(LocalDBKeys.SPLASH) ?? false;
-    await pref.clear();
-    if (hasSeenSplash) {
-      await pref.setBool(LocalDBKeys.SPLASH, true);
-    }
-    Get.offAllNamed('/signin');
+  bool hasSeenOnboarding = pref.getBool(LocalDBKeys.ONBOARDING) ?? false;
+  bool hasSeenSplash = pref.getBool('has_seen_splash') ?? false;
+
+  await pref.clear();
+
+  if (hasSeenOnboarding) {
+    await pref.setBool(LocalDBKeys.ONBOARDING, true);
   }
+  if (hasSeenSplash) {
+    await pref.setBool('has_seen_splash', true);
+  }
+
+  Get.offAllNamed('/signin');
+}
   final RxList<MyProfileBookModel> books = <MyProfileBookModel>[].obs;
   final RxBool isBookLoading = false.obs;
   final RxBool isLoadingMoreBooks = false.obs;

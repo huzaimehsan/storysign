@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -39,7 +38,6 @@ Widget profileHeaderCard({
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-   
         ClipOval(
           child: SizedBox(
             height: 16.w,
@@ -90,7 +88,9 @@ Widget profileHeaderCard({
                   ),
                   Flexible(
                     child: FormattedRequestDate(
-                      dateString: joinedDate.isNotEmpty ? joinedDate : 'Unknown',
+                      dateString: joinedDate.isNotEmpty
+                          ? joinedDate
+                          : 'Unknown',
                       dateFormat: 'dd MMM, yyyy',
                       color: secondryColor.withOpacity(0.7),
                       fontSize: 13.sp,

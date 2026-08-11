@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -7,7 +6,6 @@ import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/build_profile_image.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
-
 
 Widget buildProfileCard({
   required String? name,
@@ -18,8 +16,6 @@ Widget buildProfileCard({
   required VoidCallback onAutographPressed,
   required VoidCallback onUploadBookPressed,
 }) {
-
-
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
     width: double.infinity,
@@ -51,7 +47,6 @@ Widget buildProfileCard({
 
                         text: "Welcome, ${role}",
                       ),
-
                     ],
                   ),
                   SizedBox(height: 0.8.h),
@@ -64,8 +59,8 @@ Widget buildProfileCard({
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
                         text: name ?? "User",
-                        overFlow: TextOverflow.ellipsis, // Ye text ke aage '...' laga dega
-                        maxLines: 1,                    // Text ko ek line se upar nahi jaane dega
+                        overFlow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       GestureDetector(
                         onTap: onTrackPressed,

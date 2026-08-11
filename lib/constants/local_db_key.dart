@@ -22,7 +22,7 @@ class LocalDBKeys {
   static const String SELECTEDLANGUAGE = "SELECTEDLANGUAGE";
 
   static const String USERDATA = "USERDATA";
-  static const String SPLASH = "SPLASH";
+  static const String ONBOARDING = "SPLASH";
   static const String IS_SUBSCRIBED = "IS_SUBSCRIBED";
 
 
