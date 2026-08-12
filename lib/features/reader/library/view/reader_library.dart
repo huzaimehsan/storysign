@@ -60,8 +60,8 @@ class ReaderLibrary extends GetView<ReaderController> {
                             colors: isSelected ? buttonColor : const Color(0xFFF5E6D3),
                             height: 4.5.h,
                             fontFamily: "Poppins",
-                            fontsize: 14.sp,
-                            fontweight: FontWeight.w600,
+                            fontsize: 15.sp,
+                            fontweight: FontWeight.w500,
                           ),
                         );
                       }),
@@ -115,24 +115,24 @@ class ReaderLibrary extends GetView<ReaderController> {
                     );
                   }
 
-                  if (controller.errorMessage.value.isNotEmpty) {
-                    return ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(bottom: 12.h),
-                      children: [
-                        SizedBox(height: 60.h),
-                        Center(
-                          child: customText(
-                            text: controller.errorMessage.value,
-                            color: greyColor,
-                            fontSize: 15.sp,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
+                  // if (controller.errorMessage.value.isNotEmpty) {
+                  //   return ListView(
+                  //     physics: const AlwaysScrollableScrollPhysics(),
+                  //     padding: EdgeInsets.only(bottom: 12.h),
+                  //     children: [
+                  //       SizedBox(height: 30.h),
+                  //       Center(
+                  //         child: customText(
+                  //           text: controller.errorMessage.value,
+                  //           color: greyColor,
+                  //           fontSize: 15.sp,
+                  //           fontFamily: "Poppins",
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   );
+                  // }
 
                   final List<BookItem> books = controller.filteredBooksRx.value;
                   if (books.isEmpty) {
@@ -265,7 +265,7 @@ class ReaderLibrary extends GetView<ReaderController> {
         child: Icon(
           Icons.tune_rounded,
           color: buttonColor,
-          size: 16.sp,
+          size: 18.sp,
         ),
       ),
     );

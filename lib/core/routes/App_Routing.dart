@@ -18,6 +18,7 @@ import 'package:storysign/features/author/subscriptionplan/binding/stripe_paymen
 import 'package:storysign/features/author/subscriptionplan/binding/subscription_plan_binding.dart';
 import 'package:storysign/features/author/subscriptionplan/view/subscription_plan.dart';
 
+
 import 'package:storysign/features/reader/Home/binding/request_autograph_binding.dart';
 
 import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
@@ -25,6 +26,7 @@ import 'package:storysign/features/reader/Home/binding/payment_binding.dart';
 import 'package:storysign/features/reader/Home/binding/select_author_binding.dart';
 import 'package:storysign/features/reader/Home/binding/signed_copy_binding.dart';
 import 'package:storysign/features/reader/Home/binding/upload_book_binding.dart';
+import 'package:storysign/features/reader/Home/binding/view_all_books_binding.dart';
 
 import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
 
@@ -33,9 +35,14 @@ import 'package:storysign/features/reader/Home/view/request_detail.dart';
 import 'package:storysign/features/reader/Home/view/signed_copy.dart';
 import 'package:storysign/features/reader/Home/view/tracking_screen.dart';
 import 'package:storysign/features/reader/Home/view/upload_book.dart';
+import 'package:storysign/features/reader/Home/view/view_all_books.dart';
 import 'package:storysign/features/reader/library/controller/library_detail_controller.dart';
 import 'package:storysign/features/reader/library/binding/library_detail_binding.dart';
 import 'package:storysign/features/reader/library/binding/reader_library_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_download_history_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_view_all_books_binding.dart';
+import 'package:storysign/features/reader/profile/view/profile_download_history.dart';
+import 'package:storysign/features/reader/profile/view/profile_view_all_books.dart';
 
 import 'package:storysign/features/shared/changePassword/binding/change_password_binding.dart';
 import 'package:storysign/features/shared/contactUs/binding/contact_us_binding.dart';
@@ -43,16 +50,18 @@ import 'package:storysign/features/shared/editProfile/binding/edit_profile_bindi
 import 'package:storysign/features/reader/profile/binding/help_support_binding.dart';
 import 'package:storysign/features/reader/profile/binding/privacy_policy_binding.dart';
 import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
+
 import 'package:storysign/features/shared/changePassword/view/change_password.dart';
 import 'package:storysign/features/shared/contactUs/view/contact_us.dart';
 import 'package:storysign/features/shared/editProfile/view/edit_profile.dart';
 import 'package:storysign/features/reader/profile/view/help_and_support.dart';
 import 'package:storysign/features/reader/profile/view/privacy_policy.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+
 import 'package:storysign/features/reader/search/binding/search_binding.dart';
 
-import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';
-import '../../features/author/request/binding/request_detail_binding.dart';
+import '../../features/author/bottomNav/view/author_bottom_nav_layout.dart';import 'package:storysign/features/author/delivered/binding/delivered_binding.dart';
+import 'package:storysign/features/author/delivered/view/delivered_screen.dart';import '../../features/author/request/binding/request_detail_binding.dart';
 import '../../features/author/request/view/request_detail.dart';
 import '../../features/author/subscriptionplan/view/subscription_plan_selection.dart';
 
@@ -206,10 +215,26 @@ class AppRoutes {
       page: () => SignedCopy(),
       binding: SignedCopyBinding(),
     ),
+  
+    GetPage(
+      name: '/viewallbooks',
+      page: () => ViewAllBooksScreen(),
+      binding: ViewAllBooksBinding(),
+    ),
     GetPage(
       name: '/profile',
       page: () => ProfileScreen(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: '/profileviewallbooks',
+      page: () => ProfileViewAllBooksScreen(),
+      binding: ProfileViewAllBooksBinding(),
+    ),
+    GetPage(
+      name: '/profiledownloadhistory',
+      page: () => ProfileDownloadHistoryScreen(),
+      binding: ProfileDownloadHistoryBinding(),
     ),
     GetPage(
       name: '/editprofile',
@@ -259,8 +284,13 @@ class AppRoutes {
 
     GetPage(
       name: '/allRequest',
-      page: () => AllRequest(),
+      page: () => const AllRequest(),
       binding: RequestBinding(),
+    ),
+    GetPage(
+      name: '/deliveredRequest',
+      page: () => const DeliveredScreen(),
+      binding: DeliveredBinding(),
     ),
 
     GetPage(

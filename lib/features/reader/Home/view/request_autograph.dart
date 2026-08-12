@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
 import 'package:storysign/features/reader/library/controller/library_detail_controller.dart';
+import 'package:storysign/utils/helper_functions.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/utility.dart';
@@ -14,7 +15,7 @@ import 'package:storysign/widgets/image_picker.dart';
 import '../../search/widgets/header_widget.dart';
 import '../widgets/reader/request_detail_widget.dart';
 import '../widgets/reader/fee_field_with_price.dart';
-import '../widgets/reader/custom_text_field_with_limit.dart';
+
 
 class RequestAutographCard extends GetView<RequestAutographController> {
   const RequestAutographCard({super.key});
@@ -26,7 +27,6 @@ class RequestAutographCard extends GetView<RequestAutographController> {
     final args = Get.arguments as Map<String, dynamic>?;
     final String? role = args?['role']?.toString();
     final bool isLibraryRequest = role == 'fromLibrary';
-
     final String receivedBookId = args?['bookId']?.toString() ?? '';
     final libraryDetailController = Get.find<ReaderLibraryDetailController>();
 
@@ -125,97 +125,112 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                     }),
                   ],
 
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-
+                  Form(
+                    key: controller.formKey,
                     child: Column(
                       children: [
-                        if (!isLibraryRequest) ...[
-                          emailTextFeild(
-                            'Book Name',
-                            "Things Fall Apart",
-                            controller:
-                                homeController.bookTitleControllerRequest,
-                          ),
-                          SizedBox(height: 1.5.h),
-
-                          Obx(
-                            () => FileUploadWidget(
-                              title: 'Upload Book',
-                              description: controller.bookPdfFile.value != null
-                                  ? "File Selected"
-                                  : 'Tap to select a pdf file',
-                              file: controller.bookPdfFile.value,
-                              onTap: () async {
-                                final file = await mediaPicker.pickMedia(
-                                  context,
-                                  mode: PickMode.document,
-                                );
-                                if (file != null) {
-                                  controller.bookPdfFile.value = file;
-                                }
-                              },
-                              onRemove: () =>
-                                  controller.bookPdfFile.value = null,
-                            ),
-                          ),
-                          SizedBox(height: 1.5.h),
-
-                          Obx(
-                            () => FileUploadWidget(
-                              title: 'Upload Cover Photo',
-                              description:
-                                  controller.bookCoverImage.value != null
-                                  ? "Image Selected"
-                                  : 'Tap to select a png format',
-                              file: controller.bookCoverImage.value,
-                              onTap: () async {
-                                final file = await mediaPicker.pickMedia(
-                                  context,
-                                  mode: PickMode.image,
-                                );
-                                if (file != null) {
-                                  controller.bookCoverImage.value = file;
-                                }
-                              },
-                              onRemove: () =>
-                                  controller.bookCoverImage.value = null,
-                            ),
-                          ),
-                          SizedBox(height: 1.5.h),
-                        ],
-                      ],
-                    ),
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: Column(
-                      children: [
-                        Obx(() {
-                          final detail = libraryDetailController.detail.value;
-                          if (!isLibraryRequest ||
-                              (detail != null && !detail.isPaid)) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                          child: Column(
+                            children: [
+                              if (!isLibraryRequest) ...[
                                 emailTextFeild(
-                                  'Personal Message',
-                                  "Write a personal message to the author about why this book is special to you…",
-
-                                  width: 20.sp,
-                                  maxLines: 4,
+                                  'Book Name',
+                                  "Things Fall Apart",
+                                  validator: (value) => HelperFunction.validateBookName(value ?? '', fieldName: 'Book Name'),
                                   controller:
-                                      homeController.personalMessageController,
+                                      homeController.bookTitleControllerRequest,
+                                ),
+                                SizedBox(height: 1.5.h),
+
+                                Obx(
+                                  () => FileUploadWidget(
+                                    title: 'Upload Book',
+                                    description: controller.bookPdfFile.value != null
+                                        ? "File Selected"
+                                        : 'Tap to select a pdf file',
+                                    file: controller.bookPdfFile.value,
+                                    onTap: () async {
+                                      final file = await mediaPicker.pickMedia(
+                                        context,
+                                        mode: PickMode.document,
+                                      );
+                                      if (file != null) {
+                                        controller.bookPdfFile.value = file;
+                                      }
+                                    },
+                                    onRemove: () =>
+                                        controller.bookPdfFile.value = null,
+                                  ),
+                                ),
+                                SizedBox(height: 1.5.h),
+
+                                Obx(
+                                  () => FileUploadWidget(
+                                    title: 'Upload Cover Photo',
+                                    description:
+                                        controller.bookCoverImage.value != null
+                                        ? "Image Selected"
+                                        : 'Tap to select a png format',
+                                    file: controller.bookCoverImage.value,
+                                    onTap: () async {
+                                      final file = await mediaPicker.pickMedia(
+                                        context,
+                                        mode: PickMode.image,
+                                      );
+                                      if (file != null) {
+                                        controller.bookCoverImage.value = file;
+                                      }
+                                    },
+                                    onRemove: () =>
+                                        controller.bookCoverImage.value = null,
+                                  ),
                                 ),
                                 SizedBox(height: 1.5.h),
                               ],
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }),
-                        SizedBox(height: 5.h),
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                          child: Column(
+                            children: [
+                              Obx(() {
+                                final detail = libraryDetailController.detail.value;
+                                if (!isLibraryRequest ||
+                                    (detail != null && !detail.isPaid)) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      emailTextFeild(
+                                        'Personal Message',
+                                        "Write a personal message to the author about why this book is special to you…",
+                                      
+                                        width: 20.sp,
+                                        maxLines: 4,
+                                        controller:
+                                            homeController.personalMessageController,
+                                        validator: (value) => HelperFunction.validateMessage(value ?? '', fieldName: 'Personal Message'),
+                                      ),
+                                      SizedBox(height: 1.5.h),
+                                    ],
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Column(
+                      children: [
                         Obx(() {
                           final detail = libraryDetailController.detail.value;
                           final bool isLoadingDetail =
@@ -274,6 +289,11 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                   "Request Autograph",
                                   whiteColor,
                                   onTap: () async {
+
+                                     if (!(controller.formKey.currentState?.validate() ?? true)) {
+      return;
+    }
+
                                     final Map<String, dynamic>? result =
                                         await controller.requestAutograph(
                                           context,

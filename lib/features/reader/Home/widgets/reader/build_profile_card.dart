@@ -70,7 +70,7 @@ Widget buildProfileCard({
                           colors: bottomNavColor,
                           fontFamily: 'Poppins',
                           height: 3.3.h,
-                          width: 22.w,
+                          width: 24.w,
                           fontsize: 13.sp,
                           fontweight: FontWeight.w500,
                         ),

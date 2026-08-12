@@ -8,7 +8,7 @@ import 'package:storysign/features/author/home/widgets/pending_request.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
-import '../../../reader/Home/widgets/reader/user_profile_card.dart';
+
 import '../controller/home_controller.dart';
 import '../widgets/active_subscription.dart';
 import '../widgets/book_info_widget.dart';
@@ -28,20 +28,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
       return Scaffold(
         body: SafeArea(
           bottom: false,
-          child: controller.errorMessage.value.isNotEmpty
-              ? SizedBox(
-                  height: 60.h,
-                  child: Center(
-                    child: customText(
-                      text: controller.errorMessage.value,
-                      color: greyColor,
-                      fontSize: 15.sp,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-              : RefreshIndicator(
+          child:  RefreshIndicator(
                   backgroundColor: containerColor,
                   color: white,
                   onRefresh: () => controller.refreshHomeRequests(),
@@ -49,21 +36,17 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
                       children: [
-                        Obx(() {
-                          final authorProfile =
-                              controller.userAuthorProfile.value;
-                          final role = controller.userRole.value;
+                       Obx(() {
+  final authorProfile = controller.userAuthorProfile.value;
+  final role = controller.userRole.value;
+  final fullName = authorProfile?.fullName ?? '';
 
-                          if (authorProfile == null) {
-                            return const SizedBox.shrink();
-                          }
-
-                          return buildProfileCard(
-                            imagePath: authorProfile.profilePicture ?? '',
-                            name: authorProfile.fullName ?? 'User',
-                            role: role.isNotEmpty ? role : null,
-                          );
-                        }),
+  return buildProfileCard(
+    imagePath: authorProfile?.profilePicture ?? '',
+    name: fullName.isNotEmpty ? fullName : 'User',
+    role: role.isNotEmpty ? role : null,
+  );
+}),
                         SizedBox(height: 2.h),
 
                         // Search Bar — filterRequests se connected
@@ -143,16 +126,22 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                             status: 'Manage',
                           );
                         }),
-                        SizedBox(height: 1.h),
+                        SizedBox(height: 0.5.h),
 
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.w),
-                          child: sectionHeader(
-                            title: "Pending Requests",
-                            onSeeAll: () {},
-                          ),
-                        ),
-                        SizedBox(height: 1.h),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: customText(
+                  text: "Pending Requests",
+                  color: whiteColor,
+                  fontSize: 16.sp,
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+                        SizedBox(height: 0.5.h),
 
                         // Pending Requests List
                         Obx(() {
@@ -176,13 +165,15 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                             );
                           }
 
+                          final visibleList = list.take(3).toList();
+
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.only(bottom: 12.h),
-                            itemCount: list.length,
+                            itemCount: visibleList.length,
                             itemBuilder: (context, index) {
-                              final request = list[index];
+                              final request = visibleList[index];
                               return PendingRequest(
                                 imagePath: request.reader.profilePicture,
                                 authorName: request.reader.fullName,

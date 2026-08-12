@@ -33,13 +33,13 @@ Widget faqItemWidget({
           textAlign: TextAlign.start,
           fontFamily: "Poppins",
         ),
-        SizedBox(height: 0.3.h),
+        SizedBox(height: 0.4.h),
 
         Divider(
           color: whiteColor.withOpacity(0.5),
           thickness: 1,
         ),
-        SizedBox(height: 0.5.h),
+        SizedBox(height: 0.3.h),
       ],
     ),
   );

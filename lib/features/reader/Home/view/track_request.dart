@@ -66,8 +66,8 @@ class TrackRequest extends GetView<TrackRequestController> {
 
                             height: 4.5.h,
                             fontFamily: "Poppins",
-                            fontsize: 14.sp,
-                            fontweight: FontWeight.w600,
+                            fontsize: 15.sp,
+                            fontweight: FontWeight.w500,
                           ),
                         );
                       }),
@@ -262,7 +262,7 @@ class TrackRequest extends GetView<TrackRequestController> {
         child: Icon(
           Icons.tune_rounded,
           color: buttonColor,
-          size: 16.sp,
+          size: 18.sp,
         ),
       ),
     );

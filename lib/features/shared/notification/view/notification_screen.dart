@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../../../../widgets/formatted_date_widget.dart';
+
 
 import '../../../reader/notification/widget/notification_widget.dart';
 import '../controller/notification_screen_controller.dart';
@@ -47,20 +47,20 @@ class NotificationScreen extends StatelessWidget {
                     );
                   }
 
-                  if (controller.errorMessage.value.isNotEmpty) {
-                    return SizedBox(
-                      height: 60.h,
-                      child: Center(
-                        child: customText(
-                          text: controller.errorMessage.value,
-                          color: greyColor,
-                          fontSize: 15.sp,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }
+                  // if (controller.errorMessage.value.isNotEmpty) {
+                  //   return SizedBox(
+                  //     height: 60.h,
+                  //     child: Center(
+                  //       child: customText(
+                  //         text: controller.errorMessage.value,
+                  //         color: greyColor,
+                  //         fontSize: 15.sp,
+                  //         fontFamily: "Poppins",
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //   );
+                  // }
 
                   if (notificationController.isEmpty) {
                     // When not loading and the list is empty, show a "No Notification found" message.

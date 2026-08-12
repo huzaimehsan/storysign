@@ -27,6 +27,7 @@ Widget buttonWidget(
     child: Container(
       height: height ?? 5.5.h,
       width: width,
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
       decoration: BoxDecoration(
         color: colors,
 
@@ -63,44 +64,46 @@ Widget buttonWidget(
               )
             : null,
       ),
-      child: Center(
-        child: image == null
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, color: textColor, size: 16.sp),
-                    SizedBox(width: 2.w),
-                  ],
-                  Flexible(
-                    child: customText(
-                      text: text,
-                      fontSize: fontsize != null ? fontsize : 17.sp,
-                      fontFamily: fontFamily,
-                      color: textColor,
-                      fontWeight: fontweight ?? FontWeight.w500,
-                      overFlow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (image != null) ...[image, SizedBox(width: 2.w)],
-                  Flexible(
-                    child: customText(
-                      text: text,
-                      fontSize: fontsize != null ? fontsize : 17.sp,
-                      fontFamily: fontFamily,
-                      color: textColor,
-                      fontWeight: FontWeight.w500,
-                      overFlow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+    child: Center(
+  widthFactor: 1,
+  heightFactor: 1,
+  child: image == null
+      ? Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: textColor, size: 16.sp),
+              SizedBox(width: 2.w),
+            ],
+            Flexible(
+              child: customText(
+                text: text,
+                fontSize: fontsize != null ? fontsize : 17.sp,
+                fontFamily: fontFamily,
+                color: textColor,
+                fontWeight: fontweight ?? FontWeight.w500,
+                overFlow: TextOverflow.ellipsis,
               ),
-      ),
+            ),
+          ],
+        )
+      : Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (image != null) ...[image, SizedBox(width: 2.w)],
+            Flexible(
+              child: customText(
+                text: text,
+                fontSize: fontsize != null ? fontsize : 17.sp,
+                fontFamily: fontFamily,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                overFlow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+),
     ),
   );
 }

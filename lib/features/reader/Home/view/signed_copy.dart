@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/reader/Home/controller/signed_copy_controller.dart';
 

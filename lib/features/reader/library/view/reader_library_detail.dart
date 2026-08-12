@@ -7,8 +7,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/author_detail_widget.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
-import '../../../../widgets/sucess_widget.dart';
-import '../../Home/widgets/reader/custom_text_field_with_limit.dart';
+
 import '../../Home/widgets/reader/fee_field_with_price.dart';
 import '../../Home/widgets/reader/request_detail_widget.dart';
 import '../../search/widgets/header_widget.dart';

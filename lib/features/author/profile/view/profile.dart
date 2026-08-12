@@ -53,20 +53,20 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                         );
                       }
 
-                      if (controller.errorMessage.value.isNotEmpty) {
-                        return SizedBox(
-                          height: 60.h,
-                          child: Center(
-                            child: customText(
-                              text: controller.errorMessage.value,
-                              color: greyColor,
-                              fontSize: 15.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        );
-                      }
+                      // if (controller.errorMessage.value.isNotEmpty) {
+                      //   return SizedBox(
+                      //     height: 60.h,
+                      //     child: Center(
+                      //       child: customText(
+                      //         text: controller.errorMessage.value,
+                      //         color: greyColor,
+                      //         fontSize: 15.sp,
+                      //         fontFamily: 'Poppins',
+                      //         fontWeight: FontWeight.w500,
+                      //       ),
+                      //     ),
+                      //   );
+                      // }
 
                       final profile = controller.authorProfile.value;
                       if (profile == null) {

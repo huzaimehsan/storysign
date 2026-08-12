@@ -15,11 +15,11 @@ Widget recentSignedBookCard({
   VoidCallback? ontap,
 }) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 1.h),
+    padding: EdgeInsets.symmetric(vertical: 0.7.h),
     child: Container(
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.symmetric(horizontal :4.w ,vertical: 2.5.w),
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(20.sp),

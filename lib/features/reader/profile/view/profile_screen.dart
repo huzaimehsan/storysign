@@ -57,20 +57,20 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                       );
                     }
 
-                    if (controller.errorMessage.value.isNotEmpty) {
-                      return SizedBox(
-                        height: 60.h,
-                        child: Center(
-                          child: customText(
-                            text: controller.errorMessage.value,
-                            color: greyColor,
-                            fontSize: 15.sp,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      );
-                    }
+                    // if (controller.errorMessage.value.isNotEmpty) {
+                    //   return SizedBox(
+                    //     height: 60.h,
+                    //     child: Center(
+                    //       child: customText(
+                    //         text: controller.errorMessage.value,
+                    //         color: greyColor,
+                    //         fontSize: 15.sp,
+                    //         fontFamily: "Poppins",
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     ),
+                    //   );
+                    // }
 
                     final profile = controller.profileModel.value;
 
@@ -140,19 +140,20 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                 SizedBox(height: 1.h),
                                 sectionHeader(
                                   title: 'Recently Signed Books',
-                                  onSeeAll: () {},
+                                  onSeeAll: () {
+                                    Get.toNamed('/profileviewallbooks');
+                                  },
                                 ),
                                 ListView.builder(
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount:
-                                      controller.books.length +
+                                  itemCount: (controller.books.length > 3 ? 3 : controller.books.length) +
                                       (controller.isLoadingMoreBooks.value
                                           ? 1
                                           : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == controller.books.length) {
+                                    if (index == (controller.books.length > 3 ? 3 : controller.books.length)) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -195,19 +196,21 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                 SizedBox(height: 1.h),
                                 sectionHeader(
                                   title: 'Download History',
-                                  onSeeAll: () {},
+                                  onSeeAll: () {
+                                    Get.toNamed('/profiledownloadhistory');
+                                  },
                                 ),
                                 ListView.builder(
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount:
-                                      controller.bookList.length +
+                                      (controller.bookList.length > 3 ? 3 : controller.bookList.length) +
                                       (controller.isLoadingMoreHistory.value
                                           ? 1
                                           : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == controller.bookList.length) {
+                                    if (index == (controller.bookList.length > 3 ? 3 : controller.bookList.length)) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(

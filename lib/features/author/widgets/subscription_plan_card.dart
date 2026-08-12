@@ -109,7 +109,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                   ),
                   Divider(
                     color: buttonColor,
-                    thickness: 0.8,
+                    thickness: 0.5,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

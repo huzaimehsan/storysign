@@ -77,7 +77,7 @@ Widget notificationTile({
           fontFamily: "Poppins",
         ),
 
-        SizedBox(height: 0.3.h),
+        SizedBox(height: 1.h),
 
         // Description
         customText(

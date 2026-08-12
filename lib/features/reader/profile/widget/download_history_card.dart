@@ -14,19 +14,19 @@ Widget downloadHistoryCard({
   EdgeInsetsGeometry? margin,
 }) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 1.h),
+    padding: EdgeInsets.symmetric(vertical: 0.7.h),
     child: Container(
       width: double.infinity,
       margin: margin ?? EdgeInsets.zero,
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 3.w),
 
       decoration: BoxDecoration(
         color: white,
         borderRadius: BorderRadius.circular(18.sp),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12.sp),

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:storysign/utils/shared_prefrences_methods.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';

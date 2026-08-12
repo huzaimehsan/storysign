@@ -23,7 +23,7 @@ Widget profileHeaderCard({
   return Container(
     width: double.infinity,
 
-    padding: EdgeInsets.all(4.5.w),
+    padding: EdgeInsets.only(right: 4.5.w ,left: 4.5.w ,bottom: 3.3.w,top: 4.w ),
     decoration: BoxDecoration(
       color: white,
       borderRadius: BorderRadius.circular(20.sp),
@@ -40,13 +40,13 @@ Widget profileHeaderCard({
       children: [
         ClipOval(
           child: SizedBox(
-            height: 16.w,
-            width: 16.w,
+            height: 17.w,
+            width: 17.w,
             child: CoverImageWidget(
               assetPath: path,
               imageUrl: path.startsWith('http') ? path : null,
-              height: 16.w,
-              width: 16.w,
+              height: 17.w,
+              width: 17.w,
               fit: BoxFit.cover,
               fallbackIcon: Icons.person_rounded,
             ),
@@ -132,7 +132,7 @@ Widget profileHeaderCard({
                         fontFamily: 'Poppins',
                         height: 2.7.h,
                         fontsize: 13.sp,
-                        fontweight: FontWeight.w500,
+                        fontweight: FontWeight.w600,
                       ),
                     ),
                 ],

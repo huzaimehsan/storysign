@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 
 import '../widgets/customText_widget.dart';
-import 'local_db_key.dart';
+
 
 class HelperFunction {
   static String? emailValidate(String val) {
@@ -136,6 +136,32 @@ class HelperFunction {
       return null;
     }
   }
+
+  static String? validateBookName(val, {fieldName, int? minLength, int? maxLength}) {
+  if (val == null || val.trim().isEmpty) {
+    return '${fieldName ?? 'Book name'} cannot be empty';
+  } else if (minLength != null && val.trim().length < minLength) {
+    return '${fieldName ?? 'Book name'} must be at least $minLength characters';
+  } else if (maxLength != null && val.trim().length > maxLength) {
+    return '${fieldName ?? 'Book name'} cannot exceed $maxLength characters';
+  } else if (!RegExp(r"^[a-zA-Z0-9À-ÿ .,'\-:&!?()]+$").hasMatch(val.trim())) {
+    return '${fieldName ?? 'Book name'} contains invalid characters';
+  } else {
+    return null;
+  }
+}
+
+  static String? validateMessage(val, {fieldName, int? minLength, int? maxLength}) {
+  if (val == null || val.trim().isEmpty) {
+    return '${fieldName ?? 'Message'} cannot be empty';
+  } else if (minLength != null && val.trim().length < minLength) {
+    return '${fieldName ?? 'Message'} must be at least $minLength characters';
+  } else if (maxLength != null && val.trim().length > maxLength) {
+    return '${fieldName ?? 'Message'} cannot exceed $maxLength characters';
+  } else {
+    return null;
+  }
+}
 
   // static String? ValidateName(String val, {String? fieldName}) {
   //   final alphanumeric = RegExp(r'^[a-zA-Z\s]+$');

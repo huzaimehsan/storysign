@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -102,7 +101,7 @@ Widget recentlySignedBooks({
                   colors: buttonColor.withOpacity(0.2),
                   fontFamily: 'Poppins',
                   height: 3.h,
-                  width: 21.w,
+                 
                   borderColor: buttonColor,
                   fontsize: 14.sp,
                   fontweight: FontWeight.w600,

@@ -50,7 +50,7 @@ class AuthorBottomNavController extends GetxController {
         }
         // Also refresh AllRequestController so its local loader shows when switching tabs
         if (Get.isRegistered<AllRequestController>()) {
-          Get.find<AllRequestController>().fetchPendingRequests();
+          Get.find<AllRequestController >().fetchPendingRequests();
         }
       } catch (e) {
         debugPrint("Error refreshing Request tab: $e");

@@ -46,21 +46,10 @@ class TrackingScreen extends GetView<TrackingController> {
               statusNormalized == 'delivered' ||
               statusNormalized == 'paid';
           final isDeliveredStageComplete = statusNormalized == 'delivered';
-          final paymentDate = displayDateLabel(
-            tracking?.signaturePlacement?.paidAt ??
-                tracking?.signaturePlacement?.createdAt ??
-                tracking?.requestDate,
-          );
-          final submittedDate = displayDateLabel(
-            tracking?.requestDate ?? tracking?.signaturePlacement?.createdAt,
-          );
-          final reviewDate = displayDateLabel(
-            tracking?.requestDate ?? tracking?.signaturePlacement?.createdAt,
-          );
-          final deliveredDate = displayDateLabel(
-            tracking?.signaturePlacement?.createdAt ??
-                tracking?.signaturePlacement?.createdAt,
-          );
+          final paymentDate = displayDateLabel(tracking?.paidAt);
+          final submittedDate = displayDateLabel(tracking?.submittedAt);
+          final reviewDate = displayDateLabel(tracking?.inProgressAt);
+          final deliveredDate = displayDateLabel(tracking?.deliveredAt);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +192,7 @@ String displayDateLabel(String? value) {
 
   final dateTime = DateTime.tryParse(text);
   if (dateTime != null) {
-    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   return text.split('T').first;

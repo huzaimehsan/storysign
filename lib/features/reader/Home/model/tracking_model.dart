@@ -151,6 +151,12 @@ class TrackingModel {
   final num feeAmount;
   final bool fromLibrary;
   final bool isPaid;
+  final String? paidAt;
+  final String? submittedAt;
+  final String? inProgressAt;
+  final String? deliveredAt;
+  final String? rejectedAt;
+  final String? statusChangedAt;
   final ReaderModel? reader;
   final AuthorDetailModel? author;
   final SignaturePlacementModel? signaturePlacement;
@@ -170,6 +176,12 @@ class TrackingModel {
     required this.feeAmount,
     required this.fromLibrary,
     required this.isPaid,
+    this.paidAt,
+    this.submittedAt,
+    this.inProgressAt,
+    this.deliveredAt,
+    this.rejectedAt,
+    this.statusChangedAt,
     this.reader,
     this.author,
     this.signaturePlacement,
@@ -273,6 +285,12 @@ class TrackingModel {
           0,
       fromLibrary: _boolValue(data, ['fromLibrary', 'from_library']),
       isPaid: _boolValue(data, ['isPaid', 'is_paid', 'paid']),
+      paidAt: _stringValue(data, ['paidAt', 'paid_at']),
+      submittedAt: _stringValue(data, ['submittedAt', 'submitted_at']),
+      inProgressAt: _stringValue(data, ['inProgressAt', 'in_progress_at', 'inProgressDate']),
+      deliveredAt: _stringValue(data, ['deliveredAt', 'delivered_at', 'deliveryDate']),
+      rejectedAt: _stringValue(data, ['rejectedAt', 'rejected_at', 'rejectionDate']),
+      statusChangedAt: _stringValue(data, ['statusChangedAt', 'status_changed_at']),
       reader: readerData.isNotEmpty ? ReaderModel.fromJson(readerData) : null,
       author: authorData.isNotEmpty
           ? AuthorDetailModel.fromJson(authorData)

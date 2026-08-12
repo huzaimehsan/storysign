@@ -3,8 +3,13 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
+import 'package:storysign/features/reader/Home/binding/view_all_books_binding.dart';
+import 'package:storysign/features/reader/Home/view/view_all_books.dart';
 import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_view_all_books_binding.dart';
 import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+import 'package:storysign/features/reader/profile/view/profile_view_all_books.dart';
 import '../../../shared/notification/view/notification_screen.dart';
 import '../../Home/view/home_screen.dart';
 import '../../Home/view/track_request.dart';
@@ -23,6 +28,24 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
         return GetPageRoute(
           page: () => const TrackRequest(),
           binding: TrackRequestBinding(),
+          settings: settings,
+        );
+      case '/viewallbooks':
+        return GetPageRoute(
+          page: () => const ViewAllBooksScreen(),
+          binding: ViewAllBooksBinding(),
+          settings: settings,
+        );
+      case '/profile':
+        return GetPageRoute(
+          page: () => const ProfileScreen(),
+          binding: ProfileBinding(),
+          settings: settings,
+        );
+      case '/profileviewallbooks':
+        return GetPageRoute(
+          page: () => const ProfileViewAllBooksScreen(),
+          binding: ProfileViewAllBooksBinding(),
           settings: settings,
         );
 

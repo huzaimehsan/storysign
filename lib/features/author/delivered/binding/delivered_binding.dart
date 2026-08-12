@@ -4,6 +4,6 @@ import '../controller/delivered_controller.dart';
 class DeliveredBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<DeliveredController>(() => DeliveredController());
+    Get.lazyPut<DeliveredController>(() => DeliveredController() ,fenix: true);
   }
 }

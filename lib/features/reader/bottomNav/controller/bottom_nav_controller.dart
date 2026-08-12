@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/reader/Home/controller/home_controller.dart';
 import 'package:storysign/features/reader/Home/controller/track_request_controller.dart';
-import 'package:storysign/features/reader/profile/controller/profile_controller.dart';
+
 import '../../../shared/notification/controller/notification_screen_controller.dart';
 import '../../library/controller/library_controller.dart';
 import '../../notification/controller/notification_controller.dart';

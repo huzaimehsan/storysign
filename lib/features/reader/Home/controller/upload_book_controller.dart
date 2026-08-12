@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,10 +9,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
-import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
-import '../../../../utils/shared_prefrences_methods.dart';
+
 import '../../../../utils/utility.dart';
 import '../../../../widgets/sucess_widget.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+
 
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';

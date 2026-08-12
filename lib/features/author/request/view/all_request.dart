@@ -42,7 +42,16 @@ class AllRequest extends GetView<AllRequestController> {
             SizedBox(height: 1.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: sectionHeader(title: "Pending Requests", onSeeAll: () {}),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: customText(
+                  text: "Pending Requests",
+                  color: whiteColor,
+                  fontSize: 15.sp,
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
 
             Expanded(
@@ -57,20 +66,20 @@ class AllRequest extends GetView<AllRequestController> {
                     );
                   }
 
-                  if (controller.errorMessage.value.isNotEmpty) {
-                    return SizedBox(
-                      height: 60.h,
-                      child: Center(
-                        child: customText(
-                          text: controller.errorMessage.value,
-                          color: greyColor,
-                          fontSize: 15.sp,
-                          fontFamily: "Poppins",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }
+                  // if (controller.errorMessage.value.isNotEmpty) {
+                  //   return SizedBox(
+                  //     height: 60.h,
+                  //     child: Center(
+                  //       child: customText(
+                  //         text: controller.errorMessage.value,
+                  //         color: greyColor,
+                  //         fontSize: 15.sp,
+                  //         fontFamily: "Poppins",
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //   );
+                  // }
 
                   if (controller.filteredRequests.isEmpty) {
                     return ListView(

@@ -10,7 +10,7 @@ import '../controller/final_review_controller.dart';
 class RequestBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AllRequestController>(() => AllRequestController());
+    Get.lazyPut<AllRequestController>(() => AllRequestController(),fenix: true);
     Get.lazyPut<EbookPreviewController>(() => EbookPreviewController());
     Get.lazyPut<DrawSignatureController>(() => DrawSignatureController());
     Get.lazyPut<PlaceSignatureController>(() => PlaceSignatureController());

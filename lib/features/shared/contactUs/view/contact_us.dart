@@ -7,7 +7,7 @@ import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
-import '../../../../widgets/sucess_widget.dart';
+
 import '../../../reader/search/widgets/header_widget.dart';
 
 class ContactUs extends GetView<ContactUsController> {
@@ -64,6 +64,7 @@ class ContactUs extends GetView<ContactUsController> {
                       ),
                       SizedBox(height: 1.5.h),
                       emailTextFeild(
+                        width: 20.sp,
                         'Message',
                         "Write your message here.",
                         controller: controller.messageController,

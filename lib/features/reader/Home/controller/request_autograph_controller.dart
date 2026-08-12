@@ -19,6 +19,7 @@ class RequestAutographController extends GetxController {
   RxString selectedAuthorId = "".obs;
   RxString selectedAuthorName = "".obs;
   RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
   // Controller mein

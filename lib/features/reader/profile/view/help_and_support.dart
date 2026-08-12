@@ -29,7 +29,8 @@ class HelpAndSupport extends StatelessWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        color: buttonColor,
+        color: white,
+        backgroundColor: containerColor,
         onRefresh: () => controller.refreshHelpSupport(),
         child: SafeArea(
           child: Column(

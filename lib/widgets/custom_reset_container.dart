@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
-import '../constants/color_constants.dart' as Colors;
+
 import 'button_widget.dart';
 import 'customText_widget.dart';
 

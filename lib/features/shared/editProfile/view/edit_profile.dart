@@ -9,9 +9,9 @@ import 'package:storysign/features/shared/editProfile/controller/edit_profile_co
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/button_widget.dart';
-import '../../../../widgets/customText_widget.dart';
+
 import '../../../../widgets/custom_text_feild.dart';
-import '../../../../widgets/image_picker.dart';
+
 import '../../../author/profile/controller/profile_controller.dart';
 import '../../../reader/search/widgets/header_widget.dart';
 

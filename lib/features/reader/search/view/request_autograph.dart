@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-import 'package:storysign/features/reader/Home/controller/home_controller.dart';
+
 import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
 import 'package:storysign/features/reader/search/controller/search_page_controller.dart';
+import 'package:storysign/utils/helper_functions.dart';
 
 import '../../../../utils/utility.dart';
 import '../../../../widgets/button_widget.dart';
@@ -53,12 +54,15 @@ class RequestAutograph extends GetView<RequestAutographController> {
 
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      child: Obx(
-                        () => Column(
+                      child: Form(
+                        key: controller.formKey,
+                        child: Obx(
+                          () => Column(
                           children: [
                             emailTextFeild(
                               'Book Name',
                               "Things Fall Apart",
+                              validator: (value) => HelperFunction.validateBookName(value ?? '', fieldName: 'Book Name'),
                               controller: controller.bookTitleControllerRequest,
                             ),
                             SizedBox(height: 1.5.h),
@@ -107,6 +111,7 @@ class RequestAutograph extends GetView<RequestAutographController> {
                               maxLength: 200,
                               maxLines: 4,
                               width: 20.sp,
+                              validator: (value) => HelperFunction.validateMessage(value ?? '', fieldName: 'Personal Message'),
                               controller: controller.personalMessageController,
                             ),
                             SizedBox(height: 3.h),
@@ -115,6 +120,9 @@ class RequestAutograph extends GetView<RequestAutographController> {
                               "Request Autograph",
                               whiteColor,
                               onTap: () async {
+                                if (!(controller.formKey.currentState?.validate() ?? true)) {
+                                  return;
+                                }
                                 // Controller se Map return karwayein
                                 final Map<String, dynamic>? result =
                                     await controller.requestAutograph(
@@ -153,6 +161,7 @@ class RequestAutograph extends GetView<RequestAutographController> {
 
                             SizedBox(height: 5.h),
                           ],
+                        ),
                         ),
                       ),
                     ),

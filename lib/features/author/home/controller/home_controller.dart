@@ -84,12 +84,6 @@ class AuthorHomeController extends GetxController {
     searchQuery.value = query;
   }
 
-  // @override
-  // void onClose() {
-  //   searchController.dispose();
-  //   super.onClose();
-  // }
-
   Future<void> fetchLibraryStats() async {
     try {
       isStatsLoading.value = true;

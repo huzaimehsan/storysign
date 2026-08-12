@@ -9,6 +9,8 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
+
+
 import '../controller/home_controller.dart';
 import '../widgets/reader/build_profile_card.dart';
 import '../widgets/reader/user_profile_card.dart';
@@ -25,6 +27,7 @@ class HomeScreen extends GetView<HomeController> {
         );
       }
 
+  
       return RefreshIndicator(
         backgroundColor: containerColor,
         color: white,
@@ -79,7 +82,16 @@ class HomeScreen extends GetView<HomeController> {
                   // All Authors Section
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: sectionHeader(title: "All Authors", onSeeAll: () {}),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: customText(
+                        text: "All Authors",
+                        color: whiteColor,
+                        fontSize: 16.sp,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                   SizedBox(height: 2.h),
 
@@ -145,7 +157,9 @@ class HomeScreen extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: sectionHeader(
                       title: "Recently Signed Books",
-                      onSeeAll: () {},
+                      onSeeAll: () {
+                        Get.toNamed('/viewallbooks');
+                      },
                     ),
                   ),
                   SizedBox(height: 0.5.h),
@@ -160,6 +174,25 @@ class HomeScreen extends GetView<HomeController> {
                         ),
                       );
                     }
+                  //        if (controller.errorMessage.value.isNotEmpty) {
+                  //   return ListView(
+                  //     physics: const AlwaysScrollableScrollPhysics(),
+                  //     padding: EdgeInsets.only(bottom: 12.h),
+                  //     children: [
+                  //       SizedBox(height: 30.h),
+                  //       Center(
+                  //         child: customText(
+                  //           text: controller.errorMessage.value,
+                  //           color: greyColor,
+                  //           fontSize: 15.sp,
+                  //           fontFamily: "Poppins",
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   );
+                  // }
+
                     if (books.isEmpty) {
                       return SizedBox(
                         height: 34.h,
@@ -178,17 +211,8 @@ class HomeScreen extends GetView<HomeController> {
                       padding: EdgeInsets.only(bottom: 5.h),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: books.length +
-                          (controller.isLoadingMore.value ? 1 : 0),
+                      itemCount: books.length > 4 ? 4 : books.length,
                       itemBuilder: (context, index) {
-                        if (index == books.length) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16.0),
-                              child: CircularProgressIndicator(color: buttonColor),
-                            ),
-                          );
-                        }
                         final book = books[index];
                         return recentlySignedBooks(
                           imageUrl: book.coverImage,
