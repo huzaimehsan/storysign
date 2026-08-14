@@ -41,6 +41,7 @@ Widget buildProfileCard({
                       fontFamily: 'Poppins',
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
+                      overFlow: TextOverflow.ellipsis,
                       text:
                           "Welcome, ${role != null && role.isNotEmpty ? role.capitalizeFirst : 'User'}",
                     ),
@@ -51,6 +52,8 @@ Widget buildProfileCard({
                       fontSize: 17.sp,
                       fontWeight: FontWeight.w600,
                       text: name ?? "User",
+                      maxLines:1,
+                      overFlow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

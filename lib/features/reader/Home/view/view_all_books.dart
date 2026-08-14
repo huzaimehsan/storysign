@@ -5,7 +5,7 @@ import 'package:storysign/features/reader/search/widgets/header_widget.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
-import '../../../../widgets/button_widget.dart';
+
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../controller/view_all_books_controller.dart';
@@ -101,15 +101,8 @@ class ViewAllBooksScreen extends GetView<ViewAllBooksController> {
                             final book = books[index];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 0.h),
-                              child: recentlySignedBooks(
-                                imageUrl: book.coverImage,
-                                bookTitle: book.title,
-                                date: book.uploadDate
-                                    .toString()
-                                    .split(' ')[0],
-                                status: book.status,
-                                authorName: book.authorName,
-                                trackRequest: () {
+                              child: InkWell(
+                                onTap: () {
                                   Get.toNamed(
                                     "/signedcopy",
                                     arguments: {
@@ -120,8 +113,28 @@ class ViewAllBooksScreen extends GetView<ViewAllBooksController> {
                                     },
                                   );
                                 },
-                                imagePath: '',
-                                showAuthor: true,
+                                child: recentlySignedBooks(
+                                  imageUrl: book.coverImage,
+                                  bookTitle: book.title,
+                                  date: book.uploadDate
+                                      .toString()
+                                      .split(' ')[0],
+                                  status: book.status,
+                                  authorName: book.authorName,
+                                  trackRequest: () {
+                                    Get.toNamed(
+                                      "/signedcopy",
+                                      arguments: {
+                                        'autographRequestId':
+                                            book.autographRequestId,
+                                        'bookId': book.bookId,
+                                        'bookPdfUrl': book.signedPdfUrl,
+                                      },
+                                    );
+                                  },
+                                  imagePath: '',
+                                  showAuthor: true,
+                                ),
                               ),
                             );
                           },

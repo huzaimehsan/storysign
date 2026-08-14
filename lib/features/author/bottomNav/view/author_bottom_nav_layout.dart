@@ -111,7 +111,9 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
             .currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
+          return;
         }
+        controller.popCurrentTab();
       },
       child: Scaffold(
         extendBody: true,

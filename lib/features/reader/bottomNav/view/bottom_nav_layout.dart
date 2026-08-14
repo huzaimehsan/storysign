@@ -79,7 +79,10 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
             .currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
+          return;
         }
+
+        controller.popCurrentTabOrGoToPrevious();
       },
       child: Scaffold(
         extendBody: true,

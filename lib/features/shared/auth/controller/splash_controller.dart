@@ -14,7 +14,7 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
     super.onInit();
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 2500),
     );
 
     fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(

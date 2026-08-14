@@ -38,7 +38,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
               customHeader(
                 context: context,
                 title: "Profile",
-                onBack: () => Get.back(),
+                onBack: () => controller.popTab(),
                 onIconPressed: () {},
               ),
               SizedBox(height: 2.h),

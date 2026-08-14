@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 
+import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
@@ -11,6 +12,12 @@ import '../../../../utils/utility.dart';
 import '../model/library_model.dart';
 
 class ReaderController extends GetxController {
+  void popTab() {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().popCurrentTabOrGoToPrevious();
+    }
+  }
+
   RxString searchQuery = "".obs;
   RxString selectedTab = "All".obs;
   RxString sortBy = "None".obs; // "None", "Title A-Z", "Title Z-A", "Date Newest", "Date Oldest"

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-import 'package:storysign/widgets/cover_image_widget.dart';
+import 'package:storysign/components/cover_image_widget.dart';
 import 'package:storysign/widgets/customText_widget.dart';
 
 /// Widget 1: "Ready to Send" card — reader avatar + name, book cover + title
@@ -72,6 +72,7 @@ class ReadyToSendCard extends StatelessWidget {
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
                         overFlow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                   ],
@@ -122,6 +123,7 @@ class ReadyToSendCard extends StatelessWidget {
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
                         overFlow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                   ],

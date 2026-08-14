@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/core/services/apiendpoints.dart';
 import 'package:storysign/core/services/base_services.dart';
 import 'package:storysign/utils/utility.dart';
 
 class AllRequestController extends GetxController {
+  void popTab() {
+    if (Get.isRegistered<AuthorBottomNavController>()) {
+      Get.find<AuthorBottomNavController>().popCurrentTab();
+    }
+  }
+
   final TextEditingController searchController = TextEditingController();
   final RxBool isFetchPending = false.obs;
   final RxBool isLoadingMore = false.obs;

@@ -31,6 +31,7 @@ class SignedCopy extends GetView<SignedCopyController> {
         '';
 
     final String bookName = args['bookName']?.toString() ?? 'Unknown Book';
+    final bool isFromDownloadHistory = args['isFromDownloadHistory'] == true;
 
     return Scaffold(
       body: SafeArea(
@@ -119,23 +120,25 @@ class SignedCopy extends GetView<SignedCopyController> {
                 );
               }),
               SizedBox(height: 5.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: buttonWidget(
-                  "Download Book",
-                  whiteColor,
-                  onTap: () {
-                    controller.downloadBook(bookId, bookName);
-                  },
-                  colors: buttonColor,
-                  fontFamily: 'Poppins',
-                  height: 5.2.h,
-                  width: double.infinity,
-                  fontsize: 16.sp,
-                  fontweight: FontWeight.w600,
+              if (!isFromDownloadHistory) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: buttonWidget(
+                    "Download Book",
+                    whiteColor,
+                    onTap: () {
+                      controller.downloadBook(bookId, bookName);
+                    },
+                    colors: buttonColor,
+                    fontFamily: 'Poppins',
+                    height: 5.2.h,
+                    width: double.infinity,
+                    fontsize: 16.sp,
+                    fontweight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              SizedBox(height: 1.5.h),
+                SizedBox(height: 1.5.h),
+              ],
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 child: buttonWidget(

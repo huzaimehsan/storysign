@@ -29,7 +29,7 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
             customHeader(
               context: context,
               title: 'Profile',
-              onBack: () => Get.back(),
+              onBack: () => controller.popTab(),
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),

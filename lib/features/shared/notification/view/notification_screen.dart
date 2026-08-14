@@ -5,7 +5,8 @@ import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 
-
+import '../../../reader/bottomNav/controller/bottom_nav_controller.dart';
+import '../../../author/bottomNav/controller/author_bottom_nav_controller.dart';
 import '../../../reader/notification/widget/notification_widget.dart';
 import '../controller/notification_screen_controller.dart';
 
@@ -28,7 +29,17 @@ class NotificationScreen extends StatelessWidget {
         child: Column(
           children: [
             customNotificationHeader(
-              onBack: Get.back,
+              onBack: () {
+                if (role == 'author') {
+                  if (Get.isRegistered<AuthorBottomNavController>()) {
+                    Get.find<AuthorBottomNavController>().popCurrentTab();
+                  }
+                } else {
+                  if (Get.isRegistered<BottomNavController>()) {
+                    Get.find<BottomNavController>().popCurrentTabOrGoToPrevious();
+                  }
+                }
+              },
               onIconPressed: () => controller.markAllAsRead(),
             ),
             SizedBox(height: 1.h),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
-import '../../../../widgets/cover_image_widget.dart';
+import '../../../../components/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/formatted_date_widget.dart';
 
@@ -83,6 +83,7 @@ class PendingRequest extends StatelessWidget {
                       fontFamily: "Poppins",
                       text: authorName,
                       overFlow: TextOverflow.ellipsis,
+                      maxLines:1,
                       color: secondryColor,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
@@ -91,6 +92,8 @@ class PendingRequest extends StatelessWidget {
                     customText(
                       fontFamily: "Poppins",
                       text: bookName,
+                      overFlow: TextOverflow.ellipsis,
+                      maxLines:1,
                       color: primaryColor.withOpacity(0.7),
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,

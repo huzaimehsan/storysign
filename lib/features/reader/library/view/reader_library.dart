@@ -27,7 +27,7 @@ class ReaderLibrary extends GetView<ReaderController> {
             customHeader(
               context: context,
               title: "My Library",
-              onBack: () => Get.back(),
+              onBack: () => controller.popTab(),
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
@@ -224,7 +224,8 @@ class ReaderLibrary extends GetView<ReaderController> {
       onSelected: (value) {
         if (value == "Reset") {
           controller.sortBy.value = "None";
-          controller.fetchBooksData(status: 'all');
+          controller.selectedTab.value = "All";
+          controller.refreshRequests();
         } else if (value.startsWith("sort:")) {
           controller.sortBy.value = value.replaceFirst("sort:", "");
         }

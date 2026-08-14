@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 
 import 'package:storysign/features/shared/editProfile/controller/edit_profile_controller.dart';
 
+import '../../../../components/cover_image_widget.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../utils/helper_functions.dart';
 import '../../../../widgets/button_widget.dart';
@@ -56,41 +57,18 @@ class EditProfile extends StatelessWidget {
                           .value
                           ?.profilePicture
                           ?.toString();
-                      final bool hasNetwork =
-                          networkUrl != null && networkUrl.isNotEmpty;
 
-                      return Container(
-                        height: 30.w,
-                        width: 30.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: textFeildContainColor,
-                        ),
-                        child: ClipOval(
-                          child: pickedImage != null
-                              ? Image.file(
-                                  pickedImage,
-                                  fit: BoxFit.cover,
-                                  width: 30.w,
-                                  height: 30.w,
-                                )
-                              : hasNetwork
-                              ? Image.network(
-                                  networkUrl!,
-                                  fit: BoxFit.cover,
-                                  width: 30.w,
-                                  height: 30.w,
-                                  errorBuilder: (ctx, err, stack) => Icon(
-                                    Icons.person_rounded,
-                                    color: buttonColor.withOpacity(0.6),
-                                    size: 12.w,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.person_rounded,
-                                  color: buttonColor.withOpacity(0.6),
-                                  size: 12.w,
-                                ),
+                      return ClipOval(
+                        child: CoverImageWidget(
+                          assetPath: 'assets/png/placeholder.png',
+                          imageUrl: pickedImage != null
+                              ? pickedImage.path
+                              : networkUrl,
+                          height: 30.w,
+                          width: 30.w,
+                          fit: BoxFit.cover,
+                          placeHolderColor: white,
+                          fallbackIcon: Icons.person_rounded,
                         ),
                       );
                     }),
@@ -115,42 +93,79 @@ class EditProfile extends StatelessWidget {
               // Name, Email & Bio Fields
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Form(
-                  key: controller.formKey,
-                  child: Column(
-                    children: [
-                      emailTextFeild(
-                        'Name',
-                        'John Smith',
-                        controller: role == 'author'
-                            ? controller.authorNameUpdateController
-                            : controller.nameUpdateController,
-                        validator: (value) =>
-                            HelperFunction.ValidateName(value ?? ''),
+                child: Obx(
+                  () {
+                    // Pre-fill form fields with data from signup
+                    final profileData = controller.profileModel.value;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (role == 'author') {
+                        if (controller.authorNameUpdateController.text.isEmpty &&
+                            profileData?.fullName != null) {
+                          controller.authorNameUpdateController.text =
+                              profileData!.fullName ?? '';
+                        }
+                        if (controller.authorEmailUpdateController.text.isEmpty &&
+                            profileData?.email != null) {
+                          controller.authorEmailUpdateController.text =
+                              profileData!.email ?? '';
+                        }
+                        if (controller.bioUpdateController.text.isEmpty &&
+                            profileData?.bio != null) {
+                          controller.bioUpdateController.text =
+                              profileData!.bio ?? '';
+                        }
+                      } else {
+                        if (controller.nameUpdateController.text.isEmpty &&
+                            profileData?.fullName != null) {
+                          controller.nameUpdateController.text =
+                              profileData!.fullName ?? '';
+                        }
+                        if (controller.emailUpdateController.text.isEmpty &&
+                            profileData?.email != null) {
+                          controller.emailUpdateController.text =
+                              profileData!.email ?? '';
+                        }
+                      }
+                    });
+                    return Form(
+                      key: controller.formKey,
+                      child: Column(
+                        children: [
+                          emailTextFeild(
+                            'Name',
+                            'John Smith',
+                            controller: role == 'author'
+                                ? controller.authorNameUpdateController
+                                : controller.nameUpdateController,
+                            validator: (value) =>
+                                HelperFunction.ValidateName(value ?? ''),
+                          ),
+                          SizedBox(height: 2.h),
+                          emailTextFeild(
+                            'Email',
+                            'johnsmith@gmail.com',
+                            controller: role == 'author'
+                                ? controller.authorEmailUpdateController
+                                : controller.emailUpdateController,
+                            validator: (value) =>
+                                HelperFunction.emailValidate(value ?? ''),
+                            readOnly: true,
+                          ),
+                          if (role == 'author') ...[
+                            SizedBox(height: 2.h),
+                            emailTextFeild(
+                              'Bio',
+                              'Enter your biography',
+                              controller: controller.bioUpdateController,
+                              validator: (value) => value == null || value.isEmpty
+                                  ? 'Bio cannot be empty'
+                                  : null,
+                            ),
+                          ],
+                        ],
                       ),
-                      SizedBox(height: 2.h),
-                      emailTextFeild(
-                        'Email',
-                        'johnsmith@gmail.com',
-                        controller: role == 'author'
-                            ? controller.authorEmailUpdateController
-                            : controller.emailUpdateController,
-                        validator: (value) =>
-                            HelperFunction.emailValidate(value ?? ''),
-                      ),
-                      if (role == 'author') ...[
-                        SizedBox(height: 2.h),
-                        emailTextFeild(
-                          'Bio',
-                          'Enter your biography',
-                          controller: controller.bioUpdateController,
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Bio cannot be empty'
-                              : null,
-                        ),
-                      ],
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
 

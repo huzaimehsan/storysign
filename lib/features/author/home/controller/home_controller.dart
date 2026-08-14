@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storysign/features/author/home/model/author_profile_model.dart';
 
+import '../../bottomNav/controller/author_bottom_nav_controller.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
@@ -9,6 +10,12 @@ import '../model/active_subscription_model.dart';
 import '../model/home_model.dart';
 
 class AuthorHomeController extends GetxController {
+  void goToRequestsTab() {
+    if (Get.isRegistered<AuthorBottomNavController>()) {
+      Get.find<AuthorBottomNavController>().changeIndex(1);
+    }
+  }
+
   final TextEditingController searchController = TextEditingController();
   var authorStats = Rxn<SubscriptionStats>();
 

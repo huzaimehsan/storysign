@@ -53,6 +53,8 @@ Widget activeSubscription({
                       color: secondryColor,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
+                        maxLines:1,
+                        overFlow: TextOverflow.ellipsis,
                     ),
                     RichText(
                       text: TextSpan(
@@ -64,6 +66,7 @@ Widget activeSubscription({
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w600,
                               color: buttonColor,
+                              
                             ),
                           ),
                           TextSpan(

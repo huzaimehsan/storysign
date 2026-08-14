@@ -24,7 +24,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
               child: customHeaderAuthor(
                 context: context,
                 title: 'Draw Signature',
-                onBack: () => Get.back(),
+                onBack: () => Navigator.pop(context),
                 onIconPressed: () {},
               ),
             ),
@@ -40,14 +40,22 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                   GestureDetector(
                     onTap: () => controller.selectMode('pencil'),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 5.w,
+                        vertical: 1.h,
+                      ),
                       decoration: BoxDecoration(
                         color: isPencil ? buttonColor : white,
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Row(
                         children: [
-                          Image.asset("assets/icon/apple.png",height: 4.w,width: 4.w,color: isPencil ? whiteColor : buttonColor,),
+                          Image.asset(
+                            "assets/icon/apple.png",
+                            height: 4.w,
+                            width: 4.w,
+                            color: isPencil ? whiteColor : buttonColor,
+                          ),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Apple Pencil',
@@ -65,14 +73,22 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                   GestureDetector(
                     onTap: () => controller.selectMode('finger'),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 1.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 9.w,
+                        vertical: 1.h,
+                      ),
                       decoration: BoxDecoration(
                         color: !isPencil ? buttonColor : white,
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Row(
                         children: [
-                          Image.asset("assets/icon/finger.png",height: 4.w,width: 4.w,color: isPencil ? buttonColor : whiteColor,),
+                          Image.asset(
+                            "assets/icon/finger.png",
+                            height: 4.w,
+                            width: 4.w,
+                            color: isPencil ? buttonColor : whiteColor,
+                          ),
                           SizedBox(width: 2.w),
                           customText(
                             text: 'Finger',
@@ -105,7 +121,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                     blurRadius: 15,
                     spreadRadius: 2,
                     offset: const Offset(0, 8),
-                  )
+                  ),
                 ],
               ),
               child: ClipRRect(
@@ -136,7 +152,8 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
                               ),
                               SizedBox(height: 1.5.h),
                               customText(
-                                text: 'Draw the Signature Here Use pencil or mouse',
+                                text:
+                                    'Draw the Signature Here Use pencil or mouse',
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w400,
                                 color: secondryColor.withAlpha(128),
@@ -201,7 +218,10 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
     );
   }
 
-  Widget _buildCircleAction({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildCircleAction({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -210,11 +230,7 @@ class DrawSignatureScreen extends GetView<DrawSignatureController> {
           shape: BoxShape.circle,
           border: Border.all(color: bottomNavColor, width: 1.5),
         ),
-        child: Icon(
-          icon,
-          color: bottomNavColor,
-          size: 4.w,
-        ),
+        child: Icon(icon, color: bottomNavColor, size: 4.w),
       ),
     );
   }

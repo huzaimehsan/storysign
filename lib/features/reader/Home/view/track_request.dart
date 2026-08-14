@@ -11,7 +11,6 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../search/widgets/header_widget.dart';
 
-
 class TrackRequest extends GetView<TrackRequestController> {
   const TrackRequest({super.key});
 
@@ -26,7 +25,7 @@ class TrackRequest extends GetView<TrackRequestController> {
             customHeader(
               context: context,
               title: "All Tracking Requests",
-              onBack: () => Get.back(),
+              onBack: () => controller.popTab(),
               onIconPressed: () {},
             ),
             SizedBox(height: 2.h),
@@ -41,10 +40,7 @@ class TrackRequest extends GetView<TrackRequestController> {
               padding: EdgeInsets.only(right: 5.w, left: 3.w),
               child: Row(
                 children: [
-                  ...tabs
-                      .asMap()
-                      .entries
-                      .map((entry) {
+                  ...tabs.asMap().entries.map((entry) {
                     int index = entry.key;
                     String tab = entry.value;
 
@@ -99,7 +95,7 @@ class TrackRequest extends GetView<TrackRequestController> {
 
             Expanded(
               child: RefreshIndicator(
-                backgroundColor :containerColor,
+                backgroundColor: containerColor,
                 color: white,
                 onRefresh: () => controller.refreshRequests(),
                 child: Obx(() {
@@ -109,8 +105,7 @@ class TrackRequest extends GetView<TrackRequestController> {
                     );
                   }
 
-                  final books = controller
-                      .filteredTrackRequest;
+                  final books = controller.filteredTrackRequest;
 
                   return ListView.builder(
                     controller: controller.scrollController,
@@ -118,12 +113,13 @@ class TrackRequest extends GetView<TrackRequestController> {
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount: books.isEmpty
                         ? 1
-                        : books.length + (controller.isLoadingMore.value ? 1 : 0),
+                        : books.length +
+                              (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (books.isEmpty) {
                         return SizedBox(
                           height: 62.h,
-                          child:  Center(
+                          child: Center(
                             child: customText(
                               text: "No Tracking Request",
                               color: greyColor,
@@ -138,7 +134,9 @@ class TrackRequest extends GetView<TrackRequestController> {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: CircularProgressIndicator(color: buttonColor),
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
                           ),
                         );
                       }
@@ -149,46 +147,49 @@ class TrackRequest extends GetView<TrackRequestController> {
                       try {
                         if (book.uploadDate.isNotEmpty) {
                           final DateTime dateTime = DateTime.parse(
-                              book.uploadDate);
-                          formattedDate = "Joined: ${DateFormat('dd MMMM, yyyy')
-                              .format(dateTime)}";
+                            book.uploadDate,
+                          );
+                          formattedDate =
+                              "Joined: ${DateFormat('dd MMMM, yyyy').format(dateTime)}";
                         }
                       } catch (e) {
                         debugPrint("Date Parsing Error: $e");
                         formattedDate = "Joined: Invalid Date";
                       }
 
-                      return recentlySignedBooks(
-                        imageUrl: book.coverImage,
-                        bookTitle: book.title,
-                        authorName: book.author.fullName,
-                        date: formattedDate,
-                        trackRequest: () {
-
-                          print("DEBUG: Sending book title: ${book.title}");
-
-
-                          if (book != null) {
-                            Get.toNamed("/tracking", arguments: {'autographRequestId': book.id});
-                          }
-                          else {
-
-                          }
+                      return InkWell(
+                        onTap: () {
+                          Get.toNamed(
+                            "/tracking",
+                            arguments: {'autographRequestId': book.id},
+                          );
                         },
+                        child: recentlySignedBooks(
+                          imageUrl: book.coverImage,
+                          bookTitle: book.title,
+                          authorName: book.author.fullName,
+                          date: formattedDate,
+                          trackRequest: () {
+                            print("DEBUG: Sending book title: ${book.title}");
 
+                            if (book != null) {
+                              Get.toNamed(
+                                "/tracking",
+                                arguments: {'autographRequestId': book.id},
+                              );
+                            } else {}
+                          },
 
-                        status: book.status,
-                        imagePath: '',
-                        showAuthor: true,
+                          status: book.status,
+                          imagePath: '',
+                          showAuthor: true,
+                        ),
                       );
-
                     },
                   );
                 }),
               ),
             ),
-
-
           ],
         ),
       ),
@@ -200,9 +201,7 @@ class TrackRequest extends GetView<TrackRequestController> {
     return PopupMenuButton<String>(
       color: white,
       elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.sp),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
       offset: Offset(0, 5.h),
       onSelected: (value) {
         if (value == "Reset") {
@@ -226,7 +225,10 @@ class TrackRequest extends GetView<TrackRequestController> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          ..._sortOptions.map((label) => _buildMenuItem("sort:$label", label, controller.sortBy.value)),
+          ..._sortOptions.map(
+            (label) =>
+                _buildMenuItem("sort:$label", label, controller.sortBy.value),
+          ),
           const PopupMenuDivider(),
           PopupMenuItem<String>(
             enabled: false,
@@ -238,7 +240,13 @@ class TrackRequest extends GetView<TrackRequestController> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          ..._statusOptions.map((label) => _buildMenuItem("status:$label", label, controller.filterStatus.value)),
+          ..._statusOptions.map(
+            (label) => _buildMenuItem(
+              "status:$label",
+              label,
+              controller.filterStatus.value,
+            ),
+          ),
           const PopupMenuDivider(),
           PopupMenuItem<String>(
             value: "Reset",
@@ -259,11 +267,7 @@ class TrackRequest extends GetView<TrackRequestController> {
           color: const Color(0xFFF5E6D3),
           borderRadius: BorderRadius.circular(17.sp),
         ),
-        child: Icon(
-          Icons.tune_rounded,
-          color: buttonColor,
-          size: 18.sp,
-        ),
+        child: Icon(Icons.tune_rounded, color: buttonColor, size: 18.sp),
       ),
     );
   }
@@ -276,12 +280,13 @@ class TrackRequest extends GetView<TrackRequestController> {
     "Date Oldest",
   ];
 
-  static const List<String> _statusOptions = [
-    "Submitted",
-    "Rejected",
-  ];
+  static const List<String> _statusOptions = ["Submitted", "Rejected"];
 
-  PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {
+  PopupMenuItem<String> _buildMenuItem(
+    String value,
+    String label,
+    String currentValue,
+  ) {
     final isSelected = currentValue == label;
     return PopupMenuItem<String>(
       value: value,

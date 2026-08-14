@@ -4,7 +4,7 @@ import 'package:storysign/widgets/formatted_date_widget.dart';
 
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/button_widget.dart';
-import '../../../../../widgets/cover_image_widget.dart';
+import '../../../../../components/cover_image_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
 
 class WidgetSelectAuthor extends StatelessWidget {

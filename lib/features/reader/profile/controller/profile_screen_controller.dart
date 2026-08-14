@@ -8,10 +8,17 @@ import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 
+import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../../../../utils/utility.dart';
 import '../model/profile_screen_model.dart';
 
 class ProfileScreenController extends GetxController {
+  void popTab() {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().popCurrentTabOrGoToPrevious();
+    }
+  }
+
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
   Rxn<ProfileModel> profileModel = Rxn<ProfileModel>();

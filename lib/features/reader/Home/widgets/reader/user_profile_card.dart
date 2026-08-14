@@ -74,17 +74,18 @@ Widget userProfileCard({
             ),
           ],
         ),
-        SizedBox(height: 0.4.h),
+        SizedBox(height: 0.3.h),
 
         SizedBox(
           width: 18.w,
           child: customText(
             color: whiteColor,
             fontFamily: 'Inter',
-            fontSize: 13.2.sp,
+            fontSize: 13.7.sp,
             fontWeight: FontWeight.w600,
             text: displayName,
             maxLines: 2,
+            overFlow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
         ),

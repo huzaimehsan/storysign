@@ -55,11 +55,9 @@ class ProfileViewAllBooksScreen extends GetView<ProfileViewAllBooksController> {
                 controller: controller.searchController,
                 onChanged: controller.onSearchChanged,
               ),
-           SizedBox(height: 0.5.h),
+              SizedBox(height: 0.5.h),
 
               // Sort & Filter Options
-           
-           
 
               // Books List
               Expanded(
@@ -84,7 +82,8 @@ class ProfileViewAllBooksScreen extends GetView<ProfileViewAllBooksController> {
                             horizontal: 4.w,
                             vertical: 1.h,
                           ),
-                          itemCount: books.length +
+                          itemCount:
+                              books.length +
                               (controller.isLoadingMoreBooks.value ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index == books.length) {
@@ -100,13 +99,26 @@ class ProfileViewAllBooksScreen extends GetView<ProfileViewAllBooksController> {
                             final book = books[index];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 0.1.h),
-                              child: recentSignedBookCard(
-                                title: book.title,
-                                price: '\u0024 ${book.feeAmount}',
-                                date: book.uploadDate
-                                    .toString()
-                                    .split(' ')[0],
-                                status: book.status,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                    '/signedcopy',
+                                    arguments: {
+                                      'bookId': book.id,
+                                      'autographRequestId':
+                                          book.autographRequestId,
+                                      'bookName': book.title,
+                                    },
+                                  );
+                                },
+                                child: recentSignedBookCard(
+                                  title: book.title,
+                                  price: '\$ ${book.feeAmount}',
+                                  date: book.uploadDate.toString().split(
+                                    ' ',
+                                  )[0],
+                                  status: book.status,
+                                ),
                               ),
                             );
                           },

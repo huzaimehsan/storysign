@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
-import 'cover_image_widget.dart';
+import '../components/cover_image_widget.dart';
 import 'customText_widget.dart';
 import 'formatted_date_widget.dart';
 

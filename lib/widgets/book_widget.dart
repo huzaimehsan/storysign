@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
 import 'button_widget.dart';
-import 'cover_image_widget.dart';
+import '../components/cover_image_widget.dart';
 import 'customText_widget.dart';
 
 import 'formatted_date_widget.dart';
@@ -60,18 +60,16 @@ Widget recentlySignedBooks({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 2.w),
-                    child: customText(
-                      fontFamily: "Poppins",
-                      text: bookTitle,
-                      color: secondryColor,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      maxLines: 1,
-                      overFlow: TextOverflow.ellipsis,
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(right: 2.w),
+                  child: customText(
+                    fontFamily: "Poppins",
+                    text: bookTitle,
+                    color: secondryColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 1,
+                    overFlow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (showAuthor && authorName.isNotEmpty) ...[

@@ -28,7 +28,7 @@ class AllRequest extends GetView<AllRequestController> {
                   customHeaderAuthor(
                     context: context,
                     title: 'All Request',
-                    onBack: () => Get.back(),
+                    onBack: () => controller.popTab(),
                     onIconPressed: () {},
                   ),
                 ],

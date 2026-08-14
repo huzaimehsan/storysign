@@ -4,15 +4,41 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/utility.dart';
 import '../../Home/model/home_model.dart';
 
-
-
 class SearchPageController extends GetxController {
   late String authorId;
+
+  void popTab() {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().popCurrentTabOrGoToPrevious();
+    }
+  }
+
+  void navigateToAuthorDetail(String authorId) {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().pushInSearchTab(
+        '/authordetail',
+        arguments: {'authorId': authorId, 'role': 'search'},
+      );
+    }
+  }
+
+  void popAuthorDetail() {
+    if (Get.isRegistered<BottomNavController>()) {
+      final bottomNav = Get.find<BottomNavController>();
+      final nav = bottomNav.navigatorKeys[bottomNav.currentIndex.value].currentState;
+      if (nav != null && nav.canPop()) {
+        nav.pop();
+        return;
+      }
+    }
+    Get.back();
+  }
   @override
   void onInit() {
     super.onInit();

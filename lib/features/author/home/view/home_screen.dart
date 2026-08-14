@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
 import 'package:storysign/features/author/home/widgets/author_profile_widget.dart';
 import 'package:storysign/features/author/home/widgets/pending_request.dart';
 
@@ -178,10 +177,7 @@ class AuthorHomeScreen extends GetView<AuthorHomeController> {
                                 imagePath: request.reader.profilePicture,
                                 authorName: request.reader.fullName,
                                 date: request.requestDate,
-                                authorDetail: () {
-                                  Get.find<AuthorBottomNavController>()
-                                      .changeIndex(1);
-                                },
+                                authorDetail: () => controller.goToRequestsTab(),
                                 bookName: request.bookTitle,
                               );
                             },

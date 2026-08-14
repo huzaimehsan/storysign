@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 
@@ -9,6 +10,12 @@ import '../../../../utils/utility.dart';
 import '../model/home_model.dart';
 
 class TrackRequestController extends GetxController {
+  void popTab() {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().popCurrentTabOrGoToPrevious();
+    }
+  }
+
   RxList<NewBookItem> trackRequest = <NewBookItem>[].obs;
   RxBool trackRequestLoading = false.obs;
   RxString errorMessage = ''.obs;

@@ -305,7 +305,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
 
                                     if (result != null &&
                                         result['requestId'] != null) {
-                                      Get.offAllNamed(
+                                      Get.toNamed(
                                         '/request',
                                         arguments: {
                                           'autographRequestId':

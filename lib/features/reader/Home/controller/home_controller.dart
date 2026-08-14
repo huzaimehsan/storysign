@@ -13,6 +13,7 @@ import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
 import '../../../../utils/shared_prefrences_methods.dart';
 import '../../../../utils/utility.dart';
+import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../model/home_model.dart';
 import '../model/recently_signed_book_model.dart';
 
@@ -21,6 +22,12 @@ class HomeController extends GetxController {
   Timer? _searchDebounce;
 
   final RxBool isPageLoading = true.obs;
+
+  void goToSearchTab() {
+    if (Get.isRegistered<BottomNavController>()) {
+      Get.find<BottomNavController>().changeIndex(1);
+    }
+  }
 
   @override
   void onInit() {

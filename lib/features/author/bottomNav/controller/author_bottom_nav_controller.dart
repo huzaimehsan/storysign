@@ -104,6 +104,11 @@ class AuthorBottomNavController extends GetxController {
     final nav = navigatorKeys[currentIndex.value].currentState;
     if (nav != null && nav.canPop()) {
       nav.pop();
+      return;
+    }
+
+    if (currentIndex.value != 0) {
+      changeIndex(0);
     }
   }
 

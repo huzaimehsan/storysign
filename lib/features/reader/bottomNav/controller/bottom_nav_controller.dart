@@ -12,6 +12,7 @@ import '../../search/controller/search_page_controller.dart';
 class BottomNavController extends GetxController{
 
   var currentIndex = 0.obs;
+  final Map<int, int> tabSources = {0: 0};
 
   /// Navigator keys for each tab — used by nested navigators in BottomNavLayout
   final List<GlobalKey<NavigatorState>> navigatorKeys = [
@@ -22,7 +23,14 @@ class BottomNavController extends GetxController{
     GlobalKey<NavigatorState>(),
   ];
 
+  void setTabSource(int tabIndex, int sourceIndex) {
+    if (tabIndex < 0 || tabIndex >= navigatorKeys.length) return;
+    if (sourceIndex < 0 || sourceIndex >= navigatorKeys.length) return;
+    tabSources[tabIndex] = sourceIndex;
+  }
+
   void changeIndex(int index) {
+    if (index < 0 || index >= navigatorKeys.length) return;
     currentIndex.value = index;
 
     if (index == 0) {
@@ -33,7 +41,7 @@ class BottomNavController extends GetxController{
           Get.find<HomeController>(). fetchMyBooks();
 
         }
-        // 2. Sahi tarika 'else if' ka use karna hai
+   
         else if (Get.isRegistered<TrackRequestController>()) {
           Get.find<TrackRequestController>().fetchTrackRequestData();
         }
@@ -52,8 +60,7 @@ class BottomNavController extends GetxController{
     if (index == 2) {
       try {
         if (Get.isRegistered<ReaderController>()) {
-          Get.find<ReaderController>().fetchBooksData(status: 'all');
-
+          Get.find<ReaderController>().refreshRequests();
         }
       } catch (_) {}
     }
@@ -84,11 +91,17 @@ class BottomNavController extends GetxController{
     navigatorKeys[1].currentState?.pushNamed(routeName, arguments: arguments);
   }
 
-  /// Pop the top route in the current active tab
-  void popCurrentTab() {
+  /// Pop the top route in the current active tab.
+  /// If the current tab is already at its root screen, go back to Home (index 0).
+  void popCurrentTabOrGoToPrevious() {
     final nav = navigatorKeys[currentIndex.value].currentState;
     if (nav != null && nav.canPop()) {
       nav.pop();
+      return;
+    }
+
+    if (currentIndex.value != 0) {
+      changeIndex(0);
     }
   }
 

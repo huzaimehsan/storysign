@@ -20,6 +20,8 @@ class SendOtp extends GetView<AuthController> {
   Widget build(BuildContext context) {
     final args = Get.arguments;
     final String email = args is Map<String, dynamic> ? args['email'] ?? "" : "";
+    final formKey = GlobalKey<FormState>();
+
     return Scaffold(
       body: Stack(
         children: [
@@ -72,13 +74,14 @@ class SendOtp extends GetView<AuthController> {
                     ),
                     SizedBox(height: 1.h),
                     Form(
-                      key: controller.formKey,
-                      child: CustomOtpField(length: 6,validator: (value) => HelperFunction.validateOTP(value ?? ''), onCompleted: (pin) {
-
-
-                        controller.otpController;
-
-                      }),
+                      key: formKey,
+                      child: CustomOtpField(
+                        length: 6,
+                        validator: (value) => HelperFunction.validateOTP(value ?? ''),
+                        onCompleted: (pin) {
+                          controller.otpController;
+                        },
+                      ),
                     ),
 
                     SizedBox(height: 2.h),
@@ -87,14 +90,10 @@ class SendOtp extends GetView<AuthController> {
                     buttonWidget(
                       "Send OTP",
                       Colors.white,
-                      onTap: (){
-
-                        if(controller.formKey.currentState?.validate()?? false){
-                          Get.toNamed("/resendotp");
-                        // controller.verifyOtp(email);
-
+                      onTap: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          controller.verifyOtp(email);
                         }
-
                       },
                       colors: buttonColor,
                       fontFamily: 'Poppins',

@@ -34,7 +34,7 @@ void main() async {
   );
 
   final hasSeenSplash = prefs.getBool('has_seen_splash') ?? false;
-print("splash screen : $hasSeenSplash");
+  print("splash screen : $hasSeenSplash");
   String initialRoute;
 
   if (!hasSeenSplash) {

@@ -246,10 +246,50 @@ class SignedCopyController extends GetxController {
         return;
       }
 
+      // 1. Save to App's private documents directory (for opening with OpenFile)
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
       await file.writeAsBytes(fileResponse.bodyBytes);
-      Utils.showToast('Book downloaded successfully', false);
+
+      // 2. Try to save to Public Downloads directory on Android
+      String targetMessage = 'Book downloaded successfully';
+      if (Platform.isAndroid) {
+        try {
+          final publicDownloadDir = Directory('/storage/emulated/0/Download');
+          if (await publicDownloadDir.exists()) {
+            var publicFile = File('${publicDownloadDir.path}/${fileName ?? 'book'}.pdf');
+            int counter = 1;
+            while (await publicFile.exists()) {
+              publicFile = File('${publicDownloadDir.path}/${fileName ?? 'book'}_$counter.pdf');
+              counter++;
+            }
+            await publicFile.writeAsBytes(fileResponse.bodyBytes);
+            targetMessage = 'Book downloaded & saved to Downloads';
+            debugPrint("Saved to public download folder successfully: ${publicFile.path}");
+          }
+        } catch (e) {
+          debugPrint("Failed to save to public downloads folder: $e");
+          // Fallback to app's external downloads directory if public folder isn't writable directly
+          try {
+            final extDirs = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+            if (extDirs != null && extDirs.isNotEmpty) {
+              var extFile = File('${extDirs.first.path}/${fileName ?? 'book'}.pdf');
+              int counter = 1;
+              while (await extFile.exists()) {
+                extFile = File('${extDirs.first.path}/${fileName ?? 'book'}_$counter.pdf');
+                counter++;
+              }
+              await extFile.writeAsBytes(fileResponse.bodyBytes);
+              targetMessage = 'Book saved to App External Storage';
+              debugPrint("Saved to app external downloads folder successfully: ${extFile.path}");
+            }
+          } catch (extEx) {
+            debugPrint("Failed to save to app external downloads folder: $extEx");
+          }
+        }
+      }
+
+      Utils.showToast(targetMessage, false);
       await OpenFile.open(file.path);
     } else {
       Utils.showToast('Failed to download PDF file: ${fileResponse.statusCode}', true);

@@ -17,6 +17,8 @@ class ResendOtp extends GetView<AuthController> {
     final args = Get.arguments;
     final String email = args is Map<String, dynamic> ? args['email'] ?? "" : "";
     final String code = args is Map<String, dynamic> ? args['code'] ?? "" : "";
+    final formKey = GlobalKey<FormState>();
+
     return Scaffold(
       body: Stack(
         children: [
@@ -26,42 +28,37 @@ class ResendOtp extends GetView<AuthController> {
             title: "Reset Password",
             subtitle: "Enter your new password and confirm it",
             buttonText: "Change Password",
-            onButtonPressed: (){
-
-              if (controller.formKey.currentState?.validate() ?? false){
+            onButtonPressed: () {
+              if (formKey.currentState?.validate() ?? false) {
                 controller.resetPassword(email, code);
-
               }
-
-
             },
             Decs: 'Enter a new password and confirm it to update your account.',
             children: [
-             Form(
-               key: controller.formKey,
-               child: Column(
-                 children: [
-                   emailTextFeild(
-                     'New Password',
-                     "••••••••",
-                     controller: controller.newPasswordController,
-                     ispassword: true,
-                     isPasswordHidden: controller.isPasswordHidden,
-                     validator: (value) => HelperFunction.emailValidate(value ?? ''),
-                   ),
-                   SizedBox(height: 1.5.h,),
-                   emailTextFeild(
-                     'Confirm Password',
-                     "••••••••",
-                     controller: controller.confirmNewPasswordController,
-
-                     validator: (value) => HelperFunction.passwordValidate(value ?? ''),
-                     ispassword: true,
-                     isPasswordHidden: controller.isConfirmPasswordHidden,
-                   ),
-                 ],
-               ),
-             )
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    emailTextFeild(
+                      'New Password',
+                      "••••••••",
+                      controller: controller.newPasswordController,
+                      ispassword: true,
+                      isPasswordHidden: controller.isPasswordHidden,
+                      validator: (value) => HelperFunction.passwordValidate(value ?? ''),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    emailTextFeild(
+                      'Confirm Password',
+                      "••••••••",
+                      controller: controller.confirmNewPasswordController,
+                      validator: (value) => HelperFunction.passwordValidate(value ?? ''),
+                      ispassword: true,
+                      isPasswordHidden: controller.isConfirmPasswordHidden,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ],

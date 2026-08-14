@@ -19,6 +19,7 @@ Widget emailTextFeild(
   bool? showSuffix,
   String? Function(String?)? validator,
   bool? isPaymentScreen = false,
+  bool? readOnly = false,
 }) {
   return Column(
     children: [
@@ -30,6 +31,7 @@ Widget emailTextFeild(
             color: whiteColor,
             fontWeight: FontWeight.w400,
             textAlign: TextAlign.center,
+            
             fontFamily: "Poppins",
           ),
           isPaymentScreen == true
@@ -50,6 +52,12 @@ Widget emailTextFeild(
                 maxLength: maxLength,
                 controller: controller,
                 obscureText: isPasswordHidden!.value,
+                style: TextStyle(
+                  color: blackColor,
+                  fontFamily: "Poppins",
+                  fontSize: 15.6.sp,
+                  fontWeight: FontWeight.w400,
+                ),
                 decoration: InputDecoration(
                   filled: true,
 
@@ -126,6 +134,13 @@ Widget emailTextFeild(
               controller: controller,
               maxLength: maxLength,
               maxLines: maxLines,
+              readOnly: readOnly ?? false,
+              style: TextStyle(
+                color: blackColor,
+                fontFamily: "Poppins",
+                fontSize: 15.6.sp,
+                fontWeight: FontWeight.w400,
+              ),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: textFeildContainColor,

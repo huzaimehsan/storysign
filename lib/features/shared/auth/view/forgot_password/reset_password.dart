@@ -13,6 +13,8 @@ class ResetPassword extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    
     return Scaffold(
       body: Stack(
         children: [
@@ -23,21 +25,20 @@ class ResetPassword extends GetView<AuthController> {
             subtitle: "Enter your email to receive an OTP code",
             buttonText: "Send OTP",
             onButtonPressed: () {
-    if (controller.formKey.currentState?.validate() ?? false) {
-    controller.forgotPassword();
-    }
-    },
+              if (formKey.currentState?.validate() ?? false) {
+                final email = controller.forgotEmailController.text.trim();
+                Get.toNamed('/sendotp', arguments: {'email': email});
+              }
+            },
             Decs:
                 'We will send a 6-digit verification code to your registered email address ',
             children: [
               Form(
-                key: controller.formKey,
-
+                key: formKey,
                 child: emailTextFeild(
                   'Email',
                   "abc@gmail.com",
                   controller: controller.forgotEmailController,
-
                   validator: (value) =>
                       HelperFunction.emailValidate(value ?? ''),
                 ),

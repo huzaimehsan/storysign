@@ -199,7 +199,7 @@ class BookPreviewPage extends GetView<EbookPreviewController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 7.w),
               child: buttonWidget(
-                "Sign This Page",
+                "Proceed to Sign",
                 whiteColor,
                 colors: buttonColor,
                 onTap: (){

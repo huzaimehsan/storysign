@@ -9,8 +9,6 @@ import '../../../../constants/color_constants.dart';
 import '../../../../widgets/book_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
-
-
 import '../controller/home_controller.dart';
 import '../widgets/reader/build_profile_card.dart';
 import '../widgets/reader/user_profile_card.dart';
@@ -27,7 +25,6 @@ class HomeScreen extends GetView<HomeController> {
         );
       }
 
-  
       return RefreshIndicator(
         backgroundColor: containerColor,
         color: white,
@@ -82,15 +79,9 @@ class HomeScreen extends GetView<HomeController> {
                   // All Authors Section
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: customText(
-                        text: "All Authors",
-                        color: whiteColor,
-                        fontSize: 16.sp,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: sectionHeader(
+                      title: "All Authors",
+                      onSeeAll: () => controller.goToSearchTab(),
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -162,7 +153,7 @@ class HomeScreen extends GetView<HomeController> {
                       },
                     ),
                   ),
-                  SizedBox(height: 0.5.h),
+                  SizedBox(height: 1.h),
 
                   Obx(() {
                     final books = controller.filteredBooks;
@@ -174,24 +165,24 @@ class HomeScreen extends GetView<HomeController> {
                         ),
                       );
                     }
-                  //        if (controller.errorMessage.value.isNotEmpty) {
-                  //   return ListView(
-                  //     physics: const AlwaysScrollableScrollPhysics(),
-                  //     padding: EdgeInsets.only(bottom: 12.h),
-                  //     children: [
-                  //       SizedBox(height: 30.h),
-                  //       Center(
-                  //         child: customText(
-                  //           text: controller.errorMessage.value,
-                  //           color: greyColor,
-                  //           fontSize: 15.sp,
-                  //           fontFamily: "Poppins",
-                  //           fontWeight: FontWeight.w500,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   );
-                  // }
+                    //        if (controller.errorMessage.value.isNotEmpty) {
+                    //   return ListView(
+                    //     physics: const AlwaysScrollableScrollPhysics(),
+                    //     padding: EdgeInsets.only(bottom: 12.h),
+                    //     children: [
+                    //       SizedBox(height: 30.h),
+                    //       Center(
+                    //         child: customText(
+                    //           text: controller.errorMessage.value,
+                    //           color: greyColor,
+                    //           fontSize: 15.sp,
+                    //           fontFamily: "Poppins",
+                    //           fontWeight: FontWeight.w500,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   );
+                    // }
 
                     if (books.isEmpty) {
                       return SizedBox(
@@ -214,13 +205,8 @@ class HomeScreen extends GetView<HomeController> {
                       itemCount: books.length > 4 ? 4 : books.length,
                       itemBuilder: (context, index) {
                         final book = books[index];
-                        return recentlySignedBooks(
-                          imageUrl: book.coverImage,
-                          bookTitle: book.title,
-                          date: book.uploadDate.toString().split(' ')[0],
-                          status: book.status,
-                          authorName: book.authorName,
-                          trackRequest: () {
+                        return InkWell(
+                          onTap: () {
                             Get.toNamed(
                               "/signedcopy",
                               arguments: {
@@ -230,9 +216,26 @@ class HomeScreen extends GetView<HomeController> {
                               },
                             );
                           },
-                          imagePath: '',
+                          child: recentlySignedBooks(
+                            imageUrl: book.coverImage,
+                            bookTitle: book.title,
+                            date: book.uploadDate.toString().split(' ')[0],
+                            status: book.status,
+                            authorName: book.authorName,
+                            trackRequest: () {
+                              Get.toNamed(
+                                "/signedcopy",
+                                arguments: {
+                                  'autographRequestId': book.autographRequestId,
+                                  'bookId': book.bookId,
+                                  'bookPdfUrl': book.signedPdfUrl,
+                                },
+                              );
+                            },
+                            imagePath: '',
 
-                          showAuthor: true,
+                            showAuthor: true,
+                          ),
                         );
                       },
                     );

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storysign/features/author/home/controller/home_controller.dart';
 import 'package:storysign/features/author/profile/model/profile_model.dart';
 
+import '../../bottomNav/controller/author_bottom_nav_controller.dart';
 import '../../../../constants/local_db_key.dart';
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
@@ -17,6 +18,12 @@ import '../../../../widgets/image_picker.dart';
 import '../../../../widgets/sucess_widget.dart';
 
 class AuthorProfileController extends GetxController {
+  void popTab() {
+    if (Get.isRegistered<AuthorBottomNavController>()) {
+      Get.find<AuthorBottomNavController>().popCurrentTab();
+    }
+  }
+
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
   Rxn<AuthorProfileModel> authorProfile = Rxn<AuthorProfileModel>();

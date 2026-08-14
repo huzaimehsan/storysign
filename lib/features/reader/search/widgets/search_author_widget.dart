@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
-import '../../../../widgets/cover_image_widget.dart';
+import '../../../../components/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
 

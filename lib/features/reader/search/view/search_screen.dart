@@ -18,7 +18,7 @@ class SearchScreen extends GetView<SearchPageController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        backgroundColor :containerColor,
+        backgroundColor: containerColor,
         color: white,
         onRefresh: () => controller.refreshSearchRequests(),
         child: SafeArea(
@@ -28,7 +28,8 @@ class SearchScreen extends GetView<SearchPageController> {
               customHeader(
                 context: context,
                 title: "All Authors",
-                onBack: () => Get.back(),
+                onBack: () => Get.find<BottomNavController>()
+                    .popCurrentTabOrGoToPrevious(),
                 onIconPressed: () {},
               ),
               SizedBox(height: 2.h),
@@ -88,13 +89,19 @@ class SearchScreen extends GetView<SearchPageController> {
                         requestAutoGraph: () {
                           Get.find<BottomNavController>().pushInSearchTab(
                             '/authordetail',
-                            arguments: {'authorId': author.id, 'role': 'search'},
+                            arguments: {
+                              'authorId': author.id,
+                              'role': 'search',
+                            },
                           );
                         },
                         authorDetail: () {
                           Get.find<BottomNavController>().pushInSearchTab(
                             '/authordetail',
-                            arguments: {'authorId': author.id, 'role': 'search'},
+                            arguments: {
+                              'authorId': author.id,
+                              'role': 'search',
+                            },
                           );
                         },
                       );

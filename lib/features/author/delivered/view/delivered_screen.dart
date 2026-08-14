@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/author/delivered/controller/delivered_controller.dart';
-import 'package:storysign/features/author/request/controller/all_request_controller.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../../../../widgets/subscription_header_widget.dart';
-import '../../../reader/Home/widgets/reader/user_profile_card.dart';
 
 class DeliveredScreen extends GetView<DeliveredController> {
   const DeliveredScreen({super.key});
@@ -28,7 +26,7 @@ class DeliveredScreen extends GetView<DeliveredController> {
                   customHeaderAuthor(
                     context: context,
                     title: 'All Delivered Request',
-                    onBack: () => Get.back(),
+                    onBack: () => controller.popTab(),
                     onIconPressed: () {},
                   ),
                 ],
@@ -105,14 +103,17 @@ class DeliveredScreen extends GetView<DeliveredController> {
                     controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
-                    itemCount: controller.filteredRequests.length +
+                    itemCount:
+                        controller.filteredRequests.length +
                         (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index >= controller.filteredRequests.length) {
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 2.h),
                           child: const Center(
-                            child: CircularProgressIndicator(color: buttonColor),
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
                           ),
                         );
                       }

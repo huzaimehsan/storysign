@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import '../../bottomNav/controller/bottom_nav_controller.dart';
 import '../controller/search_page_controller.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -42,18 +41,7 @@ class AuthorDetail extends GetView<SearchPageController> {
               customHeader(
                 context: context,
                 title: "Author Detail",
-                onBack: () {
-                  final nav = Get.find<BottomNavController>()
-                      .navigatorKeys[Get.find<BottomNavController>()
-                          .currentIndex
-                          .value]
-                      .currentState;
-                  if (nav != null && nav.canPop()) {
-                    nav.pop(); // nested tab navigator (search screen)
-                  } else {
-                    Get.back(); // global GetX navigator (home screen)
-                  }
-                },
+                onBack: () => controller.popAuthorDetail(),
                 onIconPressed: () {},
               ),
 
@@ -80,40 +68,23 @@ class AuthorDetail extends GetView<SearchPageController> {
                 ),
                 SizedBox(height: 10.h),
 
-                role != 'allAuthor'
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.w),
-                        child: buttonWidget(
-                          "Request Autograph",
-                          whiteColor,
-                          onTap: () => Get.toNamed(
-                            '/requestautograph',
-                            arguments: {'authorId': authorId},
-                          ),
-                          colors: buttonColor,
-                          fontFamily: 'Poppins',
-                          height: 5.2.h,
-                          width: double.infinity,
-                          fontsize: 16.sp,
-                          fontweight: FontWeight.w600,
-                        ),
-                      )
-                    : Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 4.w),
-                      child: buttonWidget(
-                          "Back To Dashboard",
-                          whiteColor,
-                          onTap: () {
-                            Get.back();
-                          },
-                          colors: btnColor,
-                          height: 5.2.h,
-                          fontFamily: 'Poppins',
-                          width: double.infinity,
-                          fontsize: 16.sp,
-                          fontweight: FontWeight.w600,
-                        ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: buttonWidget(
+                    "Request Autograph",
+                    whiteColor,
+                    onTap: () => Get.toNamed(
+                      '/requestautograph',
+                      arguments: {'authorId': authorId},
                     ),
+                    colors: buttonColor,
+                    fontFamily: 'Poppins',
+                    height: 5.2.h,
+                    width: double.infinity,
+                    fontsize: 16.sp,
+                    fontweight: FontWeight.w600,
+                  ),
+                ),
               ],
             ],
           );

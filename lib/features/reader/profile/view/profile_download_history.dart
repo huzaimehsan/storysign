@@ -9,7 +9,8 @@ import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 import '../widget/download_history_card.dart';
 
-class ProfileDownloadHistoryScreen extends GetView<ProfileDownloadHistoryController> {
+class ProfileDownloadHistoryScreen
+    extends GetView<ProfileDownloadHistoryController> {
   const ProfileDownloadHistoryScreen({super.key});
 
   @override
@@ -79,7 +80,8 @@ class ProfileDownloadHistoryScreen extends GetView<ProfileDownloadHistoryControl
                             horizontal: 4.w,
                             vertical: 1.h,
                           ),
-                          itemCount: books.length +
+                          itemCount:
+                              books.length +
                               (controller.isLoadingMoreHistory.value ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index == books.length) {
@@ -95,12 +97,24 @@ class ProfileDownloadHistoryScreen extends GetView<ProfileDownloadHistoryControl
                             final book = books[index];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 0.1.h),
-                              child: downloadHistoryCard(
-                                imagePath: book.coverImage ?? "",
-                                title: book.bookTitle,
-                                date: book.createdAt
-                                    .toString()
-                                    .split(' ')[0],
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                    '/signedcopy',
+                                    arguments: {
+                                      'bookId': book.bookId,
+                                      'autographRequestId':
+                                          book.autographRequestId ?? '',
+                                      'bookName': book.bookTitle,
+                                      'isFromDownloadHistory': true,
+                                    },
+                                  );
+                                },
+                                child: downloadHistoryCard(
+                                  imagePath: book.coverImage ?? "",
+                                  title: book.bookTitle,
+                                  date: book.createdAt.toString().split(' ')[0],
+                                ),
                               ),
                             );
                           },
