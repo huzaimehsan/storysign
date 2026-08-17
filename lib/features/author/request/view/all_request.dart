@@ -122,7 +122,7 @@ class AllRequest extends GetView<AllRequestController> {
                       final request = controller.filteredRequests[index];
                       return AllPendingRequest(
                         imagePath: request['imagePath'] ?? '',
-                        authorName: request['authorName'] ?? 'Unknown',
+                        authorName: request['readerName'] ?? 'Unknown',
                         bookName: request['bookName'] ?? 'Unknown',
                         date: request['date'] ?? '',
                         ontap: () {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/sucess_widget.dart';
@@ -36,19 +35,22 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
 
             Expanded(
               child: RefreshIndicator(
-                      backgroundColor :containerColor,
-        color: white,
-                onRefresh:() => controller.refreshProfileRequests(),
+                backgroundColor: containerColor,
+                color: white,
+                onRefresh: () => controller.refreshProfileRequests(),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4.w),
                     child: Obx(() {
-                      if (controller.isLoading.value) {
+                      if (controller.isLoading.value ||
+                          controller.isRefreshing.value) {
                         return SizedBox(
                           height: 60.h,
                           child: const Center(
-                            child: CircularProgressIndicator(color: buttonColor),
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
                           ),
                         );
                       }
@@ -73,7 +75,9 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                         return SizedBox(
                           height: 60.h,
                           child: const Center(
-                            child: CircularProgressIndicator(color: buttonColor),
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
                           ),
                         );
                       }
@@ -86,7 +90,8 @@ class AuthorProfileScreen extends GetView<AuthorProfileController> {
                             imagePath: profile.profilePicture?.toString() ?? "",
                             name: profile.fullName?.toString() ?? "No Name",
                             email: profile.email?.toString() ?? "No Email",
-                            joinedDate: profile.dateJoined?.toString() ?? 'Unknown',
+                            joinedDate:
+                                profile.dateJoined?.toString() ?? 'Unknown',
                             onEdit: () {
                               Get.toNamed(
                                 '/editprofile',

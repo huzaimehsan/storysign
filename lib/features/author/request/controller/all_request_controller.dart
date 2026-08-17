@@ -90,6 +90,7 @@ class AllRequestController extends GetxController {
             'id': data['id']?.toString() ?? '',
             'imagePath': data['reader']?['profilePicture']?.toString() ?? '',
             'authorName': data['author']?['fullName']?.toString() ?? '',
+            'readerName': data['reader']?['fullName']?.toString() ?? '',
             'bookName': data['bookTitle']?.toString() ?? '',
             'date': data['requestDate']?.toString() ?? '',
           };

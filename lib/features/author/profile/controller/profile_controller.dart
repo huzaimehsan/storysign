@@ -25,6 +25,7 @@ class AuthorProfileController extends GetxController {
   }
 
   RxBool isLoading = false.obs;
+  RxBool isRefreshing = false.obs;
   RxString errorMessage = ''.obs;
   Rxn<AuthorProfileModel> authorProfile = Rxn<AuthorProfileModel>();
   final authorNameUpdateController = TextEditingController();
@@ -68,12 +69,19 @@ class AuthorProfileController extends GetxController {
   }
 
   Future<void> refreshProfileRequests() async {
-    await getProfile();
+    isRefreshing.value = true;
+    try {
+      await getProfile(isRefresh: true);
+    } finally {
+      isRefreshing.value = false;
+    }
   }
 
-  Future<void> getProfile() async {
+  Future<void> getProfile({bool isRefresh = false}) async {
     try {
-      isLoading.value = true;
+      if (!isRefresh) {
+        isLoading.value = true;
+      }
       errorMessage.value = '';
 
       final response = await BaseService().baseGetAPI(
@@ -102,7 +110,9 @@ class AuthorProfileController extends GetxController {
       debugPrint('ProfileScreenController getProfile error: $e');
       Utils.showToast(errorMessage.value, true);
     } finally {
-      isLoading.value = false;
+      if (!isRefresh) {
+        isLoading.value = false;
+      }
     }
   }
 void signOut() async {

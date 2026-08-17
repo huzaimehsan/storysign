@@ -34,6 +34,8 @@ class BookItem {
   final bool isPaid; // ✅ New field added from your JSON
   final String? authorName;
   final AuthorModel? author;
+  final String? paymentIntentId;
+  final String? clientSecret;
 
   BookItem({
     required this.id,
@@ -51,6 +53,8 @@ class BookItem {
     required this.isPaid,
     this.authorName,
     this.author,
+    this.paymentIntentId,
+    this.clientSecret,
   });
 
   factory BookItem.fromJson(Map<String, dynamic> json) {
@@ -75,6 +79,8 @@ class BookItem {
       author: json['author'] != null
           ? AuthorModel.fromJson(json['author'] as Map<String, dynamic>)
           : null,
+      paymentIntentId: json['paymentIntentId']?.toString(),
+      clientSecret: json['clientSecret']?.toString(),
     );
   }
 }

@@ -31,19 +31,27 @@ class ReaderLibraryDetailScreen extends GetView<ReaderLibraryDetailController> {
           if (controller.isLoading.value) {
             return SizedBox(
               height: 30.h,
-              child: const Center(child: CircularProgressIndicator(color: buttonColor)),
+              child: const Center(
+                child: CircularProgressIndicator(color: buttonColor),
+              ),
             );
           }
 
           final detail = controller.detail.value;
           if (detail == null) {
             return Center(
-              child: customText(text: 'No details available', color: greyColor, fontSize: 14.sp),
+              child: customText(
+                text: 'No details available',
+                color: greyColor,
+                fontSize: 14.sp,
+              ),
             );
           }
 
           final dateText = detail.uploadDate.isNotEmpty
-              ? DateFormat('dd MMM, yyyy').format(DateTime.tryParse(detail.uploadDate) ?? DateTime.now())
+              ? DateFormat(
+                  'dd MMM, yyyy',
+                ).format(DateTime.tryParse(detail.uploadDate) ?? DateTime.now())
               : 'Joined recently';
 
           return SingleChildScrollView(
@@ -70,36 +78,37 @@ class ReaderLibraryDetailScreen extends GetView<ReaderLibraryDetailController> {
                 RequestDetailWidget(
                   imagePath: detail.coverImage,
                   bookTitle: detail.title,
-                  authorName: detail.authorName.isEmpty ? 'Unknown' : detail.authorName,
+                  authorName: detail.authorName.isEmpty
+                      ? 'Unknown'
+                      : detail.authorName,
                   status: detail.status.isEmpty ? 'Unknown' : detail.status,
                   showSubmittedBadge: true,
                 ),
 
-
-                detail.authorName == null || detail.authorName!.isEmpty ?
-                    SizedBox.shrink() :
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 1.h,),
-                      customText(
-                        text: 'About Author',
-                        color: whiteColor,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
+                detail.authorName == null || detail.authorName!.isEmpty
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 1.h),
+                            customText(
+                              text: 'About Author',
+                              color: whiteColor,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  )
-                ),
                 SizedBox(height: 0.5.h),
                 detail.authorName == null || detail.authorName!.isEmpty
                     ? const SizedBox.shrink()
                     : AuthorInfoCard(
-                  imagePath: detail.authorProfilePicture ?? '',
-                  bookTitle: detail.authorName!,
-                  date: dateText,
-                ),
+                        imagePath: detail.authorProfilePicture ?? '',
+                        bookTitle: detail.authorName!,
+                        date: dateText,
+                      ),
                 SizedBox(height: 1.5.h),
                 FeeFieldWithPrice(
                   label: 'Signature Price',
@@ -112,20 +121,46 @@ class ReaderLibraryDetailScreen extends GetView<ReaderLibraryDetailController> {
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: !detail.isPaid
                       ? buttonWidget(
-                    'Make Request',
-                    whiteColor,
-                    onTap: () => Get.offAllNamed('/requestautographcard', arguments: {
-                      'bookId': detail.id,
-                      'bookTitle': detail.title,
-                      'role': 'fromLibrary',
-                    }),
-                    colors: buttonColor,
-                    fontweight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                    height: 5.2.h,
-                    width: double.infinity,
-                    fontsize: 16.sp,
-                  )
+                          'Make Request',
+                          whiteColor,
+                          onTap: () {
+                            if (detail.isPaid == false &&
+                                detail.autographRequestId != null &&
+                                detail.clientSecret != null &&
+                                detail.paymentIntentId != null) {
+                              Get.toNamed(
+                                '/request',
+                                arguments: {
+                                  'autographRequestId':
+                                      detail.autographRequestId,
+                                  'bookId': detail.id.toString(),
+                                  'paymentIntentId': detail.paymentIntentId,
+                                  'clientSecret': detail.clientSecret,
+                                },
+                              );
+                            } else {
+                              Get.toNamed(
+                                '/requestautographcard',
+                                arguments: {
+                                  'bookId': detail.id,
+                                  'bookTitle': detail.title,
+                                  'role': 'fromLibrary',
+                                  'coverImage': detail.coverImage,
+                                  'authorName': detail.authorName,
+                                  'status': detail.status,
+                                  'feeAmount': detail.feeAmount,
+                                  'isPaid': detail.isPaid,
+                                },
+                              );
+                            }
+                          },
+                          colors: buttonColor,
+                          fontweight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                          height: 5.2.h,
+                          width: double.infinity,
+                          fontsize: 16.sp,
+                        )
                       : const SizedBox.shrink(),
                 ),
                 SizedBox(height: 2.h),

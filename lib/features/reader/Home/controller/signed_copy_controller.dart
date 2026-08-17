@@ -35,9 +35,10 @@ class SignedCopyController extends GetxController {
       // 💡 Sabse pehle 'autographRequestId' ko check karein kyunki API ko wahi chahiye
       autographRequestId =
           args['autographRequestId']?.toString() ??
-              args['requestId']?.toString() ??
-              '';
-      bookId = args['bookId']?.toString() ?? args['bookIdValue']?.toString() ?? '';
+          args['requestId']?.toString() ??
+          '';
+      bookId =
+          args['bookId']?.toString() ?? args['bookIdValue']?.toString() ?? '';
 
       debugPrint('Extracted autographRequestId -> $autographRequestId');
       debugPrint('Extracted bookId -> $bookId');
@@ -45,7 +46,9 @@ class SignedCopyController extends GetxController {
       if (autographRequestId != null && autographRequestId!.isNotEmpty) {
         bookDetailCopy(autographRequestId);
       } else if (bookId != null && bookId!.isNotEmpty) {
-        debugPrint('No autographRequestId provided; using bookId for download only');
+        debugPrint(
+          'No autographRequestId provided; using bookId for download only',
+        );
       } else {
         errorMessage.value = 'Request id not found';
         Utils.showToast('Request ID missing in arguments', true);
@@ -94,26 +97,29 @@ class SignedCopyController extends GetxController {
   Future<void> downloadBook(String? selectedPathId, String? fileName) async {
     final String? resolvedBookId =
         (selectedRequest.value?.bookId?.trim().isNotEmpty == true)
-            ? selectedRequest.value!.bookId
-            : (selectedPathId?.trim().isNotEmpty == true
-                ? selectedPathId!.trim()
-                : null);
+        ? selectedRequest.value!.bookId
+        : (selectedPathId?.trim().isNotEmpty == true
+              ? selectedPathId!.trim()
+              : null);
 
     final String? resolvedAutographRequestId =
         (autographRequestId?.trim().isNotEmpty == true)
-            ? autographRequestId!.trim()
-            : (selectedRequest.value?.autographRequestId?.trim().isNotEmpty == true
-                ? selectedRequest.value!.autographRequestId.trim()
-                : null);
+        ? autographRequestId!.trim()
+        : (selectedRequest.value?.autographRequestId?.trim().isNotEmpty == true
+              ? selectedRequest.value!.autographRequestId.trim()
+              : null);
 
     if (resolvedBookId == null || resolvedBookId.isEmpty) {
       Utils.showToast('Unable to download book: book ID missing', true);
       return;
     }
 
-    if (resolvedAutographRequestId == null || resolvedAutographRequestId.isEmpty) {
+    if (resolvedAutographRequestId == null ||
+        resolvedAutographRequestId.isEmpty) {
       Utils.showToast(
-          'Unable to download book: autograph request ID missing', true);
+        'Unable to download book: autograph request ID missing',
+        true,
+      );
       return;
     }
 
@@ -125,7 +131,9 @@ class SignedCopyController extends GetxController {
 
       final token =
           SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-      debugPrint('Download: token present=${token.isNotEmpty}, length=${token.length}');
+      debugPrint(
+        'Download: token present=${token.isNotEmpty}, length=${token.length}',
+      );
       if (token.isEmpty) {
         Utils.showToast('Please login again', true);
         return;
@@ -154,7 +162,8 @@ class SignedCopyController extends GetxController {
         String? downloadUrl = responseBody['downloadUrl']?.toString();
 
         if (downloadUrl == null || downloadUrl.isEmpty) {
-          final String? filePath = responseBody['downloadedFilePath']?.toString();
+          final String? filePath = responseBody['downloadedFilePath']
+              ?.toString();
           if (filePath == null || filePath.isEmpty) {
             Utils.showToast('Download path is missing in response', true);
             return;
@@ -163,7 +172,9 @@ class SignedCopyController extends GetxController {
           final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
           downloadUrl = filePath.startsWith('http')
               ? filePath
-              : (filePath.startsWith('/') ? '$domain$filePath' : '$domain/$filePath');
+              : (filePath.startsWith('/')
+                    ? '$domain$filePath'
+                    : '$domain/$filePath');
         }
 
         await _downloadFileFromUrl(downloadUrl, fileName, token);
@@ -185,7 +196,10 @@ class SignedCopyController extends GetxController {
           return;
         }
 
-        Utils.showToast(fallbackResponse['message']?.toString() ?? 'Book download failed', true);
+        Utils.showToast(
+          fallbackResponse['message']?.toString() ?? 'Book download failed',
+          true,
+        );
         return;
       }
 
@@ -201,7 +215,9 @@ class SignedCopyController extends GetxController {
         final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
         downloadUrl = filePath.startsWith('http')
             ? filePath
-            : (filePath.startsWith('/') ? '$domain$filePath' : '$domain/$filePath');
+            : (filePath.startsWith('/')
+                  ? '$domain$filePath'
+                  : '$domain/$filePath');
       }
 
       debugPrint('Download URL: $downloadUrl');
@@ -215,7 +231,10 @@ class SignedCopyController extends GetxController {
   }
 
   Future<void> _downloadFileFromUrl(
-      String? downloadUrl, String? fileName, String token) async {
+    String? downloadUrl,
+    String? fileName,
+    String token,
+  ) async {
     if (downloadUrl == null || downloadUrl.isEmpty) {
       Utils.showToast('Download URL is invalid or empty', true);
       return;
@@ -257,34 +276,50 @@ class SignedCopyController extends GetxController {
         try {
           final publicDownloadDir = Directory('/storage/emulated/0/Download');
           if (await publicDownloadDir.exists()) {
-            var publicFile = File('${publicDownloadDir.path}/${fileName ?? 'book'}.pdf');
+            var publicFile = File(
+              '${publicDownloadDir.path}/${fileName ?? 'book'}.pdf',
+            );
             int counter = 1;
             while (await publicFile.exists()) {
-              publicFile = File('${publicDownloadDir.path}/${fileName ?? 'book'}_$counter.pdf');
+              publicFile = File(
+                '${publicDownloadDir.path}/${fileName ?? 'book'}_$counter.pdf',
+              );
               counter++;
             }
             await publicFile.writeAsBytes(fileResponse.bodyBytes);
             targetMessage = 'Book downloaded & saved to Downloads';
-            debugPrint("Saved to public download folder successfully: ${publicFile.path}");
+            debugPrint(
+              "Saved to public download folder successfully: ${publicFile.path}",
+            );
           }
         } catch (e) {
           debugPrint("Failed to save to public downloads folder: $e");
           // Fallback to app's external downloads directory if public folder isn't writable directly
           try {
-            final extDirs = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+            final extDirs = await getExternalStorageDirectories(
+              type: StorageDirectory.downloads,
+            );
             if (extDirs != null && extDirs.isNotEmpty) {
-              var extFile = File('${extDirs.first.path}/${fileName ?? 'book'}.pdf');
+              var extFile = File(
+                '${extDirs.first.path}/${fileName ?? 'book'}.pdf',
+              );
               int counter = 1;
               while (await extFile.exists()) {
-                extFile = File('${extDirs.first.path}/${fileName ?? 'book'}_$counter.pdf');
+                extFile = File(
+                  '${extDirs.first.path}/${fileName ?? 'book'}_$counter.pdf',
+                );
                 counter++;
               }
               await extFile.writeAsBytes(fileResponse.bodyBytes);
               targetMessage = 'Book saved to App External Storage';
-              debugPrint("Saved to app external downloads folder successfully: ${extFile.path}");
+              debugPrint(
+                "Saved to app external downloads folder successfully: ${extFile.path}",
+              );
             }
           } catch (extEx) {
-            debugPrint("Failed to save to app external downloads folder: $extEx");
+            debugPrint(
+              "Failed to save to app external downloads folder: $extEx",
+            );
           }
         }
       }
@@ -292,7 +327,10 @@ class SignedCopyController extends GetxController {
       Utils.showToast(targetMessage, false);
       await OpenFile.open(file.path);
     } else {
-      Utils.showToast('Failed to download PDF file: ${fileResponse.statusCode}', true);
+      Utils.showToast(
+        'Failed to download PDF file: ${fileResponse.statusCode}',
+        true,
+      );
       debugPrint('File GET failed body: ${fileResponse.body}');
     }
   }
@@ -303,73 +341,5 @@ class SignedCopyController extends GetxController {
     } catch (e) {
       return null;
     }
-
-    // }
-    // Future<void> downloadBook(String autographRequestId, String? fileName) async {
-    //   if (autographRequestId.trim().isEmpty) {
-    //     Utils.showToast('Unable to download book: request ID missing', true);
-    //     return;
-    //   }
-    //
-    //   try {
-    //     // 1. POST request — JSON response milta hai (file path ke sath)
-    //     final response = await BaseService().basePostAPI(
-    //       ApiEndPoints.downloadBook(autographRequestId),
-    //       {'autographRequestId': autographRequestId},
-    //     );
-    //
-    //     if (response['success'] != true) {
-    //       // basePostAPI already error toast dikha chuka hoga
-    //       return;
-    //     }
-    //
-    //     final String? filePath = response['downloadedFilePath']?.toString();
-    //     if (filePath == null || filePath.isEmpty) {
-    //       Utils.showToast('Download path is missing in response', true);
-    //       return;
-    //     }
-    //
-    //     // Domain nikal ke clean file URL banao
-    //     final String domain = BaseService().baseURL.replaceAll('/api/v1', '');
-    //     final String downloadUrl = '$domain/$filePath';
-    //
-    //     print("Download URL: $downloadUrl");
-    //
-    //     final token =
-    //         SharedPreferencesMethod.storage.getString(LocalDBKeys.TOKEN) ?? '';
-    //
-    //     EasyLoading.show(
-    //       status: 'Downloading...',
-    //       maskType: EasyLoadingMaskType.black,
-    //     );
-    //
-    //     // 2. GET request — raw PDF bytes (yahan baseGetAPI use NAHI ho sakta,
-    //     // kyunki wo json.decode karta hai response body par, jo binary
-    //     // file data ke liye crash ho jayega)
-    //     final fileResponse = await http.get(
-    //       Uri.parse(downloadUrl),
-    //       headers: {'Authorization': 'Bearer $token'},
-    //     );
-    //
-    //     if (fileResponse.statusCode == 200) {
-    //       final directory = await getApplicationDocumentsDirectory();
-    //       final file = File('${directory.path}/${fileName ?? 'book'}.pdf');
-    //       await file.writeAsBytes(fileResponse.bodyBytes);
-    //
-    //       Utils.showToast('Book downloaded successfully', false);
-    //       await OpenFile.open(file.path);
-    //     } else {
-    //       Utils.showToast(
-    //         'Failed to download PDF file: ${fileResponse.statusCode}',
-    //         true,
-    //       );
-    //     }
-    //   } catch (e) {
-    //     debugPrint('downloadBook error: $e');
-    //     Utils.showToast('Error: $e', true);
-    //   } finally {
-    //     EasyLoading.dismiss();
-    //   }
-    // }
   }
 }

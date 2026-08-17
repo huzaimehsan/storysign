@@ -11,6 +11,7 @@ class CoverImageWidget extends StatelessWidget {
   final double? width;
   final BoxFit fit;
   final Color? placeHolderColor;
+   final Color? placeHolderIconColor;
   final IconData fallbackIcon;
 
   const CoverImageWidget({
@@ -21,7 +22,7 @@ class CoverImageWidget extends StatelessWidget {
     this.width,
 
     this.fit = BoxFit.cover,
-    this.fallbackIcon = Icons.book_rounded, this.placeHolderColor,
+    this.fallbackIcon = Icons.book_rounded, this.placeHolderColor, this.placeHolderIconColor,
   });
 
   @override
@@ -41,7 +42,7 @@ class CoverImageWidget extends StatelessWidget {
         child: Center(
           child: Icon(
             fallbackIcon,
-            color: buttonColor.withOpacity(0.6),
+            color: placeHolderIconColor ?? buttonColor.withOpacity(0.6),
             size: (width ?? 25.w) * 0.6,
           ),
         ),

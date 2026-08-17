@@ -48,9 +48,21 @@ class ReaderDetailController extends GetxController {
       final response = await BaseService().baseGetAPI(endpoint, loading: false);
 
       if (response['success'] == true) {
-        final parsedRequest = NewBookItem.fromResponse(response);
+        var parsedRequest = NewBookItem.fromResponse(response);
 
         if (parsedRequest != null) {
+          final args = Get.arguments;
+          if (args is Map) {
+            final String? argClientSecret = args['clientSecret']?.toString();
+            final String? argPaymentIntentId = args['paymentIntentId']?.toString();
+
+            if ((parsedRequest.clientSecret.isEmpty) && argClientSecret != null && argClientSecret.isNotEmpty) {
+              parsedRequest = parsedRequest.copyWith(clientSecret: argClientSecret);
+            }
+            if ((parsedRequest.paymentIntentId.isEmpty) && argPaymentIntentId != null && argPaymentIntentId.isNotEmpty) {
+              parsedRequest = parsedRequest.copyWith(paymentIntentId: argPaymentIntentId);
+            }
+          }
           selectedRequest.value = parsedRequest;
         } else {
           throw Exception('Failed to parse data');

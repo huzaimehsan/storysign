@@ -22,6 +22,7 @@ class RequestAutographController extends GetxController {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Rxn<File> bookPdfFile = Rxn<File>();
   final Rxn<File> bookCoverImage = Rxn<File>();
+  final ScrollController scrollController = ScrollController();
   // Controller mein
   // Return type ko String? se Map<String, dynamic>? mein badla hai
   // Future<Map<String, dynamic>?> requestAutograph(
@@ -162,6 +163,11 @@ class RequestAutographController extends GetxController {
     bookTitleController.dispose();
     bookTitleControllerRequest.dispose();
     personalMessageController.dispose();
+    // Delaying disposal prevents the "ScrollController used after being disposed" 
+    // error if the user is dragging the view while the route pops.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      scrollController.dispose();
+    });
     super.onClose();
   }
 }

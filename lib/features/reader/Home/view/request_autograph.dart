@@ -16,7 +16,6 @@ import '../../search/widgets/header_widget.dart';
 import '../widgets/reader/request_detail_widget.dart';
 import '../widgets/reader/fee_field_with_price.dart';
 
-
 class RequestAutographCard extends GetView<RequestAutographController> {
   const RequestAutographCard({super.key});
 
@@ -42,6 +41,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: controller.scrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -88,7 +88,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                           ? controller.selectedAuthorName.value
                           : detail.authorName.isNotEmpty
                           ? detail.authorName
-                          : 'Unknown';
+                          : 'No Author Selected';
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +137,11 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                 emailTextFeild(
                                   'Book Name',
                                   "Things Fall Apart",
-                                  validator: (value) => HelperFunction.validateBookName(value ?? '', fieldName: 'Book Name'),
+                                  validator: (value) =>
+                                      HelperFunction.validateBookName(
+                                        value ?? '',
+                                        fieldName: 'Book Name',
+                                      ),
                                   controller:
                                       homeController.bookTitleControllerRequest,
                                 ),
@@ -146,7 +150,8 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                 Obx(
                                   () => FileUploadWidget(
                                     title: 'Upload Book',
-                                    description: controller.bookPdfFile.value != null
+                                    description:
+                                        controller.bookPdfFile.value != null
                                         ? "File Selected"
                                         : 'Tap to select a pdf file',
                                     file: controller.bookPdfFile.value,
@@ -197,21 +202,27 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                           child: Column(
                             children: [
                               Obx(() {
-                                final detail = libraryDetailController.detail.value;
+                                final detail =
+                                    libraryDetailController.detail.value;
                                 if (!isLibraryRequest ||
-                                    (detail != null && !detail.isPaid)) {
+                                    (detail != null && !detail.isPaid && detail.autographRequestId == null)) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       emailTextFeild(
                                         'Personal Message',
                                         "Write a personal message to the author about why this book is special to you…",
-                                      
+
                                         width: 20.sp,
                                         maxLines: 4,
-                                        controller:
-                                            homeController.personalMessageController,
-                                        validator: (value) => HelperFunction.validateMessage(value ?? '', fieldName: 'Personal Message'),
+                                        controller: homeController
+                                            .personalMessageController,
+                                        validator: (value) =>
+                                            HelperFunction.validateMessage(
+                                              value ?? '',
+                                              fieldName: 'Personal Message',
+                                            ),
                                       ),
                                       SizedBox(height: 1.5.h),
                                     ],
@@ -248,7 +259,30 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                           return Column(
                             children: [
                               if (!isPaidLibraryBook) ...[
-                                Obx(
+                                if (detail?.autographRequestId != null && detail?.clientSecret != null && detail?.paymentIntentId != null) ...[
+                                  buttonWidget(
+                                    "Make Request",
+                                    whiteColor,
+                                    onTap: () {
+                                      Get.toNamed(
+                                        '/request',
+                                        arguments: {
+                                          'autographRequestId': detail!.autographRequestId,
+                                          'clientSecret': detail.clientSecret,
+                                          'paymentIntentId': detail.paymentIntentId,
+                                          'bookId': isLibraryRequest ? receivedBookId : null,
+                                          'role': isLibraryRequest ? 'fromLibrary' : 'fromHome',
+                                        },
+                                      );
+                                    },
+                                    colors: buttonColor,
+                                    height: 5.2.h,
+                                    width: double.infinity,
+                                    fontsize: 16.sp,
+                                    fontweight: FontWeight.w600,
+                                  ),
+                                ] else ...[
+                                  Obx(
                                   () => buttonWidget(
                                     controller.selectedAuthorId.value.isNotEmpty
                                         ? "Author Selected ✅"
@@ -289,10 +323,11 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                   "Request Autograph",
                                   whiteColor,
                                   onTap: () async {
-
-                                     if (!(controller.formKey.currentState?.validate() ?? true)) {
-      return;
-    }
+                                    if (!(controller.formKey.currentState
+                                            ?.validate() ??
+                                        true)) {
+                                      return;
+                                    }
 
                                     final Map<String, dynamic>? result =
                                         await controller.requestAutograph(
@@ -322,6 +357,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                               : 'fromHome',
                                         },
                                       );
+                                      print(result['requestId']);
                                     } else {
                                       Utils.showToast(
                                         "Request failed, please try again",
@@ -335,6 +371,7 @@ class RequestAutographCard extends GetView<RequestAutographController> {
                                   fontsize: 16.sp,
                                   fontweight: FontWeight.w600,
                                 ),
+                               ],
                               ] else ...[
                                 buttonWidget(
                                   "Back to Library",

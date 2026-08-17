@@ -303,12 +303,24 @@ class NewBookItem {
   static NewBookItem? fromResponse(dynamic response) {
     if (response is Map<String, dynamic>) {
       Map<String, dynamic> merged = Map<String, dynamic>.from(response);
-      if (response.containsKey('request') && response['request'] is Map) {
-        merged = Map<String, dynamic>.from(response['request']);
-        if (response.containsKey('clientSecret'))
-          merged['clientSecret'] = response['clientSecret'];
-        if (response.containsKey('paymentIntentId'))
-          merged['paymentIntentId'] = response['paymentIntentId'];
+      if (merged.containsKey('data') && merged['data'] is Map) {
+        final innerData = Map<String, dynamic>.from(merged['data']);
+        if ((innerData['clientSecret'] == null || innerData['clientSecret'].toString().isEmpty) &&
+            merged['clientSecret'] != null) {
+          innerData['clientSecret'] = merged['clientSecret'];
+        }
+        if ((innerData['paymentIntentId'] == null || innerData['paymentIntentId'].toString().isEmpty) &&
+            merged['paymentIntentId'] != null) {
+          innerData['paymentIntentId'] = merged['paymentIntentId'];
+        }
+        merged = innerData;
+      } else if (merged.containsKey('request') && merged['request'] is Map) {
+        final requestMap = Map<String, dynamic>.from(merged['request']);
+        if (merged.containsKey('clientSecret'))
+          requestMap['clientSecret'] = merged['clientSecret'];
+        if (merged.containsKey('paymentIntentId'))
+          requestMap['paymentIntentId'] = merged['paymentIntentId'];
+        merged = requestMap;
       }
       return NewBookItem.fromJson(merged);
     }

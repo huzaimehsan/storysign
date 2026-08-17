@@ -9,7 +9,6 @@ import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 import '../../../../widgets/search_widget.dart';
 
-
 import '../../search/widgets/header_widget.dart';
 import '../controller/library_controller.dart';
 import '../model/library_model.dart';
@@ -50,14 +49,17 @@ class ReaderLibrary extends GetView<ReaderController> {
                     return Expanded(
                       flex: flexValue,
                       child: Obx(() {
-                        final bool isSelected = controller.selectedTab.value == tab;
+                        final bool isSelected =
+                            controller.selectedTab.value == tab;
                         return Padding(
                           padding: EdgeInsets.symmetric(horizontal: 2.w),
                           child: buttonWidget(
                             tab,
                             isSelected ? whiteColor : buttonColor,
                             onTap: () => controller.selectTab(tab),
-                            colors: isSelected ? buttonColor : const Color(0xFFF5E6D3),
+                            colors: isSelected
+                                ? buttonColor
+                                : const Color(0xFFF5E6D3),
                             height: 4.5.h,
                             fontFamily: "Poppins",
                             fontsize: 15.sp,
@@ -159,13 +161,15 @@ class ReaderLibrary extends GetView<ReaderController> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount:
-                    books.length + (controller.isLoadingMore.value ? 1 : 0),
+                        books.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == books.length) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: CircularProgressIndicator(color: buttonColor),
+                            child: CircularProgressIndicator(
+                              color: buttonColor,
+                            ),
                           ),
                         );
                       }
@@ -179,7 +183,8 @@ class ReaderLibrary extends GetView<ReaderController> {
                         imagePath: book.coverImage,
                         signed: book.status,
                         bookTitle: book.title,
-                        authorName: book.author?.fullName ?? "No Author Selected",
+                        authorName:
+                            book.author?.fullName ?? "No Author Selected",
                         date: formattedDate,
                         status: book.status,
                         showArrow: true,
@@ -208,8 +213,6 @@ class ReaderLibrary extends GetView<ReaderController> {
           ],
         ),
       ),
-
-
     );
   }
 
@@ -217,9 +220,7 @@ class ReaderLibrary extends GetView<ReaderController> {
     return PopupMenuButton<String>(
       color: white,
       elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.sp),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
       offset: Offset(0, 5.h),
       onSelected: (value) {
         if (value == "Reset") {
@@ -242,7 +243,10 @@ class ReaderLibrary extends GetView<ReaderController> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          ..._sortOptions.map((label) => _buildMenuItem("sort:$label", label, controller.sortBy.value)),
+          ..._sortOptions.map(
+            (label) =>
+                _buildMenuItem("sort:$label", label, controller.sortBy.value),
+          ),
           const PopupMenuDivider(),
           PopupMenuItem<String>(
             value: "Reset",
@@ -263,11 +267,7 @@ class ReaderLibrary extends GetView<ReaderController> {
           color: const Color(0xFFF5E6D3),
           borderRadius: BorderRadius.circular(17.sp),
         ),
-        child: Icon(
-          Icons.tune_rounded,
-          color: buttonColor,
-          size: 18.sp,
-        ),
+        child: Icon(Icons.tune_rounded, color: buttonColor, size: 18.sp),
       ),
     );
   }
@@ -280,7 +280,11 @@ class ReaderLibrary extends GetView<ReaderController> {
     "Date Oldest",
   ];
 
-  PopupMenuItem<String> _buildMenuItem(String value, String label, String currentValue) {
+  PopupMenuItem<String> _buildMenuItem(
+    String value,
+    String label,
+    String currentValue,
+  ) {
     final isSelected = currentValue == label;
     return PopupMenuItem<String>(
       value: value,
@@ -299,5 +303,4 @@ class ReaderLibrary extends GetView<ReaderController> {
       ),
     );
   }
-
 }

@@ -1,13 +1,9 @@
 import 'package:get/get.dart';
 import 'dart:async';
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
@@ -44,34 +40,19 @@ class UploadBookController extends GetxController {
         maskType: EasyLoadingMaskType.black,
       );
 
-      final uri = Uri.parse(
-        '${BaseService().baseURL}${ApiEndPoints.uploadBook}',
-      );
-      final request = http.MultipartRequest('POST', uri);
+      final fields = {
+        'title': title,
+      };
 
-      request.fields['title'] = title;
+      final filePaths = {
+        'bookPdf': bookPdfFile.value!.path,
+        'coverImage': bookCoverImage.value!.path,
+      };
 
-      // PDF file
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'bookPdf',
-          bookPdfFile.value!.path,
-          contentType: MediaType('application', 'pdf'),
-        ),
-      );
-
-      // Cover image
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'coverImage',
-          bookCoverImage.value!.path,
-          contentType: MediaType('image', 'jpeg'),
-        ),
-      );
-
-      final responseMap = await BaseService().baseMultipartPostAPI(
+      final responseMap = await BaseService().basePostMultipartAPI(
         ApiEndPoints.uploadBook,
-        request: request,
+        fields,
+        filePaths: filePaths,
         loading: false,
       );
 

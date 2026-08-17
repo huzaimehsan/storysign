@@ -12,6 +12,9 @@ class ReaderLibraryBookDetailModel {
   final String authorName;
   final String? authorProfilePicture;
   final String personalMessage;
+  final String? autographRequestId;
+  final String? paymentIntentId;
+  final String? clientSecret;
 
   ReaderLibraryBookDetailModel({
     required this.id,
@@ -27,6 +30,9 @@ class ReaderLibraryBookDetailModel {
     required this.authorName,
     this.authorProfilePicture,
     required this.personalMessage,
+    this.autographRequestId,
+    this.paymentIntentId,
+    this.clientSecret,
   });
 
   factory ReaderLibraryBookDetailModel.fromJson(Map<String, dynamic> json) {
@@ -51,6 +57,9 @@ class ReaderLibraryBookDetailModel {
       authorProfilePicture: (author is Map ? author['profilePicture'] : null)
           ?.toString(),
       personalMessage: json['personalMessage']?.toString() ?? '',
+      autographRequestId: json['autographRequestId']?.toString(),
+      paymentIntentId: json['paymentIntentId']?.toString(),
+      clientSecret: json['clientSecret']?.toString(),
     );
   }
 }

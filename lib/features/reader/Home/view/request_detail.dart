@@ -135,9 +135,13 @@ class RequestDetail extends GetView<ReaderDetailController> {
                              Get.find<PaymentController>();
                              final args = Get.arguments;
                              final String? clientSecret =
-                             args?['clientSecret'];
+                                 (args?['clientSecret']?.toString().isNotEmpty == true)
+                                     ? args!['clientSecret'].toString()
+                                     : (data.clientSecret.isNotEmpty ? data.clientSecret : null);
                              final String? paymentIntentId =
-                             args?['paymentIntentId'];
+                                 (args?['paymentIntentId']?.toString().isNotEmpty == true)
+                                     ? args!['paymentIntentId'].toString()
+                                     : (data.paymentIntentId.isNotEmpty ? data.paymentIntentId : null);
 
                              if (clientSecret != null &&
                                  paymentIntentId != null) {
