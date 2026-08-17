@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+
 import 'package:sizer/sizer.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -16,7 +15,7 @@ Widget customHeader({
   required VoidCallback onIconPressed,
 }) {
   return Container(
-    padding: EdgeInsets.only(top: 6.h,left: 5.w,right: 5.w),
+    padding: EdgeInsets.only(left: 4.w,right: 4.w),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -31,7 +30,7 @@ Widget customHeader({
           child: Center(
             child: customText(
               text: title,
-              fontSize: 17.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
               color: whiteColor,
               textAlign: TextAlign.center,
@@ -40,15 +39,15 @@ Widget customHeader({
         ),
 
         // 3. Custom Image/Icon
-        GestureDetector(
-          onTap: onIconPressed,
-          child: Image.asset(
-            "assets/icon/dropdownicon.png" ,
-            height: 5.w,
-            width: 5.w,
-            fit: BoxFit.contain,
-          ),
-        ),
+        // GestureDetector(
+        //   onTap: onIconPressed,
+        //   child: Image.asset(
+        //     "assets/icon/dropdownicon.png" ,
+        //     height: 5.w,
+        //     width: 5.w,
+        //     fit: BoxFit.contain,
+        //   ),
+        // ),
       ],
     ),
   );

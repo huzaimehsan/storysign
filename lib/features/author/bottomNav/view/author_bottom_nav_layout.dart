@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'package:storysign/constants/color_constants.dart';
+import 'package:storysign/features/author/bottomNav/controller/author_bottom_nav_controller.dart';
+import 'package:storysign/features/author/delivered/view/delivered_screen.dart';
+import 'package:storysign/features/author/profile/view/profile.dart';
+import 'package:storysign/features/author/request/view/all_request.dart';
+import 'package:storysign/features/author/home/view/home_screen.dart';
+import 'package:storysign/features/author/request/view/ebook_preview.dart';
+import 'package:storysign/features/author/request/view/request_detail.dart';
+import 'package:storysign/features/author/request/view/draw_signature.dart';
+import 'package:storysign/features/author/request/view/place_signature.dart';
+import 'package:storysign/features/author/request/view/add_message.dart';
+import 'package:storysign/features/author/request/view/final_review.dart';
+
+import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
+import 'package:storysign/features/author/request/binding/final_review_binding.dart';
+
+import '../../../shared/notification/view/notification_screen.dart';
+import '../../notification/binding/author_notification_binding.dart';
+
+import '../../request/binding/add_message_binding.dart';
+import '../../request/binding/draw_signature_binding.dart';
+import '../../request/binding/ebook_preview_binding.dart';
+import '../../request/binding/request_detail_binding.dart';
+
+class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
+  AuthorBottomNavLayout({super.key});
+
+  // // Tab 0 (Home) ka initial route tree
+  // Route _buildHomeRoute(RouteSettings settings) {
+  //   switch (settings.name) {
+  //     case '/trackrequest':
+  //       return MaterialPageRoute(builder: (_) => const TrackRequest());
+  //
+  //
+  //     default:
+  //
+  //
+  //       return MaterialPageRoute(builder: (_) => const HomeScreen());
+  //   }
+  // }
+
+  Route _buildRequestRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/requestDetail':
+        return GetPageRoute(
+          page: () => const RequestDetailAuthor(),
+          binding: AuthorRequestDetailBinding(),
+          settings: settings,
+        );
+      case '/pdfReview':
+        return GetPageRoute(
+          page: () => BookPreviewPage(),
+          binding: EbookPreviewBinding(),
+          settings: settings,
+        );
+      case '/drawSignature':
+        return GetPageRoute(
+          page: () => DrawSignatureScreen(),
+          binding: DrawSignatureBinding(),
+          settings: settings,
+        );
+      case '/placeSignature':
+        return GetPageRoute(
+          page: () => const PlaceSignatureScreen(),
+          binding: PlaceSignatureBinding(),
+          settings: settings,
+        );
+      case '/addMessage':
+        return GetPageRoute(
+          page: () => const AddMessageScreen(),
+          binding: AddMessageBinding(),
+          settings: settings,
+        );
+      case '/authorFinalReview':
+        return GetPageRoute(
+          page: () => const FinalReviewScreen(),
+          binding: AuthorFinalReviewBinding(),
+          settings: settings,
+        );
+      default:
+        return MaterialPageRoute(builder: (_) => const AllRequest());
+    }
+  }
+
+  // AuthorBottomNavLayout file mein ye changes karein:
+
+  Route _buildDeliveredRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/requestDetail':
+        return GetPageRoute(
+          page: () => const RequestDetailAuthor(),
+          binding: AuthorRequestDetailBinding(),
+          settings: settings,
+        );
+
+      default:
+        return MaterialPageRoute(builder: (_) => const DeliveredScreen());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        final currentNavigator = controller
+            .navigatorKeys[controller.currentIndex.value]
+            .currentState;
+        if (currentNavigator != null && currentNavigator.canPop()) {
+          currentNavigator.pop();
+          return;
+        }
+        controller.popCurrentTab();
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: Obx(
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: [
+              Navigator(
+                key: controller.navigatorKeys[0],
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => AuthorHomeScreen()),
+              ),
+              // Tab 1: Search
+              Navigator(
+                key: controller.navigatorKeys[1],
+                onGenerateRoute: _buildRequestRoute,
+              ),
+              // Tab 2: Library
+              Navigator(
+                key: controller.navigatorKeys[2],
+                onGenerateRoute: _buildDeliveredRoute,
+              ),
+
+              Navigator(
+                key: controller.navigatorKeys[3],
+                onGenerateRoute: (RouteSettings settings) {
+                  return GetPageRoute(
+                    page: () => const NotificationScreen(),
+                    binding: AuthorNotificationBinding(),
+                    settings: RouteSettings(
+                      name: settings.name,
+                      arguments: {'role': 'author'}, // 👈 ye add karein
+                    ),
+                  );
+                },
+              ),
+
+              Navigator(
+                key: controller.navigatorKeys[4],
+                onGenerateRoute: (RouteSettings settings) {
+                  return MaterialPageRoute(
+                    builder: (_) => const AuthorProfileScreen(),
+                    settings: settings,
+                  );
+                },
+              ),
+
+              // Tab 4: Profile
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          margin: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 2.h),
+          height: 8.5.h,
+          decoration: BoxDecoration(
+            color: bottomNavColor,
+            borderRadius: BorderRadius.circular(25.sp),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 2.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem("assets/icon/home.png", 0),
+                _buildNavItem("assets/icon/request.png", 1),
+                _buildNavItem("assets/icon/deliver.png", 2),
+                _buildNavItem("assets/icon/notification.png", 3),
+                _buildNavItem("assets/icon/profile.png", 4),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String imagePath, int index) {
+    return Obx(() {
+      final isSelected = controller.currentIndex.value == index;
+      return GestureDetector(
+        onTap: () => controller.changeIndex(index),
+        child: SizedBox(
+          width: 13.w,
+          height: 13.w,
+          child: Image.asset(
+            imagePath,
+            color: isSelected ? buttonColor : iconColor,
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    });
+  }
+}

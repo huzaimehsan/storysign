@@ -1,15 +1,17 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../../constants/color_constants.dart';
+import '../../../../../widgets/build_profile_image.dart';
 import '../../../../../widgets/button_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
 
-
 Widget buildProfileCard({
-  String? name,
+  required String? name,
+  required String? role,
+  required String? imagePath,
+
   required VoidCallback onTrackPressed,
   required VoidCallback onAutographPressed,
   required VoidCallback onUploadBookPressed,
@@ -24,18 +26,13 @@ Widget buildProfileCard({
     child: Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20.sp),
-              child: Image.asset(
-                "assets/png/profile.png",
-                height: 17.w,
-                width: 17.w,
-                fit: BoxFit.cover,
-              ),
+              child: buildProfileImageWidget(imagePath: imagePath),
             ),
-            SizedBox(width: 2.w),
+            SizedBox(width: 3.w),
             Expanded(
               child: Column(
                 children: [
@@ -47,9 +44,9 @@ Widget buildProfileCard({
                         fontFamily: 'Poppins',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        text: "Welcome, Reader",
+
+                        text: "Welcome, ${role}",
                       ),
-                      Icon(Icons.menu, color: Colors.white, size: 20),
                     ],
                   ),
                   SizedBox(height: 0.8.h),
@@ -62,6 +59,8 @@ Widget buildProfileCard({
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
                         text: name ?? "User",
+                        overFlow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       GestureDetector(
                         onTap: onTrackPressed,
@@ -71,7 +70,7 @@ Widget buildProfileCard({
                           colors: bottomNavColor,
                           fontFamily: 'Poppins',
                           height: 3.3.h,
-                          width: 22.w,
+                          width: 24.w,
                           fontsize: 13.sp,
                           fontweight: FontWeight.w500,
                         ),
@@ -83,7 +82,7 @@ Widget buildProfileCard({
             ),
           ],
         ),
-        SizedBox(height: 2.h),
+        SizedBox(height: 1.h),
         Row(
           children: [
             Expanded(

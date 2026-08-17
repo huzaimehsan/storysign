@@ -15,8 +15,11 @@ Widget emailTextFeild(
   Widget? suffixIcon,
   int? maxLength,
   int? maxLines,
+  double? width,
   bool? showSuffix,
+  String? Function(String?)? validator,
   bool? isPaymentScreen = false,
+  bool? readOnly = false,
 }) {
   return Column(
     children: [
@@ -28,6 +31,7 @@ Widget emailTextFeild(
             color: whiteColor,
             fontWeight: FontWeight.w400,
             textAlign: TextAlign.center,
+            
             fontFamily: "Poppins",
           ),
           isPaymentScreen == true
@@ -43,41 +47,40 @@ Widget emailTextFeild(
       SizedBox(height: 1.h),
       ispassword == true
           ? Obx(() {
-              return TextField(
+              return TextFormField(
+                validator: validator,
                 maxLength: maxLength,
                 controller: controller,
                 obscureText: isPasswordHidden!.value,
+                style: TextStyle(
+                  color: blackColor,
+                  fontFamily: "Poppins",
+                  fontSize: 15.6.sp,
+                  fontWeight: FontWeight.w400,
+                ),
                 decoration: InputDecoration(
                   filled: true,
-                  // 🔥 IMPORTANT
-                  fillColor: Colors.white,
-                  //
+
+                  fillColor: textFeildContainColor,
                   isDense: true,
                   hintText: hinttext,
                   hintStyle: TextStyle(
-                    color: borderGreyColor,
-                    fontFamily: "inter",
-                    fontSize: 14.5.sp,
+                    color: textFeildColor,
+                    fontFamily: "Poppins",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
                   ),
 
-                  contentPadding: EdgeInsets.symmetric(vertical: 1.5.h),
-
-                  /// 🔹 PREFIX
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(width: 3.w),
-
-                      Container(
-                        height: 2.5.h,
-                        width: 1,
-                        color: borderGreyColor,
-                      ),
-                      SizedBox(width: 2.w),
-                    ],
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 1.h,
+                    horizontal: 4.w,
                   ),
 
-                  /// 🔥 SUFFIX CONSTRAINTS
+                  prefixIconConstraints: BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
+
                   suffixIconConstraints: BoxConstraints(
                     minHeight: 4.3.h,
                     minWidth: 4.3.h,
@@ -88,42 +91,56 @@ Widget emailTextFeild(
                       isPasswordHidden.toggle();
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        right: 4.w, // 🔹 Add padding from right
-                      ),
+                      padding: EdgeInsets.only(right: 4.w),
                       child: Obx(
-                        () => Image.asset(
+                        () => Icon(
                           isPasswordHidden.value
-                              ? "assets/png/auth_image/field-icons-close-eye.png"
-                              : "assets/png/auth_image/open-eye.png",
-                          width: 4.w,
-                          height: 4.w,
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: borderGreyColor,
+                          size: 24,
                         ),
                       ),
                     ),
                   ),
 
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(
                       color: borderGreyColor,
                       width: 0.15.h,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.sp),
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
                     borderSide: BorderSide(
                       color: borderGreyColor,
                       width: 0.2.h,
                     ),
                   ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
+                    borderSide: BorderSide(color: Colors.red, width: 0.15.h),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(width ?? 24.sp),
+                    borderSide: BorderSide(color: Colors.red, width: 0.2.h),
+                  ),
                 ),
               );
             })
-          : TextField(
+          : TextFormField(
+              validator: validator,
               controller: controller,
               maxLength: maxLength,
               maxLines: maxLines,
+              readOnly: readOnly ?? false,
+              style: TextStyle(
+                color: blackColor,
+                fontFamily: "Poppins",
+                fontSize: 15.6.sp,
+                fontWeight: FontWeight.w400,
+              ),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: textFeildContainColor,
@@ -165,12 +182,20 @@ Widget emailTextFeild(
                     : null,
 
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: borderGreyColor, width: 0.15.h),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.sp),
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
                   borderSide: BorderSide(color: borderGreyColor, width: 0.2.h),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
+                  borderSide: BorderSide(color: Colors.red, width: 0.15.h),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(width ?? 24.sp),
+                  borderSide: BorderSide(color: Colors.red, width: 0.2.h),
                 ),
               ),
             ),
@@ -180,7 +205,7 @@ Widget emailTextFeild(
 
 Widget customTextField(
   String title,
-    int? maxLength,
+  int? maxLength,
   String hinttext, {
   String? path,
   bool? isPass = false,
@@ -274,12 +299,12 @@ Widget customTextField(
                         },
                         child: Padding(
                           padding: EdgeInsets.only(right: 4.w),
-                          child: Image.asset(
+                          child: Icon(
                             isObscure.value
-                                ? "assets/png/auth_image/field-icons-close-eye.png"
-                                : "assets/png/auth_image/open-eye.png",
-                            width: 4.w,
-                            height: 4.w,
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: borderGreyColor,
+                            size: 24,
                           ),
                         ),
                       ),

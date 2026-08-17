@@ -2,48 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
-
-import '../../Home/view/reader/home_screen.dart';
-import '../../Home/view/reader/track_request.dart';
-import '../../library/view/reader/reader_library.dart';
-import '../../notification/view/notification.dart';
+import 'package:storysign/features/reader/Home/binding/track_request_binding.dart';
+import 'package:storysign/features/reader/Home/binding/view_all_books_binding.dart';
+import 'package:storysign/features/reader/Home/view/view_all_books.dart';
+import 'package:storysign/features/reader/notification/binding/notification_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_binding.dart';
+import 'package:storysign/features/reader/profile/binding/profile_view_all_books_binding.dart';
+import 'package:storysign/features/reader/profile/view/profile_screen.dart';
+import 'package:storysign/features/reader/profile/view/profile_view_all_books.dart';
+import '../../../shared/notification/view/notification_screen.dart';
+import '../../Home/view/home_screen.dart';
+import '../../Home/view/track_request.dart';
+import '../../library/view/reader_library.dart';
 import '../../search/view/author_detail.dart';
 import '../../search/view/search_screen.dart';
 import '../controller/bottom_nav_controller.dart';
 
 class MyBottomBarScreen extends GetView<BottomNavController> {
-  MyBottomBarScreen({super.key});
-
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
+  const MyBottomBarScreen({super.key});
 
   // Tab 0 (Home) ka initial route tree
   Route _buildHomeRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/trackrequest':
-        return MaterialPageRoute(builder: (_) => const TrackRequest());
+        return GetPageRoute(
+          page: () => const TrackRequest(),
+          binding: TrackRequestBinding(),
+          settings: settings,
+        );
+      case '/viewallbooks':
+        return GetPageRoute(
+          page: () => const ViewAllBooksScreen(),
+          binding: ViewAllBooksBinding(),
+          settings: settings,
+        );
+      case '/profile':
+        return GetPageRoute(
+          page: () => const ProfileScreen(),
+          binding: ProfileBinding(),
+          settings: settings,
+        );
+      case '/profileviewallbooks':
+        return GetPageRoute(
+          page: () => const ProfileViewAllBooksScreen(),
+          binding: ProfileViewAllBooksBinding(),
+          settings: settings,
+        );
 
-
-        default:
-
-
+      default:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
     }
   }
 
   Route _buildSeacrhRoute(RouteSettings settings) {
     switch (settings.name) {
-
-      case  '/authordetail':
-        return MaterialPageRoute(builder: (_) => const AuthorDetail());
+      case '/authordetail':
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => AuthorDetail(
+            authorId: args?['authorId']?.toString() ?? '',
+            role: args?['role']?.toString() ?? '',
+          ),
+        );
       default:
-
-
         return MaterialPageRoute(builder: (_) => const SearchScreen());
     }
   }
@@ -53,11 +74,15 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        final currentNavigator =
-            _navigatorKeys[controller.currentIndex.value].currentState;
+        final currentNavigator = controller
+            .navigatorKeys[controller.currentIndex.value]
+            .currentState;
         if (currentNavigator != null && currentNavigator.canPop()) {
           currentNavigator.pop();
+          return;
         }
+
+        controller.popCurrentTabOrGoToPrevious();
       },
       child: Scaffold(
         extendBody: true,
@@ -67,44 +92,45 @@ class MyBottomBarScreen extends GetView<BottomNavController> {
             children: [
               // Tab 0: Home (nested navigator — TrackRequest bhi iske andar push hogi)
               Navigator(
-                key: _navigatorKeys[0],
+                key: controller.navigatorKeys[0],
                 onGenerateRoute: _buildHomeRoute,
               ),
               // Tab 1: Search
               Navigator(
-                key: _navigatorKeys[1],
+                key: controller.navigatorKeys[1],
                 onGenerateRoute: _buildSeacrhRoute,
               ),
               // Tab 2: Library
               Navigator(
-                key: _navigatorKeys[2],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) => ReaderLibrary()
-                        ),
+                key: controller.navigatorKeys[2],
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => ReaderLibrary()),
               ),
               // Tab 3: Notifications
               Navigator(
-                key: _navigatorKeys[3],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) =>
-                        NotificationScreen()),
+                key: controller.navigatorKeys[3],
+                onGenerateRoute: (RouteSettings settings) {
+                  return GetPageRoute(
+                    page: () => const NotificationScreen(),
+                    binding: NotificationBinding(),
+                    settings: RouteSettings(
+                      name: settings.name,
+                      arguments: {'role': 'reader'}, // 👈 ye add karein
+                    ),
+                  );
+                },
               ),
               // Tab 4: Profile
               Navigator(
-                key: _navigatorKeys[4],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                    builder: (_) =>
-                        const Center(child: Text("Profile Page"))),
+                key: controller.navigatorKeys[4],
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
               ),
             ],
           ),
         ),
         bottomNavigationBar: Container(
-          margin: EdgeInsets.only(
-            left: 5.w,
-            right: 5.w,
-            bottom: 2.h,
-          ),
+          margin: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 2.h),
           height: 8.5.h,
           decoration: BoxDecoration(
             color: bottomNavColor,

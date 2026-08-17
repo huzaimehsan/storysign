@@ -1,6 +1,7 @@
 class LocalDBKeys {
   static const String TOKEN = "TOKEN";
-  static const String FIRSTTIMEOPENAPP = "FIRSTTIMEOPENAPP";
+  static const String REFRESH_TOKEN = "REFRESH_TOKEN";
+  static const String SUBSCRITPIONPLAN = "SUBSCRITPIONPLAN";
   static const String USERTYPE = "USERTYPE";
   static const String KHANTAR = "KHANTAR";
   static const String USERDETAIL = "USERDETAIL";
@@ -19,4 +20,13 @@ class LocalDBKeys {
   static const String PROFILECOMPLETED = "PROFILECOMPLETED";
   static const String ONBOARDINGSTEP = "ONBOARDINGSTEP";
   static const String SELECTEDLANGUAGE = "SELECTEDLANGUAGE";
+
+  static const String USERDATA = "USERDATA";
+  static const String ONBOARDING = "SPLASH";
+  static const String IS_SUBSCRIBED = "IS_SUBSCRIBED";
+
+
+
+
+
 }

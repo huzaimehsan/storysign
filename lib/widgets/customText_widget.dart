@@ -15,25 +15,32 @@ Widget customText({
   Color? decorationColor,
   double? letterSpacing,
   TextDirection? textDirection,
+
   int? maxLines,
   double? height,
+
 }) {
+  final effectiveDecoration = txtDecoration == null || txtDecoration == TextDecoration.none
+      ? null
+      : txtDecoration;
+
   return Text(
     text ?? '',
     textAlign: textAlign,
     textDirection: textDirection,
     maxLines: maxLines,
     overflow: overFlow,
+
     style: TextStyle(
       fontFamily: fontFamily ?? 'inter', // Ensure it is applied here
       color: color,
       fontSize: fontSize ?? 15.sp,
       fontWeight: fontWeight, // Ensure the weight is respected
       fontStyle: fontStyle,
-      decoration: txtDecoration,
-      decorationColor: decorationColor,
-      decorationThickness: 1.0,
-      letterSpacing: letterSpacing ?? - 0.5,
+      decoration: effectiveDecoration,
+      decorationColor: effectiveDecoration != null ? decorationColor : null,
+      decorationThickness: effectiveDecoration != null ? 1.0 : null,
+      letterSpacing: letterSpacing ?? -0.5,
       height: height,
     ),
   );

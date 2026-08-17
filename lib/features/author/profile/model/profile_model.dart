@@ -1,0 +1,53 @@
+class AuthorProfileModel {
+  String? profilePicture;
+  String? fullName;
+  String? email;
+  String? bio;
+  String? dateJoined;
+  String? activePlanId;
+  String? activePlanName;
+  int? totalSignedAutographs;
+  bool? isSubscribed;
+
+  AuthorProfileModel({
+    this.profilePicture,
+    this.fullName,
+    this.email,
+    this.bio,
+    this.dateJoined,
+    this.activePlanId,
+    this.activePlanName,
+    this.totalSignedAutographs,
+    this.isSubscribed,
+  });
+
+  factory AuthorProfileModel.fromJson(Map<String, dynamic> json) {
+    return AuthorProfileModel(
+      profilePicture: json['profilePicture'],
+      fullName: json['fullName'],
+      email: json['email'],
+      bio: json['bio'],
+      dateJoined: json['dateJoined'],
+      activePlanId: json['activePlanId']?.toString() ??
+          json['planId']?.toString(),
+      activePlanName: json['activePlanName'],
+      totalSignedAutographs: json['totalSignedAutographs'],
+      isSubscribed: json['isSubscribed'],
+    );
+  }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'profilePicture': profilePicture,
+      'fullName': fullName,
+      'email': email,
+      'bio': bio,
+      'dateJoined': dateJoined,
+      'activePlanId': activePlanId,
+      'activePlanName': activePlanName,
+      'totalSignedAutographs': totalSignedAutographs,
+      'isSubscribed': isSubscribed,
+    };
+  }
+}

@@ -1,14 +1,16 @@
+
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../widgets/button_widget.dart';
+import '../../../../components/cover_image_widget.dart';
 import '../../../../widgets/customText_widget.dart';
 
 
 class SearchAuthorCard extends StatelessWidget {
-  final String imagePath;
+  final dynamic imagePath;
   final String bookTitle;
- final VoidCallback requestAutoGraph;
+  final VoidCallback requestAutoGraph;
 
   final VoidCallback authorDetail;
   final String date;
@@ -23,13 +25,23 @@ class SearchAuthorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String path = imagePath?.toString() ?? "";
+    final imageWidget = CoverImageWidget(
+      assetPath: path,
+      imageUrl: path.startsWith('http') ? path : null,
+      height: 10.h,
+      width: 9.8.h,
+      fit: BoxFit.cover,
+      fallbackIcon: Icons.person_rounded,
+    );
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
-        height: 13.8.h,
+        height: 13.2.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.all(5.w),
+        padding: EdgeInsets.only(top: 4.w,bottom: 4.w,right: 4.w,left:4.w ),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -45,20 +57,16 @@ class SearchAuthorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 10.h,
-              width: 10.h,
+              height: 9.7.h,
+              width: 9.6.h,
               decoration: BoxDecoration(
-
-                border: Border.all(
-                    color: buttonColor,
-                  width: 1.2,
-
-                ),
+                border: (path.isEmpty || path == "null")
+                    ? Border.all(color: Color(0xFFACACAC), width: 1.2)
+                    : null,
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
+              ),
+              child: ClipOval(
+                child: imageWidget,
               ),
             ),
             SizedBox(width: 4.w),
@@ -69,20 +77,21 @@ class SearchAuthorCard extends StatelessWidget {
                   customText(
                     fontFamily: "Poppins",
                     text: bookTitle,
+                    overFlow : TextOverflow.ellipsis,
                     color: secondryColor,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
 
-                  SizedBox(height: 0.6.h),
+                  SizedBox(height: 0.4.h),
                   customText(
                     fontFamily: "Poppins",
                     text: date,
-                    color: secondryColor.withOpacity(0.7),
-                    fontSize: 14.sp,
+                    color: secondryColor,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                   ),
-                  SizedBox(height: 0.6.h),
+                  SizedBox(height: 1.h),
                   buttonWidget(
                     onTap: requestAutoGraph,
                     "Request Autograph",

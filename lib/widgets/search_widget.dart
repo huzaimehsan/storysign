@@ -1,18 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
 
-Widget searchWidget(){
+Widget searchWidget({
+  TextEditingController? controller,
+  ValueChanged<String>? onChanged,
+  String hintText = "Search",
+}){
 
   return   Padding(
     padding: EdgeInsets.symmetric(horizontal: 4.w),
     child: Container(
-      height: 5.2.h,
+      height: 4.8.h,
       padding: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
-        color: white,
+        color: whiteColor,
         borderRadius: BorderRadius.circular(20.sp),
         border: Border.all(color: greyColor),
       ),
@@ -22,8 +25,10 @@ Widget searchWidget(){
           SizedBox(width: 2.w),
           Expanded(
             child: TextField(
+              controller: controller,
+              onChanged: onChanged,
               decoration: InputDecoration(
-                hintText: "Search",
+                hintText: hintText,
                 hintStyle: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 15.sp,

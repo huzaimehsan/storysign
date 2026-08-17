@@ -9,11 +9,13 @@ class CustomOtpField extends StatelessWidget {
   final Function(String) onCompleted;
   final TextEditingController? controller;
 
+  final String? Function(String?)? validator;
+
   const CustomOtpField({
     super.key,
     this.length = 4,
     required this.onCompleted,
-    this.controller,
+    this.controller, this.validator,
   });
 
   @override
@@ -43,6 +45,7 @@ class CustomOtpField extends StatelessWidget {
 
     return Pinput(
       length: length,
+      validator: validator,
       controller: controller,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       defaultPinTheme: defaultPinTheme,

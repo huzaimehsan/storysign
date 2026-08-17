@@ -1,23 +1,35 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/constants/color_constants.dart';
 
+import 'package:storysign/features/reader/Home/controller/request_autograph_controller.dart';
+import 'package:storysign/features/reader/search/controller/search_page_controller.dart';
+import 'package:storysign/utils/helper_functions.dart';
 
+import '../../../../utils/utility.dart';
 import '../../../../widgets/button_widget.dart';
 import '../../../../widgets/custom_text_feild.dart';
-
-import '../widgets/author_detail_widget.dart';
+import '../../../../widgets/image_picker.dart';
+import '../../../../widgets/author_detail_widget.dart';
 import '../widgets/file_upload_widget.dart';
 import '../widgets/header_widget.dart';
 
-class RequestAutograph extends StatelessWidget {
+class RequestAutograph extends GetView<RequestAutographController> {
   const RequestAutograph({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final MediaPickerService mediaPicker = MediaPickerService();
+    final String authorId = Get.arguments?['authorId'] ?? '';
+
+    final searchController = Get.find<SearchPageController>();
+    final author = searchController.authorDetailData.value;
+
     return Scaffold(
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -28,57 +40,133 @@ class RequestAutograph extends StatelessWidget {
               onIconPressed: () {},
             ),
             SizedBox(height: 1.h),
-            AuthorInfoCard(
-              imagePath: "assets/png/searchprofile.png",
-              bookTitle: "Matt Haig",
-              date: "Joined: 22 june, 2026",
-            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    AuthorInfoCard(
+                      imagePath: author?.profilePicture,
+                      bookTitle: author?.fullName ?? 'Author',
+                      date: author?.dateJoined,
+                    ),
 
-            SizedBox(height: 2.h),
-        
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Column(
-                children: [
-                  emailTextFeild('Book Name', "Things Fall Apart"),
-                  SizedBox(height: 1.5.h),
-        
-                  FileUploadWidget(
-                    title: 'Upload Book',
-                    description: 'Tap to select a pdf file from your device',
-                    onTap: () {},
-                  ),
-                  SizedBox(height: 1.5.h),
-        
-                  FileUploadWidget(
-                    title: 'Upload Cover Photo',
-                    description: 'Tap to select a png format from your device',
-                    onTap: () {},
-                  ),
-                  SizedBox(height: 1.5.h),
-                  emailTextFeild(
-                    'Personal Message',
-                    "Write a personal message to the author about why this book is special to you…",
-                    maxLength: 200,
-                    maxLines: 4,
-                  ),
-                  SizedBox(height: 3.h),
-        
-                  buttonWidget(
-                    "Request Autograph",
-                    whiteColor,
-                    onTap: () => Get.toNamed('/requestautograph'),
-                    colors: buttonColor,
-                    fontFamily: 'Poppins',
-                    height: 5.2.h,
-                    // Thoda height badhayi
-                    width: double.infinity,
-                    fontsize: 16.sp,
-                    fontweight: FontWeight.w600,
-                  ),
+                    SizedBox(height: 2.h),
 
-                  SizedBox(height: 5.h),
-                ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Form(
+                        key: controller.formKey,
+                        child: Obx(
+                          () => Column(
+                          children: [
+                            emailTextFeild(
+                              'Book Name',
+                              "Things Fall Apart",
+                              validator: (value) => HelperFunction.validateBookName(value ?? '', fieldName: 'Book Name'),
+                              controller: controller.bookTitleControllerRequest,
+                            ),
+                            SizedBox(height: 1.5.h),
+
+                            FileUploadWidget(
+                              title: 'Upload Book',
+                              description:
+                                  'Tap to select a pdf file from your device',
+                              file: controller.bookPdfFile.value,
+                              onTap: () async {
+                                final File? file = await mediaPicker.pickMedia(
+                                  context,
+                                  mode: PickMode.document,
+                                );
+                                if (file != null) {
+                                  controller.bookPdfFile.value = file;
+                                }
+                              },
+                              onRemove: () =>
+                                  controller.bookPdfFile.value = null,
+                            ),
+                            SizedBox(height: 1.5.h),
+
+                            FileUploadWidget(
+                              title: 'Upload Cover Photo',
+                              description:
+                                  'Tap to select a png format from your device',
+                              file: controller.bookCoverImage.value,
+                              onTap: () async {
+                                final File? file = await mediaPicker.pickMedia(
+                                  context,
+                                  mode: PickMode.image,
+                                );
+                                if (file != null) {
+                                  controller.bookCoverImage.value = file;
+                                }
+                              },
+                              onRemove: () =>
+                                  controller.bookCoverImage.value = null,
+                            ),
+
+                            SizedBox(height: 1.5.h),
+                            emailTextFeild(
+                              'Personal Message',
+                              "Write a personal message to the author about why this book is special to you…",
+                              maxLength: 200,
+                              maxLines: 4,
+                              width: 20.sp,
+                              validator: (value) => HelperFunction.validateMessage(value ?? '', fieldName: 'Personal Message'),
+                              controller: controller.personalMessageController,
+                            ),
+                            SizedBox(height: 3.h),
+
+                            buttonWidget(
+                              "Request Autograph",
+                              whiteColor,
+                              onTap: () async {
+                                if (!(controller.formKey.currentState?.validate() ?? true)) {
+                                  return;
+                                }
+                                // Controller se Map return karwayein
+                                final Map<String, dynamic>? result =
+                                    await controller.requestAutograph(
+                                      context,
+                                      authorId,
+                                    );
+
+                                // Check karein ke result valid hai
+                                if (result != null &&
+                                    result['requestId'] != null) {
+                                  Get.offNamed(
+                                    '/request',
+                                    arguments: {
+                                      'autographRequestId': result['requestId'],
+                                      'clientSecret':
+                                          result['clientSecret'], // Yeh zaroori hai
+                                      'paymentIntentId':
+                                          result['paymentIntentId'], // Yeh zaroori hai
+                                      'role': 'alreadySelectedAuthor',
+                                    },
+                                  );
+                                } else {
+                                  Utils.showToast(
+                                    "Request failed. Please try again.",
+                                    true,
+                                  );
+                                }
+                              },
+                              colors: buttonColor,
+                              fontFamily: 'Poppins',
+                              height: 5.2.h,
+                              width: double.infinity,
+                              fontsize: 16.sp,
+                              fontweight: FontWeight.w600,
+                            ),
+
+                            SizedBox(height: 5.h),
+                          ],
+                        ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

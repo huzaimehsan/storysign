@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/widgets/formatted_date_widget.dart';
 
 import '../../../../../constants/color_constants.dart';
 import '../../../../../widgets/button_widget.dart';
+import '../../../../../components/cover_image_widget.dart';
 import '../../../../../widgets/customText_widget.dart';
-
-
 
 class WidgetSelectAuthor extends StatelessWidget {
   final String imagePath;
   final String bookTitle;
-  final String activity;
-  final VoidCallback authorDetail;
+
+  final bool isActive;
+  final VoidCallback ontap;
   final String date;
 
   const WidgetSelectAuthor({
     super.key,
     required this.imagePath,
     required this.bookTitle,
-    required this.activity,
+
+    required this.isActive,
     required this.date,
-    required this.authorDetail,
+    required this.ontap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String path = imagePath.toString();
+    final imageWidget = CoverImageWidget(
+      assetPath: '',
+      imageUrl: path,
+      height: 10.h,
+      width: 10.h,
+      fit: BoxFit.cover,
+      fallbackIcon: Icons.person_rounded,
+    );
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0.3.h),
       child: Container(
-        height: 15.h,
+        height: 13.5.h,
         width: 100.w,
         margin: EdgeInsets.fromLTRB(4.w, 0.8.h, 4.w, 0),
-        padding: EdgeInsets.symmetric(horizontal: 5.w ,vertical: 4.w),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.w),
         decoration: BoxDecoration(
           color: white,
           borderRadius: BorderRadius.circular(20.sp),
@@ -50,18 +62,13 @@ class WidgetSelectAuthor extends StatelessWidget {
               height: 10.h,
               width: 10.h,
               decoration: BoxDecoration(
-
                 border: Border.all(
-                  color: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
+                  color: isActive ? Color(0xFFACACAC) : const Color(0xFFACACAC),
                   width: 1.2,
-
                 ),
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
               ),
+              child: ClipOval(child: imageWidget),
             ),
             SizedBox(width: 4.w),
             Expanded(
@@ -78,34 +85,29 @@ class WidgetSelectAuthor extends StatelessWidget {
 
                   SizedBox(height: 0.4.h),
 
-
-                  customText(
-                    fontFamily: "Poppins",
-                    text: activity,
-                    color: buttonColor,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-
                   SizedBox(height: 0.4.h),
-                  customText(
+                  FormattedRequestDate(
+                    dateString: date,
                     fontFamily: "Poppins",
-                    text: date,
-                    color: secondryColor.withOpacity(0.7),
-                    fontSize: 14.sp,
+                    fontSize: 13,
+
                     fontWeight: FontWeight.w400,
+                    dateFormat: 'dd MMM yyyy',
+                    color: secondryColor.withOpacity(0.7),
                   ),
                   SizedBox(height: 1.h),
 
                   buttonWidget(
                     "Select",
-                    activity == 'Active' ? whiteColor : whiteColor,
-                    onTap: () {},
-                    colors: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
+                    isActive ? whiteColor : whiteColor,
+                    onTap: isActive ? ontap : null,
+                    colors: isActive ? buttonColor : const Color(0xFFACACAC),
                     fontFamily: 'Poppins',
                     height: 2.7.h,
                     width: 18.w,
-                    borderColor: activity == 'Active' ? buttonColor : Color(0xFFACACAC),
+                    borderColor: isActive
+                        ? buttonColor
+                        : const Color(0xFFACACAC),
                     fontsize: 14.sp,
                     fontweight: FontWeight.w600,
                   ),

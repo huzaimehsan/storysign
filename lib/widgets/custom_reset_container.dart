@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/color_constants.dart';
-import '../constants/color_constants.dart' as Colors;
+
 import 'button_widget.dart';
 import 'customText_widget.dart';
 
@@ -88,15 +88,15 @@ class AuthCard extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
 
-            customText(
-              textAlign: TextAlign.center,
-              color: lightTextColor,
-              fontFamily: 'Inter',
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w500,
-              text:
-                  "We will send a 6-digit verification code to you registered email address ",
-            ),
+            // customText(
+            //   textAlign: TextAlign.center,
+            //   color: lightTextColor,
+            //   fontFamily: 'Inter',
+            //   fontSize: 15.sp,
+            //   fontWeight: FontWeight.w500,
+            //   text:
+            //       "We will send a 6-digit verification code to you registered email address ",
+            // ),
           ],
         ),
       ),

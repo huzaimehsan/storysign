@@ -45,20 +45,40 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_svg: ^2.3.0
   intl: ^0.20.2
+  internet_connection_checker: ^3.0.1
   pinput: ^6.0.2
-
-
+  dropdown_button2: ^3.1.0
+  image_picker: ^1.2.3
+  file_picker: ^11.0.2
+  syncfusion_flutter_pdfviewer: 33.2.12
+  signature: ^6.3.0
+  path_provider: ^2.1.6
+  flutter_easyloading: ^3.0.5
+  flutter_stripe: ^13.1.0
+  url_launcher: ^6.3.2
+  open_file: ^4.0.0
+  stripe_sdk: ^5.0.0
+  flutter_dotenv: ^6.0.1
+  google_sign_in: ^7.2.0
+  sign_in_apple: ^2.0.0
+  firebase_core: ^4.12.1
+  firebase_messaging: ^16.4.3
+# // // flutter_local_notifications: ^22.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/applogo.png"
+  min_sdk_android: 21
+
+  adaptive_icon_background: "#303030" # Background color
+  adaptive_icon_foreground: "assets/icon/applogo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -97,6 +117,9 @@ flutter:
     - assets/jpg/
     - assets/icon/
     - assets/png/
+    - assets/book/pdf.pdf
+    - .env
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
