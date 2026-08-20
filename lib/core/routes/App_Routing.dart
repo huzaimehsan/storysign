@@ -215,7 +215,7 @@ class AppRoutes {
       page: () => SignedCopy(),
       binding: SignedCopyBinding(),
     ),
-  
+
     GetPage(
       name: '/viewallbooks',
       page: () => ViewAllBooksScreen(),

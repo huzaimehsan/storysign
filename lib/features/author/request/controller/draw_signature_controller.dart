@@ -17,10 +17,71 @@ class DrawSignatureController extends GetxController {
   final RxString signatureMode = 'pencil'.obs;
   final RxBool isSignatureEmpty = true.obs;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final TextEditingController messageController = TextEditingController();
+  final RxInt charCount = 0.obs;
+  final TextEditingController dateController = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
     _registerListener();
+    messageController.addListener(() {
+      charCount.value = messageController.text.length;
+    });
+  }
+
+  Future<void> pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: buttonColor, // Selected dates and header
+              onPrimary: white, // Text on primary
+              onSurface: blackColor, // General text
+              surface: white, // Dialog background
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: white,
+              headerBackgroundColor: buttonColor,
+              headerForegroundColor: white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              dayStyle: const TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+              weekdayStyle: const TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+              ),
+              yearStyle: const TextStyle(fontFamily: 'Poppins'),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: buttonColor, // Button text color
+                textStyle: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      dateController.text = "${picked.toLocal()}".split(' ')[0];
+    }
   }
 
   void _registerListener() {
@@ -68,6 +129,8 @@ class DrawSignatureController extends GetxController {
   }
 
   void confirmSignature(BuildContext context) async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
+
     if (signatureController.isNotEmpty) {
       final bytes = await signatureController.toPngBytes();
 
@@ -94,6 +157,8 @@ class DrawSignatureController extends GetxController {
   void onClose() {
     signatureController.removeListener(_onSignatureChange);
     signatureController.dispose();
+    messageController.dispose();
+    dateController.dispose();
     super.onClose();
   }
 }

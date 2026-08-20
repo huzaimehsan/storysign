@@ -90,7 +90,7 @@ class PlaceSignatureController extends GetxController {
       pH: 792.0,
     );
 
-    Navigator.of(context).pushNamed('/addMessage');
+    Navigator.of(context).pushNamed('/authorFinalReview');
   }
 
   @override
