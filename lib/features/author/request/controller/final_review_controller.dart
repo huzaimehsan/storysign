@@ -61,8 +61,14 @@ class FinalReviewController extends GetxController {
       request.fields['pageIndex'] = reqService.pageIndex.toString();
       request.fields['xRatio'] = reqService.xRatio.toString();
       request.fields['yRatio'] = reqService.yRatio.toString();
+
       request.fields['widthRatio'] = reqService.widthRatio.toString();
+
       request.fields['heightRatio'] = reqService.heightRatio.toString();
+      // request.fields['datexRatio'] = reqService.datexRatio.toString();
+      // request.fields['dateyRatio'] = reqService.dateyRatio.toString();
+      // request.fields['dateWidthRatio'] = reqService.dateWidthRatio.toString();
+      // request.fields['dateHeightRatio'] = reqService.dateHeightRatio.toString();
       request.fields['pageWidthPts'] = reqService.pageWidthPts
           .toInt()
           .toString();
