@@ -8,7 +8,7 @@ import 'package:storysign/widgets/subscription_header_widget.dart';
 
 import '../../../../core/services/request_service.dart';
 import '../controller/place_signature_controller.dart';
-import '../controller/add_message_controller.dart';
+import '../controller/draw_signature_controller.dart';
 import '../controller/final_review_controller.dart';
 import '../widgets/ready_to_send_card.dart';
 import '../widgets/signature_detail_card.dart';
@@ -19,7 +19,7 @@ class FinalReviewScreen extends GetView<FinalReviewController> {
   @override
   Widget build(BuildContext context) {
     final placeCtrl = Get.find<PlaceSignatureController>();
-    final messageCtrl = Get.find<AddMessageController>();
+    final messageCtrl = Get.find<DrawSignatureController>();
     final reqService = RequestService.find;
 
     return Scaffold(

@@ -10,13 +10,13 @@ import '../../../../core/services/base_services.dart';
 import '../../../../core/services/request_service.dart';
 import '../../../../utils/utility.dart';
 import '../../../../widgets/sucess_widget.dart';
-import './add_message_controller.dart';
+import './draw_signature_controller.dart';
 import './place_signature_controller.dart';
 
 class FinalReviewController extends GetxController {
   Future<void> approveAndSend(BuildContext context) async {
     final reqService = RequestService.find;
-    final messageCtrl = Get.find<AddMessageController>();
+    final messageCtrl = Get.find<DrawSignatureController>();
     final placeCtrl = Get.find<PlaceSignatureController>();
 
     final String autographRequestId = reqService.autographRequestId;

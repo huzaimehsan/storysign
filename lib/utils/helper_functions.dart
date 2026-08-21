@@ -3,14 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 import 'package:intl/intl.dart';
 
-
-
 import '../widgets/customText_widget.dart';
-
 
 class HelperFunction {
   static String? emailValidate(String val) {
@@ -23,35 +18,31 @@ class HelperFunction {
     }
   }
 
-
   // Subject ke liye validation
   static String? subjectValidate(String val) {
-  if (val.isEmpty) {
-  return 'Subject cannot be empty';
-  } else if (val.length < 3) {
-  return 'Subject is too short';
-  }
-  return null;
+    if (val.isEmpty) {
+      return 'Subject cannot be empty';
+    } else if (val.length < 3) {
+      return 'Subject is too short';
+    }
+    return null;
   }
 
   // Message ke liye validation
   static String? messageValidate(String val) {
-  if (val.isEmpty) {
-  return 'Message cannot be empty';
-  } else if (val.length < 10) {
-  return 'Message must be at least 10 characters';
+    if (val.isEmpty) {
+      return 'Message cannot be empty';
+    } else if (val.length < 10) {
+      return 'Message must be at least 10 characters';
+    }
+    return null;
   }
-  return null;
-  }
-
 
   static String? validateOTP(String val) {
     // Check agar field khali hai
     if (val.isEmpty) {
       return 'OTP cannot be empty';
-    }
-
-    else if (!RegExp(r'^[0-9]{4}$').hasMatch(val)) {
+    } else if (!RegExp(r'^[0-9]{4}$').hasMatch(val)) {
       return 'Enter a valid 6-digit OTP';
     }
     return null;
@@ -70,6 +61,7 @@ class HelperFunction {
       return dateString; // Agar error aaye to original string return karein
     }
   }
+
   // HelperFunction class mein ye add karein
   static String? bioValidate(String? val) {
     if (val == null || val.isEmpty) {
@@ -130,38 +122,64 @@ class HelperFunction {
     final alphanumeric = RegExp(r'^[a-zA-Z\s]+$');
     if (val.isEmpty || val == '') {
       return '${fieldName ?? 'Field'} cannot be empty';
-    }else if (!alphanumeric.hasMatch(val)) {
+    } else if (!alphanumeric.hasMatch(val)) {
       return 'Special characters not allowed';
     } else {
       return null;
     }
   }
 
-  static String? validateBookName(val, {fieldName, int? minLength, int? maxLength}) {
-  if (val == null || val.trim().isEmpty) {
-    return '${fieldName ?? 'Book name'} cannot be empty';
-  } else if (minLength != null && val.trim().length < minLength) {
-    return '${fieldName ?? 'Book name'} must be at least $minLength characters';
-  } else if (maxLength != null && val.trim().length > maxLength) {
-    return '${fieldName ?? 'Book name'} cannot exceed $maxLength characters';
-  } else if (!RegExp(r"^[a-zA-Z0-9À-ÿ .,'\-:&!?()]+$").hasMatch(val.trim())) {
-    return '${fieldName ?? 'Book name'} contains invalid characters';
-  } else {
-    return null;
-  }
-}
+  // static String? validateMessage(String? val, {String? fieldName, int? maxLength}) {
+  //   if (val == null || val.trim().isEmpty) {
+  //     return '${fieldName ?? 'Message'} cannot be empty';
+  //   } else if (maxLength != null && val.trim().length > maxLength) {
+  //     return '${fieldName ?? 'Message'} cannot exceed $maxLength characters';
+  //   }
+  //   return null;
+  // }
 
-  static String? validateMessage(val, {fieldName, int? minLength, int? maxLength}) {
-  if (val == null || val.trim().isEmpty) {
-    return '${fieldName ?? 'Message'} cannot be empty';
-  } else if (minLength != null && val.trim().length < minLength) {
-    return '${fieldName ?? 'Message'} must be at least $minLength characters';
-  } else if (maxLength != null && val.trim().length > maxLength) {
-    return '${fieldName ?? 'Message'} cannot exceed $maxLength characters';
-  } else {
+  static String? validateDate(String? val, {String? fieldName}) {
+    if (val == null || val.trim().isEmpty) {
+      return '${fieldName ?? 'Date'} cannot be empty';
+    }
     return null;
   }
-}
+
+  static String? validateBookName(
+    val, {
+    fieldName,
+    int? minLength,
+    int? maxLength,
+  }) {
+    if (val == null || val.trim().isEmpty) {
+      return '${fieldName ?? 'Book name'} cannot be empty';
+    } else if (minLength != null && val.trim().length < minLength) {
+      return '${fieldName ?? 'Book name'} must be at least $minLength characters';
+    } else if (maxLength != null && val.trim().length > maxLength) {
+      return '${fieldName ?? 'Book name'} cannot exceed $maxLength characters';
+    } else if (!RegExp(r"^[a-zA-Z0-9À-ÿ .,'\-:&!?()]+$").hasMatch(val.trim())) {
+      return '${fieldName ?? 'Book name'} contains invalid characters';
+    } else {
+      return null;
+    }
+  }
+
+  static String? validateMessage(
+    val, {
+    fieldName,
+    int? minLength,
+    int? maxLength,
+  }) {
+    if (val == null || val.trim().isEmpty) {
+      return '${fieldName ?? 'Message'} cannot be empty';
+    } else if (minLength != null && val.trim().length < minLength) {
+      return '${fieldName ?? 'Message'} must be at least $minLength characters';
+    } else if (maxLength != null && val.trim().length > maxLength) {
+      return '${fieldName ?? 'Message'} cannot exceed $maxLength characters';
+    } else {
+      return null;
+    }
+  }
 
   // static String? ValidateName(String val, {String? fieldName}) {
   //   final alphanumeric = RegExp(r'^[a-zA-Z\s]+$');
@@ -271,57 +289,58 @@ class HelperFunction {
     }
   }
 
-  static void showBottomSheet(context,
-      {double? bottomSheetHeight,
-      double? spaceBetween,
-      String? screenTitle,
-      Widget? save,
-      Widget? widget}) {
+  static void showBottomSheet(
+    context, {
+    double? bottomSheetHeight,
+    double? spaceBetween,
+    String? screenTitle,
+    Widget? save,
+    Widget? widget,
+  }) {
     showModalBottomSheet(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(30.0), topLeft: Radius.circular(30.0)),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(30.0),
+          topLeft: Radius.circular(30.0),
         ),
-        context: context,
-        builder: (BuildContext bc) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-            child: Container(
-              height: bottomSheetHeight ?? 300,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: customText(
-                            text: '${'Constants_Cancel'.tr}',
-                            fontSize: 13,
-                            color: Color(0xff89889B),
-                          )),
-                      customText(text: '${screenTitle ?? 'Screen Name'}'),
-                      if (save == null)
-                        Container(
-                          width: 30,
-                        ),
-                      if (save != null) save
-                    ],
-                  ),
-                  SizedBox(
-                    height: spaceBetween ?? 20,
-                  ),
-                  Expanded(child: widget ?? Container()),
-                ],
-              ),
+      ),
+      context: context,
+      builder: (BuildContext bc) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+          child: Container(
+            height: bottomSheetHeight ?? 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: customText(
+                        text: '${'Constants_Cancel'.tr}',
+                        fontSize: 13,
+                        color: Color(0xff89889B),
+                      ),
+                    ),
+                    customText(text: '${screenTitle ?? 'Screen Name'}'),
+                    if (save == null) Container(width: 30),
+                    if (save != null) save,
+                  ],
+                ),
+                SizedBox(height: spaceBetween ?? 20),
+                Expanded(child: widget ?? Container()),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   static Future<void> clearLocalStorage() async {
@@ -349,8 +368,9 @@ class HelperFunction {
     if (!hasLowercase) {
       return "must contains at least 1 lower case letter";
     }
-    bool hasSpecialCharacters =
-        password.contains(new RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+    bool hasSpecialCharacters = password.contains(
+      new RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
+    );
     if (!hasSpecialCharacters) {
       return 'must contains at least 1 special character';
     }

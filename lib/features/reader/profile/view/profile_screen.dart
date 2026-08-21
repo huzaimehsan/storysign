@@ -148,12 +148,18 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   shrinkWrap: true,
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: (controller.books.length > 3 ? 3 : controller.books.length) +
+                                  itemCount:
+                                      (controller.books.length > 3
+                                          ? 3
+                                          : controller.books.length) +
                                       (controller.isLoadingMoreBooks.value
                                           ? 1
                                           : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == (controller.books.length > 3 ? 3 : controller.books.length)) {
+                                    if (index ==
+                                        (controller.books.length > 3
+                                            ? 3
+                                            : controller.books.length)) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -166,13 +172,26 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                       );
                                     }
                                     final book = controller.books[index];
-                                    return recentSignedBookCard(
-                                      title: book.title,
-                                      price: '\u0024 ${book.feeAmount}',
-                                      date: book.uploadDate.toString().split(
-                                        ' ',
-                                      )[0],
-                                      status: book.status,
+                                    return InkWell(
+                                      onTap: () {
+                                        Get.toNamed(
+                                          '/signedcopy',
+                                          arguments: {
+                                            'bookId': book.id,
+                                            'autographRequestId':
+                                                book.autographRequestId ?? '',
+                                            'bookName': book.title,
+                                          },
+                                        );
+                                      },
+                                      child: recentSignedBookCard(
+                                        title: book.title,
+                                        price: '\u0024 ${book.feeAmount}',
+                                        date: book.uploadDate.toString().split(
+                                          ' ',
+                                        )[0],
+                                        status: book.status,
+                                      ),
                                     );
                                   },
                                 ),
@@ -205,12 +224,17 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                   padding: EdgeInsets.zero,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount:
-                                      (controller.bookList.length > 3 ? 3 : controller.bookList.length) +
+                                      (controller.bookList.length > 3
+                                          ? 3
+                                          : controller.bookList.length) +
                                       (controller.isLoadingMoreHistory.value
                                           ? 1
                                           : 0),
                                   itemBuilder: (context, index) {
-                                    if (index == (controller.bookList.length > 3 ? 3 : controller.bookList.length)) {
+                                    if (index ==
+                                        (controller.bookList.length > 3
+                                            ? 3
+                                            : controller.bookList.length)) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -223,12 +247,26 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                                       );
                                     }
                                     final book = controller.bookList[index];
-                                    return downloadHistoryCard(
-                                      imagePath: book.coverImage ?? "",
-                                      title: book.bookTitle,
-                                      date: book.createdAt.toString().split(
-                                        ' ',
-                                      )[0],
+                                    return InkWell(
+                                      onTap: () {
+                                        Get.toNamed(
+                                          '/signedcopy',
+                                          arguments: {
+                                            'bookId': book.bookId,
+                                            'autographRequestId':
+                                                book.autographRequestId ?? '',
+                                            'bookName': book.bookTitle,
+                                            'isFromDownloadHistory': true,
+                                          },
+                                        );
+                                      },
+                                      child: downloadHistoryCard(
+                                        imagePath: book.coverImage ?? "",
+                                        title: book.bookTitle,
+                                        date: book.createdAt.toString().split(
+                                          ' ',
+                                        )[0],
+                                      ),
                                     );
                                   },
                                 ),

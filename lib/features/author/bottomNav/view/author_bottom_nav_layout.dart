@@ -11,7 +11,7 @@ import 'package:storysign/features/author/request/view/ebook_preview.dart';
 import 'package:storysign/features/author/request/view/request_detail.dart';
 import 'package:storysign/features/author/request/view/draw_signature.dart';
 import 'package:storysign/features/author/request/view/place_signature.dart';
-import 'package:storysign/features/author/request/view/add_message.dart';
+
 import 'package:storysign/features/author/request/view/final_review.dart';
 
 import 'package:storysign/features/author/request/binding/place_signature_binding.dart';
@@ -20,7 +20,7 @@ import 'package:storysign/features/author/request/binding/final_review_binding.d
 import '../../../shared/notification/view/notification_screen.dart';
 import '../../notification/binding/author_notification_binding.dart';
 
-import '../../request/binding/add_message_binding.dart';
+
 import '../../request/binding/draw_signature_binding.dart';
 import '../../request/binding/ebook_preview_binding.dart';
 import '../../request/binding/request_detail_binding.dart';
@@ -68,12 +68,7 @@ class AuthorBottomNavLayout extends GetView<AuthorBottomNavController> {
           binding: PlaceSignatureBinding(),
           settings: settings,
         );
-      case '/addMessage':
-        return GetPageRoute(
-          page: () => const AddMessageScreen(),
-          binding: AddMessageBinding(),
-          settings: settings,
-        );
+
       case '/authorFinalReview':
         return GetPageRoute(
           page: () => const FinalReviewScreen(),
