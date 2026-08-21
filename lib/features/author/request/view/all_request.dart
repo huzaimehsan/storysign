@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:storysign/features/author/request/binding/request_detail_binding.dart';
 import 'package:storysign/features/author/request/controller/all_request_controller.dart';
+import 'package:storysign/features/author/request/view/request_detail.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -125,13 +127,19 @@ class AllRequest extends GetView<AllRequestController> {
                         authorName: request['readerName'] ?? 'Unknown',
                         bookName: request['bookName'] ?? 'Unknown',
                         date: request['date'] ?? '',
-                        ontap: () {
-                          Navigator.of(context).pushNamed(
-                            '/requestDetail',
-                            arguments: {
-                              'from': 'all_request',
-                              'autographRequestId': request['id'],
-                            },
+                          ontap: () {
+                          Navigator.of(context).push(
+                            GetPageRoute(
+                              page: () => const RequestDetailAuthor(),
+                              binding: AuthorRequestDetailBinding(),
+                              settings: RouteSettings(
+                                name: '/requestDetail',
+                                arguments: {
+                                  'from': 'all_request',
+                                  'autographRequestId': request['id'],
+                                },
+                              ),
+                            ),
                           );
                         },
                       );

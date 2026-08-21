@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:storysign/features/author/delivered/controller/delivered_controller.dart';
+import 'package:storysign/features/author/request/binding/request_detail_binding.dart';
+import 'package:storysign/features/author/request/view/request_detail.dart';
 import 'package:storysign/features/author/request/widget/all_pending_request.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -126,12 +128,18 @@ class DeliveredScreen extends GetView<DeliveredController> {
                         bookName: request.bookTitle ?? 'Unknown Book',
                         date: request.requestDate?.toString() ?? 'Unknown',
                         ontap: () {
-                          Navigator.of(context).pushNamed(
-                            '/requestDetail',
-                            arguments: {
-                              'from': 'all_delivered',
-                              'autographRequestId': request.id,
-                            },
+                          Navigator.of(context).push(
+                            GetPageRoute(
+                              page: () => const RequestDetailAuthor(),
+                              binding: AuthorRequestDetailBinding(),
+                              settings: RouteSettings(
+                                name: '/requestDetail',
+                                arguments: {
+                                  'from': 'all_delivered',
+                                  'autographRequestId': request.id,
+                                },
+                              ),
+                            ),
                           );
                         },
                       );

@@ -139,8 +139,17 @@ class DrawSignatureController extends GetxController {
           Get.delete<PlaceSignatureController>(force: true);
         }
         RequestService.find.signatureBytes = bytes;
+        RequestService.find.signatureMessage = messageController.text;
+        RequestService.find.signatureDate = dateController.text;
 
-        Navigator.of(context).pushNamed('/placeSignature', arguments: bytes);
+        Navigator.of(context).pushNamed(
+          '/placeSignature',
+          arguments: {
+            'bytes': bytes,
+            'message': messageController.text,
+            'date': dateController.text,
+          },
+        );
       }
     } else {
       Get.snackbar(

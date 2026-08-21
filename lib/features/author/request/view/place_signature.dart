@@ -135,24 +135,74 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
                                       // Signature image or demo painter
                                       Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Container(
-                                          width: controller.sigWidth.value - 8,
-                                          height: controller.sigHeight.value - 8,
-                                          color: Colors.transparent,
-                                          child: controller.signatureBytes.isEmpty
-                                              ? CustomPaint(
-                                                  painter:
-                                                      _DemoSignaturePainter(),
-                                                )
-                                              : Image.memory(
-                                                  controller.signatureBytes,
-                                                  fit: BoxFit.contain,
+                                        child: ClipRect(
+                                          child: SizedBox(
+                                            width:
+                                                controller.sigWidth.value - 8,
+                                            height:
+                                                controller.sigHeight.value - 8,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                if (controller
+                                                    .signatureMessage
+                                                    .isNotEmpty)
+                                                  Text(
+                                                    controller.signatureMessage,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.black87,
+                                                    ),
+                                                  ),
+                                                Expanded(
+                                                  child:
+                                                      controller
+                                                          .signatureBytes
+                                                          .isEmpty
+                                                      ? CustomPaint(
+                                                          painter:
+                                                              _DemoSignaturePainter(),
+                                                        )
+                                                      : Image.memory(
+                                                          controller
+                                                              .signatureBytes,
+                                                          fit: BoxFit.contain,
+                                                        ),
                                                 ),
+                                                if (controller
+                                                    .signatureDate
+                                                    .isNotEmpty)
+                                                  Flexible(
+                                                    flex: 0,
+                                                    child: Text(
+                                                      controller.signatureDate,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: blackColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
-
                                       // Red dot – floating center-top (indicator/anchor)
-
 
                                       // White circle with black border – top-right corner
                                       Positioned(
@@ -234,14 +284,13 @@ class PlaceSignatureScreen extends GetView<PlaceSignatureController> {
             SizedBox(height: 1.5.h),
 
             // ──────────── Page Navigation ────────────
-
-
             const Spacer(),
 
             // ──────────── Rotate Button ────────────
             GestureDetector(
               onTap: controller.rotateSignature,
-              child: Row(mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     padding: EdgeInsets.all(1.w),
@@ -326,10 +375,12 @@ class _DashedBorderPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        const Radius.circular(8.0),
-      ));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(8.0),
+        ),
+      );
 
     const dashWidth = 4.0;
     const dashSpace = 3.0;

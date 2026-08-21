@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../../../core/services/apiendpoints.dart';
 import '../../../../core/services/base_services.dart';
+import '../../../../core/services/request_service.dart';
 import '../../../../utils/utility.dart';
 
 class EbookPreviewController extends GetxController {
@@ -20,25 +21,54 @@ class EbookPreviewController extends GetxController {
   bool _isInitialized = false;
 
   void initWithId(String id, {String bookPdf = '', bool shouldAccept = false}) {
-    if (_isInitialized && autographRequestId == id) return;
+    if (autographRequestId != id) {
+      bookPdfUrl.value = '';
+      isLoading.value = false;
+      _isInitialized = false;
+    }
+
+    final alreadyAccepted = RequestService.find.acceptedRequestIds.contains(id);
+
+    if (_isInitialized && autographRequestId == id) {
+      if (alreadyAccepted && bookPdfUrl.value.isNotEmpty) {
+        return;
+      }
+    }
     _isInitialized = true;
 
     autographRequestId = id;
     print(
-      '📌 EbookPreviewController - ID received: $autographRequestId, bookPdf passed: ${bookPdf.isNotEmpty}, shouldAccept: $shouldAccept',
+      '📌 EbookPreviewController - ID received: $autographRequestId, bookPdf passed: ${bookPdf.isNotEmpty}, shouldAccept: $shouldAccept, alreadyAccepted: $alreadyAccepted',
     );
 
     if (bookPdf.isNotEmpty) {
       bookPdfUrl.value = bookPdf;
       isLoading.value = true;
-
-      if (shouldAccept && autographRequestId.isNotEmpty) {
+      if (alreadyAccepted || shouldAccept) {
+        RequestService.find.markRequestAccepted(id);
+        return;
+      }
+      RequestService.find.markRequestAccepted(id);
+      if (autographRequestId.isNotEmpty) {
         acceptRequestAndLoadPdf(skipPdfUpdate: true);
       }
       return;
     }
 
     if (autographRequestId.isNotEmpty) {
+      if (alreadyAccepted) {
+        final savedPdf = RequestService.find.bookPdfUrl;
+        if (savedPdf.isNotEmpty) {
+          bookPdfUrl.value = savedPdf;
+          isLoading.value = false;
+          return;
+        }
+      }
+
+      if (!shouldAccept && alreadyAccepted) {
+        return;
+      }
+
       acceptRequestAndLoadPdf();
     } else {
       Utils.showToast('Request ID missing', true);
@@ -58,6 +88,8 @@ class EbookPreviewController extends GetxController {
       print('✅ ALL KEYS IN RESPONSE: ${response.keys.toList()}');
 
       if (response['success'] == true) {
+        RequestService.find.markRequestAccepted(autographRequestId);
+
         if (skipPdfUpdate) {
           // Accept succeeded but we already have the PDF — nothing more to do
           return;
@@ -82,12 +114,32 @@ class EbookPreviewController extends GetxController {
         }
 
         bookPdfUrl.value = pdfUrl.toString();
+        RequestService.find.bookPdfUrl = pdfUrl.toString();
         isLoading.value = true;
       } else {
+        final message = response['message']?.toString() ?? '';
+        final statusCode = response['statusCode'];
+        final isAlreadyAccepted = statusCode == 400 ||
+            statusCode == 404 ||
+            message.toLowerCase().contains('not found') ||
+            message.toLowerCase().contains('already');
+
+        if (isAlreadyAccepted) {
+          RequestService.find.markRequestAccepted(autographRequestId);
+          final savedPdf = RequestService.find.bookPdfUrl;
+          if (savedPdf.isNotEmpty) {
+            bookPdfUrl.value = savedPdf;
+            isLoading.value = false;
+          }
+          if (skipPdfUpdate) {
+            print('Silently ignored repeated accept call: $message');
+          }
+          return;
+        }
+
         if (skipPdfUpdate) {
           // Already have PDF — silently ignore accept failure
-          // (request may already be accepted from a previous session)
-          print('Silently ignored accept failure: ${response['message']}');
+          print('Silently ignored accept failure: $message');
         }
         // When !skipPdfUpdate, basePostAPI already showed the error toast
       }

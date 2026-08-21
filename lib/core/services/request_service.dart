@@ -5,8 +5,10 @@ class RequestService extends GetxService {
   String autographRequestId = '';
   String bookPdfUrl = '';
   int currentPage = 1;
-
+  String signatureMessage = '';
+  String signatureDate = '';
   Uint8List? signatureBytes;
+  final Set<String> acceptedRequestIds = <String>{};
 
   // Placement parameters for API
   int pageIndex = 0; // 0-based
@@ -30,15 +32,36 @@ class RequestService extends GetxService {
     return Get.find<RequestService>();
   }
 
-  void setRequestData(String id, {String? pdfUrl, int? page, String? rName, String? rImage, String? bTitle, String? cImage}) {
-    if (id.isNotEmpty) autographRequestId = id;
+  void setRequestData(
+    String id, {
+    String? pdfUrl,
+    int? page,
+    String? rName,
+    String? rImage,
+    String? bTitle,
+    String? cImage,
+  }) {
+    if (id.isNotEmpty) {
+      autographRequestId = id;
+    }
     if (pdfUrl != null && pdfUrl.isNotEmpty) bookPdfUrl = pdfUrl;
     if (page != null) currentPage = page;
     if (rName != null && rName.isNotEmpty) readerName = rName;
     if (rImage != null && rImage.isNotEmpty) readerImagePath = rImage;
     if (bTitle != null && bTitle.isNotEmpty) bookTitle = bTitle;
     if (cImage != null && cImage.isNotEmpty) coverImage = cImage;
-    print('RequestService - ID: $autographRequestId, Page: $currentPage, PDF: $bookPdfUrl');
+    print(
+      'RequestService - ID: $autographRequestId, Page: $currentPage, PDF: $bookPdfUrl',
+    );
+  }
+
+  void markRequestAccepted(String id) {
+    if (id.isNotEmpty) {
+      acceptedRequestIds.add(id);
+      if (autographRequestId.isEmpty) {
+        autographRequestId = id;
+      }
+    }
   }
 
   void setPlacementData({
@@ -59,7 +82,9 @@ class RequestService extends GetxService {
     heightRatio = hR;
     pageWidthPts = pW;
     pageHeightPts = pH;
-    print('RequestService Placement set - PageIdx: $pageIdx, xRatio: $xR, yRatio: $yR');
+    print(
+      'RequestService Placement set - PageIdx: $pageIdx, xRatio: $xR, yRatio: $yR',
+    );
   }
 
   void clear() {
@@ -67,6 +92,8 @@ class RequestService extends GetxService {
     bookPdfUrl = '';
     currentPage = 1;
     signatureBytes = null;
+    signatureMessage = '';
+    signatureDate = '';
     pageIndex = 0;
     xRatio = 0.15;
     yRatio = 0.82;
@@ -78,5 +105,6 @@ class RequestService extends GetxService {
     readerImagePath = '';
     bookTitle = 'Ebook';
     coverImage = '';
+    acceptedRequestIds.clear();
   }
 }

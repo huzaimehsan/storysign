@@ -1,7 +1,5 @@
 import 'dart:async';
 
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -13,14 +11,12 @@ import '../../../../core/services/request_service.dart';
 import '../../../../utils/utility.dart';
 
 Map<String, String> normalizeRequestDetailArgs(Object? args) {
-  final normalized = <String, String>{
-    'from': '',
-    'autographRequestId': '',
-  };
+  final normalized = <String, String>{'from': '', 'autographRequestId': ''};
 
   if (args is Map) {
     final fromValue = args['from'] ?? args['source'] ?? '';
-    final idValue = args['autographRequestId'] ?? args['id'] ?? args['requestId'] ?? '';
+    final idValue =
+        args['autographRequestId'] ?? args['id'] ?? args['requestId'] ?? '';
 
     normalized['from'] = fromValue?.toString().trim() ?? '';
     normalized['autographRequestId'] = idValue?.toString().trim() ?? '';
@@ -32,7 +28,6 @@ Map<String, String> normalizeRequestDetailArgs(Object? args) {
 }
 
 class RequestDetailController extends GetxController {
-
   // .obs variable
   var sourceScreen = ''.obs;
   RxString errorMessage = ''.obs;
@@ -42,6 +37,12 @@ class RequestDetailController extends GetxController {
   void initData(String from, String id) {
     final cleanedFrom = from.trim();
     final cleanedId = id.trim();
+
+    // If ID changed, always reset so stale data from a previous flow is dropped
+    if (autographRequestId != cleanedId) {
+      selectedRequestDetail.value = null;
+      errorMessage.value = '';
+    }
 
     if (sourceScreen.value == cleanedFrom &&
         autographRequestId == cleanedId &&
@@ -66,7 +67,6 @@ class RequestDetailController extends GetxController {
   }
 
   bool get isFromDelivered => sourceScreen.value == 'all_delivered';
-
 
   Rxn<RequestDetailModel> selectedRequestDetail = Rxn<RequestDetailModel>();
   var isFetchDetailLoading = false.obs;
@@ -109,11 +109,11 @@ class RequestDetailController extends GetxController {
           );
         }
         print("Successfully loaded request detail");
-
       } else {
         final responseBody = response;
         errorMessage.value =
-            responseBody['message']?.toString() ?? 'Failed to load request details';
+            responseBody['message']?.toString() ??
+            'Failed to load request details';
         if (RequestService.find.autographRequestId == autographRequestId &&
             (RequestService.find.bookTitle.isNotEmpty ||
                 RequestService.find.readerName.isNotEmpty)) {
@@ -175,8 +175,13 @@ class RequestDetailController extends GetxController {
     if (statusLower == 'accepted' ||
         statusLower == 'in process' ||
         statusLower == 'in_progress' ||
-        statusLower == 'inprocess') {
-      print('📌 Request already accepted ($statusLower), skipping accept API');
+        statusLower == 'inprocess' ||
+        statusLower == 'completed' ||
+        statusLower == 'sent' ||
+        statusLower == 'delivered') {
+      print(
+        '📌 Request already accepted/completed ($statusLower), skipping accept API',
+      );
       _navigateToPdfReview(context, detail.bookPdfUrl);
       return;
     }
@@ -205,13 +210,19 @@ class RequestDetailController extends GetxController {
 
         // If the backend says "Request not found" or returns 400/404,
         // it likely means the request is already accepted — still navigate
-        if (statusCode == 400 || statusCode == 404 ||
+        if (statusCode == 400 ||
+            statusCode == 404 ||
             message.toLowerCase().contains('not found') ||
             message.toLowerCase().contains('already')) {
-          print('📌 Accept failed but request likely already accepted: $message');
+          print(
+            '📌 Accept failed but request likely already accepted: $message',
+          );
           _navigateToPdfReview(context, detail.bookPdfUrl);
         } else {
-          Utils.showToast(message.isNotEmpty ? message : 'Failed to accept request', true);
+          Utils.showToast(
+            message.isNotEmpty ? message : 'Failed to accept request',
+            true,
+          );
         }
       }
     } on TimeoutException {
@@ -249,7 +260,8 @@ class RequestDetailController extends GetxController {
       final response = await BaseService().basePostAPI(
         ApiEndPoints.rejectAutographRequest(autographRequestId),
         {
-          'rejectionReason': reason ?? 'I am not accepting this genre at the moment.',
+          'rejectionReason':
+              reason ?? 'I am not accepting this genre at the moment.',
         },
         loading: false,
       );
@@ -257,14 +269,20 @@ class RequestDetailController extends GetxController {
       print("REJECT Response: $response");
 
       if (response['success'] == true) {
-        Utils.showToast(response['message'] ?? 'Request declined successfully', false);
+        Utils.showToast(
+          response['message'] ?? 'Request declined successfully',
+          false,
+        );
         if (Navigator.of(context).canPop()) {
           Navigator.of(context).pop();
         } else {
           Get.back();
         }
       } else {
-        Utils.showToast(response['message'] ?? 'Failed to decline request', true);
+        Utils.showToast(
+          response['message'] ?? 'Failed to decline request',
+          true,
+        );
       }
     } on TimeoutException {
       Utils.showToast('Request timed out', true);

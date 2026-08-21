@@ -25,7 +25,9 @@ class RequestDetailAuthor extends GetView<RequestDetailController> {
     print("RECEIVED ARGS - From: $from, ID: $id");
 
     // Initialize controller with data
-    controller.initData(from, id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initData(from, id);
+    });
 
     final bool isFromDelivered = from == 'all_delivered';
 
