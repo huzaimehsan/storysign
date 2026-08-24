@@ -105,11 +105,16 @@ class PlaceSignatureController extends GetxController {
       ((rotationAngle.value * 180 / 3.141592653589793) % 360).round();
 
   Future<Uint8List> buildCompositeSignature() async {
+    final double scale = 4.0;
     final double w = sigWidth.value;
     final double h = sigHeight.value;
 
     final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, w, h));
+    // Create canvas with scaled dimensions
+    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, w * scale, h * scale));
+    
+    // Scale the canvas so all drawing operations are naturally scaled up
+    canvas.scale(scale, scale);
 
     double yOffset = 0;
 
@@ -151,7 +156,10 @@ class PlaceSignatureController extends GetxController {
         sigImg.height.toDouble(),
       );
       final dstRect = Rect.fromLTWH(0, yOffset, w, sigAreaHeight);
-      canvas.drawImageRect(sigImg, srcRect, dstRect, Paint());
+      
+      // Use high quality filter for image scaling
+      final paint = Paint()..filterQuality = FilterQuality.high;
+      canvas.drawImageRect(sigImg, srcRect, dstRect, paint);
     }
     yOffset += sigAreaHeight;
 
@@ -175,7 +183,8 @@ class PlaceSignatureController extends GetxController {
     }
 
     final picture = recorder.endRecording();
-    final img = await picture.toImage(w.toInt(), h.toInt());
+    // Export image at scaled dimensions
+    final img = await picture.toImage((w * scale).toInt(), (h * scale).toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     return byteData!.buffer.asUint8List();
   }

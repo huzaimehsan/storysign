@@ -132,7 +132,26 @@ class DrawSignatureController extends GetxController {
     if (!(formKey.currentState?.validate() ?? false)) return;
 
     if (signatureController.isNotEmpty) {
-      final bytes = await signatureController.toPngBytes();
+      // Scale factor to increase the resolution of the exported PNG
+      final double scale = 4.0; 
+      
+      final List<Point> scaledPoints = signatureController.points.map((p) {
+        return Point(
+          Offset(p.offset.dx * scale, p.offset.dy * scale),
+          p.type,
+          p.pressure,
+        );
+      }).toList();
+
+      final highResController = SignatureController(
+        penStrokeWidth: signatureController.penStrokeWidth * scale,
+        penColor: signatureController.penColor,
+        exportBackgroundColor: signatureController.exportBackgroundColor,
+        points: scaledPoints,
+      );
+
+      final bytes = await highResController.toPngBytes();
+      highResController.dispose();
 
       if (bytes != null && context.mounted) {
         if (Get.isRegistered<PlaceSignatureController>()) {

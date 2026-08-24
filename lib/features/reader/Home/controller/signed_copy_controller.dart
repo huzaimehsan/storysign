@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:storysign/features/reader/Home/model/home_model.dart';
 
 import '../../../../constants/local_db_key.dart';
@@ -272,55 +273,20 @@ class SignedCopyController extends GetxController {
 
       // 2. Try to save to Public Downloads directory on Android
       String targetMessage = 'Book downloaded successfully';
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid || Platform.isIOS) {
         try {
-          final publicDownloadDir = Directory('/storage/emulated/0/Download');
-          if (await publicDownloadDir.exists()) {
-            var publicFile = File(
-              '${publicDownloadDir.path}/${fileName ?? 'book'}.pdf',
-            );
-            int counter = 1;
-            while (await publicFile.exists()) {
-              publicFile = File(
-                '${publicDownloadDir.path}/${fileName ?? 'book'}_$counter.pdf',
-              );
-              counter++;
-            }
-            await publicFile.writeAsBytes(fileResponse.bodyBytes);
+          final params = SaveFileDialogParams(
+            sourceFilePath: file.path,
+            fileName: '${fileName ?? 'book'}.pdf',
+            mimeTypesFilter: ['application/pdf'],
+          );
+          final finalPath = await FlutterFileDialog.saveFile(params: params);
+          if (finalPath != null) {
             targetMessage = 'Book downloaded & saved to Downloads';
-            debugPrint(
-              "Saved to public download folder successfully: ${publicFile.path}",
-            );
+            debugPrint("Saved via flutter_file_dialog: $finalPath");
           }
         } catch (e) {
-          debugPrint("Failed to save to public downloads folder: $e");
-          // Fallback to app's external downloads directory if public folder isn't writable directly
-          try {
-            final extDirs = await getExternalStorageDirectories(
-              type: StorageDirectory.downloads,
-            );
-            if (extDirs != null && extDirs.isNotEmpty) {
-              var extFile = File(
-                '${extDirs.first.path}/${fileName ?? 'book'}.pdf',
-              );
-              int counter = 1;
-              while (await extFile.exists()) {
-                extFile = File(
-                  '${extDirs.first.path}/${fileName ?? 'book'}_$counter.pdf',
-                );
-                counter++;
-              }
-              await extFile.writeAsBytes(fileResponse.bodyBytes);
-              targetMessage = 'Book saved to App External Storage';
-              debugPrint(
-                "Saved to app external downloads folder successfully: ${extFile.path}",
-              );
-            }
-          } catch (extEx) {
-            debugPrint(
-              "Failed to save to app external downloads folder: $extEx",
-            );
-          }
+          debugPrint("Failed to save via flutter_file_dialog: $e");
         }
       }
 

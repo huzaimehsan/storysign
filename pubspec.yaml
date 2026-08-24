@@ -63,6 +63,7 @@ dependencies:
   sign_in_apple: ^2.0.0
   firebase_core: ^4.12.1
   firebase_messaging: ^16.4.3
+  flutter_file_dialog: ^3.3.2
 # // // flutter_local_notifications: ^22.2.0
 
 dev_dependencies:
